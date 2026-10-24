@@ -178,3 +178,33 @@ func TestRunTempScript(t *testing.T) {
 		t.Errorf("biến n1 phải lấy từ lần chạy trước: %q", back.in.Lines())
 	}
 }
+
+// run_step: node thành công vào nháp, node sau dùng biến của node trước (không chạy lại node trước); lỗi thì không vào nháp.
+func TestRunStepDraft(t *testing.T) {
+	cs, back := connect(t)
+	out, isErr := call(t, cs, "run_step", map[string]any{"step": map[string]any{"type": "wait", "delayAfter": 1}})
+	if isErr || out["state"] != "success" {
+		t.Fatalf("n1: %v", out)
+	}
+	if bad, isErr := call(t, cs, "run_step", map[string]any{"step": map[string]any{"type": "type", "text": "{{n9.status}}"}}); !isErr {
+		t.Fatalf("biến tới node không có phải báo lỗi: %v", bad)
+	}
+	sh, _ := call(t, cs, "draft", map[string]any{"action": "show"})
+	if rows := sh["steps"].([]any); len(rows) != 1 {
+		t.Fatalf("lỗi không được vào nháp: %v", sh)
+	}
+	out, isErr = call(t, cs, "run_step", map[string]any{"step": map[string]any{"type": "type", "text": "{{n1.status}}"}})
+	if isErr || out["state"] != "success" || back.lastOpt.SeedRun == "" || back.lastOpt.From != "s2" {
+		t.Fatalf("n2: %v / %+v", out, back.lastOpt)
+	}
+	saved, isErr := call(t, cs, "draft", map[string]any{"action": "save", "name": "Nháp thử"})
+	if isErr || saved["steps"] != float64(2) || saved["shots"] != float64(2) {
+		t.Fatalf("save: %v", saved)
+	}
+	if _, err := os.Stat(saved["shotsDir"].(string)); err != nil {
+		t.Fatal(err)
+	}
+	if _, isErr := call(t, cs, "draft", map[string]any{"action": "show"}); !isErr {
+		t.Fatal("nháp đã lưu phải được bỏ")
+	}
+}

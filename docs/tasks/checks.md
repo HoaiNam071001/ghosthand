@@ -8,6 +8,8 @@ Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi t
 - [ ] Trên Claude Code: `screenshot` một trang → `capture_template` khoanh một nút → `find_image` báo `found` + `center` đúng nút → `create_script` với `clickImage` có `"template": "tpl:1"`; mở kịch bản thấy node có ảnh mẫu thật (không còn chữ `tpl:`) và chạy click đúng nút (thử cả Retina)
 - [ ] Ghim output: chạy kịch bản có node Đọc chữ / HTTP, chuột phải node → *Ghim output* → thẻ hiện icon ghim; chạy lại: node đó không chạy (nhật ký ghi “node đã ghim”), node sau vẫn nhận biến `{{nX.output…}}` đã ghim; *Bỏ ghim* thì chạy thật; đóng / mở lại app ghim vẫn còn, file kịch bản (.json) không có dữ liệu ghim
 - [ ] Chuột phải node: *Chạy đến n3* dừng sau n3; Shift + click chọn 3 node → *Chạy cụm đã chọn* chỉ chạy 3 node đó; sau một lần chạy lỗi ở n3, sửa rồi *Chạy tiếp từ n3* không chạy lại n1–n2
+- [ ] `run_step` trên Claude Code (mức Hỏi hoặc Tự chạy): nhờ AI “mở Notepad, gõ chào bạn” bằng từng run_step → mỗi node chạy thật đúng một lần (Notepad không mở lại ở node 2), ảnh sau từng node; `draft save` tạo kịch bản + thư mục ảnh các bước, chạy lại kịch bản không cần AI
+- [ ] Chấm đỏ: AI gọi screenshot / describe_screen lúc thanh mini đang hiện → chấm đỏ nhấp nháy ~3 s cạnh tiêu đề; Cài đặt → AI chạy kịch bản → tắt “Chấm đỏ…” thì không hiện
 - [ ] `simulate_script` trên Claude Code với một kịch bản có Nếu + click: không có chuột / phím nào chạy thật; `outcomes` đổi nhánh Nếu / click thất bại; node không tới nằm trong `unvisited`
 - [ ] `get_mouse_position` trả đúng chỗ chuột đang đứng; `list_windows` khớp cửa sổ đang mở
 

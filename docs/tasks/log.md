@@ -248,3 +248,4 @@
 - **2026-10-24** – 31c: tool MCP capture_template (tpl:N) / find_image / get_mouse_position / list_windows + resolveTemplates. go vet + go test xanh, check-docs 0 lỗi; chưa thử tay.
 - **2026-10-24** – 31c: ghim output node (store/pins.go, engine.Options.Pins, pinStore.ts) + menu chuột phải node (Chạy đến / cụm / tiếp từ / ghim). go vet + go test + npm build/test xanh; chưa thử tay.
 - **2026-10-24** – 31c: simulate_script (engine/simulate.go + mcpsrv/tools_simulate.go). go vet + go test xanh; chưa thử tay.
+- **2026-10-24** – 31c: run_step + draft (mcpsrv/tools_draft.go), chấm đỏ AI chụp màn hình (ai:capture) – xong mục con cuối của 31c. go vet + go test + npm build/test xanh; chưa thử tay.
