@@ -30,6 +30,9 @@ func (SystemElements) Act(app string, index int, act, value string) error {
 }
 
 var (
+	// ErrNoFinder – macOS chưa cho app điều khiển Finder (Thùng rác) – StepError code permission.
+	ErrNoFinder = errors.New("chưa cho phép điều khiển Finder")
+
 	// ErrNoAccessibility – app / terminal chưa có quyền Accessibility (StepError code permission).
 	ErrNoAccessibility = errors.New("chưa cấp quyền Accessibility – System Settings → Privacy & Security → Accessibility, bật cho app / terminal rồi mở lại")
 	// ErrNoWindow – app không có cửa sổ đang hiện: thu nhỏ, ở Space khác, bị ẩn (cây lúc đó đứng – đọc ra giá trị cũ).

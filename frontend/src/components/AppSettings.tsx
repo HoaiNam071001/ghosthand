@@ -36,8 +36,9 @@ export default function AppSettings() {
     StorageDefaults().then(setDefaults).catch((e) => setError(errorText(e)));
     setOpen(true);
   };
+  const [focusId, setFocusId] = useState('');
   const toggle = () => (open ? setOpen(false) : show());
-  useEffect(() => onOpenSettings((t) => { setTab(t); show(); }), []);
+  useEffect(() => onOpenSettings((t, f) => { setTab(t); setFocusId(f ?? ''); show(); }), []);
   useEffect(() => {
     if (!open || tab !== 'perms') return;
     // cấp quyền xong ở System Settings rồi quay lại app → tự kiểm tra lại
@@ -94,7 +95,7 @@ export default function AppSettings() {
             )}
             {tab === 'secrets' && <SecretsSettings onError={setError} />}
             {tab === 'perms' && (
-              <PermSettings items={perms.items} needed={needs(script)} busy={perms.busy} error={perms.error}
+              <PermSettings items={perms.items} needed={needs(script)} focus={focusId} busy={perms.busy} error={perms.error}
                 onRefresh={refreshPerms} onRequest={requestPerm} onOpen={openPermSettings} />
             )}
             {tab === 'api' && <ApiSettings api={settings.api} onChange={saveApi} />}

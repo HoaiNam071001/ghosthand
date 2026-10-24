@@ -4,8 +4,11 @@ import (
 	"errors"
 	"sort"
 
+	"ghosthand/internal/browser"
+	"ghosthand/internal/device"
 	"ghosthand/internal/element"
 	"ghosthand/internal/model"
+	"ghosthand/internal/perm"
 	"ghosthand/internal/vision"
 	"ghosthand/internal/web"
 )
@@ -17,6 +20,7 @@ import (
 //   phần tử:         {kind: element, selectors, read (số phần tử đã đọc), count, near[{role, name, box, score}]}
 //   web:             {kind: web, selectors, perSelector[{selector, shown, hidden}], tab, matched, count, hidden, covered,
 //                     moving, offView, loading, hover, noTab, outline[{role, name, sel, …}] (không selector nào khớp)
+//   quyền (permission): {permission: id quyền thiếu – khớp perm.ID, xem Cài đặt → Quyền}
 //   cửa sổ:          {kind: window, app, title, near[{title, app, box, minimized, score}]}
 //   ứng dụng:        {kind: app, app, running[] (khớp tên – vd chưa có cửa sổ / chưa thoát), near[{name, id, score}]}
 //   mọi node lỗi:    context {foreground {title, app, box}, mouse {x, y}, screen, displays, shotArea}
@@ -53,6 +57,9 @@ const (
 
 // errDetail – phần chi tiết riêng của lỗi (nil = không có).
 func errDetail(err error) map[string]any {
+	if id := permOf(err); id != "" {
+		return map[string]any{"permission": string(id)} // UI nhảy tới đúng mục ở Cài đặt → Quyền (bước 48 P5)
+	}
 	var nf *notFoundErr
 	if errors.As(err, &nf) {
 		return nf.detail
@@ -62,6 +69,21 @@ func errDetail(err error) map[string]any {
 		return late.detail
 	}
 	return nil
+}
+
+// permOf: quyền hệ điều hành thiếu gây ra lỗi err ("" = không phải lỗi quyền hoặc không gắn với quyền nào).
+func permOf(err error) perm.ID {
+	switch {
+	case errors.Is(err, device.ErrNoPermission):
+		return perm.ScreenRecording
+	case errors.Is(err, device.ErrNoAccessibility):
+		return perm.Accessibility
+	case errors.Is(err, device.ErrNoFinder):
+		return perm.AutoFinder
+	case errors.Is(err, browser.ErrNoAutomation):
+		return perm.AutoChrome
+	}
+	return ""
 }
 
 func imageMiss(m FindResult, s model.Step) map[string]any {

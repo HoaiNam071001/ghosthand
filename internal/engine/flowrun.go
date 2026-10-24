@@ -311,7 +311,7 @@ func errCode(err error) string {
 	case errors.As(err, &late):
 		return model.ErrTimeout
 	case errors.Is(err, device.ErrNoPermission), errors.Is(err, device.ErrNoAccessibility), errors.Is(err, errDangerNotAllowed),
-		errors.Is(err, browser.ErrNoAutomation):
+		errors.Is(err, browser.ErrNoAutomation), errors.Is(err, device.ErrNoFinder):
 		return model.ErrPermission
 	}
 	return model.ErrInternal

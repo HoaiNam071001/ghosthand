@@ -51,7 +51,7 @@ export type RunRow = {
   ms?: number;
   attempts?: number;
   output?: Record<string, unknown>;
-  error?: { code: string; message: string };
+  error?: { code: string; message: string; detail?: Record<string, unknown> };
   logs?: LogLine[];
   shot?: string; // ảnh màn hình lúc thất bại (file trong lịch sử chạy)
 };

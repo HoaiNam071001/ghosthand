@@ -57,7 +57,7 @@ func (SystemTrash) EmptyTrash() error {
 // finderErr – lỗi -1743: chưa cho app điều khiển Finder (System Settings → Privacy & Security → Automation).
 func finderErr(what string, err error) error {
 	if strings.Contains(err.Error(), "-1743") {
-		return fmt.Errorf("%w: chưa cho phép điều khiển Finder để %s – System Settings → Privacy & Security → Automation, bật Finder cho app / terminal", ErrNoPermission, what)
+		return fmt.Errorf("%w để %s – System Settings → Privacy & Security → Automation, bật Finder cho app / terminal", ErrNoFinder, what)
 	}
 	return fmt.Errorf("không %s được: %w", what, err)
 }

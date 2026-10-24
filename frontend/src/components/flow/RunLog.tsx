@@ -4,6 +4,7 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import { StepIcon } from '../icons';
 import { FlowNodeView, RunRow } from './model';
 import { fmtMs, LogLines, StatusChip } from './PortField';
+import { openSettings } from '../../settingsNav';
 
 export type RunTone = 'ok' | 'fail' | 'running' | 'muted';
 const TONE: Record<RunTone, string> = { ok: 'text-ok', fail: 'text-danger-text', running: 'text-accent-text', muted: 'text-muted' };
@@ -87,7 +88,8 @@ function Detail({ r, loadShot }: { r: RunRow; loadShot?: (shot: string) => Promi
   }, [r.shot, loadShot]);
   return (
     <div className="flex w-[340px] flex-none flex-col gap-2 overflow-y-auto border-t border-l border-line p-3 max-[1100px]:w-[280px]">
-      {r.error && <div className="rounded-control bg-danger-soft px-2.5 py-2 text-[13px] text-danger-text"><span className="font-mono text-xs">{r.error.code}</span> · {r.error.message}</div>}
+      {r.error && <div className="rounded-control bg-danger-soft px-2.5 py-2 text-[13px] text-danger-text"><span className="font-mono text-xs">{r.error.code}</span> · {r.error.message}
+        <PermLink detail={r.error.detail} /></div>}
       {shot && (
         <button onClick={() => setBig(true)} title="Màn hình lúc node thất bại – bấm để phóng to" className="overflow-hidden rounded-control border border-line">
           <img src={shot} alt="Màn hình lúc node thất bại" className="block w-full" />
@@ -102,4 +104,11 @@ function Detail({ r, loadShot }: { r: RunRow; loadShot?: (shot: string) => Promi
       )}
     </div>
   );
+}
+
+// Lỗi permission kèm id quyền thiếu (engine/detail.go permOf) → nút mở thẳng mục đó ở Cài đặt → Quyền.
+function PermLink({ detail }: { detail?: Record<string, unknown> }) {
+  const id = detail?.permission;
+  if (typeof id !== 'string') return null;
+  return <button onClick={() => openSettings('perms', id)} className="ml-2 underline">Mở Cài đặt → Quyền</button>;
 }

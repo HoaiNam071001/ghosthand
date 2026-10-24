@@ -7,7 +7,7 @@
   - [x] P2. **Ánh xạ node → quyền**: hàm thuần `perm.NeedsOf(step)` / `perm.Needs(script)` (Go, `internal/perm/needs.go` – đặt trong `perm` để `script` không kéo cgo) + bản TS `flow/perms.ts` cùng tên, test chung `testdata/` (mọi loại node trong `flow/nodeInfo.ts` phải khai báo quyền cần hoặc "không" – test đỏ nếu thiếu; cập nhật skill `add-node-type`)
   - [x] P3. **Cài đặt → tab Quyền** (`settings/PermSettings`): danh sách quyền + trạng thái, nút Cấp quyền / Mở System Settings / Kiểm tra lại, tự kiểm tra lại khi cửa sổ lấy lại focus; mục nào đang được kịch bản đang mở dùng thì ghim lên đầu
   - [x] P4. **Cảnh báo**: chấm cảnh báo trên `NodeCard` + dòng trong inspector (nút nhảy sang tab Quyền); bấm Chạy / F8 với kịch bản thiếu quyền → hộp thoại liệt kê, chọn *Vẫn chạy* hoặc *Mở Cài đặt*; AI: `run_script` / `wait_run` / `get_preferences` trả `missingPermissions`, thêm tool `check_permissions` (thanh mini không cần – hộp thoại hiện trước khi thu cửa sổ). Chỉ quyền `denied` tính là thiếu; `unknown` không cảnh báo
-  - [ ] P5. Mã lỗi `permission` khi chạy kèm `id` quyền thiếu để UI chỉ thẳng tới mục đó
+  - [x] P5. Mã lỗi `permission` khi chạy kèm `id` quyền thiếu để UI chỉ thẳng tới mục đó
   - Chuẩn bị cho MCP (31): có – `check_permissions` tool (chỉ đọc) để AI biết trước thay vì thử chạy
   - Kiểm tra tay: [checks.md](../checks.md) mục 48
   - Xong khi: mở Cài đặt → Quyền thấy ngay quyền nào thiếu; node cần quyền thiếu có cảnh báo; bấm Chạy kịch bản thiếu quyền được báo trước khi chạy; cấp xong bấm Kiểm tra lại là đổi sang ✓.
