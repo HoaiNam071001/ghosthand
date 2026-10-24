@@ -3,10 +3,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import FlowCanvas from './FlowCanvas';
 import FlowHeader, { headerBtn } from './FlowHeader';
+import EmbedMenu from './EmbedMenu';
 import AddStepPalette from '../AddStepPalette';
 import { Region } from '../icons';
 import { layoutFlow } from '../../flow/layout';
 import { portsOf } from '../../flow/model';
+import { groupViews, routeEdges } from '../../flow/groups';
 import { nodeViews } from '../../flow/view';
 import { missingOf, needsOf } from '../../flow/perms';
 import { usePerms } from '../../store/permStore';
@@ -16,7 +18,7 @@ import NodeMenu from './NodeMenu';
 import { nodeMenuItems } from './nodeMenuItems';
 import {
   applyLayout, clearInsertAt, connectPort, copySelected, insertAfterSelected, moveNode, pasteClip, removeEdge, removeSteps, selectNodes, selectStep,
-  getEditor, setInsertAt, setRegion, toggleMultiStep, useEditor,
+  getEditor, groupPicked, moveGroup, renameGroup, setInsertAt, setRegion, toggleGroup, toggleMultiStep, ungroup, useEditor,
 } from '../../store';
 import { stepInputCount } from '../../scriptInputs';
 import { useEngine } from '../../engineStore';
@@ -26,6 +28,7 @@ import { closeRunLog, shotUrl, useRunLog } from '../../runStore';
 import { openOverlay } from '../../windowMode';
 import type { Script } from '../../types';
 
+const groupActions = { onToggle: toggleGroup, onUngroup: ungroup, onRename: renameGroup };
 const isMac = navigator.platform.startsWith('Mac');
 
 // Xếp tự động cho kịch bản (vị trí theo id node)
@@ -62,6 +65,8 @@ export default function FlowEditor() {
     setFocus((f) => ({ id, key: (f?.key ?? 0) + 1 }));
   };
   const positions = useMemo(() => Object.fromEntries(script.steps.flatMap((s) => (s.pos ? [[s.id, s.pos]] : []))), [script.steps]);
+  const groups = useMemo(() => groupViews(script.groups, positions, script.steps.map((st) => ({ id: st.id, ports: portsOf(st) }))), [script.groups, positions, script.steps]);
+  const edges = useMemo(() => routeEdges(script.edges, script.groups), [script.edges, script.groups]);
 
   // Mở kịch bản khác: node chưa có vị trí (file viết tay / AI tạo) thì tự xếp – không tính là sửa; xong thì vừa màn hình.
   useEffect(() => {
@@ -85,9 +90,10 @@ export default function FlowEditor() {
         });
       }
       const typing = (e.target as HTMLElement).closest?.('input, textarea, select, [contenteditable="true"]');
-      if (typing || !(k === 'c' || k === 'v' || k === 'a')) return;
+      if (typing || !(k === 'c' || k === 'v' || k === 'a' || k === 'g')) return;
       e.preventDefault();
-      if (k === 'c') copySelected();
+      if (k === 'g') groupPicked();
+      else if (k === 'c') copySelected();
       else if (k === 'v') pasteClip();
       else selectNodes(getEditor().script.steps.map((s) => s.id));
     };
@@ -112,11 +118,17 @@ export default function FlowEditor() {
             <button onClick={() => setRegion(null)} aria-label="Về toàn màn hình" title="Về toàn màn hình"
               className="grid h-8 w-8 place-items-center rounded-control text-muted hover:bg-hover hover:text-ink">✕</button>
           )}
+          {picked.length > 1 && (
+            <button onClick={groupPicked} title="Gom các node đang chọn vào một khung" className={headerBtn}>
+              Nhóm lại <span className="font-mono text-[11px] text-muted">{isMac ? '⌘G' : 'Ctrl+G'}</span>
+            </button>
+          )}
+          <EmbedMenu />
           <button onClick={openPalette} className={headerBtn}>
             + Thêm node <span className="font-mono text-[11px] text-muted">{isMac ? '⌘K' : 'Ctrl+K'}</span>
           </button>
         </FlowHeader>
-        <FlowCanvas nodes={views} edges={script.edges} start={script.start} positions={positions} selected={selected || null} picked={picked} fitKey={fitKey}
+        <FlowCanvas nodes={views} edges={edges} groups={groups} groupActions={groupActions} onMoveGroup={moveGroup} start={script.start} positions={positions} selected={selected || null} picked={picked} fitKey={fitKey}
           focus={focus} taken={trace.taken} activeEdge={trace.active}
           onSelect={(id, additive) => {
             if (id && additive) return toggleMultiStep(id);

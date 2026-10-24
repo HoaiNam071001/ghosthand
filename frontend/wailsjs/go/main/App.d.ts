@@ -3,6 +3,7 @@
 import {web} from '../models';
 import {model} from '../models';
 import {main} from '../models';
+import {script} from '../models';
 import {engine} from '../models';
 import {store} from '../models';
 import {mcpsrv} from '../models';
@@ -41,6 +42,10 @@ export function DeleteRun(arg1:string,arg2:string,arg3:string):Promise<void>;
 export function DeleteSecret(arg1:string):Promise<void>;
 
 export function Displays():Promise<Array<main.DisplayInfo>>;
+
+export function EmbedSample(arg1:model.Script,arg2:string):Promise<script.EmbedResult>;
+
+export function EmbedScriptFile(arg1:model.Script):Promise<script.EmbedResult>;
 
 export function FindElement(arg1:model.Script,arg2:string):Promise<engine.WebFindResult>;
 

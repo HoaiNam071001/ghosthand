@@ -4,6 +4,7 @@ import { anchorPoint, usesVar } from '../anchor';
 import {
   Clip, connect, copyNodes, disconnect, InsertAt, insertNode as insertInto, nextRef, pasteNodes, pruneEdges, removeEdge as dropEdge, removeNode,
 } from '../flow/edit';
+import { dropMembers } from '../flow/groups';
 import { findsImage, flowOrder, portsOf } from '../flow/model';
 import { STEP_DEFAULTS } from '../flow/defaults';
 import { isWebStep, type WebType } from '../flow/web';
@@ -109,7 +110,7 @@ export function removeSteps(ids: string[]) {
   const label = del.length === 1 ? refOf(del[0]) : `${del.length} node`;
   let g = { nodes: sc.steps, edges: sc.edges, start: sc.start };
   for (const id of del) g = removeNode(g, id);
-  updateScript({ steps: g.nodes, edges: g.edges, start: g.start });
+  updateScript({ steps: g.nodes, edges: g.edges, start: g.start, groups: dropMembers(sc.groups, del) });
   const { selected, picked } = getEditor();
   setEditor({ selected: del.includes(selected) ? '' : selected, picked: picked.filter((id) => !del.includes(id)), notice: `Đã xoá ${label} – ${undoKey()}` });
 }

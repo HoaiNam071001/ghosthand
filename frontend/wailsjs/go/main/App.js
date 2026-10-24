@@ -66,6 +66,14 @@ export function Displays() {
   return window['go']['main']['App']['Displays']();
 }
 
+export function EmbedSample(arg1, arg2) {
+  return window['go']['main']['App']['EmbedSample'](arg1, arg2);
+}
+
+export function EmbedScriptFile(arg1) {
+  return window['go']['main']['App']['EmbedScriptFile'](arg1);
+}
+
 export function FindElement(arg1, arg2) {
   return window['go']['main']['App']['FindElement'](arg1, arg2);
 }

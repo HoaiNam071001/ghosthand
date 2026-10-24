@@ -268,6 +268,7 @@ type Script struct {
 	Human      string        `json:"human,omitempty"`      // thao tác giống người: "" / off = tắt | low | medium | high
 	KeepAwake  bool          `json:"keepAwake,omitempty"`  // giữ máy + màn hình thức trong lúc kịch bản chạy (macOS caffeinate, Windows SetThreadExecutionState)
 	Meta       *ScriptMeta   `json:"meta,omitempty"`       // nguồn gốc kịch bản (AI tạo – bước 31)
+	Groups     []Group       `json:"groups,omitempty"`     // khung nhóm node – chỉ UI (group.go, bước 39)
 }
 
 // ScriptMeta – thông tin về kịch bản, không ảnh hưởng lúc chạy.

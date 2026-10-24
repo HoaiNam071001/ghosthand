@@ -3,6 +3,14 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## 39 – Gom kịch bản: khung nhóm node (G1) + nhúng kịch bản (G2) · [phase3/39-gom-kich-ban.md](phase3/39-gom-kich-ban.md)
+- [ ] Mở mẫu *Nhóm node*: thấy khung “Chuẩn bị” bao 3 node giữa; kéo thanh tên khung → cả 3 node dời theo, thả ra vẫn đúng chỗ (⌘Z hoàn tác được)
+- [ ] Nút thu gọn trên khung → thành một thẻ, cạnh vào / ra nối vào thẻ; mở rộng lại về như cũ; kéo thẻ thu gọn → các node dời theo
+- [ ] Bấm đúp tên đổi tên (Enter lưu, Esc huỷ); Shift + click 2 node → nút *Nhóm lại* (Ctrl/⌘+G) tạo khung mới; *Bỏ nhóm* → node giữ chỗ
+- [ ] Xoá một node trong nhóm → khung co lại; xoá hết node → khung biến mất; lưu rồi mở lại kịch bản vẫn còn khung; Chạy kịch bản như cũ (nhóm không ảnh hưởng)
+- [ ] Nút *Nhúng kịch bản* (dòng đầu canvas) → *Từ file…* chọn một kịch bản đã lưu, hoặc một mẫu trong danh sách: xuất hiện khung mới tên theo kịch bản, nằm dưới các node cũ; chưa nối vào flow nên nối cổng của node cũ vào node đầu khung rồi Chạy
+- [ ] Nhúng kịch bản có vùng khác (hoặc toàn màn) vào kịch bản có vùng khác: click rơi đúng chỗ như khi chạy kịch bản gốc; biến `{{n2.output…}}` trong đoạn nhúng vẫn chạy đúng dù mã node bị đổi; input trùng tên khác kiểu → hiện thông báo đổi tên (key_2), form Chạy hỏi cả hai
+
 ## 48 – Kiểm tra quyền trước khi chạy (P1–P5) · [phase3/48-kiem-tra-quyen.md](phase3/48-kiem-tra-quyen.md)
 
 - [ ] Cài đặt → tab Quyền (macOS): Trợ năng / Ghi màn hình / Tự động hoá Chrome · Finder · System Events hiện đúng trạng thái so với System Settings; mở tab không bật hộp thoại nào của hệ điều hành

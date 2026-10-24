@@ -37,6 +37,10 @@ func validateFlow(sc model.Script) error {
 		return &model.ScriptError{Field: "start", Msg: "chưa chọn node bắt đầu"}
 	}
 
+	if err := validateGroups(sc.Groups, idx); err != nil {
+		return err
+	}
+
 	ports := map[[2]string]bool{}
 	for _, e := range sc.Edges {
 		i, ok := idx[e.From]

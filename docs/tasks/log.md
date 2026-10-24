@@ -255,3 +255,5 @@
 - **2026-10-24** – 48 P3: tab Cài đặt → Quyền (settings/PermSettings + store/permStore.ts). go vet/test + npm build/test xanh; chưa thử tay.
 - 2026-10-24 48 P4: cảnh báo thiếu quyền (thẻ node, inspector, hộp thoại trước Chạy, AI check_permissions/missingPermissions)
 - **2026-10-24** – 48 P5: lỗi permission kèm error.detail.permission (id quyền), nhật ký có nút mở Cài đặt → Quyền ghim mục đó. go vet/test, npm build/test OK; chưa thử tay.
+- **2026-10-24** – 39 G1 khung nhóm node (model.Group, groups.ts, GroupNodes, mẫu nhom-node). go vet/test, tsc, vitest OK; chưa thử tay trên canvas.
+- **2026-10-24** – 39 G2 nhúng kịch bản khác (script.Embed, embedapi.go, EmbedMenu). go vet/test, tsc, vitest OK; chưa thử tay.

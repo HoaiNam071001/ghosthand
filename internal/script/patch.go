@@ -148,6 +148,7 @@ func removeStep(sc *model.Script, idOrRef string) error {
 	}
 	sc.Steps = slices.Delete(sc.Steps, at, at+1)
 	sc.Edges = slices.DeleteFunc(sc.Edges, func(e model.Edge) bool { return e.From == id || e.To == id })
+	sc.Groups = DropMember(sc.Groups, id)
 	if sc.Start == id {
 		sc.Start = ""
 	}

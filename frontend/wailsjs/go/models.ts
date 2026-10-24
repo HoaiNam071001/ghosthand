@@ -807,6 +807,28 @@ export namespace model {
 	        this.example = source["example"];
 	    }
 	}
+	export class Group {
+	    id: string;
+	    name: string;
+	    members: string[];
+	    collapsed?: boolean;
+	    color?: string;
+	    from?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Group(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.name = source["name"];
+	        this.members = source["members"];
+	        this.collapsed = source["collapsed"];
+	        this.color = source["color"];
+	        this.from = source["from"];
+	    }
+	}
 	export class InputTarget {
 	    stepId: string;
 	    field: string;
@@ -1547,6 +1569,7 @@ export namespace model {
 	    human?: string;
 	    keepAwake?: boolean;
 	    meta?: ScriptMeta;
+	    groups?: Group[];
 	
 	    static createFrom(source: any = {}) {
 	        return new Script(source);
@@ -1567,6 +1590,7 @@ export namespace model {
 	        this.human = source["human"];
 	        this.keepAwake = source["keepAwake"];
 	        this.meta = this.convertValues(source["meta"], ScriptMeta);
+	        this.groups = this.convertValues(source["groups"], Group);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -1750,6 +1774,44 @@ export namespace script {
 	        this.script = source["script"];
 	        this.dir = source["dir"];
 	    }
+	}
+	export class EmbedResult {
+	    script: model.Script;
+	    groupId: string;
+	    nodes: number;
+	    renamedInput?: Record<string, string>;
+	    droppedEnds: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new EmbedResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.script = this.convertValues(source["script"], model.Script);
+	        this.groupId = source["groupId"];
+	        this.nodes = source["nodes"];
+	        this.renamedInput = source["renamedInput"];
+	        this.droppedEnds = source["droppedEnds"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 
 }

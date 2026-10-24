@@ -37,6 +37,20 @@ export type FlowEdgeView = {
   from: string;
   port: string;
   to: string;
+  // cạnh qua nhóm thu gọn (flow/groups.ts routeEdges): đầu mút là id nhóm, đi qua cổng out / in của thẻ nhóm
+  origFrom?: string;
+  fromGroup?: boolean;
+  toGroup?: boolean;
+};
+
+// Khung nhóm node (bước 39): box theo toạ độ canvas; thu gọn thì box là thẻ đứng thay cả cụm
+export type FlowGroupView = {
+  id: string;
+  name: string;
+  collapsed: boolean;
+  members: string[];
+  color?: string;
+  box: { x: number; y: number; w: number; h: number };
 };
 
 // Một dòng nhật ký = StepResult của một lần chạy node (model Go ở F1)

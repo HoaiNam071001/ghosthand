@@ -39,3 +39,7 @@
   border-radius: 9px;
   overflow: hidden;
 }
+
+/* Khung nhóm (bước 39): chỉ thanh tên bắt chuột, phần thân để chuột xuyên xuống nền / thẻ node */
+.flow-canvas .react-flow__node-group { pointer-events: none !important; }
+.flow-canvas .react-flow__node-group .group-head { pointer-events: auto; }

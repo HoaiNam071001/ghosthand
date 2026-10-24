@@ -6,5 +6,7 @@ export * from './geometry';
 export * from './nodes';
 export * from './points';
 export * from './multi';
+export * from './groups';
+export * from './embed';
 export * from './control';
 export * from './secrets';

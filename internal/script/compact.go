@@ -3,6 +3,7 @@ package script
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
 
 	"ghosthand/internal/model"
 )
@@ -19,7 +20,8 @@ type Compact struct {
 	Edges      []model.Edge        `json:"edges"`
 	Inputs     []model.ScriptInput `json:"inputs"`
 	AnchorMode string              `json:"anchorMode"`
-	Human      *string             `json:"human"` // nil = mặc định của kịch bản mới
+	Human      *string             `json:"human"`  // nil = mặc định của kịch bản mới
+	Groups     []model.Group       `json:"groups"` // khung nhóm node; members ghi id hoặc ref
 }
 
 // Expand dựng kịch bản đủ trường từ dạng gọn (chưa qua DecodeScript – gọi Checked để kiểm tra như lúc mở file).
@@ -34,7 +36,7 @@ func Expand(c Compact) (model.Script, error) {
 	if c.Human != nil {
 		sc.Human = *c.Human
 	}
-	sc.MaxMinutes, sc.Region, sc.Inputs, sc.AnchorMode = c.MaxMinutes, c.Region, c.Inputs, c.AnchorMode
+	sc.MaxMinutes, sc.Region, sc.Inputs, sc.AnchorMode, sc.Groups = c.MaxMinutes, c.Region, c.Inputs, c.AnchorMode, c.Groups
 	for i, raw := range c.Steps {
 		st, err := ExpandStep(raw, fmt.Sprintf("s%d", i+1), fmt.Sprintf("n%d", i+1))
 		if err != nil {
@@ -73,6 +75,13 @@ func RefsToIDs(sc *model.Script) {
 		e.From, e.To = NodeID(sc.Steps, e.From), NodeID(sc.Steps, e.To)
 	}
 	sc.Start = NodeID(sc.Steps, sc.Start)
+	for i := range sc.Groups {
+		g := &sc.Groups[i]
+		g.Members = slices.Clone(g.Members)
+		for j, m := range g.Members {
+			g.Members[j] = NodeID(sc.Steps, m)
+		}
+	}
 	for i := range sc.Steps {
 		if s := &sc.Steps[i]; s.ImageFrom != "" {
 			s.ImageFrom = NodeID(sc.Steps, s.ImageFrom)

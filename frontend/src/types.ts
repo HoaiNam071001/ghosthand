@@ -205,12 +205,21 @@ export interface Script {
   human?: HumanLevel; // thao tác giống người (bước 34, internal/humanize): trống / off = tắt
   keepAwake?: boolean; // giữ máy + màn hình thức trong lúc chạy (bước 43 S3)
   meta?: ScriptMeta; // nguồn gốc – AI tạo qua MCP (bước 31)
+  groups?: Group[]; // khung nhóm node – chỉ UI (bước 39, flow/groups.ts)
+}
+export interface Group {
+  id: string;
+  name: string;
+  members: string[]; // id node – một node thuộc nhiều nhất một nhóm
+  collapsed?: boolean; // thu thành một thẻ
+  color?: string;
+  from?: string; // nguồn khi nhúng từ kịch bản khác (G2)
 }
 export type AnchorMode = 'start';
 export interface ScriptMeta {
   createdBy?: 'ai';
 }
-const scriptMatchesGo: [Same<keyof Script, keyof Fields<model.Script>>, Same<keyof ScriptMeta, keyof Fields<model.ScriptMeta>>] = [true, true];
+const scriptMatchesGo: [Same<keyof Script, keyof Fields<model.Script>>, Same<keyof ScriptMeta, keyof Fields<model.ScriptMeta>>, Same<keyof Group, keyof Fields<model.Group>>] = [true, true, true];
 void scriptMatchesGo;
 
 // ---- Input của kịch bản (bước 21b) – khớp ScriptInput trong internal/model/inputs.go ----

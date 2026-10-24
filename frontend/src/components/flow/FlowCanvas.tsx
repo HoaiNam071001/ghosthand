@@ -1,13 +1,14 @@
 // Canvas soạn flow kiểu n8n (bước 20) trên @xyflow/react. Chỉ hiển thị + báo thao tác qua callback –
 // dữ liệu (node, cạnh, vị trí) do nơi gọi giữ: màn mẫu #demo-flow (state cục bộ) hoặc store kịch bản (F4b, qua flowEdit.ts).
 import './flow.css';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Background, BackgroundVariant, getNodesBounds, MarkerType, MiniMap, Panel, ReactFlow, ReactFlowProvider, useNodesState, useReactFlow, useStore, useStoreApi,
 } from '@xyflow/react';
 import NodeCard, { CardNode } from './NodeCard';
 import FlowEdge, { edgeColor, FlowEdgeType } from './FlowEdge';
-import { FlowEdgeView, FlowNodeView } from './model';
+import { GroupActions, GroupCard, GroupCardNode, GROUP_HANDLE, GroupFrame, GroupFrameNode } from './GroupNodes';
+import { FlowEdgeView, FlowGroupView, FlowNodeView } from './model';
 import type { Positions } from '../../flow/layout';
 
 export type FlowCanvasProps = {
@@ -31,9 +32,12 @@ export type FlowCanvasProps = {
   focus?: { id: string; key: number }; // đổi key → cuộn canvas cho node id ra giữa (giữ zoom)
   taken?: Set<string>; // id cạnh đã đi qua trong lần chạy
   activeEdge?: string; // cạnh đang đi
+  groups?: FlowGroupView[]; // khung nhóm (bước 39); nhóm thu gọn ẩn các node thành viên
+  groupActions?: GroupActions;
+  onMoveGroup?: (id: string, dx: number, dy: number) => void; // kéo khung / thẻ nhóm
 };
 
-const nodeTypes = { card: NodeCard };
+const nodeTypes = { card: NodeCard, group: GroupFrame, groupCard: GroupCard };
 const MIN_FIT = 0.65; // tự vừa màn hình không thu nhỏ hơn mức này (dưới đó chữ trên thẻ không đọc được)
 const edgeTypes = { flow: FlowEdge };
 
@@ -43,7 +47,7 @@ export default function FlowCanvas(props: FlowCanvasProps) {
 
 function Canvas({
   nodes, edges, start, positions, selected, picked, onSelect, onSelectBox, onMove, onConnect, onDeleteEdge, onDeleteNodes, onDropPort, onNodeMenu, onLayout, fitKey, focus,
-  taken, activeEdge,
+  taken, activeEdge, groups, groupActions, onMoveGroup,
 }: FlowCanvasProps) {
   const { fitView, getZoom, screenToFlowPosition, setCenter, setViewport, zoomIn, zoomOut } = useReactFlow();
   const store = useStoreApi();
@@ -51,22 +55,29 @@ function Canvas({
   const [edgeSel, setEdgeSel] = useState<string | null>(null);
 
   // Node: React Flow cần giữ `measured` / vị trí lúc kéo trong state riêng – đồng bộ lại từ props mỗi khi dữ liệu đổi.
-  const [rfNodes, setRfNodes, onNodesChange] = useNodesState<CardNode>([]);
+  const [rfNodes, setRfNodes, onNodesChange] = useNodesState<CardNode | GroupFrameNode | GroupCardNode>([]);
+  const dragFrom = useRef<Record<string, { x: number; y: number }>>({}); // vị trí thành viên lúc bắt đầu kéo khung
   useEffect(() => {
-    setRfNodes((prev) => nodes.map((v) => {
+    const hidden = new Set(groups?.filter((g) => g.collapsed).flatMap((g) => g.members));
+    const act = groupActions ?? { onToggle() {}, onUngroup() {}, onRename() {} };
+    // khung nằm dưới các thẻ (zIndex -1); thẻ nhóm thu gọn nằm cùng lớp với thẻ node
+    const boxes = (groups ?? []).map((g) => g.collapsed
+      ? { id: g.id, type: 'groupCard' as const, position: { x: g.box.x, y: g.box.y }, data: { view: g, ...act }, dragHandle: GROUP_HANDLE, selectable: false, deletable: false }
+      : { id: g.id, type: 'group' as const, position: { x: g.box.x, y: g.box.y }, data: { view: g, ...act }, dragHandle: GROUP_HANDLE, selectable: false, deletable: false, zIndex: -1 });
+    setRfNodes((prev) => [...boxes, ...nodes.filter((v) => !hidden.has(v.id)).map((v) => {
       const old = prev.find((p) => p.id === v.id);
       const data = { view: v, start: v.id === start, linked: edges.filter((e) => e.from === v.id).map((e) => e.port) };
       const position = positions[v.id] ?? old?.position ?? { x: 0, y: 0 };
-      return { ...old, id: v.id, type: 'card' as const, position, data, selected: v.id === selected || !!picked?.includes(v.id) };
-    }));
-  }, [nodes, edges, start, positions, selected, picked, setRfNodes]);
+      return { ...old, id: v.id, type: 'card' as const, position, data, selected: v.id === selected || !!picked?.includes(v.id) } as CardNode;
+    })]);
+  }, [nodes, edges, start, positions, selected, picked, groups, groupActions, setRfNodes]);
 
   const rfEdges = useMemo<FlowEdgeType[]>(() => edges.map((e) => {
-    const port = nodes.find((n) => n.id === e.from)?.ports.find((p) => p.id === e.port);
+    const port = nodes.find((n) => n.id === (e.origFrom ?? e.from))?.ports.find((p) => p.id === e.port);
     const data = { kind: port?.kind ?? 'neutral', taken: taken?.has(e.id), active: e.id === activeEdge, onDelete: onDeleteEdge };
     const sel = e.id === edgeSel;
     return {
-      id: e.id, source: e.from, sourceHandle: e.port, target: e.to, type: 'flow' as const, data, selected: sel,
+      id: e.id, source: e.from, sourceHandle: e.fromGroup ? 'out' : e.port, target: e.to, targetHandle: e.toGroup ? 'in' : undefined, type: 'flow' as const, data, selected: sel,
       markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: edgeColor(data, sel) },
       zIndex: sel || data.taken ? 1 : 0,
     };
@@ -104,9 +115,23 @@ function Canvas({
   return (
     <ReactFlow className="flow-canvas" nodes={rfNodes} edges={rfEdges} nodeTypes={nodeTypes} edgeTypes={edgeTypes}
       onNodesChange={onNodesChange}
-      onNodeDragStop={(_, n) => onMove(n.id, { x: Math.round(n.position.x), y: Math.round(n.position.y) })}
-      onNodeClick={(e, n) => { setEdgeSel(null); onSelect(n.id, e.shiftKey || e.metaKey || e.ctrlKey); }}
-      onNodeContextMenu={(e, n) => { if (!onNodeMenu) return; e.preventDefault(); onNodeMenu(n.id, { x: e.clientX, y: e.clientY }); }}
+      onNodeDragStart={(_, n) => {
+        if (n.type === 'group') dragFrom.current = Object.fromEntries(groups?.find((g) => g.id === n.id)?.members.flatMap((m) => (positions[m] ? [[m, positions[m]]] : [])) ?? []);
+      }}
+      onNodeDrag={(_, n) => {
+        if (n.type !== 'group') return;
+        const g = groups?.find((x) => x.id === n.id);
+        if (!g) return;
+        const dx = n.position.x - g.box.x, dy = n.position.y - g.box.y;
+        setRfNodes((cur) => cur.map((c) => (dragFrom.current[c.id] ? { ...c, position: { x: dragFrom.current[c.id].x + dx, y: dragFrom.current[c.id].y + dy } } : c)));
+      }}
+      onNodeDragStop={(_, n) => {
+        if (n.type === 'card') return onMove(n.id, { x: Math.round(n.position.x), y: Math.round(n.position.y) });
+        const g = groups?.find((x) => x.id === n.id);
+        if (g) onMoveGroup?.(g.id, Math.round(n.position.x - g.box.x), Math.round(n.position.y - g.box.y));
+      }}
+      onNodeClick={(e, n) => { if (n.type !== 'card') return; setEdgeSel(null); onSelect(n.id, e.shiftKey || e.metaKey || e.ctrlKey); }}
+      onNodeContextMenu={(e, n) => { if (!onNodeMenu || n.type !== 'card') return; e.preventDefault(); onNodeMenu(n.id, { x: e.clientX, y: e.clientY }); }}
       onEdgeClick={(_, e) => { setEdgeSel(e.id); onSelect(null); }}
       onPaneClick={() => { setEdgeSel(null); onSelect(null); }}
       onConnect={(c) => c.sourceHandle && onConnect(c.source, c.sourceHandle, c.target)}
@@ -116,7 +141,7 @@ function Canvas({
         const pt = 'changedTouches' in ev ? ev.changedTouches[0] : ev;
         onDropPort(st.fromNode.id, st.fromHandle.id, { x: pt.clientX, y: pt.clientY }, screenToFlowPosition({ x: pt.clientX, y: pt.clientY }));
       }}
-      onSelectionEnd={() => onSelectBox?.(store.getState().nodes.filter((n) => n.selected).map((n) => n.id))}
+      onSelectionEnd={() => onSelectBox?.(store.getState().nodes.filter((n) => n.selected && n.type === 'card').map((n) => n.id))}
       onDelete={({ nodes: ns, edges: es }) => {
         if (ns.length) return onDeleteNodes?.(ns.map((n) => n.id)); // cạnh nối vào node xoá đi theo node
         es.forEach((e) => onDeleteEdge(e.id));

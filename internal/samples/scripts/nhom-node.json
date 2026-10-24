@@ -1,0 +1,21 @@
+{
+ "meta": {
+  "name": "Nhóm node – gom đoạn thành khung",
+  "description": "Kịch bản có 5 node chờ, 3 node giữa nằm trong khung “Chuẩn bị”. Thử trên canvas: kéo thanh tên khung → cả cụm dời theo; bấm nút thu gọn → thành một thẻ, cạnh vào / ra nối vào thẻ; bấm đúp tên để đổi; Shift + click chọn vài node rồi bấm Nhóm lại (Ctrl/⌘ + G); Bỏ nhóm → node giữ nguyên chỗ. Chạy: nhóm không ảnh hưởng gì, đi hết 5 node rồi kết thúc thành công.",
+  "app": "Hệ thống",
+  "level": 1,
+  "page": "index.html",
+  "real": false
+ },
+ "script": {
+  "steps": [
+   { "type": "wait", "delayAfter": 300 },
+   { "type": "wait", "delayAfter": 300 },
+   { "type": "wait", "delayAfter": 300 },
+   { "type": "wait", "delayAfter": 300 },
+   { "type": "wait", "delayAfter": 300 },
+   { "type": "end", "endStatus": "success", "message": "Đi hết 5 node" }
+  ],
+  "groups": [{ "id": "g1", "name": "Chuẩn bị", "members": ["n2", "n3", "n4"] }]
+ }
+}
