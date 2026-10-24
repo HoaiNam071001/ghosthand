@@ -45,7 +45,8 @@
   - Kiểm tra tay: [checks.md](../checks.md) mục 31b2
   - Xong khi: tắt `screenshot` cho Cursor, bật cho Claude Code → Cursor không thấy / gọi bị từ chối, Claude Code vẫn chụp được
 - [ ] **31c. MCP – AI soạn bằng cách thử + ảnh mẫu** – phần còn lại của 31b / 31c cũ.
-  - [ ] Tool `find_image` (so khớp mẫu của 25), `capture_template` (AI khoanh vùng trên ảnh chụp → lưu ảnh mẫu cạnh kịch bản cho `waitImage` / `clickImage`), `get_mouse_position`, `list_windows`
+  - [x] Tool `find_image` (so khớp mẫu của 25), `capture_template` (AI khoanh vùng trên ảnh chụp → lưu ảnh mẫu cạnh kịch bản cho `waitImage` / `clickImage`), `get_mouse_position`, `list_windows`
+    - Xong code (2026-10-24): `mcpsrv/tools_template.go`. Ảnh mẫu của app nằm **trong node** (base64), không phải file cạnh kịch bản → `capture_template` giữ ảnh trong bộ nhớ server, trả `"tpl:N"`; AI ghi chuỗi đó vào `template` của node / điều kiện / case, `resolveTemplates` (gọi ở `parseScript` + `update_script`) thay bằng ảnh thật + `templateScale`. `find_image` dùng `engine.FindOnce` (cùng đường với nút *Thử tìm*), không click. Ảnh `tpl:N` mất khi tắt app (kịch bản đã lưu thì ảnh nằm trong file). Backend thêm `FindImage`, `TemplateScale`, `MousePosition`
   - [ ] Ghim output node (như pin data n8n): lưu trên máy theo kịch bản, **không ghi vào file**; thẻ node có dấu ghim. App dùng chung `StopAt` / `Only` / `Seed` của 31b: chuột phải node → *Chạy đến đây* / *Chạy cụm đã chọn* / *Chạy tiếp từ đây (dùng kết quả lần trước)*
   - [ ] Chạy thử khô `simulate_script`: chạy flow với thiết bị giả, không đụng chuột – AI kiểm tra nhánh / biến trước khi chạy thật. Node tìm ảnh / chữ / web trả theo kịch bản AI đưa (`found` / `notFound`) hoặc mặc định `success`
   - [ ] `run_step` + chế độ "AI soạn bằng cách thử": các bước AI chạy thành công ghi thành kịch bản nháp, kèm ảnh chụp từng bước để người dùng xem lại

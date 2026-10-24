@@ -65,7 +65,7 @@ func (s *Server) validate(_ context.Context, _ *mcp.CallToolRequest, in validate
 	var sc model.Script
 	var err error
 	if in.Script != nil {
-		sc, err = parseScript(in.Script)
+		sc, err = s.parseScript(in.Script)
 	} else if path, e := s.resolvePath(in.Path); e != nil {
 		err = e
 	} else {
@@ -103,7 +103,7 @@ func (s *Server) create(_ context.Context, _ *mcp.CallToolRequest, in createIn) 
 	}
 	scs := make([]model.Script, len(raws))
 	for i, raw := range raws { // kiểm tra hết trước – lỗi thì không lưu cái nào
-		sc, err := parseScript(raw)
+		sc, err := s.parseScript(raw)
 		if err != nil {
 			if len(raws) > 1 {
 				err = fmt.Errorf("scripts[%d]: %w", i, err)
@@ -182,6 +182,9 @@ func (s *Server) update(_ context.Context, _ *mcp.CallToolRequest, in updateIn) 
 		p.Steps = append(p.Steps, raw)
 	}
 	next, dropped, err := script.ApplyPatch(sc, p)
+	if err == nil {
+		err = s.resolveTemplates(&next)
+	}
 	if err == nil {
 		next, err = checked(next)
 	}

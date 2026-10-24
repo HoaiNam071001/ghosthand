@@ -11,7 +11,7 @@ import (
 
 // parseScript – kịch bản AI gửi (object, hoặc chuỗi JSON với client chỉ gửi được chuỗi) → kịch bản đủ trường, đã kiểm
 // tra cấu trúc như lúc mở file.
-func parseScript(v any) (model.Script, error) {
+func (s *Server) parseScript(v any) (model.Script, error) {
 	raw, err := jsonRaw(v)
 	if err != nil {
 		return model.Script{}, err
@@ -27,6 +27,9 @@ func parseScript(v any) (model.Script, error) {
 		c.Name = "Kịch bản AI"
 	}
 	sc, err := script.Expand(c)
+	if err == nil {
+		err = s.resolveTemplates(&sc)
+	}
 	if err != nil {
 		return model.Script{}, err
 	}

@@ -10,6 +10,7 @@ import (
 	"ghosthand/internal/device"
 	"ghosthand/internal/device/devicetest"
 	"ghosthand/internal/element"
+	"ghosthand/internal/engine"
 	"ghosthand/internal/model"
 	"ghosthand/internal/session"
 	"ghosthand/internal/vision"
@@ -51,6 +52,12 @@ func (f *fakeBackend) Elements(string) ([]element.Node, error) {
 	f.elemReads++
 	return f.elems, nil
 }
+func (f *fakeBackend) FindImage(s model.Step, area model.Rect) (engine.FindResult, error) {
+	f.found = s
+	return engine.FindResult{Found: true, Score: 97, X: area.X + 10, Y: area.Y + 20, W: 30, H: 10, Area: area}, nil
+}
+func (f *fakeBackend) TemplateScale(image.Image, model.Rect) float64 { return 2 }
+func (f *fakeBackend) MousePosition() (int, int)                     { return 300, 400 }
 func (f *fakeBackend) Windows() ([]model.WindowInfo, error) {
 	return []model.WindowInfo{{Title: "Notepad", App: "notepad", Box: model.Rect{X: 100, Y: 100, W: 800, H: 600}}}, nil
 }

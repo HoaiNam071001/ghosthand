@@ -13,6 +13,7 @@ import (
 
 	"ghosthand/internal/device"
 	"ghosthand/internal/element"
+	"ghosthand/internal/engine"
 	"ghosthand/internal/model"
 	"ghosthand/internal/session"
 	"ghosthand/internal/store"
@@ -169,6 +170,14 @@ func (b mcpBackend) ReadText(img image.Image) ([]vision.TextLine, error) {
 func (b mcpBackend) Elements(app string) ([]element.Node, error) {
 	return device.SystemElements{}.Elements(app)
 }
+func (b mcpBackend) FindImage(s model.Step, area model.Rect) (engine.FindResult, error) {
+	sc := model.Script{Region: &area}
+	return engine.New(nil, sc, engine.Options{Screen: device.MainScreen(), Displays: device.Displays()}).FindOnce(s)
+}
+func (b mcpBackend) TemplateScale(img image.Image, r model.Rect) float64 {
+	return device.TemplateScale(img, r)
+}
+func (b mcpBackend) MousePosition() (int, int)            { return device.Location() }
 func (b mcpBackend) Windows() ([]model.WindowInfo, error) { return device.SystemWindows{}.List() }
 
 // showMain – đưa màn chính lên (hộp hỏi cần chỗ; app mở nền thì từ giờ là app thường).

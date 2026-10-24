@@ -14,6 +14,7 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
 	"ghosthand/internal/element"
+	"ghosthand/internal/engine"
 	"ghosthand/internal/model"
 	"ghosthand/internal/session"
 	"ghosthand/internal/store"
@@ -62,6 +63,11 @@ type Backend interface {
 	Windows() ([]model.WindowInfo, error) // theo thứ tự chồng – trên cùng trước
 	// Elements – cây phần tử AX / UIA của app ("" = app có cửa sổ trên cùng) – cây rút gọn, ảnh đánh số, selector (43 A).
 	Elements(app string) ([]element.Node, error)
+	// Soạn bằng cách thử (31c): thử tìm ảnh mẫu của s trong vùng area (một lần, không click); px ảnh mẫu / px logic khi
+	// chụp img ở vùng r; vị trí chuột.
+	FindImage(s model.Step, area model.Rect) (engine.FindResult, error)
+	TemplateScale(img image.Image, r model.Rect) float64
+	MousePosition() (x, y int)
 
 	// Thử trang + ưu tiên node (44): MCP – cài đặt MCP hiện tại; CheckPage theo mức AI (Chỉ soạn → từ chối);
 	// SetNodePref lưu + báo người dùng.
@@ -81,6 +87,7 @@ type Server struct {
 	log  *CallLog
 	acc  access
 	temp tempScripts // kịch bản tạm của run_script (không có file) theo runId
+	tpls templates   // ảnh mẫu AI vừa khoanh (capture_template) chờ ghi vào node
 	snap snapshots   // cây phần tử AI vừa xem (số # → phần tử) và cây “trước” của screen_changes (43 A)
 }
 
@@ -88,6 +95,7 @@ const instructions = `Ghosthand – app tự động click / gõ theo kịch b�
 Tạo kịch bản: đọc get_step_types compact=true (danh sách gọn mọi node + khi nào dùng; chi tiết một loại: type=…; hoặc resource ghosthand://guide) → viết kịch bản → validate_script → create_script.
 Sửa: read_script (lấy revision) → update_script theo id / ref node. Thiếu thông tin (app nào, giá trị nào là input) thì hỏi lại người dùng trước.
 Thử – sửa: run_script (cả / stopAt / only; script = kịch bản tạm, không tạo file) → node lỗi có error.detail + ảnh → update_script (kịch bản tạm: gửi script sửa vào resume_run) → resume_run (chạy tiếp từ node lỗi, giữ biến).
+Ảnh mẫu: capture_template khoanh vùng → "tpl:N" ghi vào template của node; find_image thử trước. get_mouse_position / list_windows để lấy toạ độ / cửa sổ.
 Xem màn hình: describe_screen (chữ + cửa sổ, rẻ) trước, screenshot khi cần nhìn. App có Accessibility: describe_screen elements=true (cây phần tử đánh số #N) hoặc screenshot marks=true → suggest_selector {mark} lấy selector bền cho node phần tử (không dùng toạ độ cứng); screen_changes start/end để biết thao tác có tác dụng không. Người dùng muốn xem / tự chạy: open_in_app.
 Trang web: get_preferences – nodePref web thì probe_page(url) trước, verdict ok mới dùng node web; mặc định (vision) dùng node ảnh / chữ.
 Đang thao tác dở trên trang (popup, hộp thoại): read_web_outline (dialog true = chỉ hộp thoại) lấy selector, tab = id tab trong tabs.
@@ -103,6 +111,7 @@ func New(back Backend) *Server {
 	s.addWriteTools()
 	s.addRunTools()
 	s.addScreenTools()
+	s.addTemplateTools()
 	s.addWebTools()
 	s.addDocs()
 	return s

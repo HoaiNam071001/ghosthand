@@ -80,3 +80,51 @@ func TestTitleDiff(t *testing.T) {
 		t.Fatalf("opened %v closed %v", o, c)
 	}
 }
+
+func TestTemplateFlow(t *testing.T) {
+	cs, back := connect(t)
+	if _, isErr := call(t, cs, "capture_template", map[string]any{}); !isErr {
+		t.Fatal("thiếu vùng phải báo lỗi")
+	}
+	cap, isErr := call(t, cs, "capture_template", map[string]any{"x": 100, "y": 100, "w": 40, "h": 30})
+	if isErr || cap["template"] != "tpl:1" || cap["templateScale"] != float64(2) {
+		t.Fatalf("capture: %v", cap)
+	}
+	f, isErr := call(t, cs, "find_image", map[string]any{"template": "tpl:1", "x": 0, "y": 0, "w": 500, "h": 500})
+	if isErr || f["found"] != true || f["center"].(map[string]any)["x"] != float64(25) || back.found.Threshold != 80 || back.found.Template == "" {
+		t.Fatalf("find: %v / %+v", f, back.found)
+	}
+	if _, isErr := call(t, cs, "find_image", map[string]any{"template": "tpl:9"}); !isErr {
+		t.Fatal("ảnh mẫu không có phải báo lỗi")
+	}
+	// ảnh mẫu thật thay vào kịch bản khi tạo
+	out, isErr := call(t, cs, "create_script", map[string]any{"script": map[string]any{"name": "Ảnh mẫu", "steps": []any{
+		map[string]any{"type": "clickImage", "template": "tpl:1"},
+	}}})
+	if isErr {
+		t.Fatalf("create: %v", out)
+	}
+	rd, _ := call(t, cs, "read_script", map[string]any{"path": out["created"].([]any)[0].(map[string]any)["path"]})
+	st := rd["script"].(map[string]any)["steps"].([]any)[0].(map[string]any)
+	if tp, _ := st["template"].(string); strings.HasPrefix(tp, "tpl:") || tp == "" || st["templateScale"] != float64(2) {
+		t.Fatalf("template chưa thay: %v", st)
+	}
+	bad, isErr := call(t, cs, "create_script", map[string]any{"script": map[string]any{"name": "Hỏng", "steps": []any{
+		map[string]any{"type": "clickImage", "template": "tpl:77"},
+	}}})
+	if !isErr {
+		t.Fatalf("tpl không có phải lỗi: %v", bad)
+	}
+}
+
+func TestMouseAndWindows(t *testing.T) {
+	cs, _ := connect(t)
+	m, isErr := call(t, cs, "get_mouse_position", map[string]any{})
+	if isErr || m["x"] != float64(300) || m["y"] != float64(400) {
+		t.Fatalf("mouse: %v", m)
+	}
+	w, isErr := call(t, cs, "list_windows", map[string]any{})
+	if isErr || len(w["windows"].([]any)) != 1 {
+		t.Fatalf("windows: %v", w)
+	}
+}

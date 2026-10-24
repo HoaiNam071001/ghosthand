@@ -245,3 +245,4 @@
 - **2026-10-22** – 43 S7 (node Màn hình / âm thanh), S3 (node Nguồn + tuỳ chọn kịch bản Giữ máy thức), S6b (op toggleIME của node Bộ gõ). go vet + go test + npm build + npm test xanh; mẫu man-hinh-am-thanh chạy thật OK trên macOS (đảo sáng/tối rồi trả, phát Glass); lệnh nguồn chỉ test bằng bản giả; Windows chưa chạy thử; chưa thử tay.
 - 2026-10-24 43 A1–A4: cây phần tử rút gọn, ảnh đánh số, suggest_selector, screen_changes (MCP)
 - 2026-10-24 43 A3 vào error.detail + A4 gợi ý ở inspector
+- **2026-10-24** – 31c: tool MCP capture_template (tpl:N) / find_image / get_mouse_position / list_windows + resolveTemplates. go vet + go test xanh, check-docs 0 lỗi; chưa thử tay.

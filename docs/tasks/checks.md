@@ -3,6 +3,11 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## 31c – MCP: ảnh mẫu AI tự khoanh · [phase3/31-mcp-ai.md](phase3/31-mcp-ai.md)
+
+- [ ] Trên Claude Code: `screenshot` một trang → `capture_template` khoanh một nút → `find_image` báo `found` + `center` đúng nút → `create_script` với `clickImage` có `"template": "tpl:1"`; mở kịch bản thấy node có ảnh mẫu thật (không còn chữ `tpl:`) và chạy click đúng nút (thử cả Retina)
+- [ ] `get_mouse_position` trả đúng chỗ chuột đang đứng; `list_windows` khớp cửa sổ đang mở
+
 ## 43 – Node chuyên sâu (S7 Màn hình / âm thanh, S3 Nguồn, S6b Bật / tắt tiếng Việt, S10 Kho bí mật, S9 Thông báo, S8 Nén / giải nén, S6 Bộ gõ, S5 Tiến trình, S4 Thông tin máy, S2 Shortcuts, S1 Chạy lệnh, E3 Đọc tài liệu, E2 Chờ sự kiện giao diện, E1 Thao tác phần tử, B1 Tab trình duyệt, B2 Đi tới URL, B3 Chuẩn hoá – macOS, B4 Đọc chữ trang, B5 Đọc bảng, B6 Chờ tải xong, B7 Lưu PDF) · [phase3/43-node-chuyen-sau.md](phase3/43-node-chuyen-sau.md)
 
 - [ ] (S7) Mẫu thử *Màn hình / âm thanh*: giao diện macOS đổi sáng ↔ tối rồi về như cũ, nghe tiếng Glass, lời kết đúng loa / micro / độ sáng. Thử thêm node *Đổi loa mặc định* sang tai nghe / loa khác thật (Cài đặt hệ thống → Âm thanh đổi theo) và *Độ sáng màn hình* 50 trên laptop; màn ngoài báo lỗi rõ. Windows: đổi sáng / tối, độ sáng laptop, đổi loa / micro (IPolicyConfig), phát .wav – chưa thử

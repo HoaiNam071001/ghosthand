@@ -40,6 +40,7 @@ type fakeBackend struct {
 	probed        string
 	elems         []element.Node // Elements trả (43 A)
 	elemReads     int
+	found         model.Step // node FindImage nhận lần cuối
 }
 
 func (f *fakeBackend) Enabled() bool          { return true }

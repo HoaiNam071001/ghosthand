@@ -83,7 +83,7 @@ func (s *Server) runScript(ctx context.Context, _ *mcp.CallToolRequest, in runIn
 		if in.Path != "" {
 			return fail(errors.New("chỉ gửi một trong path (kịch bản đã lưu) hoặc script (kịch bản tạm)"))
 		}
-		sc, err := parseScript(in.Script)
+		sc, err := s.parseScript(in.Script)
 		if err != nil {
 			return fail(err)
 		}
@@ -136,7 +136,7 @@ func (s *Server) resumeRun(ctx context.Context, _ *mcp.CallToolRequest, in resum
 	case in.Script != nil && prev.Path != "":
 		return fail(errors.New("lần chạy trước là kịch bản đã lưu – sửa bằng update_script, không gửi script"))
 	case in.Script != nil:
-		sc, err = parseScript(in.Script)
+		sc, err = s.parseScript(in.Script)
 	default:
 		sc, err = s.scriptOf(prev)
 	}
