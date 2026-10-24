@@ -1956,6 +1956,7 @@ export namespace store {
 	    maxMinutes?: number;
 	    offTools?: string[];
 	    clients?: Record<string, Array<string>>;
+	    hideCaptureDot?: boolean;
 	    nodePref?: string;
 	
 	    static createFrom(source: any = {}) {
@@ -1969,6 +1970,7 @@ export namespace store {
 	        this.maxMinutes = source["maxMinutes"];
 	        this.offTools = source["offTools"];
 	        this.clients = source["clients"];
+	        this.hideCaptureDot = source["hideCaptureDot"];
 	        this.nodePref = source["nodePref"];
 	    }
 	}

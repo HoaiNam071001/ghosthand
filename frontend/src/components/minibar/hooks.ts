@@ -4,6 +4,8 @@ import { GetSettings, SetMCPSettings } from '../../../wailsjs/go/main/App';
 import { store } from '../../../wailsjs/go/models';
 import { AiLevel, aiLevel, withLevel } from '../../aiLevel';
 import { errorText, setLastError } from '../../engineStore';
+import { EventsOn } from '../../../wailsjs/runtime/runtime';
+import { inWails } from '../../windowMode';
 
 // useAiLevel – mức AI hiện tại + đổi mức (lưu như Cài đặt; Go dừng lượt AI khi chuyển về Tắt / Chỉ soạn).
 // active = false (lượt không do AI chạy) → không đọc cài đặt, trả undefined.
@@ -21,4 +23,23 @@ export function useAiLevel(active: boolean): { level: AiLevel; onLevel: (l: AiLe
       return SetMCPSettings(next).then(() => setMcp(next));
     }).catch((e) => setLastError(errorText(e))),
   };
+}
+
+// useCaptureDot – true vài giây sau khi AI chụp / đọc màn hình (event ai:capture – Go bỏ qua nếu người dùng đã tắt chấm).
+export function useCaptureDot(): boolean {
+  const [on, setOn] = useState(false);
+  useEffect(() => {
+    if (!inWails) return;
+    let timer: ReturnType<typeof setTimeout>;
+    const off = EventsOn('ai:capture', () => {
+      setOn(true);
+      clearTimeout(timer);
+      timer = setTimeout(() => setOn(false), 3000);
+    });
+    return () => {
+      off();
+      clearTimeout(timer);
+    };
+  }, []);
+  return on;
 }

@@ -30,12 +30,13 @@ type Settings struct {
 // MCPSettings – cho AI kết nối qua MCP (bước 31): bật mặc định; route /mcp chạy trên cùng cổng API local.
 // Công tắc AI 4 mức (31b): Enabled = false → Tắt; còn lại theo Run: edit (chỉ soạn) | ask (chạy, hỏi trước – mặc định) | auto (tự chạy).
 type MCPSettings struct {
-	Enabled    bool                `json:"enabled"`
-	Run        string              `json:"run,omitempty"`        // "" = ask
-	MaxMinutes int                 `json:"maxMinutes,omitempty"` // trần thời gian mỗi lượt AI chạy; 0 = AIMaxMinutes
-	OffTools   []string            `json:"offTools,omitempty"`   // tool tắt mặc định cho mọi AI (31b2)
-	Clients    map[string][]string `json:"clients,omitempty"`    // tên loại AI → danh sách tool tắt riêng (thay hẳn mặc định)
-	NodePref   string              `json:"nodePref,omitempty"`   // ưu tiên node cho AI (44): "" / vision | web
+	Enabled        bool                `json:"enabled"`
+	Run            string              `json:"run,omitempty"`            // "" = ask
+	MaxMinutes     int                 `json:"maxMinutes,omitempty"`     // trần thời gian mỗi lượt AI chạy; 0 = AIMaxMinutes
+	OffTools       []string            `json:"offTools,omitempty"`       // tool tắt mặc định cho mọi AI (31b2)
+	Clients        map[string][]string `json:"clients,omitempty"`        // tên loại AI → danh sách tool tắt riêng (thay hẳn mặc định)
+	HideCaptureDot bool                `json:"hideCaptureDot,omitempty"` // true = không hiện chấm đỏ trên thanh mini khi AI chụp / đọc màn hình (31c)
+	NodePref       string              `json:"nodePref,omitempty"`       // ưu tiên node cho AI (44): "" / vision | web
 }
 
 // Ưu tiên node cho AI (MCPSettings.NodePref, bước 44): vision = node ảnh / chữ (mặc định); web = thử trang trên Chrome

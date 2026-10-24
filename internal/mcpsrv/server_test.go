@@ -40,6 +40,7 @@ type fakeBackend struct {
 	probed        string
 	elems         []element.Node // Elements trả (43 A)
 	elemReads     int
+	captures      int        // số lần NoteCapture
 	found         model.Step // node FindImage nhận lần cuối
 }
 

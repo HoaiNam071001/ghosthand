@@ -56,6 +56,7 @@ func (f *fakeBackend) FindImage(s model.Step, area model.Rect) (engine.FindResul
 	f.found = s
 	return engine.FindResult{Found: true, Score: 97, X: area.X + 10, Y: area.Y + 20, W: 30, H: 10, Area: area}, nil
 }
+func (f *fakeBackend) NoteCapture()                                  { f.captures++ }
 func (f *fakeBackend) TemplateScale(image.Image, model.Rect) float64 { return 2 }
 func (f *fakeBackend) MousePosition() (int, int)                     { return 300, 400 }
 func (f *fakeBackend) Windows() ([]model.WindowInfo, error) {

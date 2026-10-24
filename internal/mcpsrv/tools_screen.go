@@ -76,6 +76,7 @@ func (s *Server) area(in areaIn) (model.Rect, error) {
 }
 
 func (s *Server) screenshot(ctx context.Context, _ *mcp.CallToolRequest, in shotIn) (*mcp.CallToolResult, any, error) {
+	s.back.NoteCapture()
 	if t := strings.TrimSpace(in.WebTab); t != "" {
 		return s.tabShot(ctx, t)
 	}
@@ -134,6 +135,7 @@ func (s *Server) tabShot(ctx context.Context, tab string) (*mcp.CallToolResult, 
 }
 
 func (s *Server) describeScreen(_ context.Context, _ *mcp.CallToolRequest, in describeIn) (*mcp.CallToolResult, any, error) {
+	s.back.NoteCapture()
 	r, err := s.area(in.areaIn)
 	if err != nil {
 		return fail(err)

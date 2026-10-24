@@ -4,6 +4,7 @@ import { store } from '../../../wailsjs/go/models';
 import { RunMode, runMode } from '../../aiLevel';
 import NumInput from '../NumInput';
 import Segmented from '../Segmented';
+import { Switch } from '../Switch';
 
 const AI_MAX_MINUTES = 10; // khớp store.AIMaxMinutes
 
@@ -26,6 +27,9 @@ export default function AiRunSettings({ mcp, onChange }: { mcp: store.MCPSetting
       <span>AI được chạy kịch bản</span>
       <Segmented value={mode} options={MODES} onChange={(run) => onChange({ run })} label="Mức chạy của AI" full />
       <span className="text-xs text-muted">{HINT[mode]}</span>
+      <label className="flex items-center justify-between gap-3 text-muted">Chấm đỏ trên thanh mini khi AI chụp / đọc màn hình
+        <Switch on={!mcp.hideCaptureDot} onChange={(on) => onChange({ hideCaptureDot: !on })} label="Chấm đỏ khi AI chụp màn hình" />
+      </label>
       {mode !== 'edit' && (
         <label className="flex items-center justify-between gap-3 text-muted">Tối đa mỗi lượt AI chạy
           <NumInput value={mcp.maxMinutes || AI_MAX_MINUTES} min={1} unit="phút" className="w-24" onChange={(maxMinutes) => onChange({ maxMinutes })} />

@@ -149,3 +149,13 @@ func TestSimulateScript(t *testing.T) {
 		t.Fatalf("mặc định: %v", out)
 	}
 }
+
+func TestCaptureNotes(t *testing.T) {
+	cs, back := connect(t)
+	call(t, cs, "describe_screen", map[string]any{})
+	call(t, cs, "screenshot", map[string]any{})
+	call(t, cs, "get_mouse_position", map[string]any{})
+	if back.captures != 2 {
+		t.Fatalf("captures = %d, cần 2 (describe_screen + screenshot, không tính get_mouse_position)", back.captures)
+	}
+}

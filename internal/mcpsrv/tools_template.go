@@ -83,6 +83,7 @@ func (s *Server) addTemplateTools() {
 }
 
 func (s *Server) captureTemplate(_ context.Context, _ *mcp.CallToolRequest, in captureTplIn) (*mcp.CallToolResult, any, error) {
+	s.back.NoteCapture()
 	r, err := s.area(in.areaIn)
 	if err != nil {
 		return fail(err)
@@ -117,6 +118,7 @@ func (s *Server) captureTemplate(_ context.Context, _ *mcp.CallToolRequest, in c
 }
 
 func (s *Server) findImage(_ context.Context, _ *mcp.CallToolRequest, in findImageIn) (*mcp.CallToolResult, any, error) {
+	s.back.NoteCapture()
 	t, err := s.tpls.get(in.Template)
 	if err != nil {
 		return fail(err)

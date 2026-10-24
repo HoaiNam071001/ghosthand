@@ -17,6 +17,10 @@ const STATES: { note: string; props: Parameters<typeof MiniBarView>[0] }[] = [
     props: { title: 'n2 · Tìm nút Nhắn tin · Thất bại → n4 · Đếm', lines: ['lượt n4 3 / 10', 'vòng 1 / 1   12 click   00:41'], icon: 'counter', progress: 0.3, paused: false, countdown: 0, canPause: true, onPause: noop, onStop: noop },
   },
   {
+    note: 'AI vừa chụp màn hình – chấm đỏ cạnh tiêu đề (bước 31c)',
+    props: { title: 'n3 · Click nút Gửi', lines: ['vòng 1 / 1   3 click   00:12'], icon: 'click', progress: 0.5, paused: false, countdown: 0, canPause: true, onPause: noop, onStop: noop, ai: { level: 'auto', onLevel: noop }, capturing: true },
+  },
+  {
     note: 'AI đang chạy – chip mức AI (bước 31b)',
     props: { title: 'n3 · Click nút Gửi', lines: ['vòng 1 / 1   3 click   00:12'], icon: 'click', progress: 0.5, paused: false, countdown: 0, canPause: true, onPause: noop, onStop: noop, ai: { level: 'auto', onLevel: noop } },
   },

@@ -113,6 +113,13 @@ func (b mcpBackend) OpenInApp(path string) error {
 	return nil
 }
 
+// NoteCapture – chấm đỏ trên thanh mini (event ai:capture) trừ khi người dùng đã tắt trong Cài đặt.
+func (b mcpBackend) NoteCapture() {
+	if !store.CurrentSettings().MCP.HideCaptureDot {
+		b.a.emit("ai:capture", nil)
+	}
+}
+
 func (b mcpBackend) SecretNames() []string { return store.Secrets().Names() }
 
 func (b mcpBackend) Displays() []mcpsrv.Display {

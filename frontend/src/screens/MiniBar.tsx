@@ -4,7 +4,7 @@ import { PauseScript, ResumeScript, StepScript, StopScript } from '../../wailsjs
 import { AiLevel } from '../aiLevel';
 import { Pause, Play, Stop, StepIcon, StepIconName, StepOver } from '../components/icons';
 import { AiChip, AiLevelRow } from '../components/minibar/AiChip';
-import { useAiLevel } from '../components/minibar/hooks';
+import { useAiLevel, useCaptureDot } from '../components/minibar/hooks';
 import { elapsedNow, fmtElapsed, Progress, useEngine } from '../engineStore';
 import { useScript } from '../store';
 import { inWails, setWindowMode } from '../windowMode';
@@ -47,6 +47,7 @@ export default function MiniBar() {
     : p.loops > 0 ? ((p.loop - 1) * p.total + p.step) / (p.loops * p.total)
     : p.step / p.total;
   const cur = p?.nodeId ? steps.find((s) => s.id === p.nodeId) : undefined;
+  const capturing = useCaptureDot();
   const ai = useAiLevel(inWails && running && engine.source === 'ai');
 
   const stop = () => {
@@ -67,18 +68,19 @@ export default function MiniBar() {
         `vòng ${p?.loop ?? 0} / ${p && p.loops > 0 ? p.loops : '∞'}   ${p?.clicks ?? 0} click   ${fmtElapsed(elapsed)}`,
         ...(engine.preset ? [`bộ giá trị: ${engine.preset}`] : [])]}
       canPause={running && !counting} onPause={() => (paused ? ResumeScript() : PauseScript())} onStop={stop}
-      onStep={paused && p?.break ? () => StepScript() : undefined} ai={ai} />
+      onStep={paused && p?.break ? () => StepScript() : undefined} ai={ai} capturing={capturing} />
   );
 }
 
 // Phần hiển thị (dùng chung với #demo-minibar). progress: 0..1 – vòng tiến độ (đang chờ ảnh: theo thời gian chờ);
 // lines: 1–2 dòng mono (vòng / click / thời gian; "đang tìm x / y s   thử lại a / b"…).
 // onStep: đang dừng vì debug – hiện nút chạy node kế (F10); nút Tiếp tục chạy tới điểm dừng sau.
+// capturing: AI vừa chụp / đọc màn hình – chấm đỏ cạnh tiêu đề.
 // ai: lượt do AI chạy – chip mức AI cạnh tiêu đề, bấm thì hàng chọn mức thay cho các dòng chữ.
-export function MiniBarView({ title, lines, icon, progress, paused, countdown, canPause, onPause, onStop, onStep, ai, aiOpen = false }: {
+export function MiniBarView({ title, lines, icon, progress, paused, countdown, canPause, onPause, onStop, onStep, ai, aiOpen = false, capturing = false }: {
   title: string; lines: string[]; icon: StepIconName; progress: number; paused: boolean; countdown: number;
   canPause: boolean; onPause: () => void; onStop: () => void; onStep?: () => void;
-  ai?: { level: AiLevel; onLevel: (l: AiLevel) => void }; aiOpen?: boolean;
+  ai?: { level: AiLevel; onLevel: (l: AiLevel) => void }; aiOpen?: boolean; capturing?: boolean;
 }) {
   const counting = countdown > 0;
   const [open, setOpen] = useState(aiOpen);
@@ -104,6 +106,7 @@ export function MiniBarView({ title, lines, icon, progress, paused, countdown, c
       <div className="flex min-w-0 flex-1 flex-col gap-[3px]">
         <div className="flex min-w-0 items-center gap-2">
           <span className="truncate font-semibold">{title}</span>
+          {capturing && <span className="h-2 w-2 flex-none animate-pulse rounded-full bg-danger" role="status" aria-label="AI vừa chụp màn hình" title="AI vừa chụp / đọc màn hình" />}
           {ai && <AiChip level={ai.level} open={open} onToggle={() => setOpen(!open)} />}
         </div>
         {ai && open ? <AiLevelRow level={ai.level} onLevel={(l) => { ai.onLevel(l); setOpen(false); }} />
