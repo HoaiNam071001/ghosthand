@@ -66,6 +66,7 @@ component ──gọi──► store/nodes|control|points|multi ──► flow/e
 
 1. `openOverlay(tool, focus)` (`windowMode.ts`) → Go `OverlayDisplayFor` chọn màn chứa vùng → `SetWindowMode('overlay')` → hash `#overlay`.
 2. `OverlayScreen` vẽ vùng + marker; click → toạ độ cửa sổ → **`coordMap.ts`** đổi sang toạ độ robotgo (ước lượng `k, b` từ mẫu `MousePos`, xử lý DPI / màn phụ) → `store/points` đổi sang điểm neo theo vùng (`store/geometry`).
+3b. Ghi macro (bước 24): menu Chạy → *Ghi thao tác* → `App.StartRecording` (thu nhỏ cửa sổ) → vòng hook của `hotkey.go` đẩy sự kiện vào `recorder` (`recordapi.go`; F9 hoặc `StopRecording` dừng) → event `record:done` → `store/record` gọi `App.FinishRecording(parent)`: `internal/record.Build` ghép click / kéo / cuộn / gõ chữ / phím + `DelayAfter` theo khoảng nghỉ thật, rồi `script.Embed` nhúng thành khung nhóm.
 3. F6 (Go `hotkey.go`) → event `hotkey:f6 {x,y}` (toạ độ robotgo sẵn) → `store/points` thêm điểm.
 4. Công cụ: `point`, `drag` (A rồi B), `region`, `preview` (con trỏ giả – `Simulation.tsx`, đi theo đồ thị: cổng ở node rẽ nhánh chọn trong menu Nhánh – `flow/preview.ts`, `previewBranches.ts`), `select` (biến đổi nhiều điểm – `TransformTool` + `transform.ts`), `capture` (khoanh ảnh mẫu – `imageSteps.ts` → Go `CaptureTemplate`, ẩn cửa sổ lúc chụp).
 
@@ -146,6 +147,7 @@ Dừng / tạm dừng: `StopScript` (huỷ ctx), `PauseScript` / `ResumeScript` 
 | `engine:failed` | `{stepId, miss?}` | engineStore, imageSteps |
 | `engine:stopped` | `"f8"` \| `"corner"` | engineStore |
 | `hotkey:f8start` / `hotkey:f6` / `hotkey:error` | – / `Point` / chuỗi | runForm / store/points / engineStore |
+| `record:done` | – | store/record (gọi `FinishRecording`) |
 | `app:confirmClose` | – | scriptFile |
 | `run:started` / `run:ended` | `{runId, source, script, path, preset}` / `session.Status` | engineStore (nguồn ngoài app → thanh mini) |
 | `script:changed` | `{path, revision, source}` | scriptFile (nạp lại, làm mới Mở gần đây) |

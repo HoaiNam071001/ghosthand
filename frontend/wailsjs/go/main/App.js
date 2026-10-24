@@ -82,6 +82,10 @@ export function FindImage(arg1, arg2) {
   return window['go']['main']['App']['FindImage'](arg1, arg2);
 }
 
+export function FinishRecording(arg1) {
+  return window['go']['main']['App']['FinishRecording'](arg1);
+}
+
 export function FlowGuide() {
   return window['go']['main']['App']['FlowGuide']();
 }
@@ -330,12 +334,20 @@ export function SetWindowMode(arg1) {
   return window['go']['main']['App']['SetWindowMode'](arg1);
 }
 
+export function StartRecording() {
+  return window['go']['main']['App']['StartRecording']();
+}
+
 export function StepScript() {
   return window['go']['main']['App']['StepScript']();
 }
 
 export function StepTypes() {
   return window['go']['main']['App']['StepTypes']();
+}
+
+export function StopRecording() {
+  return window['go']['main']['App']['StopRecording']();
 }
 
 export function StopScript() {

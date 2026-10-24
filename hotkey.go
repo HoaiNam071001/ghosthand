@@ -22,6 +22,12 @@ func (a *App) startHotkeys() {
 	evs := hook.Start()
 	go func() {
 		for ev := range evs {
+			if rec.active() {
+				if rec.feed(ev) {
+					a.endRecording()
+				}
+				continue
+			}
 			switch {
 			case ev.Kind == hook.HookDisabled:
 				runtime.EventsEmit(a.ctx, "hotkey:error", "Không nghe được phím toàn cục – kiểm tra quyền Accessibility")

@@ -51,6 +51,8 @@ export function FindElement(arg1:model.Script,arg2:string):Promise<engine.WebFin
 
 export function FindImage(arg1:model.Script,arg2:string):Promise<engine.FindResult>;
 
+export function FinishRecording(arg1:model.Script):Promise<script.EmbedResult>;
+
 export function FlowGuide():Promise<model.FlowGuideDoc>;
 
 export function ForgetRecent(arg1:string):Promise<Array<string>>;
@@ -175,9 +177,13 @@ export function SetTheme(arg1:string):Promise<void>;
 
 export function SetWindowMode(arg1:string):Promise<void>;
 
+export function StartRecording():Promise<void>;
+
 export function StepScript():Promise<boolean>;
 
 export function StepTypes():Promise<Array<model.StepTypeDoc>>;
+
+export function StopRecording():Promise<void>;
 
 export function StopScript():Promise<void>;
 

@@ -3,6 +3,10 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## 24 – Ghi macro · [phase3/24-ghi-macro.md](phase3/24-ghi-macro.md)
+- [ ] Menu Chạy ▾ → *Ghi thao tác*: app thu nhỏ; click vài chỗ, kéo một đoạn, cuộn, gõ chữ, bấm Enter, Ctrl/⌘+C rồi F9 (macOS: fn+F9) → app hiện lại, có khung *Ghi hh:mm:ss* với đúng các node; nối vào flow rồi Chạy lại → thao tác lặp lại đúng chỗ, nhịp nghỉ gần như lúc ghi
+- [ ] Cuộn lăn xuống ra node hướng *down* (không ngược); click đôi nhanh ra một node *Số lần = 2*; ghi trên kịch bản có vùng riêng → click vẫn đúng chỗ; macOS: cấp quyền Accessibility / Input Monitoring nếu không ghi được
+
 ## 39 – Gom kịch bản: khung nhóm node (G1) + nhúng kịch bản (G2) · [phase3/39-gom-kich-ban.md](phase3/39-gom-kich-ban.md)
 - [ ] Mở mẫu *Nhóm node*: thấy khung “Chuẩn bị” bao 3 node giữa; kéo thanh tên khung → cả 3 node dời theo, thả ra vẫn đúng chỗ (⌘Z hoàn tác được)
 - [ ] Nút thu gọn trên khung → thành một thẻ, cạnh vào / ra nối vào thẻ; mở rộng lại về như cũ; kéo thẻ thu gọn → các node dời theo

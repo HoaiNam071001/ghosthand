@@ -4,7 +4,7 @@ import { StatusBar, Toolbar } from '../components/AppChrome';
 import { RUN_ICON, RunMenuItem } from '../components/RunMenu';
 import { MousePos, StopScript } from '../../wailsjs/go/main/App';
 import { inWails, openOverlay } from '../windowMode';
-import { useEditor } from '../store';
+import { startRecording, useEditor } from '../store';
 import { closeRunForm, deletePreset, loadMemory, savePreset, startRun, submitRun, useRunForm } from '../runForm';
 import { inputViews, runSections } from '../scriptInputs';
 import RunDialog from '../components/inputs/RunDialog';
@@ -123,7 +123,8 @@ function runItems(ref: string | undefined, off: boolean, hasInputs: boolean, onF
       title: 'Dừng trước mỗi node, bấm Tiếp / F10 để chạy node kế' },
     { label: 'Xem trước trên màn hình', icon: RUN_ICON.preview, onClick: () => openOverlay('preview'),
       title: 'Xem đường đi các node bằng con trỏ giả, không click thật' },
-    { label: 'Ghi thao tác', icon: RUN_ICON.record, hotkey: 'F9', danger: true, disabled: true, title: 'Ghi macro – sắp có (bước 24)' },
+    { label: 'Ghi thao tác', icon: RUN_ICON.record, hotkey: 'F9', danger: true, disabled: off, onClick: startRecording,
+      title: 'Thu nhỏ app, ghi chuột / phím bạn thao tác thành node – F9 để dừng' },
     { label: 'Sửa input trước khi chạy', minor: true, disabled: off || !hasInputs, onClick: () => startRun(true),
       title: hasInputs ? 'Mở form input rồi mới chạy – cũng mở được bằng Shift + bấm Chạy' : 'Kịch bản chưa có input' },
   ];
