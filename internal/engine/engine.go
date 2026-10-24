@@ -116,6 +116,7 @@ type Engine struct {
 	counts   map[string]int               // node Đếm: số lần đã đi qua trong vòng này
 	lists    map[string]*listCursor       // node Lặp qua danh sách: danh sách đã nạp + phần tử kế (foreach.go)
 	stopAt   string                       // Options.StopAt
+	sim      *Simulate                    // Options.Simulate
 	pins     map[string]model.StepResult  // Options.Pins
 	seed     *Carry                       // Options.Seed
 	shotsDir string                       // Options.ShotsDir

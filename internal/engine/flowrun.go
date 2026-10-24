@@ -206,7 +206,7 @@ func (e *Engine) execNode(ctx context.Context, s model.Step, loop int) (res mode
 	e.miss = nil
 	tries := 1
 	delay := 0
-	if s.Retry != nil && !model.IsControl(s.Type) {
+	if s.Retry != nil && !model.IsControl(s.Type) && e.sim == nil {
 		tries += s.Retry.Count
 		delay = s.Retry.DelayMs
 	}
@@ -238,7 +238,10 @@ func (e *Engine) execNode(ctx context.Context, s model.Step, loop int) (res mode
 		wait = e.jitterMs(rs.DelayAfter, rs.JitterMs)
 		e.setHuman(rs)
 		port, out := model.PortSuccess, map[string]any(nil)
-		if model.IsControl(s.Type) {
+		if sp, so, serr, handled := e.simStep(rs, logf); handled {
+			port, out, err = sp, so, serr
+			wait = 0
+		} else if model.IsControl(s.Type) {
 			port, out, err = e.runControl(ctx, rs, logf)
 		} else {
 			out, err = e.runStep(ctx, rs, wait)

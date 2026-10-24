@@ -95,6 +95,7 @@ const instructions = `Ghosthand – app tự động click / gõ theo kịch b�
 Tạo kịch bản: đọc get_step_types compact=true (danh sách gọn mọi node + khi nào dùng; chi tiết một loại: type=…; hoặc resource ghosthand://guide) → viết kịch bản → validate_script → create_script.
 Sửa: read_script (lấy revision) → update_script theo id / ref node. Thiếu thông tin (app nào, giá trị nào là input) thì hỏi lại người dùng trước.
 Thử – sửa: run_script (cả / stopAt / only; script = kịch bản tạm, không tạo file) → node lỗi có error.detail + ảnh → update_script (kịch bản tạm: gửi script sửa vào resume_run) → resume_run (chạy tiếp từ node lỗi, giữ biến).
+Kiểm tra nhánh / biến trước khi chạy thật: simulate_script (không đụng máy; outcomes cho node nhìn màn hình).
 Ảnh mẫu: capture_template khoanh vùng → "tpl:N" ghi vào template của node; find_image thử trước. get_mouse_position / list_windows để lấy toạ độ / cửa sổ.
 Xem màn hình: describe_screen (chữ + cửa sổ, rẻ) trước, screenshot khi cần nhìn. App có Accessibility: describe_screen elements=true (cây phần tử đánh số #N) hoặc screenshot marks=true → suggest_selector {mark} lấy selector bền cho node phần tử (không dùng toạ độ cứng); screen_changes start/end để biết thao tác có tác dụng không. Người dùng muốn xem / tự chạy: open_in_app.
 Trang web: get_preferences – nodePref web thì probe_page(url) trước, verdict ok mới dùng node web; mặc định (vision) dùng node ảnh / chữ.
@@ -112,6 +113,7 @@ func New(back Backend) *Server {
 	s.addRunTools()
 	s.addScreenTools()
 	s.addTemplateTools()
+	s.addSimulateTools()
 	s.addWebTools()
 	s.addDocs()
 	return s

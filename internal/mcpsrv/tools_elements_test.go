@@ -128,3 +128,24 @@ func TestMouseAndWindows(t *testing.T) {
 		t.Fatalf("windows: %v", w)
 	}
 }
+
+func TestSimulateScript(t *testing.T) {
+	cs, _ := connect(t)
+	sc := map[string]any{"name": "Thử khô", "steps": []any{
+		map[string]any{"type": "wait", "delayAfter": 1},
+		map[string]any{"type": "click", "x": 10, "y": 10},
+		map[string]any{"type": "type", "text": "{{n1.output.ten}}"},
+	}, "edges": []any{map[string]any{"from": "n1", "port": "success", "to": "n2"}, map[string]any{"from": "n2", "port": "fail", "to": "n3"}}}
+	out, isErr := call(t, cs, "simulate_script", map[string]any{"script": sc,
+		"outcomes": map[string]any{"n2": "fail"}, "outputs": map[string]any{"n1": map[string]any{"ten": "Lan"}}})
+	if isErr || out["ok"] != true || out["visited"] != float64(3) || len(out["unvisited"].([]any)) != 0 {
+		t.Fatalf("simulate: %v", out)
+	}
+	if bad, isErr := call(t, cs, "simulate_script", map[string]any{"script": sc, "outcomes": map[string]any{"n1": "yes"}}); !isErr {
+		t.Fatalf("cổng không có phải lỗi: %v", bad)
+	}
+	out, _ = call(t, cs, "simulate_script", map[string]any{"script": sc}) // n2 thành công → n3 không tới
+	if out["visited"] != float64(2) || len(out["unvisited"].([]any)) != 1 {
+		t.Fatalf("mặc định: %v", out)
+	}
+}
