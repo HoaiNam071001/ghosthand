@@ -9,6 +9,7 @@ import (
 
 	"ghosthand/internal/device"
 	"ghosthand/internal/device/devicetest"
+	"ghosthand/internal/element"
 	"ghosthand/internal/model"
 	"ghosthand/internal/session"
 	"ghosthand/internal/vision"
@@ -45,6 +46,10 @@ func (f *fakeBackend) Capture(r model.Rect) (image.Image, error) {
 }
 func (f *fakeBackend) ReadText(image.Image) ([]vision.TextLine, error) {
 	return []vision.TextLine{{Text: "Gửi", Box: model.Rect{X: 10, Y: 20, W: 30, H: 10}}}, nil
+}
+func (f *fakeBackend) Elements(string) ([]element.Node, error) {
+	f.elemReads++
+	return f.elems, nil
 }
 func (f *fakeBackend) Windows() ([]model.WindowInfo, error) {
 	return []model.WindowInfo{{Title: "Notepad", App: "notepad", Box: model.Rect{X: 100, Y: 100, W: 800, H: 600}}}, nil

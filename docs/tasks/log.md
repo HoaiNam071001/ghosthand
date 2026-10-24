@@ -243,3 +243,4 @@
 - **2026-10-22** – 43 S9: node Thông báo hệ thống (`notify`, chưa có nút bấm – tách S9b); mẫu `thong-bao` chạy thật OK trên macOS. go vet + go test + npm build + npm test xanh; chưa thử tay.
 - **2026-10-22** – 43 S10: kho bí mật (Keychain / Credential Manager) + `{{secret.<tên>}}` + che giá trị ở kết quả / lịch sử / event + tool MCP `list_secrets` + Cài đặt → Bí mật. Keychain macOS ghi / đọc / xoá thật OK; go vet + go test + npm build + npm test xanh; chưa thử tay trong app, Windows chưa chạy.
 - **2026-10-22** – 43 S7 (node Màn hình / âm thanh), S3 (node Nguồn + tuỳ chọn kịch bản Giữ máy thức), S6b (op toggleIME của node Bộ gõ). go vet + go test + npm build + npm test xanh; mẫu man-hinh-am-thanh chạy thật OK trên macOS (đảo sáng/tối rồi trả, phát Glass); lệnh nguồn chỉ test bằng bản giả; Windows chưa chạy thử; chưa thử tay.
+- 2026-10-24 43 A1–A4: cây phần tử rút gọn, ảnh đánh số, suggest_selector, screen_changes (MCP)

@@ -29,7 +29,7 @@ const tips = `Viết kịch bản bền:
 - Dạng gọn: node chỉ cần type + trường cần (còn lại lấy mặc định), id / ref tự đặt (s1, s2… / n1, n2…) nếu bỏ trống, không có edges thì nối các node theo thứ tự bằng cổng success.
 
 Thử – sửa (chạy thật trên máy người dùng):
-- Chưa biết màn hình có gì: describe_screen (chữ + khung + cửa sổ) trước, screenshot khi cần nhìn bố cục.
+- Chưa biết màn hình có gì: describe_screen (chữ + khung + cửa sổ) trước, screenshot khi cần nhìn bố cục. Chọn nút / ô trong app: describe_screen elements=true hoặc screenshot marks=true cho số #N → suggest_selector {mark: N} trả selector bền (unique trước) để ghi vào selectors / occurrence / elementApp, thay cho toạ độ. Biết thao tác có tác dụng chưa: screen_changes start → làm → end.
 - Thử nhanh một vài thao tác / dò cách tìm: run_script với script (kịch bản tạm) – không tạo file, không ghi lịch sử; sửa thì gửi bản sửa vào resume_run. Chỉ create_script khi người dùng muốn giữ kịch bản.
 - Kịch bản dài: run_script với stopAt chạy từng đoạn, xem output từng node rồi resume_run from node kế để chạy tiếp – không chạy lại đoạn đã đúng.
 - Người dùng cầm chuột lúc AI đang chạy → app tự tạm dừng (wait_run: current.pausedBy = "touch") – đừng chạy lại hay tranh chuột; chờ người dùng bấm Tiếp tục trên thanh mini hoặc hỏi người dùng.

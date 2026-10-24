@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"image"
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
@@ -30,6 +31,8 @@ type areaIn struct {
 
 type shotIn struct {
 	areaIn
+	Marks  bool   `json:"marks,omitempty" jsonschema:"vẽ số #1, #2… lên từng phần tử bấm / gõ được trong ảnh (đọc qua Accessibility) + trả danh sách; sau đó suggest_selector {mark} để lấy selector bền"`
+	App    string `json:"app,omitempty" jsonschema:"với marks: tên app / bundle id cần đọc phần tử (bỏ trống = cửa sổ của window, hoặc app trên cùng)"`
 	WebTab string `json:"webTab,omitempty" jsonschema:"chụp riêng một tab của Chrome của app qua trình duyệt (id tab từ probe_page / read_web_outline, hoặc chuỗi trong URL; \"active\" = tab đang hiện) – đúng tab kể cả khi Chrome bị che; bỏ qua window / vùng"`
 }
 
@@ -41,7 +44,8 @@ type textLine struct {
 func (s *Server) addScreenTools() {
 	addTool(s, KindScreen, &mcp.Tool{Name: "describe_screen", Description: "Đọc màn hình bằng chữ (rẻ hơn ảnh): các dòng chữ (OCR) kèm khung " +
 		"theo toạ độ chuột + danh sách cửa sổ đang mở (trên cùng trước). Dùng để tìm chữ / nút cho node waitImage / clickImage (findBy text) " +
-		"hoặc biết cửa sổ nào đang trước."}, s.describeScreen)
+		"hoặc biết cửa sổ nào đang trước. elements=true: thay OCR bằng cây phần tử rút gọn của app (Accessibility / UIA) – mỗi dòng #số role \"tên\" {khung}, " +
+		"chính xác hơn OCR cho app có Accessibility; nói “click #12” → suggest_selector."}, s.describeScreen)
 	addTool(s, KindScreen, &mcp.Tool{Name: "screenshot", Description: "Chụp màn hình / vùng / cửa sổ, trả ảnh (thu nhỏ) + vùng + tỷ lệ: " +
 		"toạ độ chuột = area.x + px ảnh × scale (y tương tự). webTab: chụp một tab Chrome của app (khung nhìn trang, toạ độ trong trang = px ảnh × scale)."}, s.screenshot)
 }
@@ -83,11 +87,20 @@ func (s *Server) screenshot(ctx context.Context, _ *mcp.CallToolRequest, in shot
 	if err != nil {
 		return fail(err)
 	}
+	out := map[string]any{"area": r}
+	if in.Marks {
+		var shown image.Image
+		if shown, err = s.markImage(img, r, in.areaIn, in.App, out); err != nil {
+			return fail(err)
+		}
+		img = shown
+	}
 	c, w := pngContent(img)
 	if c == nil {
 		return fail(fmt.Errorf("không mã hoá được ảnh"))
 	}
-	res, _, err := ok(map[string]any{"area": r, "imageWidth": w, "scale": float64(r.W) / float64(w)})
+	out["imageWidth"], out["scale"] = w, float64(r.W)/float64(w)
+	res, _, err := ok(out)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -120,10 +133,13 @@ func (s *Server) tabShot(ctx context.Context, tab string) (*mcp.CallToolResult, 
 	return res, nil, nil
 }
 
-func (s *Server) describeScreen(_ context.Context, _ *mcp.CallToolRequest, in areaIn) (*mcp.CallToolResult, any, error) {
-	r, err := s.area(in)
+func (s *Server) describeScreen(_ context.Context, _ *mcp.CallToolRequest, in describeIn) (*mcp.CallToolResult, any, error) {
+	r, err := s.area(in.areaIn)
 	if err != nil {
 		return fail(err)
+	}
+	if in.Elements {
+		return s.describeElements(in, r)
 	}
 	img, err := s.back.Capture(r)
 	if err != nil {
@@ -148,4 +164,12 @@ func (s *Server) describeScreen(_ context.Context, _ *mcp.CallToolRequest, in ar
 		out["windows"] = ws[:min(len(ws), maxWindows)]
 	}
 	return ok(out)
+}
+
+type describeIn struct {
+	areaIn
+	Elements        bool   `json:"elements,omitempty" jsonschema:"đọc cây phần tử (Accessibility / UIA) thay vì OCR"`
+	App             string `json:"app,omitempty" jsonschema:"với elements: tên app / bundle id (bỏ trống = cửa sổ của window, hoặc app trên cùng)"`
+	InteractiveOnly bool   `json:"interactiveOnly,omitempty" jsonschema:"với elements: chỉ nút / ô nhập / liên kết… bấm gõ được"`
+	Max             int    `json:"max,omitempty" jsonschema:"với elements: số dòng tối đa (mặc định 120)"`
 }

@@ -377,3 +377,8 @@ Người dùng chốt 2026-10-18: việc qua Chrome của app làm sau cùng –
 
 - [ ] Cắm màn ngoài (khác DPI Retina) rồi chạy `go run -tags probe ./cmd/d0probe -scenario all` – tình huống `display2` lệch ≤ 2 px (chuột sẽ tự di chuyển + bấm ~1 phút, đừng động vào chuột)
 - [ ] Khi có máy Windows: chạy lại trên màn DPI 125% (sửa `-chrome` trỏ tới chrome.exe; phím zoom là Ctrl) – dán kết quả vào file bước
+
+### 43 A – Cho AI nhìn theo phần tử · [phase3/43-node-chuyen-sau.md](phase3/43-node-chuyen-sau.md)
+
+- [ ] Claude gọi `screenshot marks=true` trên Chrome thường / Finder (macOS): ảnh có số đỏ / xanh đúng chỗ nút, danh sách `#N` khớp; `suggest_selector {mark}` trả selector `unique` chạy được trong node *Click theo phần tử*
+- [ ] `describe_screen elements=true` trả cây gọn (không có hàng trăm dòng trang trí); `screen_changes start` → bấm mở popup → `end` báo phần tử mới + cửa sổ mới

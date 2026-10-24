@@ -12,6 +12,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
 	"ghosthand/internal/device"
+	"ghosthand/internal/element"
 	"ghosthand/internal/model"
 	"ghosthand/internal/session"
 	"ghosthand/internal/store"
@@ -164,6 +165,9 @@ func (b mcpBackend) Capture(r model.Rect) (image.Image, error) {
 }
 func (b mcpBackend) ReadText(img image.Image) ([]vision.TextLine, error) {
 	return device.SystemOCR{}.ReadText(img)
+}
+func (b mcpBackend) Elements(app string) ([]element.Node, error) {
+	return device.SystemElements{}.Elements(app)
 }
 func (b mcpBackend) Windows() ([]model.WindowInfo, error) { return device.SystemWindows{}.List() }
 

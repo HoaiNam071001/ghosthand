@@ -14,6 +14,7 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
 	"ghosthand/internal/device/devicetest"
+	"ghosthand/internal/element"
 	"ghosthand/internal/model"
 	"ghosthand/internal/session"
 	"ghosthand/internal/store"
@@ -37,6 +38,8 @@ type fakeBackend struct {
 	outlineTab    string
 	outlineDialog bool
 	probed        string
+	elems         []element.Node // Elements trả (43 A)
+	elemReads     int
 }
 
 func (f *fakeBackend) Enabled() bool          { return true }
