@@ -95,7 +95,7 @@ func (m *masker) result(r model.StepResult) model.StepResult {
 	if m == nil || len(m.vals) == 0 {
 		return r
 	}
-	r.Output = m.dict(r.Output)
+	r.Output, r.Changes = m.dict(r.Output), m.dict(r.Changes)
 	if r.Error != nil {
 		er := *r.Error
 		er.Message, er.Detail = m.str(er.Message), m.dict(er.Detail)

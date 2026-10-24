@@ -11,6 +11,7 @@ import { errText, Field, fmtSec, hint, NumField, SwitchField, useNodeVars } from
 import { pickElement, testFind, useImageState } from '../../imageSteps';
 import { inWails, openOverlay } from '../../windowMode';
 import { FindAllResult } from './FindAllResult';
+import { ElementSuggestions } from './ElementSuggestions';
 
 // optional: cách tìm có thể trống (node Đọc chữ trang: trống = cả cửa sổ)
 export function ElementQueryFields({ step: s, optional }: { step: Step; optional?: boolean }) {
@@ -41,7 +42,7 @@ export function ElementQueryFields({ step: s, optional }: { step: Step; optional
 // Tìm theo: Phần tử của Chờ / Click theo ảnh·chữ (37 E3): cách tìm + Chọn phần tử trên màn + Thử tìm (khung vẽ trên
 // overlay; không thấy thì liệt kê các phần tử đang có để chọn lại cách tìm).
 export function ElementSearchFields({ step: s }: { step: Step }) {
-  const { finds, busy, error } = useImageState();
+  const { finds, busy, error, suggestions } = useImageState();
   const find = finds[s.id];
   const btn = 'h-[34px] flex-1 rounded-control border border-line bg-surface text-[13px] text-ink enabled:hover:bg-hover disabled:opacity-50';
   return (
@@ -54,6 +55,8 @@ export function ElementSearchFields({ step: s }: { step: Step }) {
           <button onClick={() => testFind(s.id)} disabled={!inWails || busy === s.id || !s.selectors?.some((l) => l.trim().length > 5)} className={btn}
             title="Tìm trong cây phần tử của app lúc này (không di chuột)">{busy === s.id ? 'Đang tìm…' : 'Thử tìm'}</button>
         </div>
+        <ElementSuggestions list={suggestions[s.id] ?? []} current={s.selectors?.[0]}
+          onPick={(g) => updateStep(s.id, { selectors: [g.selector], occurrence: g.occurrence > 1 ? g.occurrence : undefined })} />
         {find && s.type === 'findAll' ? <FindAllResult step={s} find={find} /> : find && (
           <span className={`flex flex-col gap-1 text-xs ${find.found ? 'text-ok' : 'text-warn'}`}>
             <span className="flex flex-wrap items-center gap-x-2">

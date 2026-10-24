@@ -18,6 +18,10 @@ func TestPickElement(t *testing.T) {
 	}
 	want := ElementPick{Selectors: []string{`text="Mua ngay"`, `role=button[name="Mua ngay"]`, "role=button"}, Occurrence: 1,
 		Role: "button", Name: "Mua ngay", Box: elemBox(100, 200, 80, 30)}
+	if len(got.Suggestions) != 3 || got.Suggestions[0].Selector != want.Selectors[0] || !got.Suggestions[0].Unique { // 43 A4
+		t.Errorf("gợi ý %+v", got.Suggestions)
+	}
+	got.Suggestions = nil
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("%+v, muốn %+v", got, want)
 	}

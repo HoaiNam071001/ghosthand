@@ -1,3 +1,30 @@
+export namespace element {
+	
+	export class Suggestion {
+	    selector: string;
+	    occurrence: number;
+	    matches: number;
+	    unique: boolean;
+	    stability: string;
+	    note?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Suggestion(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.selector = source["selector"];
+	        this.occurrence = source["occurrence"];
+	        this.matches = source["matches"];
+	        this.unique = source["unique"];
+	        this.stability = source["stability"];
+	        this.note = source["note"];
+	    }
+	}
+
+}
+
 export namespace engine {
 	
 	export class CondPart {
@@ -68,6 +95,7 @@ export namespace engine {
 	    role: string;
 	    name: string;
 	    box: model.Rect;
+	    suggestions: element.Suggestion[];
 	
 	    static createFrom(source: any = {}) {
 	        return new ElementPick(source);
@@ -80,6 +108,7 @@ export namespace engine {
 	        this.role = source["role"];
 	        this.name = source["name"];
 	        this.box = this.convertValues(source["box"], model.Rect);
+	        this.suggestions = this.convertValues(source["suggestions"], element.Suggestion);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -910,6 +939,7 @@ export namespace model {
 	    attempts: number;
 	    loop: number;
 	    shot?: string;
+	    changes?: Record<string, any>;
 	    // Go type: time
 	    startedAt: any;
 	    durationMs: number;
@@ -930,6 +960,7 @@ export namespace model {
 	        this.attempts = source["attempts"];
 	        this.loop = source["loop"];
 	        this.shot = source["shot"];
+	        this.changes = source["changes"];
 	        this.startedAt = this.convertValues(source["startedAt"], null);
 	        this.durationMs = source["durationMs"];
 	    }

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"ghosthand/internal/device/devicetest"
+	"ghosthand/internal/element"
 	"ghosthand/internal/model"
 	"ghosthand/internal/model/modeltest"
 	"ghosthand/internal/vision"
@@ -36,7 +37,7 @@ func TestShootOnFail(t *testing.T) {
 // shots: each – chụp sau mỗi node thành công, sau DelayAfter (không chờ hai lần); chỉ giữ maxEach ảnh mới nhất.
 func TestShootEach(t *testing.T) {
 	e, _ := sendFlow(0, nil)
-	e.shots, e.eachShot = map[string]image.Image{}, true
+	e.shots, e.eachShot, e.elems = map[string]image.Image{}, true, &devicetest.FakeElements{}
 	e.sc.Steps[2].DelayAfter = 300
 	var got []string
 	e.onNode = func(r model.StepResult) { got = append(got, r.Shot) }
@@ -58,6 +59,26 @@ func TestShootEach(t *testing.T) {
 	}
 	if len(e.shots) != maxEach || e.shots["each-1-n1.png"] != nil || e.shots["each-18-n9.png"] == nil || e.shots["each-7-n9.png"] == nil {
 		t.Errorf("còn %d ảnh: %v", len(e.shots), slices.Collect(maps.Keys(e.shots)))
+	}
+}
+
+// 43 A3: chụp sau mỗi node → node có kèm phần tử mới / mất so với sau node trước (node đầu chỉ lấy mốc, không đổi thì không có).
+func TestEachShotChanges(t *testing.T) {
+	e, _ := sendFlow(0, nil)
+	base := page(elemBox(0, 0, 80, 30))
+	withDialog := append(slices.Clone(base), element.Node{Role: "dialog", Title: "Đã lưu", Box: elemBox(200, 200, 300, 100), Depth: 1})
+	e.shots, e.eachShot = map[string]image.Image{}, true
+	e.elems = &devicetest.FakeElements{Frames: [][]element.Node{base, base, withDialog}}
+	var got []map[string]any
+	e.onNode = func(r model.StepResult) { got = append(got, r.Changes) }
+	if err := e.Run(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if len(got) != 3 || got[0] != nil || got[1] != nil || got[2] == nil {
+		t.Fatalf("changes = %v", got)
+	}
+	if added, _ := got[2]["added"].([]any); len(added) != 1 {
+		t.Errorf("added = %v", got[2])
 	}
 }
 

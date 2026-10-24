@@ -37,8 +37,9 @@ type nodeView struct {
 	Ms       int64            `json:"ms"`
 	Output   map[string]any   `json:"output,omitempty"`
 	Error    *model.StepError `json:"error,omitempty"`
-	Logs     []model.LogLine  `json:"logs,omitempty"` // chỉ node lỗi
-	Shot     string           `json:"shot,omitempty"` // ảnh lúc lỗi / sau node (shots: each) – gửi kèm dưới hoặc xin bằng wait_run shots
+	Logs     []model.LogLine  `json:"logs,omitempty"`    // chỉ node lỗi
+	Shot     string           `json:"shot,omitempty"`    // ảnh lúc lỗi / sau node (shots: each) – gửi kèm dưới hoặc xin bằng wait_run shots
+	Changes  map[string]any   `json:"changes,omitempty"` // giao diện đổi gì sau node (shots: each) – biết click có tác dụng không mà không cần ảnh
 	// rộng ảnh gửi kèm (px): toạ độ thật = error.detail.context.shotArea.x + px ảnh × shotArea.w / ShotW (y tương tự)
 	ShotW int `json:"shotWidth,omitempty"`
 }
@@ -53,7 +54,7 @@ func traceView(tr session.Trace, sc model.Script, shotW map[string]int) map[stri
 	nodes := make([]nodeView, 0, len(res)-omitted)
 	for _, r := range res[omitted:] {
 		n := nodeView{ID: r.NodeID, Ref: r.Ref, Type: types[r.NodeID], Status: r.Status, Port: r.Port, Loop: r.Loop,
-			Attempts: r.Attempts, Ms: r.DurationMs, Output: trimMap(r.Output), Error: r.Error, ShotW: shotW[r.Shot]}
+			Attempts: r.Attempts, Ms: r.DurationMs, Output: trimMap(r.Output), Error: r.Error, Changes: r.Changes, ShotW: shotW[r.Shot]}
 		if tr.Shots[r.Shot] != nil { // shots: each chỉ giữ ảnh mới nhất – ảnh đã bỏ thì không báo tên
 			n.Shot = r.Shot
 		}

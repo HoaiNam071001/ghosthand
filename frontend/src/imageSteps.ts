@@ -3,7 +3,7 @@
 import { useSyncExternalStore } from 'react';
 import { CaptureTemplate, FindImage, PickElementAt, PixelColorAt, RequestScreenCapture, ScreenCaptureAllowed, TestNode } from '../wailsjs/go/main/App';
 import { EventsOn } from '../wailsjs/runtime/runtime';
-import { model } from '../wailsjs/go/models';
+import { element, model } from '../wailsjs/go/models';
 import { addStep, getEditor, pickScreenPoint, selectStep, setNotice, toScreen, updateCond, updateStep } from './store';
 import { CondAt, condOf } from './flow/cond';
 import { errorText } from './engineStore';
@@ -19,14 +19,17 @@ export type FindResult = { found: boolean; score: number; x: number; y: number; 
 export type CondPart = { path: number[]; case?: string; kind: string; ok: boolean; known: boolean; detail: string; hit?: Rect };
 export type NodeTestResult = { port: string; known: boolean; parts: CondPart[]; value?: string; ms: number };
 
+export type ElementSuggestion = element.Suggestion; // gợi ý cách tìm phần tử vừa chọn (43 A4)
+
 type ImageState = {
+  suggestions: Record<string, ElementSuggestion[]>; // theo id node – sau "Chọn trên màn"
   nodeTests: Record<string, NodeTestResult>; // theo id node
   allowed: boolean | null; // quyền chụp màn hình (null = chưa kiểm tra)
   finds: Record<string, FindResult>; // kết quả "Thử tìm" theo id bước – overlay vẽ khung
   busy: string; // id bước đang thử tìm / lấy màu
   error: string;
 };
-let state: ImageState = { nodeTests: {}, allowed: null, finds: {}, busy: '', error: '' };
+let state: ImageState = { suggestions: {}, nodeTests: {}, allowed: null, finds: {}, busy: '', error: '' };
 const listeners = new Set<() => void>();
 const set = (p: Partial<ImageState>) => {
   state = { ...state, ...p };
@@ -138,7 +141,7 @@ export function pickElement(stepId: string) {
       const r = await PickElementAt(model.Script.createFrom(getEditor().script), stepId, p.x, p.y);
       updateStep(stepId, { selectors: r.selectors, occurrence: r.occurrence > 1 ? r.occurrence : undefined });
       const b = r.box;
-      set({ busy: '', finds: { ...state.finds, [stepId]: { found: true, score: 100, x: b.x, y: b.y, w: b.w, h: b.h, area: b, ms: 0, label: r.role } } });
+      set({ busy: '', suggestions: { ...state.suggestions, [stepId]: r.suggestions ?? [] }, finds: { ...state.finds, [stepId]: { found: true, score: 100, x: b.x, y: b.y, w: b.w, h: b.h, area: b, ms: 0, label: r.role } } });
       setNotice(`Đã chọn ${r.role}${r.name ? ` “${r.name}”` : ''} – cách tìm: ${r.selectors[0]}`);
     } catch (e) {
       set({ busy: '', error: errorText(e) });

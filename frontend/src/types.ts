@@ -37,6 +37,7 @@ export interface StepResult {
   attempts: number;
   loop: number; // vòng thứ mấy, từ 1
   shot?: string; // ảnh lúc thất bại (lịch sử chạy – RunShot)
+  changes?: Record<string, unknown>; // phần tử mới / mất / đổi giá trị so với sau node trước (AI chạy shots: each – 43 A3)
   startedAt: string;
   durationMs: number;
 }

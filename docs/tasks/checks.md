@@ -382,3 +382,5 @@ Người dùng chốt 2026-10-18: việc qua Chrome của app làm sau cùng –
 
 - [ ] Claude gọi `screenshot marks=true` trên Chrome thường / Finder (macOS): ảnh có số đỏ / xanh đúng chỗ nút, danh sách `#N` khớp; `suggest_selector {mark}` trả selector `unique` chạy được trong node *Click theo phần tử*
 - [ ] `describe_screen elements=true` trả cây gọn (không có hàng trăm dòng trang trí); `screen_changes start` → bấm mở popup → `end` báo phần tử mới + cửa sổ mới
+- [ ] Inspector node Click/Chờ theo phần tử: *Chọn trên màn* một nút → hiện danh sách gợi ý (duy nhất / N chỗ, bền / dễ hỏng); bấm một dòng đổi ô *Cách tìm* + *Chỗ thứ*
+- [ ] AI chạy `run_script shots: each`: node mở popup có `changes.added`; node lỗi sau đó có `error.detail.changes`

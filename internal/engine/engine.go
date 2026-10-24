@@ -13,6 +13,7 @@ import (
 	"ghosthand/internal/browser"
 	"ghosthand/internal/device"
 	"ghosthand/internal/display"
+	"ghosthand/internal/element"
 	"ghosthand/internal/humanize"
 	"ghosthand/internal/inputsource"
 	"ghosthand/internal/launch"
@@ -75,6 +76,7 @@ type Engine struct {
 	open        func(target, app string) error // bước Mở – test thay bằng hàm ghi lại
 	scr         device.Screen                  // chụp màn hình / đọc màu (imagestep.go) – test thay bằng màn hình giả
 	ocr         device.TextReader              // đọc chữ (tìm theo chữ, ocr.go) – test thay bằng bộ đọc giả
+	prevTree    []element.Node                 // cây phần tử sau node trước (changes.go, chỉ khi ShotEach)
 	elems       device.ElementReader           // phần tử màn hình qua Accessibility (elementstep.go) – test thay bằng cây giả
 	clip        device.Clipboard               // clipboard (chụp màn hình chép ảnh – shot.go) – test thay bằng bản giả
 	httpc       *http.Client                   // node HTTP (http.go) – thời gian chờ theo TimeoutMs của node

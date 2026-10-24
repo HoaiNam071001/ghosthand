@@ -97,6 +97,12 @@ func (e *Engine) runLoop(ctx context.Context, loop int) error {
 		res, wait := e.execNode(ctx, s, loop)
 		if res.Status == model.StatusFail {
 			e.addContext(&res)
+			if ch := e.treeChanges(); ch != nil && res.Error != nil {
+				if res.Error.Detail == nil {
+					res.Error.Detail = map[string]any{}
+				}
+				res.Error.Detail["changes"] = ch // popup / hộp thoại mới hiện từ node trước – thường là lý do node này lỗi
+			}
 			e.shoot(&res)
 		}
 		wait = e.shootAfter(ctx, &res, wait)

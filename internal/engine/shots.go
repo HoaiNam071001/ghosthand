@@ -40,6 +40,7 @@ func (e *Engine) shootAfter(ctx context.Context, res *model.StepResult, wait int
 	if Sleep(ctx, wait) != nil {
 		return 0
 	}
+	res.Changes = e.treeChanges()
 	img, err := e.scr.Capture(e.searchArea(model.Step{SearchArea: "screen"}))
 	if err != nil {
 		return 0

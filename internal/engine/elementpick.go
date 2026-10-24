@@ -15,6 +15,8 @@ type ElementPick struct {
 	Role       string     `json:"role"`
 	Name       string     `json:"name"`
 	Box        model.Rect `json:"box"`
+	// Suggestions – mọi cách tìm khác (43 A4), xếp bền → kém, kèm số chỗ khớp: inspector cho chọn lại.
+	Suggestions []element.Suggestion `json:"suggestions"`
 }
 
 // PickElement – phần tử dưới điểm p (toạ độ robotgo) trong cây của app ("" = app có cửa sổ trên cùng, trừ app này)
@@ -33,5 +35,6 @@ func (e *Engine) PickElement(app string, p model.Point) (ElementPick, error) {
 		return ElementPick{}, errors.New("phần tử ở chỗ này không có chữ / nhãn để tìm lại – chọn phần tử có chữ gần đó, hoặc dùng Tìm theo chữ / ảnh")
 	}
 	n := nodes[i]
-	return ElementPick{Selectors: pk.Selectors, Occurrence: pk.Occurrence, Role: n.Role, Name: n.Name(), Box: n.Box}, nil
+	return ElementPick{Selectors: pk.Selectors, Occurrence: pk.Occurrence, Role: n.Role, Name: n.Name(), Box: n.Box,
+		Suggestions: element.Suggest(nodes, i)}, nil
 }
