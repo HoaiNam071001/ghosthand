@@ -3,6 +3,7 @@ import { DangerCheck, InBackground, RunScript, ValidateScript } from '../wailsjs
 import { askDanger } from './dangerConfirm';
 import { model, session } from '../wailsjs/go/models';
 import { EventsOn } from '../wailsjs/runtime/runtime';
+import { getPins } from './pinStore';
 import { Script } from './types';
 import { inWails, setWindowMode } from './windowMode';
 
@@ -85,7 +86,8 @@ const COUNTDOWN_SEC = 3;
 export const errorText = (e: unknown) => (e instanceof Error ? e.message : String(e)).replace(/^Error:\s*/, '');
 
 // Debug (bước 20 F5): from = chạy một vòng từ node này (only: chỉ riêng node đó – 20 F7); step = dừng trước mỗi node (Tiếp / F10).
-export type Debug = { from?: string; only?: boolean; step?: boolean };
+// stopAt = chạy tới hết node này rồi dừng; nodes = chỉ chạy cụm node này; seedRun = nạp kết quả + biến của lần chạy trước (31c).
+export type Debug = { from?: string; only?: boolean; step?: boolean; stopAt?: string; nodes?: string[]; seedRun?: string };
 
 // Chạy kịch bản với giá trị input (Go áp vào bản sao – resolveInputs): kiểm tra trước (lỗi thì ở lại màn chính),
 // thu cửa sổ thành mini bar, chạy tới khi xong / dừng, rồi về màn chính. Form Chạy: runForm.ts.
@@ -108,7 +110,7 @@ export async function runScript(script: Script, countdown: boolean, values: Reco
   }
   await setWindowMode('minibar');
   try {
-    await RunScript(sc, values, session.Options.createFrom({ countdown: countdown ? COUNTDOWN_SEC : 0, path, source: 'user', preset, confirmDanger, ...debug }));
+    await RunScript(sc, values, session.Options.createFrom({ countdown: countdown ? COUNTDOWN_SEC : 0, path, source: 'user', preset, confirmDanger, pins: getPins(), ...debug }));
   } catch (e) {
     set({ lastError: errorText(e) });
   }

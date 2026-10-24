@@ -38,6 +38,10 @@ export function ClearDraft() {
   return window['go']['main']['App']['ClearDraft']();
 }
 
+export function ClearPin(arg1, arg2, arg3) {
+  return window['go']['main']['App']['ClearPin'](arg1, arg2, arg3);
+}
+
 export function ClearRuns(arg1, arg2) {
   return window['go']['main']['App']['ClearRuns'](arg1, arg2);
 }
@@ -80,6 +84,10 @@ export function ForgetRecent(arg1) {
 
 export function GetInputMemory(arg1) {
   return window['go']['main']['App']['GetInputMemory'](arg1);
+}
+
+export function GetPins(arg1, arg2) {
+  return window['go']['main']['App']['GetPins'](arg1, arg2);
 }
 
 export function GetRun(arg1, arg2, arg3) {
@@ -276,6 +284,10 @@ export function SetMCPSettings(arg1) {
 
 export function SetOverlayDisplay(arg1) {
   return window['go']['main']['App']['SetOverlayDisplay'](arg1);
+}
+
+export function SetPin(arg1, arg2, arg3) {
+  return window['go']['main']['App']['SetPin'](arg1, arg2, arg3);
 }
 
 export function SetSchedule(arg1) {

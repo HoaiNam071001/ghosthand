@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"maps"
 	"strings"
 	"time"
 
@@ -195,6 +196,11 @@ func (e *Engine) execNode(ctx context.Context, s model.Step, loop int) (res mode
 	if !s.Enabled {
 		res.Status, res.Port = model.StatusSkipped, model.PortSuccess
 		logf("info", "node đang tắt – đi tiếp cổng success")
+		return res, 0
+	}
+	if pin, ok := e.pins[s.ID]; ok && pin.Status == model.StatusSuccess {
+		res.Status, res.Port, res.Output, res.Attempts = model.StatusSuccess, pin.Port, maps.Clone(pin.Output), 1
+		logf("info", "node đã ghim – dùng kết quả đã lưu, không chạy")
 		return res, 0
 	}
 	e.miss = nil

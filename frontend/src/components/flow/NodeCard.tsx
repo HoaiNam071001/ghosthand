@@ -29,6 +29,7 @@ export default function NodeCard({ data, selected }: NodeProps<CardNode>) {
 
       <div style={{ height: NODE_HEAD }} className={`flex items-center gap-[7px] rounded-t-[9px] bg-cat-soft px-2 ${off ? 'opacity-50' : ''}`}>
         <span className="grid h-5 w-5 flex-none place-items-center rounded-[6px] bg-cat-tile text-cat"><StepIcon type={v.icon} className="h-3 w-3" /></span>
+        {v.pinned && <svg viewBox="0 0 24 24" className="h-3 w-3 flex-none text-warn" fill="currentColor" aria-label="Output đã ghim"><title>Output đã ghim – node không chạy, dùng kết quả đã lưu</title><path d="M9 3h6l-1 6 3 3v2h-4v6l-1 1-1-1v-6H7v-2l3-3z" /></svg>}
         {v.breakpoint && <span className="h-2 w-2 flex-none rounded-full bg-danger" title="Điểm dừng (debug)" />}
         <span className="min-w-0 flex-1 truncate text-[12.5px] font-semibold">{v.title}</span>
         <span className="flex-none font-mono text-[10.5px] text-muted">{off ? 'Tắt' : v.ref}</span>

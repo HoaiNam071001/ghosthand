@@ -27,6 +27,7 @@ export type FlowNodeView = {
   warn?: string; // cảnh báo kiểm tra (thiếu dữ liệu, không đi tới được…)
   chips?: string[];
   breakpoint?: boolean;
+  pinned?: boolean; // output đã ghim (pinStore) – node không chạy, dùng kết quả đã lưu
   run?: RunState;
   visits?: number; // số lần đã đi qua trong lần chạy
 };

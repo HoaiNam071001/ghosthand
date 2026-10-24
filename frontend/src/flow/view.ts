@@ -44,6 +44,7 @@ export const nodeTitle = (s: Step) => s.name || `${stepLabel(s)}${s.type === 'cl
 export type ViewOptions = {
   inputs?: (id: string) => number; // số input ghim vào node
   run?: Map<string, { run: RunState; visits?: number }>; // trạng thái lần chạy đang xem
+  pinned?: (id: string) => boolean; // output node đã ghim
 };
 
 export function nodeViews(sc: Pick<Script, 'steps' | 'start' | 'edges'>, opt: ViewOptions = {}): FlowNodeView[] {
@@ -66,6 +67,7 @@ export function nodeViews(sc: Pick<Script, 'steps' | 'start' | 'edges'>, opt: Vi
         ...(s.human && usesHuman(s) ? [`giống người: ${humanLabel(s.human)}`] : [])],
       warn: warningOf(s, ok.has(s.id), refs),
       breakpoint: s.breakpoint,
+      pinned: opt.pinned?.(s.id),
       run: r?.run,
       visits: r?.visits,
     };

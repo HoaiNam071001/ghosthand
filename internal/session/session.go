@@ -65,12 +65,14 @@ type Options struct {
 	Step      bool   `json:"step,omitempty"`   // debug: dừng trước mỗi node, Tiếp / F10 chạy node kế
 	// chạy một phần (AI – 31b): chạy xong node StopAt thì dừng; Nodes = chỉ chạy cụm node này (cạnh ra ngoài cụm bị bỏ);
 	// SeedRun = runId lần chạy trước – kết quả node + biến của nó nạp sẵn (chạy tiếp từ node lỗi với biến cũ)
-	StopAt     string   `json:"stopAt,omitempty"`
-	Nodes      []string `json:"nodes,omitempty"`
-	SeedRun    string   `json:"seedRun,omitempty"`
-	MaxMinutes int      `json:"maxMinutes,omitempty"` // trần thời gian lượt chạy (AI) – kịch bản đặt dài hơn / không đặt thì dùng trần này
-	ShotEach   bool     `json:"shotEach,omitempty"`   // chụp màn sau mỗi node thành công (AI xin – shots: each)
-	NoHistory  bool     `json:"noHistory,omitempty"`  // không ghi lịch sử chạy (AI chạy kịch bản tạm – 46 B1)
+	StopAt  string   `json:"stopAt,omitempty"`
+	Nodes   []string `json:"nodes,omitempty"`
+	SeedRun string   `json:"seedRun,omitempty"`
+	// Pins – node ghim (31c, chạy từ app): không chạy, dùng kết quả đã ghim (id node → kết quả)
+	Pins       map[string]model.StepResult `json:"pins,omitempty"`
+	MaxMinutes int                         `json:"maxMinutes,omitempty"` // trần thời gian lượt chạy (AI) – kịch bản đặt dài hơn / không đặt thì dùng trần này
+	ShotEach   bool                        `json:"shotEach,omitempty"`   // chụp màn sau mỗi node thành công (AI xin – shots: each)
+	NoHistory  bool                        `json:"noHistory,omitempty"`  // không ghi lịch sử chạy (AI chạy kịch bản tạm – 46 B1)
 	// dấu vân tay thao tác nguy hiểm người dùng vừa đồng ý (DangerCheck) – chạy được và ghi nhớ; trống = chỉ chạy khi đã đồng ý trước đó
 	ConfirmDanger string `json:"confirmDanger,omitempty"`
 }

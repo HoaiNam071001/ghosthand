@@ -165,3 +165,22 @@ func TestFlowInfiniteLoopLimit(t *testing.T) {
 		t.Fatalf("lỗi %v", err)
 	}
 }
+
+func TestFlowPinnedNodeNotRun(t *testing.T) {
+	sc := model.Script{Loops: 1, Start: "a", Steps: []model.Step{
+		modeltest.Node("a", "n1", model.StepText, func(s *model.Step) { s.Text = "gõ" }),
+		modeltest.Node("b", "n2", model.StepText, func(s *model.Step) { s.Text = "{{n1.output.ten}}" }),
+	}, Edges: []model.Edge{modeltest.Edge("a", model.PortSuccess, "b")}}
+	in := &devicetest.FakeInput{}
+	e := newEngine(in, sc, nil)
+	e.pins = map[string]model.StepResult{"a": {NodeID: "a", Status: model.StatusSuccess, Port: model.PortSuccess, Output: map[string]any{"ten": "Lan"}}}
+	if err := e.Run(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if r := e.results["a"]; r.Status != model.StatusSuccess || r.Output["ten"] != "Lan" || !strings.Contains(r.Logs[0].Msg, "ghim") {
+		t.Errorf("node ghim: %+v", r)
+	}
+	if got := strings.ReplaceAll(strings.Join(in.Lines(), "|"), "type ", ""); got != "L|a|n" {
+		t.Errorf("lệnh %q – node a không được chạy, node b gõ biến đã ghim", got)
+	}
+}

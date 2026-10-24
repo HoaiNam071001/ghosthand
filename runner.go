@@ -62,6 +62,11 @@ func (a *App) RunStatus(runID string) (session.Status, error) { return a.sess.St
 // ListRuns – lịch sử chạy của kịch bản (tên + đường dẫn file như lúc chạy), mới nhất trước.
 func (a *App) ListRuns(name, path string) []model.RunSummary { return store.RunsOf(name, path) }
 
+// Ghim output node (31c): kết quả giữ trên máy theo kịch bản (tên + file như lịch sử chạy), không ghi vào file kịch bản.
+func (a *App) GetPins(name, path string) map[string]model.StepResult { return store.Pins(name, path) }
+func (a *App) SetPin(name, path string, r model.StepResult) error    { return store.SetPin(name, path, r) }
+func (a *App) ClearPin(name, path, nodeID string) error              { return store.ClearPin(name, path, nodeID) }
+
 // GetRun – toàn bộ một lần chạy (nhật ký từng node).
 func (a *App) GetRun(name, path, id string) (model.RunRecord, error) {
 	return store.GetRun(name, path, id)

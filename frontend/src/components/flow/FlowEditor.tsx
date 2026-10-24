@@ -10,12 +10,16 @@ import { portsOf } from '../../flow/model';
 import { nodeViews } from '../../flow/view';
 import { runHead, runRows, runTrace } from '../../flow/run';
 import RunLog from './RunLog';
+import NodeMenu from './NodeMenu';
+import { nodeMenuItems } from './nodeMenuItems';
 import {
   applyLayout, clearInsertAt, connectPort, copySelected, insertAfterSelected, moveNode, pasteClip, removeEdge, removeSteps, selectNodes, selectStep,
   getEditor, setInsertAt, setRegion, toggleMultiStep, useEditor,
 } from '../../store';
 import { stepInputCount } from '../../scriptInputs';
 import { useEngine } from '../../engineStore';
+import { startRun } from '../../runForm';
+import { pinResult, unpin, usePins } from '../../pinStore';
 import { closeRunLog, shotUrl, useRunLog } from '../../runStore';
 import { openOverlay } from '../../windowMode';
 import type { Script } from '../../types';
@@ -31,6 +35,8 @@ export default function FlowEditor() {
   const log = useRunLog();
   const [palette, setPalette] = useState(false);
   const [fitKey, setFitKey] = useState(0);
+  const pins = usePins();
+  const [menu, setMenu] = useState<{ id: string; x: number; y: number }>();
   const [focus, setFocus] = useState<{ id: string; key: number }>();
 
   // Trạng thái chạy trên thẻ + cạnh đã đi: từ nhật ký lần đang xem (đóng nhật ký thì thôi tô).
@@ -40,7 +46,7 @@ export default function FlowEditor() {
     if (log.open && failedStep && !t.nodes.has(failedStep)) t.nodes.set(failedStep, { run: 'fail' });
     return t;
   }, [log.open, log.results, script.edges, running, progress?.nodeId, failedStep]);
-  const views = useMemo(() => nodeViews(script, { inputs: (id) => stepInputCount(script, id), run: trace.nodes }), [script, trace]);
+  const views = useMemo(() => nodeViews(script, { inputs: (id) => stepInputCount(script, id), run: trace.nodes, pinned: (id) => id in pins }), [script, trace, pins]);
   const rows = useMemo(() => (log.open ? runRows(log.results, script.steps, script.edges) : []), [log.open, log.results, script.steps, script.edges]);
   const head = runHead(log.results, log.summary, log.live, running);
   const jump = (id: string) => {
@@ -118,6 +124,7 @@ export default function FlowEditor() {
             setInsertAt({ from, port, pos: { x: Math.round(pos.x), y: Math.round(pos.y - 28) } });
             setPalette(true);
           }}
+          onNodeMenu={(id, c) => setMenu({ id, x: c.x, y: c.y })}
           onLayout={() => layoutOf(script).then((pos) => { applyLayout(pos); setFitKey((k) => k + 1); })} />
         {script.steps.length === 0 && (
           <p className="pointer-events-none absolute inset-0 grid place-items-center text-center text-muted">
@@ -131,6 +138,14 @@ export default function FlowEditor() {
           onSelect={jump} onClose={closeRunLog} loadShot={shotUrl} />
       )}
 
+      {menu && (
+        <NodeMenu x={menu.x} y={menu.y} title={script.steps.find((s) => s.id === menu.id)?.ref ?? ''} onClose={() => setMenu(undefined)}
+          items={nodeMenuItems({
+            id: menu.id, ref: script.steps.find((s) => s.id === menu.id)?.ref ?? '', running, picked, pinned: menu.id in pins,
+            last: log.results.findLast((r) => r.nodeId === menu.id), seedRun: log.live && !running ? log.summary?.id : undefined,
+            run: (dbg) => void startRun(false, dbg), pin: (r) => void pinResult(r), unpin: (id) => void unpin(id),
+          })} />
+      )}
       {palette && <AddStepPalette onClose={() => setPalette(false)} onCancel={clearInsertAt} />}
     </main>
   );

@@ -1740,6 +1740,7 @@ export namespace session {
 	    stopAt?: string;
 	    nodes?: string[];
 	    seedRun?: string;
+	    pins?: Record<string, model.StepResult>;
 	    maxMinutes?: number;
 	    shotEach?: boolean;
 	    noHistory?: boolean;
@@ -1761,11 +1762,30 @@ export namespace session {
 	        this.stopAt = source["stopAt"];
 	        this.nodes = source["nodes"];
 	        this.seedRun = source["seedRun"];
+	        this.pins = this.convertValues(source["pins"], model.StepResult, true);
 	        this.maxMinutes = source["maxMinutes"];
 	        this.shotEach = source["shotEach"];
 	        this.noHistory = source["noHistory"];
 	        this.confirmDanger = source["confirmDanger"];
 	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class Status {
 	    runId: string;

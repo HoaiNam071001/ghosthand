@@ -27,6 +27,8 @@ export function ClaudeDesktopConfigPath():Promise<string>;
 
 export function ClearDraft():Promise<void>;
 
+export function ClearPin(arg1:string,arg2:string,arg3:string):Promise<void>;
+
 export function ClearRuns(arg1:string,arg2:string):Promise<void>;
 
 export function ConfirmQuit():Promise<void>;
@@ -48,6 +50,8 @@ export function FlowGuide():Promise<model.FlowGuideDoc>;
 export function ForgetRecent(arg1:string):Promise<Array<string>>;
 
 export function GetInputMemory(arg1:string):Promise<store.InputMemory>;
+
+export function GetPins(arg1:string,arg2:string):Promise<Record<string, model.StepResult>>;
 
 export function GetRun(arg1:string,arg2:string,arg3:string):Promise<model.RunRecord>;
 
@@ -146,6 +150,8 @@ export function SetEditorState(arg1:string,arg2:boolean):Promise<void>;
 export function SetMCPSettings(arg1:store.MCPSettings):Promise<void>;
 
 export function SetOverlayDisplay(arg1:number):Promise<void>;
+
+export function SetPin(arg1:string,arg2:string,arg3:model.StepResult):Promise<void>;
 
 export function SetSchedule(arg1:model.Schedule):Promise<void>;
 

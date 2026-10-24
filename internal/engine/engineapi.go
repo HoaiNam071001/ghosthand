@@ -20,17 +20,18 @@ type Options struct {
 	Screen      model.Rect   // khung màn hình chính: kịch bản không có vùng thì neo theo khung này
 	Displays    []model.Rect // khung các màn (tìm "cả màn", kiểm tra vùng chụp); nil = không kiểm tra
 	OnProgress  func(Progress)
-	OnNode      func(model.StepResult) // mỗi node chạy xong
-	Debug       bool                   // dừng ở node có Breakpoint (chạy từ app)
-	StepMode    bool                   // dừng trước mỗi node (chạy từng node)
-	KeepShots   bool                   // chụp màn hình lúc node thất bại (lịch sử chạy)
-	ShotEach    bool                   // cùng KeepShots: chụp thêm sau mỗi node thành công (AI xin, shots: each – 31b)
-	Browser     web.Browser            // node web + node Mở bằng Chrome của app; nil = không có (node web lỗi code browser)
-	AllowDanger bool                   // cho thao tác nguy hiểm (xoá file, buộc thoát app, đóng cửa sổ) – runner đặt khi người dùng đã xác nhận (script.DangerOps)
-	StopAt      string                 // chạy xong node này thì dừng (kết thúc bình thường – Reached) – AI chạy đến node (31b)
-	Seed        *Carry                 // kết quả node + biến của lần chạy trước, nạp vào đầu vòng 1 – chạy tiếp từ node lỗi
-	Secrets     map[string]string      // giá trị {{secret.<tên>}} (kho bí mật, bước 43 S10) – chỉ các tên kịch bản dùng; giá trị bị che ở mọi kết quả rời engine
-	ShotsDir    string                 // thư mục ảnh trong Cài đặt cho node Chụp màn hình để trống saveDir ("" = Pictures/Ghosthand)
+	OnNode      func(model.StepResult)      // mỗi node chạy xong
+	Debug       bool                        // dừng ở node có Breakpoint (chạy từ app)
+	StepMode    bool                        // dừng trước mỗi node (chạy từng node)
+	KeepShots   bool                        // chụp màn hình lúc node thất bại (lịch sử chạy)
+	ShotEach    bool                        // cùng KeepShots: chụp thêm sau mỗi node thành công (AI xin, shots: each – 31b)
+	Browser     web.Browser                 // node web + node Mở bằng Chrome của app; nil = không có (node web lỗi code browser)
+	AllowDanger bool                        // cho thao tác nguy hiểm (xoá file, buộc thoát app, đóng cửa sổ) – runner đặt khi người dùng đã xác nhận (script.DangerOps)
+	StopAt      string                      // chạy xong node này thì dừng (kết thúc bình thường – Reached) – AI chạy đến node (31b)
+	Seed        *Carry                      // kết quả node + biến của lần chạy trước, nạp vào đầu vòng 1 – chạy tiếp từ node lỗi
+	Pins        map[string]model.StepResult // node ghim (31c): không chạy, trả luôn Output + cổng đã ghim (theo id node)
+	Secrets     map[string]string           // giá trị {{secret.<tên>}} (kho bí mật, bước 43 S10) – chỉ các tên kịch bản dùng; giá trị bị che ở mọi kết quả rời engine
+	ShotsDir    string                      // thư mục ảnh trong Cài đặt cho node Chụp màn hình để trống saveDir ("" = Pictures/Ghosthand)
 }
 
 // Carry – kết quả node (theo id) + biến {{vars.…}} của vòng cuối một lần chạy, để lần sau chạy tiếp mà biến node trước vẫn có.
@@ -61,7 +62,7 @@ func (e *Engine) TimedOut() bool { return e.timedOut }
 func New(in device.Input, sc model.Script, o Options) *Engine {
 	e := newEngine(in, sc, o.OnProgress)
 	e.screen, e.displays, e.onNode, e.debug, e.browser, e.allowDanger = o.Screen, o.Displays, o.OnNode, o.Debug, o.Browser, o.AllowDanger
-	e.stopAt, e.seed, e.shotsDir = o.StopAt, o.Seed, o.ShotsDir
+	e.stopAt, e.seed, e.shotsDir, e.pins = o.StopAt, o.Seed, o.ShotsDir, o.Pins
 	e.rv.secrets, e.mask = o.Secrets, newMasker(o.Secrets)
 	e.pasteAuto, e.imeCheck = goruntime.GOOS == "windows", true
 	e.step.Store(o.StepMode)

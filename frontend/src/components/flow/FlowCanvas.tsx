@@ -25,6 +25,7 @@ export type FlowCanvasProps = {
   onDeleteNodes?: (ids: string[]) => void; // Delete / Backspace: các node đang chọn (kèm cạnh) – một lần
   // kéo từ cổng ra rồi thả ở chỗ trống → mở bảng thêm node (client = toạ độ màn hình, flow = toạ độ canvas)
   onDropPort?: (from: string, port: string, client: { x: number; y: number }, flow: { x: number; y: number }) => void;
+  onNodeMenu?: (id: string, client: { x: number; y: number }) => void; // chuột phải thẻ node
   onLayout?: () => void;
   fitKey?: number; // đổi số → vừa màn hình (sau khi xếp lại)
   focus?: { id: string; key: number }; // đổi key → cuộn canvas cho node id ra giữa (giữ zoom)
@@ -41,7 +42,7 @@ export default function FlowCanvas(props: FlowCanvasProps) {
 }
 
 function Canvas({
-  nodes, edges, start, positions, selected, picked, onSelect, onSelectBox, onMove, onConnect, onDeleteEdge, onDeleteNodes, onDropPort, onLayout, fitKey, focus,
+  nodes, edges, start, positions, selected, picked, onSelect, onSelectBox, onMove, onConnect, onDeleteEdge, onDeleteNodes, onDropPort, onNodeMenu, onLayout, fitKey, focus,
   taken, activeEdge,
 }: FlowCanvasProps) {
   const { fitView, getZoom, screenToFlowPosition, setCenter, setViewport, zoomIn, zoomOut } = useReactFlow();
@@ -105,6 +106,7 @@ function Canvas({
       onNodesChange={onNodesChange}
       onNodeDragStop={(_, n) => onMove(n.id, { x: Math.round(n.position.x), y: Math.round(n.position.y) })}
       onNodeClick={(e, n) => { setEdgeSel(null); onSelect(n.id, e.shiftKey || e.metaKey || e.ctrlKey); }}
+      onNodeContextMenu={(e, n) => { if (!onNodeMenu) return; e.preventDefault(); onNodeMenu(n.id, { x: e.clientX, y: e.clientY }); }}
       onEdgeClick={(_, e) => { setEdgeSel(e.id); onSelect(null); }}
       onPaneClick={() => { setEdgeSel(null); onSelect(null); }}
       onConnect={(c) => c.sourceHandle && onConnect(c.source, c.sourceHandle, c.target)}
