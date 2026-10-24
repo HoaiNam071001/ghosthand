@@ -9,6 +9,7 @@ import (
 	"ghosthand/internal/device"
 	"ghosthand/internal/mcpsrv"
 	"ghosthand/internal/model"
+	"ghosthand/internal/perm"
 	"ghosthand/internal/session"
 	"ghosthand/internal/store"
 	"ghosthand/internal/web"
@@ -119,6 +120,8 @@ func (b mcpBackend) NoteCapture() {
 		b.a.emit("ai:capture", nil)
 	}
 }
+
+func (b mcpBackend) Permissions() []perm.Item { return perm.Check(perm.System{}) }
 
 func (b mcpBackend) SecretNames() []string { return store.Secrets().Names() }
 

@@ -16,6 +16,7 @@ import (
 	"ghosthand/internal/device/devicetest"
 	"ghosthand/internal/element"
 	"ghosthand/internal/model"
+	"ghosthand/internal/perm"
 	"ghosthand/internal/session"
 	"ghosthand/internal/store"
 	"ghosthand/internal/web"
@@ -30,6 +31,7 @@ type fakeBackend struct {
 	opened        []string
 	sess          *session.Manager // phiên chạy thật, thiết bị giả (runBackend trong run_test.go)
 	in            *devicetest.FakeInput
+	perms         []perm.Item
 	settings      store.MCPSettings // tool tắt (31b2)
 	page          web.PageCheck     // probe_page trả (44)
 	outline       web.Outline       // read_web_outline trả (46)
@@ -70,6 +72,7 @@ func (f *fakeBackend) Recent() []string             { return f.recent }
 func (f *fakeBackend) Editor() Editor               { return f.editor }
 func (f *fakeBackend) ScriptsDir() (string, error)  { return f.dir, nil }
 func (f *fakeBackend) OpenInApp(path string) error  { f.opened = append(f.opened, path); return nil }
+func (f *fakeBackend) Permissions() []perm.Item     { return f.perms }
 func (f *fakeBackend) SecretNames() []string        { return []string{"mat_khau_email"} }
 func (f *fakeBackend) Displays() []Display {
 	return []Display{{Rect: model.Rect{W: 1920, H: 1080}, Scale: 1, Main: true}}

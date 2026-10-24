@@ -6,6 +6,7 @@ import {main} from '../models';
 import {engine} from '../models';
 import {store} from '../models';
 import {mcpsrv} from '../models';
+import {perm} from '../models';
 import {session} from '../models';
 import {samples} from '../models';
 
@@ -91,6 +92,8 @@ export function OpenAppBrowser(arg1:string):Promise<void>;
 
 export function OpenFolder(arg1:string):Promise<void>;
 
+export function OpenPermissionSettings(arg1:string):Promise<void>;
+
 export function OpenSample(arg1:string):Promise<model.Script>;
 
 export function OpenSandboxPage(arg1:string):Promise<void>;
@@ -102,6 +105,8 @@ export function OpenScriptPath(arg1:string):Promise<main.ScriptFile>;
 export function OverlayDisplayFor(arg1:model.Rect):Promise<number>;
 
 export function PauseScript():Promise<boolean>;
+
+export function Permissions():Promise<Array<perm.Item>>;
 
 export function PickElement(arg1:string):Promise<web.Picked>;
 
@@ -118,6 +123,8 @@ export function PreviewText(arg1:model.Step):Promise<main.TextPreview>;
 export function RecentScripts():Promise<Array<string>>;
 
 export function RemoveSchedule(arg1:string):Promise<void>;
+
+export function RequestPermission(arg1:string):Promise<perm.Item>;
 
 export function RequestScreenCapture():Promise<boolean>;
 

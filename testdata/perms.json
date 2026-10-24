@@ -1,0 +1,428 @@
+{
+  "_doc": "Quyền hệ điều hành mà node cần (bước 48 P2): perm.NeedsOf (internal/perm/needs.go) ↔ needsOf (frontend/src/flow/perms.ts). Thứ tự kết quả cố định.",
+  "cases": [
+    {
+      "name": "click",
+      "step": {
+        "type": "click"
+      },
+      "want": [
+        "accessibility"
+      ]
+    },
+    {
+      "name": "chờ ảnh",
+      "step": {
+        "type": "waitImage"
+      },
+      "want": [
+        "screenRecording"
+      ]
+    },
+    {
+      "name": "chờ phần tử",
+      "step": {
+        "type": "waitImage",
+        "findBy": "element"
+      },
+      "want": [
+        "accessibility"
+      ]
+    },
+    {
+      "name": "click theo chữ",
+      "step": {
+        "type": "clickImage",
+        "findBy": "text"
+      },
+      "want": [
+        "accessibility",
+        "screenRecording"
+      ]
+    },
+    {
+      "name": "click theo chỗ node khác tìm",
+      "step": {
+        "type": "clickImage",
+        "imageSource": "node"
+      },
+      "want": [
+        "accessibility"
+      ]
+    },
+    {
+      "name": "click theo phần tử",
+      "step": {
+        "type": "clickImage",
+        "findBy": "element"
+      },
+      "want": [
+        "accessibility"
+      ]
+    },
+    {
+      "name": "đọc phần tử cạnh nhãn",
+      "step": {
+        "type": "elementRead",
+        "readNear": "right"
+      },
+      "want": [
+        "accessibility",
+        "screenRecording"
+      ]
+    },
+    {
+      "name": "chụp màn hình",
+      "step": {
+        "type": "screenshot"
+      },
+      "want": [
+        "screenRecording"
+      ]
+    },
+    {
+      "name": "Nếu lồng ảnh + phần tử",
+      "step": {
+        "type": "if",
+        "cond": {
+          "kind": "all",
+          "conds": [
+            {
+              "kind": "image"
+            },
+            {
+              "kind": "element"
+            }
+          ]
+        }
+      },
+      "want": [
+        "accessibility",
+        "screenRecording"
+      ]
+    },
+    {
+      "name": "Nếu so giá trị",
+      "step": {
+        "type": "if",
+        "cond": {
+          "kind": "value"
+        }
+      },
+      "want": []
+    },
+    {
+      "name": "switchScreen theo màu",
+      "step": {
+        "type": "switchScreen",
+        "cases": [
+          {
+            "key": "a",
+            "cond": {
+              "kind": "pixel"
+            }
+          }
+        ]
+      },
+      "want": [
+        "screenRecording"
+      ]
+    },
+    {
+      "name": "tab Chrome",
+      "step": {
+        "type": "browserTab"
+      },
+      "want": [
+        "autoChrome"
+      ]
+    },
+    {
+      "name": "tab Edge",
+      "step": {
+        "type": "browserTab",
+        "browser": "edge"
+      },
+      "want": []
+    },
+    {
+      "name": "chuẩn hoá trình duyệt",
+      "step": {
+        "type": "browserNorm",
+        "browser": "chrome"
+      },
+      "want": [
+        "accessibility",
+        "autoChrome",
+        "autoSystemEvents"
+      ]
+    },
+    {
+      "name": "lưu PDF",
+      "step": {
+        "type": "savePdf"
+      },
+      "want": [
+        "accessibility",
+        "autoChrome"
+      ]
+    },
+    {
+      "name": "xoá vào Thùng rác",
+      "step": {
+        "type": "file",
+        "fileOp": "trash"
+      },
+      "want": [
+        "autoFinder"
+      ]
+    },
+    {
+      "name": "ghi file thường",
+      "step": {
+        "type": "file"
+      },
+      "want": []
+    },
+    {
+      "name": "đổi giao diện sáng tối",
+      "step": {
+        "type": "display",
+        "displayOp": "theme"
+      },
+      "want": [
+        "autoSystemEvents"
+      ]
+    },
+    {
+      "name": "đọc màn hình",
+      "step": {
+        "type": "display"
+      },
+      "want": []
+    },
+    {
+      "name": "khoá màn",
+      "step": {
+        "type": "power",
+        "powerOp": "lock"
+      },
+      "want": [
+        "accessibility",
+        "autoSystemEvents"
+      ]
+    },
+    {
+      "name": "ngủ",
+      "step": {
+        "type": "power",
+        "powerOp": "sleep"
+      },
+      "want": []
+    },
+    {
+      "name": "bật tắt tiếng Việt",
+      "step": {
+        "type": "inputSource",
+        "inputOp": "toggleIME"
+      },
+      "want": [
+        "accessibility"
+      ]
+    },
+    {
+      "name": "thông báo",
+      "step": {
+        "type": "notify"
+      },
+      "want": [
+        "notifications"
+      ]
+    },
+    {
+      "name": "HTTP",
+      "step": {
+        "type": "http"
+      },
+      "want": []
+    },
+    {
+      "name": "gõ vào ô web (chuột thật)",
+      "step": {
+        "type": "webType"
+      },
+      "want": [
+        "accessibility"
+      ]
+    },
+    {
+      "name": "gõ phím web qua CDP",
+      "step": {
+        "type": "webKey"
+      },
+      "want": []
+    },
+    {
+      "name": "điều khiển / đọc qua accessibility: double",
+      "step": {
+        "type": "double"
+      },
+      "want": [
+        "accessibility"
+      ]
+    },
+    {
+      "name": "điều khiển / đọc qua accessibility: hold",
+      "step": {
+        "type": "hold"
+      },
+      "want": [
+        "accessibility"
+      ]
+    },
+    {
+      "name": "điều khiển / đọc qua accessibility: drag",
+      "step": {
+        "type": "drag"
+      },
+      "want": [
+        "accessibility"
+      ]
+    },
+    {
+      "name": "điều khiển / đọc qua accessibility: type",
+      "step": {
+        "type": "type"
+      },
+      "want": [
+        "accessibility"
+      ]
+    },
+    {
+      "name": "điều khiển / đọc qua accessibility: key",
+      "step": {
+        "type": "key"
+      },
+      "want": [
+        "accessibility"
+      ]
+    },
+    {
+      "name": "điều khiển / đọc qua accessibility: scroll",
+      "step": {
+        "type": "scroll"
+      },
+      "want": [
+        "accessibility"
+      ]
+    },
+    {
+      "name": "điều khiển / đọc qua accessibility: path",
+      "step": {
+        "type": "path"
+      },
+      "want": [
+        "accessibility"
+      ]
+    },
+    {
+      "name": "điều khiển / đọc qua accessibility: webClick",
+      "step": {
+        "type": "webClick"
+      },
+      "want": [
+        "accessibility"
+      ]
+    },
+    {
+      "name": "điều khiển / đọc qua accessibility: webScroll",
+      "step": {
+        "type": "webScroll"
+      },
+      "want": [
+        "accessibility"
+      ]
+    },
+    {
+      "name": "điều khiển / đọc qua accessibility: pageText",
+      "step": {
+        "type": "pageText"
+      },
+      "want": [
+        "accessibility"
+      ]
+    },
+    {
+      "name": "điều khiển / đọc qua accessibility: readTable",
+      "step": {
+        "type": "readTable"
+      },
+      "want": [
+        "accessibility"
+      ]
+    },
+    {
+      "name": "điều khiển / đọc qua accessibility: elementAction",
+      "step": {
+        "type": "elementAction"
+      },
+      "want": [
+        "accessibility"
+      ]
+    },
+    {
+      "name": "điều khiển / đọc qua accessibility: readDocument",
+      "step": {
+        "type": "readDocument"
+      },
+      "want": [
+        "accessibility"
+      ]
+    },
+    {
+      "name": "điều khiển / đọc qua accessibility: waitUIEvent",
+      "step": {
+        "type": "waitUIEvent"
+      },
+      "want": [
+        "accessibility"
+      ]
+    },
+    {
+      "name": "chờ pixel",
+      "step": {
+        "type": "waitPixel"
+      },
+      "want": [
+        "screenRecording"
+      ]
+    },
+    {
+      "name": "chờ màn hình",
+      "step": {
+        "type": "waitScreen"
+      },
+      "want": [
+        "screenRecording"
+      ]
+    },
+    {
+      "name": "tìm tất cả",
+      "step": {
+        "type": "findAll"
+      },
+      "want": [
+        "screenRecording"
+      ]
+    },
+    {
+      "name": "đi tới URL",
+      "step": {
+        "type": "browserGo"
+      },
+      "want": [
+        "autoChrome"
+      ]
+    }
+  ]
+}

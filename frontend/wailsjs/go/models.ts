@@ -1663,6 +1663,33 @@ export namespace model {
 
 }
 
+export namespace perm {
+	
+	export class Item {
+	    id: string;
+	    name: string;
+	    state: string;
+	    hint: string;
+	    note: string;
+	    manual: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Item(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.name = source["name"];
+	        this.state = source["state"];
+	        this.hint = source["hint"];
+	        this.note = source["note"];
+	        this.manual = source["manual"];
+	    }
+	}
+
+}
+
 export namespace samples {
 	
 	export class Info {

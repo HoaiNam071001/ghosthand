@@ -58,6 +58,7 @@ import InputsTab from './stepform/InputsTab';
 import { HumanNodeField } from './HumanFields';
 import { usesHuman } from '../flow/human';
 import { nodeInfo } from '../flow/nodeInfo';
+import PermNotice from './stepform/PermNotice';
 
 // Loại node hành động đổi qua lại được trong ô loại node ở đầu (node điều khiển có trường riêng, không đổi loại)
 const REF_RE = /^[A-Za-z][A-Za-z0-9_]{0,31}$/; // khớp validRef (flow.go)
@@ -96,6 +97,7 @@ export default function StepForm({ step: s }: { step: Step }) {
         </div>
 
         {tab === 'inputs' ? <InputsTab /> : <>
+          <PermNotice step={s} />
           {/* node Chờ: chỉ có thời gian chờ – không hiện khối Thiết lập trống, mở sẵn khối Thời gian */}
           {s.type !== 'wait' && <Section title="Thiết lập" scope={s.type} defaultOpen>
             {isControl(s.type) ? <ControlSection step={s} /> : (

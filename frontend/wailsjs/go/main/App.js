@@ -166,6 +166,10 @@ export function OpenFolder(arg1) {
   return window['go']['main']['App']['OpenFolder'](arg1);
 }
 
+export function OpenPermissionSettings(arg1) {
+  return window['go']['main']['App']['OpenPermissionSettings'](arg1);
+}
+
 export function OpenSample(arg1) {
   return window['go']['main']['App']['OpenSample'](arg1);
 }
@@ -188,6 +192,10 @@ export function OverlayDisplayFor(arg1) {
 
 export function PauseScript() {
   return window['go']['main']['App']['PauseScript']();
+}
+
+export function Permissions() {
+  return window['go']['main']['App']['Permissions']();
 }
 
 export function PickElement(arg1) {
@@ -220,6 +228,10 @@ export function RecentScripts() {
 
 export function RemoveSchedule(arg1) {
   return window['go']['main']['App']['RemoveSchedule'](arg1);
+}
+
+export function RequestPermission(arg1) {
+  return window['go']['main']['App']['RequestPermission'](arg1);
 }
 
 export function RequestScreenCapture() {

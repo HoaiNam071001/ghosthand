@@ -249,3 +249,8 @@
 - **2026-10-24** – 31c: ghim output node (store/pins.go, engine.Options.Pins, pinStore.ts) + menu chuột phải node (Chạy đến / cụm / tiếp từ / ghim). go vet + go test + npm build/test xanh; chưa thử tay.
 - **2026-10-24** – 31c: simulate_script (engine/simulate.go + mcpsrv/tools_simulate.go). go vet + go test xanh; chưa thử tay.
 - **2026-10-24** – 31c: run_step + draft (mcpsrv/tools_draft.go), chấm đỏ AI chụp màn hình (ai:capture) – xong mục con cuối của 31c. go vet + go test + npm build/test xanh; chưa thử tay.
+- **2026-10-24** – Kế hoạch (người dùng yêu cầu): bước 48 Kiểm tra quyền trước khi chạy (tab Quyền + cảnh báo node / trước Chạy; macOS trước). Chưa code.
+- **2026-10-24** – 48 P1: internal/perm (Check/Request/OpenSettings, System macOS) + permapi.go. go vet + test xanh; chưa có UI.
+- **2026-10-24** – 48 P2: perm.NeedsOf/Needs + flow/perms.ts + testdata/perms.json (test bắt loại node chưa khai báo quyền), cập nhật skill add-node-type. go vet + go test + npm build/test xanh.
+- **2026-10-24** – 48 P3: tab Cài đặt → Quyền (settings/PermSettings + store/permStore.ts). go vet/test + npm build/test xanh; chưa thử tay.
+- 2026-10-24 48 P4: cảnh báo thiếu quyền (thẻ node, inspector, hộp thoại trước Chạy, AI check_permissions/missingPermissions)

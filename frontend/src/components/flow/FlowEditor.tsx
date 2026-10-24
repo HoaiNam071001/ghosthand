@@ -8,6 +8,8 @@ import { Region } from '../icons';
 import { layoutFlow } from '../../flow/layout';
 import { portsOf } from '../../flow/model';
 import { nodeViews } from '../../flow/view';
+import { missingOf, needsOf } from '../../flow/perms';
+import { usePerms } from '../../store/permStore';
 import { runHead, runRows, runTrace } from '../../flow/run';
 import RunLog from './RunLog';
 import NodeMenu from './NodeMenu';
@@ -46,7 +48,13 @@ export default function FlowEditor() {
     if (log.open && failedStep && !t.nodes.has(failedStep)) t.nodes.set(failedStep, { run: 'fail' });
     return t;
   }, [log.open, log.results, script.edges, running, progress?.nodeId, failedStep]);
-  const views = useMemo(() => nodeViews(script, { inputs: (id) => stepInputCount(script, id), run: trace.nodes, pinned: (id) => id in pins }), [script, trace, pins]);
+  const { items: permItems } = usePerms();
+  const views = useMemo(() => nodeViews(script, { inputs: (id) => stepInputCount(script, id), run: trace.nodes, pinned: (id) => id in pins }).map((v) => {
+    const step = script.steps.find((s) => s.id === v.id);
+    if (!step?.enabled) return v;
+    const lack = missingOf(permItems, needsOf(step)).map((id) => permItems?.find((it) => it.id === id)?.name ?? id);
+    return lack.length ? { ...v, warn: [v.warn, `Thiếu quyền: ${lack.join(', ')}`].filter(Boolean).join('\n') } : v;
+  }), [script, trace, pins, permItems]);
   const rows = useMemo(() => (log.open ? runRows(log.results, script.steps, script.edges) : []), [log.open, log.results, script.steps, script.edges]);
   const head = runHead(log.results, log.summary, log.live, running);
   const jump = (id: string) => {

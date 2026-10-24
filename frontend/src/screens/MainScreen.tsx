@@ -11,6 +11,8 @@ import RunDialog from '../components/inputs/RunDialog';
 import { newScript, openScript, save, useFile } from '../scriptFile';
 import SaveChangesDialog from '../components/SaveChangesDialog';
 import DangerConfirmDialog from '../components/DangerConfirmDialog';
+import PermConfirmDialog from '../components/PermConfirmDialog';
+import { watchPerms } from '../store/permStore';
 import AIRunDialog from '../components/AIRunDialog';
 import TitleBar from '../components/TitleBar';
 import Library from '../components/Library';
@@ -39,6 +41,8 @@ export default function MainScreen() {
   useEffect(() => {
     loadMemory();
   }, [path, script.name]);
+
+  useEffect(watchPerms, []);
 
   // Toạ độ chuột thật ở status bar – để đọc nhanh toạ độ khi nhập tay.
   const [mouse, setMouse] = useState<Point | null>(null);
@@ -96,6 +100,7 @@ export default function MainScreen() {
       </StatusBar>
       <SaveChangesDialog />
       <DangerConfirmDialog />
+      <PermConfirmDialog />
       <AIRunDialog />
       {runForm.open && (
         <RunDialog scriptName={script.name} inputs={inputViews(script)} sections={runSections(script)}

@@ -16,6 +16,7 @@ import (
 	"ghosthand/internal/element"
 	"ghosthand/internal/engine"
 	"ghosthand/internal/model"
+	"ghosthand/internal/perm"
 	"ghosthand/internal/session"
 	"ghosthand/internal/store"
 	"ghosthand/internal/vision"
@@ -48,8 +49,9 @@ type Backend interface {
 	WriteScript(path string, sc model.Script, revision int) (int, error)
 	OpenInApp(path string) error
 	Displays() []Display
-	NoteCapture()          // AI vừa chụp / đọc màn hình – app báo người dùng (chấm đỏ trên thanh mini, tắt được trong Cài đặt)
-	SecretNames() []string // tên bí mật trong kho (bước 43 S10) – KHÔNG bao giờ có giá trị
+	NoteCapture()             // AI vừa chụp / đọc màn hình – app báo người dùng (chấm đỏ trên thanh mini, tắt được trong Cài đặt)
+	Permissions() []perm.Item // quyền hệ điều hành + trạng thái (bước 48) – không bật hộp thoại
+	SecretNames() []string    // tên bí mật trong kho (bước 43 S10) – KHÔNG bao giờ có giá trị
 
 	// Chạy (31b): Run hỏi quyền theo công tắc AI (Cài đặt) rồi session.Start kịch bản sc (đọc từ path; path "" = kịch bản
 	// tạm AI gửi kèm – 46 B1); Wait / Trace / Stop theo runId.

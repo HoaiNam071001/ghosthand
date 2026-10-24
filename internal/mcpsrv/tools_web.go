@@ -7,6 +7,7 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
+	"ghosthand/internal/perm"
 	"ghosthand/internal/store"
 	"ghosthand/internal/web"
 )
@@ -52,7 +53,9 @@ func (s *Server) addWebTools() {
 		"(id, title, url; đứng đầu = đang dùng) – truyền id vào tab để đọc / ghim tab khác; dialog true = chỉ hộp thoại đang mở (form antd). " +
 		"Khác probe_page: không mở trang, không dò captcha – dùng khi trang đã mở và đang thao tác dở (popup, hộp thoại)."}, s.readWebOutline)
 	addTool(s, KindRead, &mcp.Tool{Name: "get_preferences", Description: "Cài đặt của app ảnh hưởng cách soạn: nodePref (vision | web), " +
-		"mức chạy của AI (run)."}, s.getPrefs)
+		"mức chạy của AI (run), quyền hệ điều hành đang thiếu (missingPermissions)."}, s.getPrefs)
+	addTool(s, KindRead, &mcp.Tool{Name: "check_permissions", Description: "Quyền hệ điều hành (macOS) và trạng thái từng quyền: granted | denied | unknown | notNeeded. " +
+		"Kiểm tra không bật hộp thoại. Gọi trước khi soạn / chạy node cần quyền (chuột, phím, chụp màn hình, Chrome…) để biết quyền nào thiếu – nhờ người dùng cấp ở Cài đặt → Quyền, đừng chạy thử rồi mới biết lỗi permission."}, s.checkPerms)
 	addTool(s, KindSettings, &mcp.Tool{Name: "set_node_preference", Description: "Đổi ưu tiên node khi soạn: vision = node ảnh / chữ (mặc định), " +
 		"web = thử trang (probe_page) trước, không captcha thì dùng node web. Đổi ngay, app báo người dùng; guide (get_step_types) theo mức mới."}, s.setPref)
 }
@@ -85,7 +88,7 @@ func isWebURL(u string) bool {
 
 func (s *Server) getPrefs(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp.CallToolResult, any, error) {
 	m := s.back.MCP()
-	return ok(map[string]any{"nodePref": m.NodePreference(), "run": m.RunMode()})
+	return ok(map[string]any{"nodePref": m.NodePreference(), "run": m.RunMode(), "missingPermissions": perm.DeniedOf(s.back.Permissions())})
 }
 
 func (s *Server) setPref(_ context.Context, _ *mcp.CallToolRequest, in prefIn) (*mcp.CallToolResult, any, error) {
@@ -119,4 +122,8 @@ func webTabs(tabs []web.Tab) []web.Tab {
 		}
 	}
 	return out
+}
+
+func (s *Server) checkPerms(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp.CallToolResult, any, error) {
+	return ok(map[string]any{"permissions": s.back.Permissions()})
 }

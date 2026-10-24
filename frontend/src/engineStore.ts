@@ -1,6 +1,8 @@
 import { useSyncExternalStore } from 'react';
 import { DangerCheck, InBackground, RunScript, ValidateScript } from '../wailsjs/go/main/App';
 import { askDanger } from './dangerConfirm';
+import { askPerm } from './permConfirm';
+import { missingForRun } from './store/permStore';
 import { model, session } from '../wailsjs/go/models';
 import { EventsOn } from '../wailsjs/runtime/runtime';
 import { getPins } from './pinStore';
@@ -99,6 +101,8 @@ export async function runScript(script: Script, countdown: boolean, values: Reco
   let confirmDanger = ''; // kịch bản có thao tác nguy hiểm chưa đồng ý → hỏi (dangerConfirm.ts), Go ghi nhớ khi chạy
   try {
     await ValidateScript(sc, values);
+    const lacking = await missingForRun(script);
+    if (lacking.length && !(await askPerm(lacking.map((x) => x.name)))) return;
     const chk = await DangerCheck(sc, values, path);
     if (chk.ops?.length && !chk.confirmed) {
       if (!(await askDanger(chk.ops))) return;

@@ -1,5 +1,5 @@
 // Cài đặt app (nút bánh răng trên thanh tiêu đề), chia tab: Lưu trữ – thư mục kịch bản / ảnh (bước 41, settings/StorageSettings),
-// Bí mật – kho mật khẩu / token (bước 43 S10, settings/SecretsSettings), API – dòng lệnh + API local (bước 22, settings/ApiSettings), AI qua MCP (bước 31, settings/McpSettings).
+// Bí mật – kho mật khẩu / token (bước 43 S10, settings/SecretsSettings), Quyền – quyền hệ điều hành (bước 48, settings/PermSettings), API – dòng lệnh + API local (bước 22, settings/ApiSettings), AI qua MCP (bước 31, settings/McpSettings).
 import { useEffect, useState } from 'react';
 import {
   GetSettings, OpenFolder, PickFolder, SetAPISettings, SetMCPSettings, SetStorageSettings, StorageDefaults,
@@ -8,29 +8,43 @@ import { store } from '../../wailsjs/go/models';
 import { EventsOn } from '../../wailsjs/runtime/runtime';
 import { errorText } from '../engineStore';
 import { Gear } from './icons';
+import { needs } from '../flow/perms';
+import { onOpenSettings, SettingsTab } from '../settingsNav';
+import { openPermSettings, refreshPerms, requestPerm, usePerms } from '../store/permStore';
+import { useScript } from '../store/editor';
 import ApiSettings from './settings/ApiSettings';
 import McpSettings from './settings/McpSettings';
+import PermSettings from './settings/PermSettings';
 import SecretsSettings from './settings/SecretsSettings';
 import StorageSettings, { StorageKey } from './settings/StorageSettings';
 import Segmented from './Segmented';
 
-type Tab = 'storage' | 'secrets' | 'api' | 'mcp';
-const TABS: { id: Tab; label: string }[] = [{ id: 'storage', label: 'Lưu trữ' }, { id: 'secrets', label: 'Bí mật' }, { id: 'api', label: 'API' }, { id: 'mcp', label: 'AI (MCP)' }];
+type Tab = SettingsTab;
+const TABS: { id: Tab; label: string }[] = [{ id: 'storage', label: 'Lưu trữ' }, { id: 'secrets', label: 'Bí mật' }, { id: 'perms', label: 'Quyền' }, { id: 'api', label: 'API' }, { id: 'mcp', label: 'AI (MCP)' }];
 
 export default function AppSettings() {
   const [open, setOpen] = useState(false);
   const [settings, setSettings] = useState<store.Settings | null>(null);
   const [error, setError] = useState('');
   const [tab, setTab] = useState<Tab>('storage');
+  const perms = usePerms();
+  const script = useScript();
   const [defaults, setDefaults] = useState<store.StorageDefaults | null>(null);
 
-  const toggle = () => {
-    if (!open) {
-      GetSettings().then(setSettings).catch((e) => setError(errorText(e)));
-      StorageDefaults().then(setDefaults).catch((e) => setError(errorText(e)));
-    }
-    setOpen(!open);
+  const show = () => {
+    GetSettings().then(setSettings).catch((e) => setError(errorText(e)));
+    StorageDefaults().then(setDefaults).catch((e) => setError(errorText(e)));
+    setOpen(true);
   };
+  const toggle = () => (open ? setOpen(false) : show());
+  useEffect(() => onOpenSettings((t) => { setTab(t); show(); }), []);
+  useEffect(() => {
+    if (!open || tab !== 'perms') return;
+    // cấp quyền xong ở System Settings rồi quay lại app → tự kiểm tra lại
+    refreshPerms();
+    window.addEventListener('focus', refreshPerms);
+    return () => window.removeEventListener('focus', refreshPerms);
+  }, [open, tab]);
   useEffect(() => {
     if (!open) return;
     // AI đổi ưu tiên node lúc đang mở Cài đặt (44) – cập nhật để lần lưu sau không ghi đè bằng giá trị cũ
@@ -79,6 +93,10 @@ export default function AppSettings() {
               <StorageSettings storage={settings.storage ?? {}} defaults={defaults} onPick={pick} onOpen={openDir} onReset={(key) => saveStorage(key, '')} />
             )}
             {tab === 'secrets' && <SecretsSettings onError={setError} />}
+            {tab === 'perms' && (
+              <PermSettings items={perms.items} needed={needs(script)} busy={perms.busy} error={perms.error}
+                onRefresh={refreshPerms} onRequest={requestPerm} onOpen={openPermSettings} />
+            )}
             {tab === 'api' && <ApiSettings api={settings.api} onChange={saveApi} />}
             {tab === 'mcp' && <McpSettings mcp={settings.mcp} onChange={saveMcp} />}
             {error && <span className="text-danger-text">{error}</span>}

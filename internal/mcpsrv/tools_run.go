@@ -9,6 +9,7 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
 	"ghosthand/internal/model"
+	"ghosthand/internal/perm"
 	"ghosthand/internal/script"
 	"ghosthand/internal/session"
 )
@@ -191,7 +192,11 @@ func (s *Server) report(ctx context.Context, id string, sc model.Script, waitS *
 		return fail(err)
 	}
 	imgs, widths := shotImages(tr, want)
-	res, _, err := ok(traceView(tr, sc, widths))
+	view := traceView(tr, sc, widths)
+	if miss := perm.Missing(s.back.Permissions(), perm.Needs(sc)); len(miss) > 0 {
+		view["missingPermissions"] = miss // node cần quyền macOS chưa cấp → lỗi permission; nhờ người dùng cấp (Cài đặt → Quyền)
+	}
+	res, _, err := ok(view)
 	if err != nil {
 		return nil, nil, err
 	}

@@ -4,6 +4,7 @@ import (
 	"strings"
 	"testing"
 
+	"ghosthand/internal/perm"
 	"ghosthand/internal/web"
 )
 
@@ -89,5 +90,18 @@ func TestScreenshotWebTab(t *testing.T) {
 	back.outline.URL = "file:///C:/a.html"
 	if out, isErr := call(t, cs, "screenshot", map[string]any{"webTab": "a.html"}); !isErr {
 		t.Errorf("tab file:// phải bị từ chối: %v", out)
+	}
+}
+
+func TestCheckPermissions(t *testing.T) {
+	cs, fb := connect(t)
+	fb.perms = []perm.Item{{ID: perm.Accessibility, State: perm.Denied}, {ID: perm.ScreenRecording, State: perm.Granted}}
+	out, isErr := call(t, cs, "check_permissions", nil)
+	if isErr || len(out["permissions"].([]any)) != 2 {
+		t.Fatalf("check_permissions: %v", out)
+	}
+	pref, _ := call(t, cs, "get_preferences", nil)
+	if miss, _ := pref["missingPermissions"].([]any); len(miss) != 1 {
+		t.Errorf("get_preferences phải báo 1 quyền thiếu: %v", pref)
 	}
 }

@@ -3,6 +3,14 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## 48 – Kiểm tra quyền trước khi chạy (P1–P4) · [phase3/48-kiem-tra-quyen.md](phase3/48-kiem-tra-quyen.md)
+
+- [ ] Cài đặt → tab Quyền (macOS): Trợ năng / Ghi màn hình / Tự động hoá Chrome · Finder · System Events hiện đúng trạng thái so với System Settings; mở tab không bật hộp thoại nào của hệ điều hành
+- [ ] Bấm *Cấp quyền* ở Tự động hoá Chrome (Chrome đang mở) → macOS hỏi → Cho phép → dòng đổi sang ✓; bấm *Mở System Settings* mở đúng mục Privacy; bật/tắt ở đó rồi quay lại app → tự cập nhật không cần bấm
+- [ ] Mở kịch bản có node Chụp màn hình / Tab trình duyệt: quyền tương ứng nằm đầu danh sách kèm nhãn “kịch bản này dùng”
+- [ ] Tắt quyền Ghi màn hình (System Settings) rồi mở kịch bản có node Chụp màn hình: thẻ node có dấu ! (tooltip “Thiếu quyền…”), inspector có dòng cảnh báo + nút *Mở Cài đặt → Quyền* nhảy đúng tab; bấm Chạy / F8 → hộp thoại liệt kê quyền thiếu, *Vẫn chạy* chạy tiếp, *Mở Cài đặt* mở tab Quyền, Esc huỷ
+- [ ] Cấp lại quyền, quay về app → dấu ! và dòng cảnh báo tự biến mất, Chạy không hỏi nữa
+
 ## 31c – MCP: ảnh mẫu AI tự khoanh · [phase3/31-mcp-ai.md](phase3/31-mcp-ai.md)
 
 - [ ] Trên Claude Code: `screenshot` một trang → `capture_template` khoanh một nút → `find_image` báo `found` + `center` đúng nút → `create_script` với `clickImage` có `"template": "tpl:1"`; mở kịch bản thấy node có ảnh mẫu thật (không còn chữ `tpl:`) và chạy click đúng nút (thử cả Retina)

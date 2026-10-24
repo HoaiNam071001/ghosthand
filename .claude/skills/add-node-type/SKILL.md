@@ -32,6 +32,7 @@ description: Thêm một loại node mới vào flow (vd focus cửa sổ, web D
 - [ ] `flow/nodeInfo.ts` `NODE_INFO`: mô tả *làm gì* + *dùng khi* cho người dùng (test bắt thiếu loại).
 - [ ] Bảng thêm node (`components/palette/groups.ts`): mục mới, nhóm đúng, từ khoá tìm không dấu, `info: NODE_INFO.<loại>, key: '<loại>'`, `type: '<loại>'` nếu là loại node thuần (để hiện khi Đổi loại node).
 - [ ] Hoạt hoạ minh hoạ: thêm cảnh `<loại>` vào file nhóm trong `components/palette/illus/` (ghép phần tử ở `parts.tsx`, xem ở `#demo-illus`); `illus.test.ts` đỏ nếu thiếu.
+- [ ] Quyền hệ điều hành: node cần quyền nào (Accessibility, Screen Recording, Automation, Thông báo) thì thêm vào `internal/perm/needs.go` (`addStep`) **và** `frontend/src/flow/perms.ts`, thêm ca vào `testdata/perms.json`; node không cần quyền nào thì thêm tên vào `noPermTypes` (`perm/needs_test.go`) và `NO_PERM` (`flow/perms.test.ts`) – hai test đỏ nếu quên.
 - [ ] Inspector: hành động → `components/stepform/<Nhóm>Fields.tsx` (+ đăng ký trong `StepForm.tsx`); điều khiển → `components/flow/nodes/`. Dùng `Field` / `NumField` / `PickButton` / `VarTextInput`.
 - [ ] Node cần điểm trên màn hình → overlay (`store/points`, `OverlayScreen`), `Simulation` (xem trước).
 - [ ] Bỏ phần *Sắp có* tương ứng trong `components/steps/` nếu có.
