@@ -104,3 +104,28 @@ func TestTextMissApprox(t *testing.T) {
 		t.Error("OCR Windows: thiếu approx")
 	}
 }
+
+// Trình duyệt đã Thử trang đó → detail web kèm kết luận (captcha / canvas…) để AI không đổ lỗi cho selector.
+type checkedBrowser struct {
+	*fakeBrowser
+	check web.PageCheck
+}
+
+func (b checkedBrowser) LastCheck(u string) (web.PageCheck, bool) {
+	return b.check, u == b.check.URL
+}
+
+func TestWebMissDetailPageCheck(t *testing.T) {
+	fb := &fakeBrowser{finds: []web.Found{{Selector: -1, Tab: "https://game-a.vn/choi"}}}
+	b := checkedBrowser{fb, web.PageCheck{Verdict: web.PageCaptcha, Signs: []string{"reCAPTCHA"}, URL: "https://game-a.vn/choi"}}
+	_, res, _ := runWeb(t, b, webNode(model.StepWebClick, nil))
+	d, _ := json.Marshal(res[0].Error.Detail)
+	wantAll(t, "pageCheck", string(d), `"pageCheck":{"signs":["reCAPTCHA"],"url":"https://game-a.vn/choi","useWeb":false,"verdict":"captcha"}`)
+
+	// Bản giả không nhớ Thử trang → không có khoá pageCheck.
+	_, res, _ = runWeb(t, &fakeBrowser{finds: []web.Found{{Selector: -1, Tab: "https://x.vn"}}}, webNode(model.StepWebClick, nil))
+	d, _ = json.Marshal(res[0].Error.Detail)
+	if strings.Contains(string(d), "pageCheck") {
+		t.Errorf("chưa thử trang mà vẫn có pageCheck: %s", d)
+	}
+}

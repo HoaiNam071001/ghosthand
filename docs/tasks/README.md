@@ -139,7 +139,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 chờ kiểm tra tay | [31c. MCP – AI soạn bằng cách thử + ảnh mẫu](phase3/31-mcp-ai.md) | 5 / 5 | [7 việc](checks.md) |
 | 🟡 đang làm | [31d. AI bên trong flow](phase3/31-mcp-ai.md) | 7 / 11 |  |
 | ✅ xong | [41. Nơi lưu kịch bản / ảnh chụp + xoá lịch sử](phase3/41-noi-luu-lich-su.md) | 4 / 4 |  |
-| 🟡 đang làm | [44. Thử trang trên Chrome của app + ưu tiên node cho AI](phase3/44-thu-trang-uu-tien-node.md) | 6 / 8 | [8 việc](checks.md) |
+| 🟡 đang làm | [44. Thử trang trên Chrome của app + ưu tiên node cho AI](phase3/44-thu-trang-uu-tien-node.md) | 8 / 8 | [8 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [45. Đổi tên app thành Ghosthand](phase3/45-doi-ten-ghosthand.md) | 5 / 5 | [6 việc](checks.md) |
 | 🟡 đang làm | [46. MCP web – tinh chỉnh](phase3/46-mcp-web-tinh-chinh.md) | 9 / 11 | [10 việc](checks.md) |
 | 🟡 đang làm | [47. Hình minh hoạ động cho từng node](phase3/47-hinh-minh-hoa-node.md) | 6 / 7 | [3 việc](checks.md) |

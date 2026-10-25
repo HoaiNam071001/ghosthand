@@ -19,7 +19,8 @@ import (
 //   chờ màu:         {kind: pixel, point, actual, want, tolerance}
 //   phần tử:         {kind: element, selectors, read (số phần tử đã đọc), count, near[{role, name, box, score}]}
 //   web:             {kind: web, selectors, perSelector[{selector, shown, hidden}], tab, matched, count, hidden, covered,
-//                     moving, offView, loading, hover, noTab, outline[{role, name, sel, …}] (không selector nào khớp)
+//                     moving, offView, loading, hover, noTab, outline[{role, name, sel, …}] (không selector nào khớp),
+//                     pageCheck {verdict, useWeb, signs, url} (nếu đã Thử trang đó – captcha / canvas / chặn)
 //   quyền (permission): {permission: id quyền thiếu – khớp perm.ID, xem Cài đặt → Quyền}
 //   cửa sổ:          {kind: window, app, title, near[{title, app, box, minimized, score}]}
 //   ứng dụng:        {kind: app, app, running[] (khớp tên – vd chưa có cửa sổ / chưa thoát), near[{name, id, score}]}
@@ -128,7 +129,7 @@ func elementMiss(selectors []string, nodes []element.Node, r element.Result, q e
 }
 
 // webMiss – trạng thái lần tìm cuối; chỉ ghi trường có giá trị cho gọn. near: phần tử trong outline giống cách tìm.
-func webMiss(f webTry, lines []string, near []web.OutlineItem) map[string]any {
+func webMiss(f webTry, lines []string, near []web.OutlineItem, check *web.PageCheck) map[string]any {
 	d := map[string]any{"kind": "web", "selectors": lines, "tab": f.Tab, "count": f.Count}
 	var per []map[string]any
 	for i, c := range f.Counts {
@@ -141,6 +142,9 @@ func webMiss(f webTry, lines []string, near []web.OutlineItem) map[string]any {
 	}
 	if near != nil {
 		d["outline"] = near
+	}
+	if check != nil { // lần Thử trang gần nhất: captcha / canvas / chặn → lỗi do trang chứ không do selector
+		d["pageCheck"] = map[string]any{"verdict": check.Verdict, "useWeb": check.UseWeb, "signs": check.Signs, "url": check.URL}
 	}
 	if f.Selector >= 0 && f.Selector < len(lines) {
 		d["matched"] = lines[f.Selector]

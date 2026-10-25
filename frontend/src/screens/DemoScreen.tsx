@@ -9,6 +9,7 @@ import ScheduleDialog, { Schedule, ScheduleRow } from '../components/ScheduleDia
 import { GroupFrame, StaticCard } from '../components/StepCard';
 import RunDialog from '../components/inputs/RunDialog';
 import DemoInspector from '../demo/DemoInspector';
+import PageCheckDemo from '../demo/PageCheckDemo';
 import {
   demoInputs, demoItems, demoLibrary, demoNumbers, demoPresets, demoRunSections, DemoStep, findDemoStep,
 } from '../demo/demoScript';
@@ -49,7 +50,8 @@ export default function DemoScreen() {
           <div className="flex items-center gap-2.5">
             <h1 className="text-base font-semibold">Các bước</h1>
             <span className="text-muted">10 bước, 1 nhóm</span>
-            <span className="ml-auto rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-semibold text-accent-text">Màn mẫu #demo</span>
+            <span className="ml-auto"><PageCheckDemo /></span>
+            <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-semibold text-accent-text">Màn mẫu #demo</span>
           </div>
           <ol className="flex flex-col gap-1.5">
             {demoItems.map((it) => it.type === 'group'

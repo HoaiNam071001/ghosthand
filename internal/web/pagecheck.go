@@ -93,8 +93,12 @@ func (c *Chrome) CheckPage(ctx context.Context, u string) (PageCheck, error) {
 	pc := classifyPage(s, o.Total, loaded)
 	pc.Outline = o.Items[:min(len(o.Items), maxCheckList)]
 	pc.Tab, pc.Tabs = t.id, c.Status(ctx).Tabs
+	c.checks.put(pc)
 	return pc, nil
 }
+
+// LastCheck – kết quả Thử trang gần nhất của trang tabURL (cùng URL hoặc cùng host); chưa thử thì ok = false.
+func (c *Chrome) LastCheck(tabURL string) (PageCheck, bool) { return c.checks.lookup(tabURL) }
 
 // Dấu hiệu theo src iframe / câu chữ (chữ thường).
 var (

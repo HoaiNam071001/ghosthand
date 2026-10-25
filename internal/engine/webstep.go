@@ -73,7 +73,7 @@ func (e *Engine) webFindQ(ctx context.Context, s model.Step, q web.Query, lines 
 				near = outlineNear(o, q.Selectors)
 			}
 		}
-		return last, lines, &notFoundErr{msg: webMissMsg(s, last, lines, gone), detail: webMiss(last, lines, near)}
+		return last, lines, &notFoundErr{msg: webMissMsg(s, last, lines, gone), detail: webMiss(last, lines, near, e.lastPageCheck(last.Tab))}
 	}
 	return last, lines, err
 }
@@ -209,4 +209,20 @@ func (e *Engine) openInBrowser(ctx context.Context, url string) error {
 		return errNoBrowserOpt
 	}
 	return e.browser.Open(ctx, url)
+}
+
+// pageChecker – trình duyệt nhớ kết quả Thử trang (web.Chrome); bản giả không cần cài.
+type pageChecker interface {
+	LastCheck(tabURL string) (web.PageCheck, bool)
+}
+
+func (e *Engine) lastPageCheck(tabURL string) *web.PageCheck {
+	pcr, ok := e.browser.(pageChecker)
+	if !ok || tabURL == "" {
+		return nil
+	}
+	if pc, ok := pcr.LastCheck(tabURL); ok {
+		return &pc
+	}
+	return nil
 }

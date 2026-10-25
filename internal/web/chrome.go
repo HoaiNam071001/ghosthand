@@ -29,8 +29,9 @@ type Chrome struct {
 	alloc  context.Context
 	cancel context.CancelFunc
 	tabs   map[string]*tabConn
-	prefer string   // tab vừa mở bằng Open – mặc định của node web không lọc tab
-	last   *tabConn // tab của lần Find (Scroll) thấy gần nhất – Hover dùng
+	prefer string    // tab vừa mở bằng Open – mặc định của node web không lọc tab
+	last   *tabConn  // tab của lần Find (Scroll) thấy gần nhất – Hover dùng
+	checks checkMemo // kết quả Thử trang gần nhất theo URL (checkmemo.go)
 }
 
 type tabConn struct {

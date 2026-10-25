@@ -99,7 +99,7 @@ func webNode(typ string, mod func(*model.Step)) model.Step {
 	})
 }
 
-func runWeb(t *testing.T, b *fakeBrowser, steps ...model.Step) (*devicetest.FakeInput, []model.StepResult, error) {
+func runWeb(t *testing.T, b web.Browser, steps ...model.Step) (*devicetest.FakeInput, []model.StepResult, error) {
 	t.Helper()
 	in := &devicetest.FakeInput{}
 	var res []model.StepResult
