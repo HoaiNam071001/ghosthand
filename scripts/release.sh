@@ -16,6 +16,7 @@ git rev-parse "v$V" >/dev/null 2>&1 && { echo "Tag v$V đã có"; exit 1; }
 
 VERSION="$V" scripts/mac-build.sh
 DMG="build/bin/Ghosthand-$V.dmg"
+shasum -a 256 "$DMG" | cut -d' ' -f1 > "$DMG.sha256"   # app kiểm mã này trước khi tự cài
 
 git push origin main
 git tag "v$V"
@@ -23,8 +24,8 @@ git push origin "v$V"    # kích hoạt build Windows trên GitHub
 
 # Windows có thể đã tạo Release trước; có rồi thì chỉ đính thêm .dmg
 if gh release view "v$V" >/dev/null 2>&1; then
-  gh release upload "v$V" "$DMG" --clobber
+  gh release upload "v$V" "$DMG" "$DMG.sha256" --clobber
 else
-  gh release create "v$V" "$DMG" --title "Ghosthand $V" --generate-notes
+  gh release create "v$V" "$DMG" "$DMG.sha256" --title "Ghosthand $V" --generate-notes
 fi
 echo "Xong. Bản Windows (setup + portable) sẽ tự đính vào Release sau vài phút: gh run watch"

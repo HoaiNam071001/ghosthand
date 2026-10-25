@@ -30,6 +30,6 @@ make release V=1.0.1   # build .dmg + đẩy main + tag v1.0.1 + tạo GitHub Re
 
 Tag `v*.*.*` kích hoạt workflow *Release Windows* (`.github/workflows/release-windows.yml`) tự build `setup.exe` + `portable.zip` và đính vào cùng Release (theo dõi: `gh run watch`).
 
-**Báo bản mới** – app hỏi GitHub Releases (`releases/latest`) khoảng 5 giây sau khi mở, hoặc bấm *Cài đặt → Giới thiệu → Kiểm tra bản mới*. Chỉ báo, không tự cài; chỉ `git push` thì app không biết – phải có Release với tag số cao hơn bản đang chạy. Bản tự build không gắn số (`dev`) không nhắc.
+**Báo bản mới** – app hỏi GitHub Releases (`releases/latest`) khoảng 5 giây sau khi mở, hoặc bấm *Cài đặt → Giới thiệu → Kiểm tra bản mới*. Bấm *Cập nhật ngay* thì app tự tải (kiểm sha256), cài đè và mở lại – macOS thay app trong chỗ đang chạy (quyền giữ nguyên), Windows chạy bộ cài im lặng (hỏi UAC) hoặc thay exe với bản không cài đặt; không làm khi đang chạy kịch bản / kịch bản chưa lưu; chỉ `git push` thì app không biết – phải có Release với tag số cao hơn bản đang chạy. Bản tự build không gắn số (`dev`) không nhắc.
 
 Kế hoạch và tiến độ: [docs/tasks/](docs/tasks/README.md). Hướng dẫn cho Claude Code: [CLAUDE.md](CLAUDE.md).

@@ -22,17 +22,23 @@ const Repo = "HoaiNam071001/ghosthand"
 
 // Info – kết quả một lần kiểm tra.
 type Info struct {
-	Current string `json:"current"`
-	Latest  string `json:"latest"` // không kèm "v"
-	URL     string `json:"url"`    // trang tải của bản mới nhất
-	Notes   string `json:"notes"`  // ghi chú phát hành (cắt ngắn)
-	Newer   bool   `json:"newer"`  // Latest mới hơn Current
+	Current string  `json:"current"`
+	Latest  string  `json:"latest"` // không kèm "v"
+	URL     string  `json:"url"`    // trang tải của bản mới nhất
+	Notes   string  `json:"notes"`  // ghi chú phát hành (cắt ngắn)
+	Newer   bool    `json:"newer"`  // Latest mới hơn Current
+	Assets  []Asset `json:"assets"` // file đính kèm Release – install.go chọn đúng file cho máy này
 }
 
 type release struct {
-	Tag  string `json:"tag_name"`
-	URL  string `json:"html_url"`
-	Body string `json:"body"`
+	Tag    string `json:"tag_name"`
+	URL    string `json:"html_url"`
+	Body   string `json:"body"`
+	Assets []struct {
+		Name string `json:"name"`
+		URL  string `json:"browser_download_url"`
+		Size int64  `json:"size"`
+	} `json:"assets"`
 }
 
 const maxNotes = 600
@@ -71,7 +77,11 @@ func Check(ctx context.Context, base string) (Info, error) {
 	if len([]rune(notes)) > maxNotes {
 		notes = string([]rune(notes)[:maxNotes]) + "…"
 	}
-	return Info{Current: Version, Latest: latest, URL: r.URL, Notes: notes, Newer: Newer(Version, latest)}, nil
+	info := Info{Current: Version, Latest: latest, URL: r.URL, Notes: notes, Newer: Newer(Version, latest)}
+	for _, a := range r.Assets {
+		info.Assets = append(info.Assets, Asset{Name: a.Name, URL: a.URL, Size: a.Size})
+	}
+	return info, nil
 }
 
 // Newer: latest > current theo số phiên bản (1.2.10 > 1.2.9). Bản "dev" hoặc chuỗi không đọc được → false (không nhắc).

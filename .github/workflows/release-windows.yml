@@ -49,6 +49,8 @@ jobs:
           cd build/bin
           mv ghosthand-amd64-installer.exe "Ghosthand-$VER-setup.exe"
           zip "Ghosthand-$VER-portable.zip" ghosthand.exe
+          # mã sha256 đi kèm từng file – app kiểm trước khi tự cài (internal/update)
+          for f in "Ghosthand-$VER-setup.exe" "Ghosthand-$VER-portable.zip"; do sha256sum "$f" | cut -d' ' -f1 > "$f.sha256"; done
           cd ../..
           gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --generate-notes
-          gh release upload "$TAG" "build/bin/Ghosthand-$VER-setup.exe" "build/bin/Ghosthand-$VER-portable.zip" --clobber
+          gh release upload "$TAG" build/bin/Ghosthand-$VER-setup.exe{,.sha256} build/bin/Ghosthand-$VER-portable.zip{,.sha256} --clobber

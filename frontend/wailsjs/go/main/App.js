@@ -122,6 +122,10 @@ export function InBackground() {
   return window['go']['main']['App']['InBackground']();
 }
 
+export function InstallUpdate() {
+  return window['go']['main']['App']['InstallUpdate']();
+}
+
 export function ListApps() {
   return window['go']['main']['App']['ListApps']();
 }

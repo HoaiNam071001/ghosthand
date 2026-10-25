@@ -72,6 +72,8 @@ export function GetSettings():Promise<store.Settings>;
 
 export function InBackground():Promise<boolean>;
 
+export function InstallUpdate():Promise<void>;
+
 export function ListApps():Promise<Array<model.AppInfo>>;
 
 export function ListRuns(arg1:string,arg2:string):Promise<Array<model.RunSummary>>;

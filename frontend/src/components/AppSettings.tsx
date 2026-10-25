@@ -12,7 +12,7 @@ import { needs } from '../flow/perms';
 import { onOpenSettings, SettingsTab } from '../settingsNav';
 import { openPermSettings, refreshPerms, requestPerm, usePerms } from '../store/permStore';
 import { useScript } from '../store/editor';
-import { checkUpdate, loadVersion, openReleasePage, useUpdate } from '../store/updateStore';
+import { checkUpdate, installUpdate, loadVersion, openReleasePage, useUpdate } from '../store/updateStore';
 import AboutSettings from './settings/AboutSettings';
 import ApiSettings from './settings/ApiSettings';
 import McpSettings from './settings/McpSettings';
@@ -104,7 +104,7 @@ export default function AppSettings() {
             )}
             {tab === 'api' && <ApiSettings api={settings.api} onChange={saveApi} />}
             {tab === 'mcp' && <McpSettings mcp={settings.mcp} onChange={saveMcp} />}
-            {tab === 'about' && <AboutSettings version={upd.version} info={upd.info} busy={upd.busy} error={upd.error} onCheck={checkUpdate} onOpen={openReleasePage} />}
+            {tab === 'about' && <AboutSettings version={upd.version} info={upd.info} busy={upd.busy} error={upd.error} progress={upd.progress} onCheck={checkUpdate} onOpen={openReleasePage} onInstall={installUpdate} />}
             {error && <span className="text-danger-text">{error}</span>}
           </div>
         </div>

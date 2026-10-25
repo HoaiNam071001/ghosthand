@@ -263,3 +263,4 @@
 - 2026-10-25 macOS: bundle ID app.ghosthand + scripts/mac-build.sh (ký tự tạo + dmg) để giữ quyền qua các bản build
 - 2026-10-25 Báo bản mới: internal/update (GitHub Releases), Cài đặt → Giới thiệu, version gắn qua ldflags (mac-build.sh + workflow Windows)
 - 2026-10-25 Phát hành: Makefile + scripts/release.sh / win-build.sh + workflow release-windows.yml (setup + portable); chưa chạy thật trên GitHub
+- 2026-10-25 Tự cập nhật: PickAsset / Download (sha256) / Install mac + Windows (cài, portable), nút Cập nhật ngay; Release đính kèm .sha256; chưa thử thật trên GitHub / Windows

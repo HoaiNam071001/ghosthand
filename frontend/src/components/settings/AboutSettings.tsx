@@ -2,8 +2,18 @@
 // AppSettings nối updateStore.
 import { update } from '../../../wailsjs/go/models';
 
-export default function AboutSettings({ version, info, busy, error, onCheck, onOpen }: {
-  version: string; info: update.Info | null; busy: boolean; error: string; onCheck: () => void; onOpen: (url: string) => void;
+const PHASE: Record<string, string> = { install: 'Đang cài…', restart: 'Xong – đang mở lại app…' };
+
+// Dòng tiến độ lúc Cập nhật ngay: tải (% / MB) → cài → mở lại.
+function progressText(p: { phase: string; done: number; total: number }) {
+  if (p.phase !== 'download') return PHASE[p.phase] ?? '';
+  const mb = (n: number) => (n / 1048576).toFixed(1);
+  return p.total > 0 ? `Đang tải… ${Math.round((p.done / p.total) * 100)} % (${mb(p.done)} / ${mb(p.total)} MB)` : 'Đang tải…';
+}
+
+export default function AboutSettings({ version, info, busy, error, progress, onCheck, onOpen, onInstall }: {
+  version: string; info: update.Info | null; busy: boolean; error: string; progress: { phase: string; done: number; total: number } | null;
+  onCheck: () => void; onOpen: (url: string) => void; onInstall: () => void;
 }) {
   const btn = 'h-7 rounded-control border border-line px-2.5 text-xs hover:bg-hover disabled:opacity-50';
   return (
@@ -17,11 +27,16 @@ export default function AboutSettings({ version, info, busy, error, onCheck, onO
         <div className="flex flex-col gap-1.5 rounded-control bg-soft p-2.5">
           <span className="font-semibold text-accent-text">Có bản mới v{info.latest}</span>
           {info.notes && <span className="whitespace-pre-line text-xs text-muted">{info.notes}</span>}
-          <button onClick={() => onOpen(info.url)} className={`${btn} self-start`}>Mở trang tải</button>
+          {progress ? <span className="text-xs text-accent-text">{progressText(progress)}</span> : (
+            <span className="flex gap-1.5">
+              {version !== 'dev' && <button onClick={onInstall} className="btn-primary h-7 rounded-control px-3 text-xs text-on-accent">Cập nhật ngay</button>}
+              <button onClick={() => onOpen(info.url)} className={btn}>Mở trang tải</button>
+            </span>
+          )}
         </div>
       )}
       {error && <span className="text-danger-text">{error}</span>}
-      <span className="text-xs text-muted">Chỉ báo có bản mới, không tự cài. Cài bản mới bằng cách chép đè lên app cũ trong Applications – quyền đã cấp được giữ (macOS).</span>
+      <span className="text-xs text-muted">Cập nhật ngay tải bản mới (kiểm tra mã sha256), cài đè và mở lại app; quyền đã cấp được giữ (macOS). Không làm khi đang chạy kịch bản hoặc kịch bản chưa lưu.</span>
     </>
   );
 }

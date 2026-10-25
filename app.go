@@ -43,6 +43,8 @@ type App struct {
 
 	web        *web.Chrome        // Chrome của app cho giao diện (webapi.go) – tạo lười
 	pickCancel context.CancelFunc // huỷ lần Chọn phần tử đang chờ
+
+	upd updateState // bản mới đã hỏi được + đang cập nhật (updateapi.go)
 }
 
 // NewApp creates a new App application struct
