@@ -15,6 +15,7 @@ Desktop app tự động click theo kịch bản (flow node + cạnh kiểu n8n:
 ```bash
 wails dev                      # chạy app (hot reload). wails nằm ở ~/go/bin
 wails build                    # build ra build/bin/
+scripts/mac-build.sh            # macOS: build + ký chứng chỉ tự tạo "Ghosthand Dev" + .dmg – giữ quyền Accessibility / Screen Recording qua các bản build (bundle ID cố định app.ghosthand)
 # exe Windows: GitHub Actions "Build Windows" mỗi lần push (tab Actions → Artifacts); build chéo tại máy: CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc wails build -platform windows/amd64 -skipbindings
 go vet ./... && go test ./...  # Go (thiết bị giả)
 cd frontend && npm run build   # type-check (tsc) + build – sau mỗi thay đổi TS

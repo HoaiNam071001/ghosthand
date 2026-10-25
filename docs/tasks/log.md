@@ -260,3 +260,4 @@
 - **2026-10-24** – 24 Ghi macro (internal/record, recordapi.go, store/record, mục Ghi thao tác trong menu Chạy). go vet/test, tsc, vitest OK; chưa thử tay.
 - 2026-10-25 39: màu nhóm + update_script nhận groups
 - 2026-10-25 44: màn #demo có hộp Thử trang; error.detail web kèm pageCheck
+- 2026-10-25 macOS: bundle ID app.ghosthand + scripts/mac-build.sh (ký tự tạo + dmg) để giữ quyền qua các bản build
