@@ -3,6 +3,12 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## 49 – Cài đặt rộng, thanh overlay đặt cạnh + co giãn, Lịch sử xem mọi output · [phase3/49-cai-dat-overlay-lich-su.md](phase3/49-cai-dat-overlay-lich-su.md)
+- [ ] Mở Cài đặt: hộp thoại rộng (~760px), cao cố định, đổi qua lại các tab không nhảy cỡ; tab MCP / Quyền không tràn
+- [ ] Cài đặt → Chọn vùng: chọn Trái → mở Chọn vùng: thanh xếp dọc giữa cạnh trái, hiện khi chuột sát cạnh trái, ẩn khi rời; thử Phải / Dưới / Trên (Dưới có thể bị Dock che)
+- [ ] Có 2 màn hình: mở overlay ở màn to rồi bấm chọn màn nhỏ hơn → thanh tự gọn (ẩn nhãn, chỉ icon, có tooltip), không bị che / tràn; quay lại màn to → hiện lại nhãn. Thử cả Xem trước, Sửa điểm, xem riêng một node
+- [ ] Chạy một kịch bản có node đọc chữ / HTTP… → Thư viện → Lịch sử chạy (hoặc Nhật ký dưới canvas) → tab *Tất cả output*: thấy output mọi node, nhiều vòng có "vòng N"; nút chép từng node / tất cả dán ra JSON đúng; biến bí mật vẫn bị che
+
 ## 24 – Ghi macro · [phase3/24-ghi-macro.md](phase3/24-ghi-macro.md)
 - [ ] Menu Chạy ▾ → *Ghi thao tác*: app thu nhỏ; click vài chỗ, kéo một đoạn, cuộn, gõ chữ, bấm Enter, Ctrl/⌘+C rồi F9 (macOS: fn+F9) → app hiện lại, có khung *Ghi hh:mm:ss* với đúng các node; nối vào flow rồi Chạy lại → thao tác lặp lại đúng chỗ, nhịp nghỉ gần như lúc ghi
 - [ ] Cuộn lăn xuống ra node hướng *down* (không ngược); click đôi nhanh ra một node *Số lần = 2*; ghi trên kịch bản có vùng riêng → click vẫn đúng chỗ; macOS: cấp quyền Accessibility / Input Monitoring nếu không ghi được

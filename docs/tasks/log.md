@@ -264,3 +264,5 @@
 - 2026-10-25 Báo bản mới: internal/update (GitHub Releases), Cài đặt → Giới thiệu, version gắn qua ldflags (mac-build.sh + workflow Windows)
 - 2026-10-25 Phát hành: Makefile + scripts/release.sh / win-build.sh + workflow release-windows.yml (setup + portable); chưa chạy thật trên GitHub
 - 2026-10-25 Tự cập nhật: PickAsset / Download (sha256) / Install mac + Windows (cài, portable), nút Cập nhật ngay; Release đính kèm .sha256; chưa thử thật trên GitHub / Windows
+- 2026-10-25 Kế hoạch (người dùng yêu cầu): bước 49 – Cài đặt rộng ~760px, thanh overlay đặt top/left/right/bottom + co giãn theo màn, Lịch sử xem mọi output
+- **2026-10-25** – Bước 49 xong code: modal Cài đặt 760px, tab Chọn vùng (cạnh thanh overlay, `overlay/toolbarLayout.ts` – dọc / ngang, ẩn nhãn theo cỡ màn), Lịch sử tab Tất cả output (`flow/runOutputs.ts`). go vet + npm build + npm test OK; `TestBrowserNormalize` đỏ sẵn từ trước (không liên quan); chưa thử tay (checks.md mục 49).

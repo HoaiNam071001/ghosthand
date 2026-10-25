@@ -3,20 +3,21 @@ import { ReactNode } from 'react';
 import { main } from '../../../wailsjs/go/models';
 import type { Mapping } from '../../coordMap';
 import { Point, Rect, Step } from '../../types';
+import type { BarSide } from '../../overlay/toolbarLayout';
 
 // Gợi ý gọn một dòng giữa phía trên – cũng là tab mở thanh công cụ (rê vào / đưa chuột sát mép trên).
-export function HintPill({ barOpen, onEnter, onLeave, icon, title, hint, extra, notice }: {
-  barOpen: boolean; onEnter: () => void; onLeave: () => void; icon: ReactNode; title: string; hint: string; extra?: string; notice?: string;
+export function HintPill({ side, barOpen, onEnter, onLeave, icon, title, hint, extra, notice }: {
+  side: BarSide; barOpen: boolean; onEnter: () => void; onLeave: () => void; icon: ReactNode; title: string; hint: string; extra?: string; notice?: string;
 }) {
   return (
-    <div data-ui onMouseEnter={onEnter} onMouseLeave={onLeave} style={{ top: barOpen ? 76 : 8 }}
+    <div data-ui onMouseEnter={onEnter} onMouseLeave={onLeave} style={{ top: barOpen && side === 'top' ? 76 : 8 }}
       className="absolute left-1/2 flex h-8 max-w-[min(760px,calc(100vw-48px))] -translate-x-1/2 cursor-default items-center gap-2 whitespace-nowrap rounded-full border border-hud-line bg-hud/95 pr-3.5 pl-1.5 text-[12px] text-hud-text shadow-[0_6px_18px_rgb(0_0_0/.3)] transition-[top] duration-150">
       <span className="grid h-[22px] w-[22px] flex-none place-items-center rounded-full bg-accent-soft text-accent-text">{icon}</span>
       <b className="font-semibold text-white">{title}</b>
       <span className="min-w-0 truncate text-hud-text/75">{hint}</span>
       {extra && <span className="truncate font-mono text-[#FF8CC6]">{extra}</span>}
       {notice && <span className="truncate text-ok">· {notice}</span>}
-      {!barOpen && <svg width="10" height="10" viewBox="0 0 10 10" className="flex-none text-hud-text/50" aria-hidden><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>}
+      {!barOpen && side === 'top' && <svg width="10" height="10" viewBox="0 0 10 10" className="flex-none text-hud-text/50" aria-hidden><path d="M2 3.5 5 6.5 8 3.5" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>}
     </div>
   );
 }

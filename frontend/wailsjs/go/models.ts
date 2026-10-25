@@ -2063,6 +2063,18 @@ export namespace store {
 	        this.nodePref = source["nodePref"];
 	    }
 	}
+	export class OverlaySettings {
+	    toolbar?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new OverlaySettings(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.toolbar = source["toolbar"];
+	    }
+	}
 	export class StorageSettings {
 	    scriptsDir?: string;
 	    aiScriptsDir?: string;
@@ -2085,6 +2097,7 @@ export namespace store {
 	    api: APISettings;
 	    mcp: MCPSettings;
 	    storage: StorageSettings;
+	    overlay: OverlaySettings;
 	
 	    static createFrom(source: any = {}) {
 	        return new Settings(source);
@@ -2097,6 +2110,7 @@ export namespace store {
 	        this.api = this.convertValues(source["api"], APISettings);
 	        this.mcp = this.convertValues(source["mcp"], MCPSettings);
 	        this.storage = this.convertValues(source["storage"], StorageSettings);
+	        this.overlay = this.convertValues(source["overlay"], OverlaySettings);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

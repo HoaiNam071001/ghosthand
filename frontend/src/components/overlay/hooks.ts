@@ -1,10 +1,11 @@
 // Hook nhỏ của overlay.
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Displays, SetOverlayDisplay } from '../../../wailsjs/go/main/App';
+import { Displays, GetSettings, SetOverlayDisplay } from '../../../wailsjs/go/main/App';
 import { main } from '../../../wailsjs/go/models';
 import { inWails } from '../../windowMode';
 import { applyCapture } from '../../imageSteps';
 import { Rect } from '../../types';
+import { BarSide, toBarSide } from '../../overlay/toolbarLayout';
 
 const BAR_HIDE_MS = 350; // rời thanh / gợi ý bao lâu thì ẩn
 const BAR_INTRO_MS = 2500; // mở overlay: hiện thanh một lúc cho dễ thấy
@@ -37,6 +38,24 @@ export function useAutoHideBar() {
     return () => clearTimeout(timer.current);
   }, []);
   return { open, show, leave };
+}
+
+// Cạnh đặt thanh công cụ (Cài đặt → Chọn vùng); đọc lúc mở overlay.
+export function useBarSide() {
+  const [side, setSide] = useState<BarSide>('top');
+  useEffect(() => { if (inWails) GetSettings().then((s) => setSide(toBarSide(s.overlay?.toolbar))).catch(() => {}); }, []);
+  return side;
+}
+
+// Cỡ vùng nhìn thấy của overlay – đổi khi chuyển sang màn hình khác (cửa sổ đổi cỡ theo màn).
+export function useViewport() {
+  const [vp, setVp] = useState({ w: window.innerWidth, h: window.innerHeight });
+  useEffect(() => {
+    const on = () => setVp({ w: window.innerWidth, h: window.innerHeight });
+    window.addEventListener('resize', on);
+    return () => window.removeEventListener('resize', on);
+  }, []);
+  return vp;
 }
 
 // true trong ms sau mỗi lần value đổi (khác rỗng) – thông báo hiện vài giây rồi tắt.

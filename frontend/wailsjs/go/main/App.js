@@ -326,6 +326,10 @@ export function SetOverlayDisplay(arg1) {
   return window['go']['main']['App']['SetOverlayDisplay'](arg1);
 }
 
+export function SetOverlaySettings(arg1) {
+  return window['go']['main']['App']['SetOverlaySettings'](arg1);
+}
+
 export function SetPin(arg1, arg2, arg3) {
   return window['go']['main']['App']['SetPin'](arg1, arg2, arg3);
 }

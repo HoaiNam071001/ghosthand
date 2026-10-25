@@ -96,6 +96,9 @@ func (a *App) FlowGuide() model.FlowGuideDoc { return model.Guide() }
 // GetSettings trả cấu hình đã lưu (mặc định nếu chưa có / không đọc được thư mục cấu hình).
 func (a *App) GetSettings() store.Settings { return store.CurrentSettings() }
 
+// SetOverlaySettings lưu cài đặt overlay (cạnh đặt thanh công cụ – bước 49).
+func (a *App) SetOverlaySettings(o store.OverlaySettings) error { return store.SetOverlay(o) }
+
 // SetTheme lưu theme: light | dark | system.
 func (a *App) SetTheme(theme string) error { return store.SetTheme(theme) }
 

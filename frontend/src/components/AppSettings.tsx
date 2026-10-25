@@ -1,8 +1,8 @@
-// Cài đặt app (nút bánh răng trên thanh tiêu đề), chia tab: Lưu trữ – thư mục kịch bản / ảnh (bước 41, settings/StorageSettings),
+// Cài đặt app (nút bánh răng trên thanh tiêu đề), chia tab: Lưu trữ – thư mục kịch bản / ảnh (bước 41, settings/StorageSettings), Chọn vùng – cạnh đặt thanh overlay (bước 49, settings/OverlaySettings),
 // Bí mật – kho mật khẩu / token (bước 43 S10, settings/SecretsSettings), Quyền – quyền hệ điều hành (bước 48, settings/PermSettings), API – dòng lệnh + API local (bước 22, settings/ApiSettings), AI qua MCP (bước 31, settings/McpSettings), Giới thiệu – phiên bản + kiểm tra bản mới (settings/AboutSettings).
 import { useEffect, useState } from 'react';
 import {
-  GetSettings, OpenFolder, PickFolder, SetAPISettings, SetMCPSettings, SetStorageSettings, StorageDefaults,
+  GetSettings, OpenFolder, PickFolder, SetAPISettings, SetMCPSettings, SetOverlaySettings, SetStorageSettings, StorageDefaults,
 } from '../../wailsjs/go/main/App';
 import { store } from '../../wailsjs/go/models';
 import { EventsOn } from '../../wailsjs/runtime/runtime';
@@ -16,13 +16,14 @@ import { checkUpdate, installUpdate, loadVersion, openReleasePage, useUpdate } f
 import AboutSettings from './settings/AboutSettings';
 import ApiSettings from './settings/ApiSettings';
 import McpSettings from './settings/McpSettings';
+import OverlaySettings from './settings/OverlaySettings';
 import PermSettings from './settings/PermSettings';
 import SecretsSettings from './settings/SecretsSettings';
 import StorageSettings, { StorageKey } from './settings/StorageSettings';
 import Segmented from './Segmented';
 
 type Tab = SettingsTab;
-const TABS: { id: Tab; label: string }[] = [{ id: 'storage', label: 'Lưu trữ' }, { id: 'secrets', label: 'Bí mật' }, { id: 'perms', label: 'Quyền' }, { id: 'api', label: 'API' }, { id: 'mcp', label: 'AI (MCP)' }, { id: 'about', label: 'Giới thiệu' }];
+const TABS: { id: Tab; label: string }[] = [{ id: 'storage', label: 'Lưu trữ' }, { id: 'overlay', label: 'Chọn vùng' }, { id: 'secrets', label: 'Bí mật' }, { id: 'perms', label: 'Quyền' }, { id: 'api', label: 'API' }, { id: 'mcp', label: 'AI (MCP)' }, { id: 'about', label: 'Giới thiệu' }];
 
 export default function AppSettings() {
   const [open, setOpen] = useState(false);
@@ -72,6 +73,12 @@ export default function AppSettings() {
     setSettings(store.Settings.createFrom({ ...settings, mcp }));
     SetMCPSettings(mcp).then(() => setError('')).catch((e) => setError(errorText(e)));
   };
+  const saveOverlay = (side: string) => {
+    if (!settings) return;
+    const overlay = store.OverlaySettings.createFrom({ toolbar: side });
+    setSettings(store.Settings.createFrom({ ...settings, overlay }));
+    SetOverlaySettings(overlay).then(() => setError('')).catch((e) => setError(errorText(e)));
+  };
   const saveStorage = (key: StorageKey, dir: string) => {
     if (!settings) return;
     const storage = store.StorageSettings.createFrom({ ...settings.storage, [key]: dir });
@@ -88,7 +95,7 @@ export default function AppSettings() {
         className="grid h-9 w-9 place-items-center text-muted hover:bg-hover hover:text-ink"><Gear /></button>
       {open && settings && (
         <div className="fixed inset-0 z-40 flex items-start justify-center bg-black/25 px-4 pt-[6vh]" onMouseDown={(e) => e.target === e.currentTarget && setOpen(false)}>
-          <div role="dialog" aria-modal="true" aria-label="Cài đặt" className="flex max-h-[88vh] w-[440px] max-w-full flex-col gap-3 overflow-y-auto rounded-panel border border-line bg-surface p-[18px] text-[13px] text-ink shadow-[0_16px_48px_rgb(0_0_0/.22)]">
+          <div role="dialog" aria-modal="true" aria-label="Cài đặt" className="flex h-[80vh] max-h-[88vh] w-[760px] max-w-full flex-col gap-3 overflow-y-auto rounded-panel border border-line bg-surface p-[18px] text-[13px] text-ink shadow-[0_16px_48px_rgb(0_0_0/.22)]">
             <div className="flex items-center justify-between">
               <div className="text-base font-semibold">Cài đặt</div>
               <button onClick={() => setOpen(false)} aria-label="Đóng" className="rounded-md px-2 py-1 text-muted hover:bg-hover hover:text-ink">✕</button>
@@ -97,6 +104,7 @@ export default function AppSettings() {
             {tab === 'storage' && (
               <StorageSettings storage={settings.storage ?? {}} defaults={defaults} onPick={pick} onOpen={openDir} onReset={(key) => saveStorage(key, '')} />
             )}
+            {tab === 'overlay' && <OverlaySettings toolbar={settings.overlay?.toolbar} onChange={saveOverlay} />}
             {tab === 'secrets' && <SecretsSettings onError={setError} />}
             {tab === 'perms' && (
               <PermSettings items={perms.items} needed={needs(script)} focus={focusId} busy={perms.busy} error={perms.error}

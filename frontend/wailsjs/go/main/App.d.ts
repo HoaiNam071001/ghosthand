@@ -174,6 +174,8 @@ export function SetMCPSettings(arg1:store.MCPSettings):Promise<void>;
 
 export function SetOverlayDisplay(arg1:number):Promise<void>;
 
+export function SetOverlaySettings(arg1:store.OverlaySettings):Promise<void>;
+
 export function SetPin(arg1:string,arg2:string,arg3:model.StepResult):Promise<void>;
 
 export function SetSchedule(arg1:model.Schedule):Promise<void>;

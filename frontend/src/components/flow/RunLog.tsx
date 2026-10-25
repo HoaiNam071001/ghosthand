@@ -1,10 +1,12 @@
 // Bảng Nhật ký dưới canvas (bước 20 F5): mỗi dòng một lần chạy node (StepResult). Bấm dòng → chọn node trên canvas
 // và mở chi tiết (output / lỗi / log / ảnh lúc lỗi). Thu gọn được còn một dòng tiêu đề; nhiều vòng thì có dòng chia vòng.
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { StepIcon } from '../icons';
 import { FlowNodeView, RunRow } from './model';
 import { fmtMs, LogLines, StatusChip } from './PortField';
 import { openSettings } from '../../settingsNav';
+import { outputBlocks } from '../../flow/runOutputs';
+import RunOutputs from './RunOutputs';
 
 export type RunTone = 'ok' | 'fail' | 'running' | 'muted';
 const TONE: Record<RunTone, string> = { ok: 'text-ok', fail: 'text-danger-text', running: 'text-accent-text', muted: 'text-muted' };
@@ -18,6 +20,8 @@ export default function RunLog({ title, summary, tone, rows, nodes, selected, on
 }) {
   const [open, setOpen] = useState(true);
   const [row, setRow] = useState<number | null>(null);
+  const [view, setView] = useState<'log' | 'outputs'>('log');
+  const blocks = useMemo(() => outputBlocks(rows, nodes), [rows, nodes]);
   const list = useRef<HTMLOListElement>(null);
   const byId = new Map(nodes.map((n) => [n.id, n]));
   const loops = new Set(rows.map((r) => r.loop)).size > 1;
@@ -36,12 +40,19 @@ export default function RunLog({ title, summary, tone, rows, nodes, selected, on
           <span className="whitespace-nowrap text-muted">{title}</span>
           <span className={`ml-auto truncate text-xs ${TONE[tone]}`} title={summary}>{summary}</span>
         </button>
+        <div role="tablist" aria-label="Kiểu xem nhật ký" className="mr-2 flex flex-none rounded-md bg-soft p-0.5 text-xs">
+          {([['log', 'Từng bước'], ['outputs', `Tất cả output${blocks.length ? ` (${blocks.length})` : ''}`]] as const).map(([id, label]) => (
+            <button key={id} role="tab" aria-selected={view === id} onClick={() => { setView(id); setOpen(true); }}
+              className={`h-6 whitespace-nowrap rounded px-2.5 ${view === id ? 'bg-raised font-semibold shadow-[var(--c-raise)]' : 'text-muted hover:text-ink'}`}>{label}</button>
+          ))}
+        </div>
         {onClose && (
           <button onClick={onClose} aria-label="Đóng nhật ký" title="Đóng nhật ký (bỏ tô đường đã đi trên canvas)"
             className="grid h-9 w-9 flex-none place-items-center text-muted hover:bg-hover hover:text-ink">✕</button>
         )}
       </div>
-      {open && (
+      {open && view === 'outputs' && <RunOutputs blocks={blocks} loops={loops} />}
+      {open && view === 'log' && (
         <div className="flex min-h-0 flex-1">
           <ol ref={list} className="min-w-0 flex-1 overflow-y-auto border-t border-line">
             {rows.length === 0 && <li className="px-4 py-2 text-[13px] text-muted">Chưa có node nào chạy xong.</li>}
