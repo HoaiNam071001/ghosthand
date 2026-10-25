@@ -26,6 +26,8 @@ export const renameGroup = (id: string, name: string) => {
   if (n) updateScript({ groups: patchGroup(script().groups, id, { name: n }) });
 };
 
+export const setGroupColor = (id: string, color: string) => updateScript({ groups: patchGroup(script().groups, id, { color: color || undefined }) });
+
 // Kéo khung (hoặc thẻ thu gọn): mọi node thành viên dời cùng một đoạn.
 export function moveGroup(id: string, dx: number, dy: number) {
   const g = script().groups?.find((x) => x.id === id);

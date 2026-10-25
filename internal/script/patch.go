@@ -16,6 +16,7 @@ type Patch struct {
 	Human       *string             `json:"human,omitempty"`
 	Start       string              `json:"start,omitempty"`
 	Inputs      []model.ScriptInput `json:"inputs,omitempty"`      // thay cả danh sách input
+	Groups      []model.Group       `json:"groups,omitempty"`      // thay cả danh sách khung nhóm; members ghi id hoặc ref
 	Steps       []json.RawMessage   `json:"steps,omitempty"`       // node có id / ref đã có → đè các trường gửi lên; chưa có → thêm (mặc định theo loại)
 	RemoveSteps []string            `json:"removeSteps,omitempty"` // xoá node + mọi cạnh nối vào / ra
 	Edges       []model.Edge        `json:"edges,omitempty"`       // thêm cạnh; cổng from + port đã có cạnh thì thay
@@ -38,6 +39,9 @@ func ApplyPatch(sc model.Script, p Patch) (model.Script, []model.Edge, error) {
 	}
 	if p.Inputs != nil {
 		sc.Inputs = p.Inputs
+	}
+	if p.Groups != nil {
+		sc.Groups = p.Groups
 	}
 	var dropped []model.Edge
 	for i, raw := range p.Steps {

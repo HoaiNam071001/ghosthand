@@ -34,6 +34,7 @@ type updateIn struct {
 	Human       *string             `json:"human,omitempty" jsonschema:"off | low | medium | high"`
 	Start       string              `json:"start,omitempty" jsonschema:"id / ref node chạy đầu"`
 	Inputs      []model.ScriptInput `json:"inputs,omitempty" jsonschema:"thay cả danh sách input"`
+	Groups      []model.Group       `json:"groups,omitempty" jsonschema:"thay cả danh sách khung nhóm node {id, name, members (id / ref node), collapsed?, color? (mouse|kb|wait|data|app|flow|web)}; chỉ để soạn cho gọn, không đổi cách chạy. Xoá node thì tự bỏ khỏi nhóm"`
 	Steps       []map[string]any    `json:"steps,omitempty" jsonschema:"node có id / ref đã có → chỉ đè các trường gửi lên; chưa có → thêm node mới (cần type). Gửi type khác loại cũ = đổi loại: node dựng lại theo loại mới, giữ name / pos / enabled / delayAfter / retry và trường cũ loại mới cũng dùng (points, selectors…); cạnh theo cổng loại mới không có bị bỏ (droppedEdges)"`
 	RemoveSteps []string            `json:"removeSteps,omitempty" jsonschema:"id / ref node cần xoá (xoá luôn cạnh nối)"`
 	Edges       []edgeIn            `json:"edges,omitempty" jsonschema:"thêm cạnh {from, port, to} theo id / ref; cổng đã có cạnh thì thay"`
@@ -169,7 +170,7 @@ func (s *Server) update(_ context.Context, _ *mcp.CallToolRequest, in updateIn) 
 	if rev != *in.Revision {
 		return fail(&store.ConflictError{Path: path, Have: rev, Got: *in.Revision})
 	}
-	p := script.Patch{Name: in.Name, Loops: in.Loops, Human: in.Human, Start: in.Start, Inputs: in.Inputs,
+	p := script.Patch{Name: in.Name, Loops: in.Loops, Human: in.Human, Start: in.Start, Inputs: in.Inputs, Groups: in.Groups,
 		RemoveSteps: in.RemoveSteps, RemoveEdges: in.RemoveEdges}
 	for _, e := range in.Edges {
 		p.Edges = append(p.Edges, model.Edge(e))

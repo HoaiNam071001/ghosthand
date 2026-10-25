@@ -42,3 +42,12 @@ describe('nhóm node', () => {
     expect(shiftPositions({ a: { x: 1, y: 2 }, b: { x: 5, y: 5 } }, ['a', 'q'], 10, -2)).toEqual({ a: { x: 11, y: 0 } });
   });
 });
+
+describe('groupColor', () => {
+  it('chỉ nhận tên nhóm node hợp lệ', async () => {
+    const { groupColor } = await import('./groups');
+    expect(groupColor('wait')).toBe('wait');
+    expect(groupColor('red')).toBeUndefined();
+    expect(groupColor(undefined)).toBeUndefined();
+  });
+});

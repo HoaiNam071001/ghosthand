@@ -10,6 +10,10 @@ export const GROUP_PAD = 20; // đệm giữa khung và node
 export const GROUP_HEAD = 30; // thanh tên trên khung
 export const GROUP_CARD_H = 58; // thẻ nhóm thu gọn
 
+// Màu khung nhóm = tên một trong 7 nhóm node (class .cat-<tên> trong style.css); trống = mặc định.
+export const GROUP_COLORS = ['mouse', 'kb', 'wait', 'data', 'app', 'flow', 'web'] as const;
+export const groupColor = (c: string | undefined) => (GROUP_COLORS as readonly string[]).includes(c ?? '') ? c : undefined;
+
 export const groupOf = (groups: Group[] | undefined, id: string) => groups?.find((g) => g.members.includes(id));
 
 // Bỏ node khỏi mọi nhóm; nhóm hết thành viên thì xoá (cùng quy tắc script.DropMember bên Go).

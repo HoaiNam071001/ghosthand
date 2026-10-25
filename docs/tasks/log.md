@@ -258,3 +258,4 @@
 - **2026-10-24** – 39 G1 khung nhóm node (model.Group, groups.ts, GroupNodes, mẫu nhom-node). go vet/test, tsc, vitest OK; chưa thử tay trên canvas.
 - **2026-10-24** – 39 G2 nhúng kịch bản khác (script.Embed, embedapi.go, EmbedMenu). go vet/test, tsc, vitest OK; chưa thử tay.
 - **2026-10-24** – 24 Ghi macro (internal/record, recordapi.go, store/record, mục Ghi thao tác trong menu Chạy). go vet/test, tsc, vitest OK; chưa thử tay.
+- 2026-10-25 39: màu nhóm + update_script nhận groups

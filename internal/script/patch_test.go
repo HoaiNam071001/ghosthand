@@ -141,3 +141,21 @@ func TestApplyPatchRetype(t *testing.T) {
 		t.Errorf("cạnh true / false của if phải bị bỏ: dropped %+v, còn %+v", dropped, got.Edges)
 	}
 }
+
+func TestApplyPatchGroups(t *testing.T) {
+	sc := compactScript(t, `{"steps":[{"type":"wait"},{"type":"wait"},{"type":"wait"}]}`)
+	var p Patch
+	if err := json.Unmarshal([]byte(`{"groups":[{"id":"g1","name":"Chờ","members":["n1","n2"],"color":"wait"}]}`), &p); err != nil {
+		t.Fatal(err)
+	}
+	got, _, err := ApplyPatch(sc, p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got, err = Checked(got); err != nil {
+		t.Fatal(err)
+	}
+	if len(got.Groups) != 1 || got.Groups[0].Members[0] != got.Steps[0].ID || got.Groups[0].Color != "wait" {
+		t.Fatalf("nhóm không đúng: %+v", got.Groups)
+	}
+}
