@@ -5,6 +5,7 @@ import { Displays } from '../../../wailsjs/go/main/App';
 import NumInput from '../NumInput';
 import { Region } from '../icons';
 import VarTextInput from '../inputs/VarTextInput';
+import PathInput from './PathInput';
 import { updateStep, useScript } from '../../store';
 import { addInput } from '../../scriptInputs';
 import { startCapture } from '../../imageSteps';
@@ -25,7 +26,7 @@ export function ShotFields({ step: s }: { step: Step }) {
     <>
       <ShotAreaField step={s} label="Chụp" />
       <Field label="Thư mục lưu" wide group help="Trống = thư mục ảnh trong Cài đặt → Lưu trữ (mặc định Pictures/Ghosthand) · chưa có thì tự tạo">
-        <VarTextInput {...varProps} value={s.saveDir ?? ''} onChange={(v) => set({ saveDir: v || undefined })} placeholder="Thư mục ảnh trong Cài đặt" />
+        <PathInput kind="folder" {...varProps} value={s.saveDir ?? ''} onChange={(v) => set({ saveDir: v || undefined })} placeholder="Thư mục ảnh trong Cài đặt" />
       </Field>
       <Field label="Tên file" wide group help="Tự thêm .png · trùng tên thì thêm (2), không ghi đè">
         <VarTextInput {...varProps} value={s.fileName ?? ''} onChange={(v) => set({ fileName: v || undefined })} placeholder="ghosthand-<ngày>-<giờ>" />

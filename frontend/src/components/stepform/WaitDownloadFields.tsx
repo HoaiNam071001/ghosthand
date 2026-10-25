@@ -1,6 +1,7 @@
 // Node Chờ tải xong (bước 43 B6): thư mục theo dõi + mẫu tên file. Quét thư mục định kỳ, không cần quyền riêng.
 import NumInput from '../NumInput';
 import VarTextInput from '../inputs/VarTextInput';
+import PathInput from './PathInput';
 import { updateStep, useScript } from '../../store';
 import { addInput } from '../../scriptInputs';
 import { Step } from '../../types';
@@ -13,7 +14,7 @@ export default function WaitDownloadFields({ step: s }: { step: Step }) {
   return (
     <>
       <Field label="Thư mục tải về" wide group help="Trống = Downloads của người dùng · ~ = thư mục người dùng">
-        <VarTextInput {...varProps} rows={1} compact value={s.filePath ?? ''} onChange={(v) => updateStep(s.id, { filePath: v || undefined })} placeholder="~/Downloads" />
+        <PathInput kind="folder" {...varProps} value={s.filePath ?? ''} onChange={(v) => updateStep(s.id, { filePath: v || undefined })} placeholder="~/Downloads" />
       </Field>
       <Field label="Mẫu tên file" wide group help="Vd *.pdf, bao-cao-*.xlsx · không phân biệt hoa thường · trống = file mới bất kỳ">
         <VarTextInput {...varProps} rows={1} compact value={s.filePattern ?? ''} onChange={(v) => updateStep(s.id, { filePattern: v || undefined })} placeholder="*.pdf" />

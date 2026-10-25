@@ -4,7 +4,7 @@ import { Displays, GetSettings, SetOverlayDisplay } from '../../../wailsjs/go/ma
 import { main } from '../../../wailsjs/go/models';
 import { inWails } from '../../windowMode';
 import { applyCapture } from '../../imageSteps';
-import { Rect } from '../../types';
+import { Point, Rect } from '../../types';
 import { BarSide, toBarSide } from '../../overlay/toolbarLayout';
 
 const BAR_HIDE_MS = 350; // rời thanh / gợi ý bao lâu thì ẩn
@@ -110,4 +110,23 @@ export function useCapture(toScreenRect: (r: Rect) => Rect) {
     setErr('');
   }, []);
   return { cap, capRef, setCap, busy, err, use, reset };
+}
+
+// Nét kéo chuột của công cụ Vẽ đường (bước 50 E1): mẫu theo toạ độ cửa sổ, thưa hơn 3 px thì bỏ. Thả chuột trả nét để chốt.
+export function useStroke() {
+  const [pts, setPts, ref] = useRefState<Point[]>([]);
+  return {
+    pts,
+    active: pts.length > 0,
+    begin: (p: Point) => setPts([p]),
+    add: (p: Point) => {
+      const last = ref.current[ref.current.length - 1];
+      if (last && Math.hypot(p.x - last.x, p.y - last.y) >= 3) setPts([...ref.current, p]);
+    },
+    end: (): Point[] => {
+      const out = ref.current;
+      setPts([]);
+      return out;
+    },
+  };
 }

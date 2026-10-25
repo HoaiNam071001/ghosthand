@@ -1,6 +1,7 @@
 // Node Clipboard (bước 35 N2): đọc chữ / ghi chữ / ghi ảnh PNG từ file – ô chữ nhận {{biến}}.
 import Segmented from '../Segmented';
 import VarTextInput from '../inputs/VarTextInput';
+import PathInput from './PathInput';
 import { updateStep, useScript } from '../../store';
 import { addInput } from '../../scriptInputs';
 import { CLIP_OPS, type ClipOp } from '../../flow/clipboard';
@@ -29,7 +30,7 @@ export function ClipFields({ step: s }: { step: Step }) {
       )}
       {op === 'image' && (
         <Field label="File ảnh PNG" wide group help="~ / đường dẫn tương đối tính từ thư mục người dùng">
-          <VarTextInput {...varProps} rows={1} compact value={s.filePath ?? ''} onChange={(v) => set({ filePath: v || undefined })}
+          <PathInput kind="file" {...varProps} value={s.filePath ?? ''} onChange={(v) => set({ filePath: v || undefined })}
             placeholder={shot ? `{{${shot.ref}.output.path}}` : '~/Pictures/anh.png'} />
           {!s.filePath?.trim() && (
             <span className={errText}>Chưa nhập file – chạy sẽ báo lỗi

@@ -1,8 +1,10 @@
 // Tab "Tất cả output" của nhật ký (bước 49): output mọi node của một lần chạy, mỗi node một khối "tên = giá trị",
 // chép được từng node hoặc cả lần chạy. Chỉ hiển thị – dữ liệu đã gom ở flow/runOutputs.
 import { StatusChip } from './PortField';
+import OutputTable from './OutputTable';
+import { outputRows } from '../../flow/outputRows';
 import { CopyButton } from '../settings/parts';
-import { allOutputsJson, blockJson, OutputBlock, valueText } from '../../flow/runOutputs';
+import { allOutputsJson, blockJson, OutputBlock } from '../../flow/runOutputs';
 
 export default function RunOutputs({ blocks, loops }: { blocks: OutputBlock[]; loops: boolean }) {
   if (!blocks.length) return <p className="border-t border-line px-4 py-2 text-[13px] text-muted">Lần chạy này không node nào có output.</p>;
@@ -23,14 +25,7 @@ export default function RunOutputs({ blocks, loops }: { blocks: OutputBlock[]; l
             <StatusChip status={b.status} />
             <CopyButton text={blockJson(b)} label={`Chép output của ${b.ref}`} />
           </header>
-          <dl className="grid grid-cols-[minmax(80px,max-content)_minmax(0,1fr)] gap-x-3 gap-y-1 font-mono text-xs">
-            {Object.entries(b.output).map(([k, v]) => (
-              <div key={k} className="contents">
-                <dt className="text-muted">{k}</dt>
-                <dd className="m-0 whitespace-pre-wrap break-words select-text">{valueText(v)}</dd>
-              </div>
-            ))}
-          </dl>
+          <OutputTable rows={outputRows(b.ref, b.output)} />
         </section>
       ))}
     </div>

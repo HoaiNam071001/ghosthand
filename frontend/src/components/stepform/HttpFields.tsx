@@ -7,6 +7,7 @@ import { addInput } from '../../scriptInputs';
 import { BODY_TYPES, hasBody, HTTP_METHODS, jsonBodyValid, type BodyType, type HttpMethod } from '../../flow/http';
 import { Step } from '../../types';
 import { KVTable } from './KVTable';
+import { CurlImport } from './CurlImport';
 import { fieldBox } from '../NumInput';
 import { errText, Field, hint, NumField, useNodeVars } from './shared';
 
@@ -21,6 +22,7 @@ export function HttpFields({ step: s }: { step: Step }) {
   const setMethod = (method: HttpMethod) => set(hasBody(method) && !s.bodyType ? { method, bodyType: 'json', body: s.body || '{\n  \n}' } : { method });
   return (
     <>
+      <CurlImport step={s} />
       <Field label="Gọi tới" wide group help="Biến trong URL chèn nguyên văn – giá trị có dấu cách / tiếng Việt đặt ở bảng Tham số (tự mã hoá).">
         <div className="flex items-start gap-1.5">
           <div className="w-[92px] flex-none">

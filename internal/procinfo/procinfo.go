@@ -4,6 +4,7 @@ package procinfo
 
 import (
 	"context"
+	"sort"
 	"time"
 
 	"github.com/shirou/gopsutil/v4/process"
@@ -72,4 +73,44 @@ func cpuPercent(deltaSec, elapsedSec float64) float64 {
 		return 0
 	}
 	return deltaSec / elapsedSec * 100
+}
+
+// Group – các tiến trình cùng tên gộp một dòng (Chrome Helper ×12…) để người dùng chọn tên cho node Tiến trình.
+type Group struct {
+	Name  string  `json:"name"`
+	Count int     `json:"count"`
+	CPU   float64 `json:"cpu"`   // tổng CPU %
+	MemMB float64 `json:"memMB"` // tổng RAM
+}
+
+// Groups gộp theo tên, nặng CPU trước rồi tới RAM, rồi theo tên.
+func Groups(list []Info) []Group {
+	by := map[string]*Group{}
+	var out []*Group
+	for _, p := range list {
+		g := by[p.Name]
+		if g == nil {
+			g = &Group{Name: p.Name}
+			by[p.Name] = g
+			out = append(out, g)
+		}
+		g.Count++
+		g.CPU += p.CPU
+		g.MemMB += p.MemMB
+	}
+	sort.SliceStable(out, func(i, j int) bool {
+		a, b := out[i], out[j]
+		if a.CPU != b.CPU {
+			return a.CPU > b.CPU
+		}
+		if a.MemMB != b.MemMB {
+			return a.MemMB > b.MemMB
+		}
+		return a.Name < b.Name
+	})
+	res := make([]Group, len(out))
+	for i, g := range out {
+		res[i] = *g
+	}
+	return res
 }

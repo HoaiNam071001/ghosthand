@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"runtime"
 	"sync"
 
 	"ghosthand/internal/api"
@@ -89,6 +90,12 @@ func (a *App) NewScript() model.Script { return model.NewScript() }
 
 // StepTypes trả mô tả các loại bước app đang hỗ trợ.
 func (a *App) StepTypes() []model.StepTypeDoc { return model.StepTypeDocs() }
+
+// Platform – hệ điều hành đang chạy (GOOS: darwin | windows) để UI báo loại node không chạy được ở đây.
+func (a *App) Platform() string { return runtime.GOOS }
+
+// StepOnlyOS – loại node chỉ chạy trên một số hệ điều hành (loại vắng = chạy cả macOS + Windows).
+func (a *App) StepOnlyOS() map[string][]string { return model.OnlyOS() }
 
 // FlowGuide trả hướng dẫn cấu trúc flow, trường chung và kịch bản mẫu (cho AI / MCP, bước 31).
 func (a *App) FlowGuide() model.FlowGuideDoc { return model.Guide() }

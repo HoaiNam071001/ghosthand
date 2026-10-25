@@ -109,7 +109,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 > Bảng tự sinh – sau khi tick chạy `python3 scripts/tasks-index.py`. Bấm tên bước để mở file chi tiết.
 
 <!-- index:start -->
-**44 / 59 bước xong code** · 🧪 **[232 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
+**45 / 60 bước xong code** · 🧪 **[242 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
 
 ### Phase 3 – Design v2 & tự động hoá (theo thứ tự làm)
 
@@ -133,7 +133,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 chờ kiểm tra tay | [35. Node nâng cao](phase3/35-node-nang-cao.md) | 9 / 9 | [9 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [38. UI v3 – gọn: màu theo nhóm node, thẻ node nhỏ, inspector thu gọn](phase3/38-ui-v3.md) | 9 / 11 | [7 việc](checks.md) |
 | 🟡 đang làm | [37. Tìm / đọc phần tử màn hình qua Accessibility](phase3/37-phan-tu-man-hinh.md) | 10 / 11 | [7 việc](checks.md) |
-| 🟡 đang làm | [26. Node Cửa sổ (`window`) + Ứng dụng (`app`)](phase3/26-cua-so-ung-dung.md) | 18 / 20 | [12 việc](checks.md) |
+| 🟡 đang làm | [26. Node Cửa sổ (`window`) + Ứng dụng (`app`)](phase3/26-cua-so-ung-dung.md) | 19 / 20 | [12 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [22. Hẹn giờ + thông báo + CLI / API local](phase3/22-hen-gio-cli-api.md) | 17 / 17 | [7 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [31b. MCP – vòng thử – sửa: AI tự chạy, xem lỗi, sửa, chạy tiếp](phase3/31-mcp-ai.md) | 19 / 19 | [15 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [31c. MCP – AI soạn bằng cách thử + ảnh mẫu](phase3/31-mcp-ai.md) | 5 / 5 | [7 việc](checks.md) |
@@ -145,6 +145,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🟡 đang làm | [47. Hình minh hoạ động cho từng node](phase3/47-hinh-minh-hoa-node.md) | 6 / 7 | [3 việc](checks.md) |
 | 🟡 đang làm | [48. Kiểm tra quyền](phase3/48-kiem-tra-quyen.md) | 5 / 5 | [6 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [49. Chỉnh giao diện theo yêu cầu 2026-10-25](phase3/49-cai-dat-overlay-lich-su.md) | 4 / 4 | [4 việc](checks.md) |
+| 🧪 chờ kiểm tra tay | [50. Góp ý khi dùng node 2026-10-25](phase3/50-gop-y-dung-node.md) | 12 / 12 | [10 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | 12 / 12 | [16 việc](checks.md) |
 | 🟡 đang làm | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | 35 / 42 | [24 việc](checks.md) |
 | 🟡 đang làm | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | 11 / 12 |  |
@@ -230,6 +231,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 16a1d | [47. Hình minh hoạ động cho node](phase3/47-hinh-minh-hoa-node.md) | Người dùng yêu cầu (2026-10-21): người mới nhìn hình hiểu node ngay, không cần đọc chữ; chưa xếp trước 42 / 43 – chờ người dùng chọn lúc làm |
 | 16a1e | [48. Kiểm tra quyền trước khi chạy](phase3/48-kiem-tra-quyen.md) | Người dùng yêu cầu (2026-10-24): biết thiếu quyền trước khi chạy; chưa xếp trước 42 / 43 – chờ người dùng chọn lúc làm |
 | 16a1f | [49. Cài đặt, thanh overlay, lịch sử output](phase3/49-cai-dat-overlay-lich-su.md) | Người dùng yêu cầu (2026-10-25); chưa xếp thứ tự – chờ người dùng chọn lúc làm |
+| 16a1g | [50. Góp ý khi dùng node](phase3/50-gop-y-dung-node.md) | Người dùng yêu cầu (2026-10-25): sửa UI tràn + log Accessibility, nút chọn file mọi nơi, output dạng bảng, cửa sổ macOS, vẽ đường trên overlay, dán curl, chọn tiến trình – làm ngay, nhóm A → E |
 | 16a2 | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | Người dùng yêu cầu (2026-10-20): ngay sau 41 – chờ màn hình đứng yên thay Chờ cố định, lặp qua danh sách + tìm tất cả, tính toán / xử lý chữ; làm trên Mac được |
 | 16a3 | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | Người dùng yêu cầu (2026-10-20): sau 42, xen kẽ 40 O0–O3 (máy Windows) – trình duyệt Chromium thường không CDP, phần tử app không cần chuột, hệ điều hành, ảnh đánh số / cây giao diện cho AI trước 31c; mỗi việc một node |
 | 16b | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | Người dùng yêu cầu (2026-10-20): làm sau 31b, trước 31c – Windows chưa đọc được tiếng Việt (`Windows.Media.Ocr`); 31c (AI soạn bằng cách thử, ảnh mẫu) cần đọc chữ / tìm ảnh đáng tin |

@@ -1,4 +1,4 @@
-//go:build !windows
+//go:build !windows && !darwin
 
 package device
 
@@ -8,9 +8,8 @@ import (
 	"ghosthand/internal/model"
 )
 
-// Cầu nối tạm (bước 26 W0): macOS (CGWindowList + AX) làm trên máy Mac – xoá file này khi có window_darwin.go
-// (Linux vẫn cần bản báo chưa hỗ trợ – đổi build tag thành !windows && !darwin).
-var errNoWindows = errors.New("điều khiển cửa sổ / ứng dụng hiện chỉ có trên Windows")
+// Hệ điều hành khác (Linux): báo chưa hỗ trợ. Windows: window_windows.go · macOS: window_darwin.go.
+var errNoWindows = errors.New("điều khiển cửa sổ / ứng dụng chỉ có trên macOS và Windows")
 
 func (SystemWindows) List() ([]model.WindowInfo, error)  { return nil, errNoWindows }
 func (SystemWindows) Focus(uint64) error                 { return errNoWindows }

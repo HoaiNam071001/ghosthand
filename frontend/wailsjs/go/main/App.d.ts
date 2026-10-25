@@ -7,6 +7,7 @@ import {update} from '../models';
 import {script} from '../models';
 import {engine} from '../models';
 import {store} from '../models';
+import {procinfo} from '../models';
 import {mcpsrv} from '../models';
 import {perm} from '../models';
 import {session} from '../models';
@@ -76,6 +77,8 @@ export function InstallUpdate():Promise<void>;
 
 export function ListApps():Promise<Array<model.AppInfo>>;
 
+export function ListProcesses():Promise<Array<procinfo.Group>>;
+
 export function ListRuns(arg1:string,arg2:string):Promise<Array<model.RunSummary>>;
 
 export function ListSchedules():Promise<Array<model.Schedule>>;
@@ -130,7 +133,11 @@ export function PickElementAt(arg1:model.Script,arg2:string,arg3:number,arg4:num
 
 export function PickFolder(arg1:string,arg2:string):Promise<string>;
 
+export function PickPath(arg1:string,arg2:string,arg3:string):Promise<string>;
+
 export function PixelColorAt(arg1:number,arg2:number):Promise<string>;
+
+export function Platform():Promise<string>;
 
 export function PreviewList(arg1:model.Step):Promise<engine.ListPreview>;
 
@@ -189,6 +196,8 @@ export function SetTheme(arg1:string):Promise<void>;
 export function SetWindowMode(arg1:string):Promise<void>;
 
 export function StartRecording():Promise<void>;
+
+export function StepOnlyOS():Promise<Record<string, Array<string>>>;
 
 export function StepScript():Promise<boolean>;
 

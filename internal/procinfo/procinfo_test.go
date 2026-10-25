@@ -29,3 +29,15 @@ func TestSystemListFindsSelf(t *testing.T) {
 	}
 	t.Error("không thấy tiến trình của chính test")
 }
+
+func TestGroups(t *testing.T) {
+	got := Groups([]Info{
+		{PID: 1, Name: "Helper", CPU: 1, MemMB: 100},
+		{PID: 2, Name: "ffmpeg", CPU: 50, MemMB: 300},
+		{PID: 3, Name: "Helper", CPU: 2, MemMB: 50},
+		{PID: 4, Name: "idle", MemMB: 1},
+	})
+	if len(got) != 3 || got[0].Name != "ffmpeg" || got[1].Name != "Helper" || got[1].Count != 2 || got[1].CPU != 3 || got[1].MemMB != 150 {
+		t.Errorf("Groups = %+v", got)
+	}
+}

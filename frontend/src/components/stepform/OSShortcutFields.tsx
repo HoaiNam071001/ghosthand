@@ -22,8 +22,15 @@ export default function OSShortcutFields({ step: s }: { step: Step }) {
   }, []);
   return (
     <>
-      <Field label="Tên Shortcut" wide group help="Đúng như trong ứng dụng Phím tắt · chỉ chạy trên macOS">
+      <div className="col-span-2 flex flex-col gap-1 rounded-card bg-soft px-3 py-2.5 text-xs text-muted">
+        <span className="font-semibold text-ink">Shortcut (Phím tắt của macOS) là gì?</span>
+        <span>Là một chuỗi việc nhỏ bạn tự ghép sẵn trong app <b className="text-ink">Phím tắt</b> (Shortcuts) – đổi tên ảnh hàng loạt, nén PDF, gửi tin nhắn, dịch chữ, mở app… Node này chạy một Shortcut có sẵn rồi lấy chữ nó trả về.</span>
+        <span>Cách dùng: <b className="text-ink">1)</b> tạo / mở Shortcut trong app Phím tắt · <b className="text-ink">2)</b> chọn tên ở ô dưới · <b className="text-ink">3)</b> (tuỳ chọn) đưa chữ vào làm đầu vào – Shortcut nhận ở bước “Nhận Input”.</span>
+        <span>Vd: Shortcut “Dịch sang Anh” nhận chữ <span className="font-mono text-ink">{'{{n1.output.text}}'}</span> → node sau đọc bản dịch ở <span className="font-mono text-ink">{`{{${s.ref}.output.text}}`}</span>.</span>
+      </div>
+      <Field label="Tên Shortcut" wide group help="Đúng như trong ứng dụng Phím tắt · chỉ chạy trên macOS · danh sách bên dưới là các Shortcut đang có trong máy">
         <VarTextInput {...varProps} rows={1} compact value={s.shortcutName ?? ''} onChange={(v) => updateStep(s.id, { shortcutName: v || undefined })} placeholder="Đổi tên ảnh" />
+        {inWails && !error && names.length === 0 && <span className={hint}>Chưa thấy Shortcut nào trong máy – mở app Phím tắt để tạo.</span>}
         {names.length > 0 && (
           <Select value="" onChange={(v) => v && updateStep(s.id, { shortcutName: v })} className={selectBox} aria-label="Chọn Shortcut có sẵn"
             options={[{ value: '', label: 'Chọn từ danh sách…' }, ...names.map((n) => ({ value: n, label: n }))]} />

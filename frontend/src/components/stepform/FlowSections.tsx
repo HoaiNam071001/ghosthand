@@ -40,7 +40,7 @@ export default function FlowSections({ step: s }: { step: Step }) {
       )}
       {lastRun && (
         <Section title="Lần chạy gần nhất" scope={s.type} summary={<StatusChip status={lastRun.status} />}>
-          <LastRunPanel row={lastRun} />
+          <LastRunPanel row={lastRun} refName={s.ref} fields={outputs} />
         </Section>
       )}
       <div className={footerRow}>

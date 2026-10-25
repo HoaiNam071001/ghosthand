@@ -1,5 +1,6 @@
 // Node Lưu trang ra PDF (bước 43 B7): file đích, trình duyệt, tab cần in, thời gian chờ.
 import VarTextInput from '../inputs/VarTextInput';
+import PathInput from './PathInput';
 import { updateStep } from '../../store';
 import { Step } from '../../types';
 import { errText, Field, fmtSec, hint, NumField } from './shared';
@@ -13,7 +14,7 @@ export function SavePdfFields({ step: s }: { step: Step }) {
   return (
     <>
       <Field label="Lưu vào file" wide group help="Đuôi .pdf, thư mục phải có sẵn; ~ là thư mục người dùng. File cùng tên bị ghi đè.">
-        <VarTextInput {...varProps} value={path} onChange={(v) => updateStep(s.id, { filePath: v || undefined })} placeholder="~/Documents/bao-cao.pdf" />
+        <PathInput kind="save" {...varProps} value={path} onChange={(v) => updateStep(s.id, { filePath: v || undefined })} placeholder="~/Documents/bao-cao.pdf" />
         {bad && <span className={errText}>{bad}</span>}
       </Field>
       <BrowserField step={s} />

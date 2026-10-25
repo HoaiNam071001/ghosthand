@@ -3,6 +3,7 @@
 import { EventsOn } from '../../wailsjs/runtime/runtime';
 import { STEP_DEFAULTS } from '../flow/defaults';
 import { anchorPoint, fmtPoint } from '../anchor';
+import { simplifyStroke } from '../overlay/stroke';
 import { makeStep, Anchor, Point, Step, STEP_LABEL, StepPoint, StepType } from '../types';
 import { inWails, openOverlay, setWindowMode } from '../windowMode';
 import { getEditor, setEditor, setNotice } from './editor';
@@ -83,6 +84,13 @@ export function pickPointFor(stepId: string) {
   pickStay = false;
   const step = script().steps.find((s) => s.id === stepId);
   return openOverlay(step?.type === 'drag' ? 'drag' : 'point');
+}
+
+// Vẽ đường (bước 50 E1): mở overlay, người dùng kéo một nét liền → các điểm của node Vẽ đường (placeStroke).
+export function drawPathFor(stepId: string) {
+  pickTarget = stepId;
+  pickStay = false;
+  return openOverlay('stroke');
 }
 
 export const pickingStep = () => pickTarget;
@@ -181,6 +189,27 @@ export function placePoint(screen: Point): boolean {
   }
   const step = makeStep({ id: newId(), type: pointType, ...STEP_DEFAULTS[pointType], points: [rel] });
   insertNode(step, (ref) => `Đã thêm ${ref}: ${STEP_LABEL[pointType].toLowerCase()} ${fmtPoint(rel)}`);
+  return true;
+}
+
+// Nét vẽ (toạ độ màn hình thật) → rút gọn thành điểm của node đang vẽ; thành hình thì chuyển lại về "các điểm". Trả false = ở lại overlay vẽ lại.
+export function placeStroke(screen: Point[]): boolean {
+  const sc = script();
+  const target = pickTarget && sc.steps.find((s) => s.id === pickTarget);
+  if (!target) return false;
+  const points = simplifyStroke(screen).map((p) => toRelative(p, sc.region));
+  if (points.length < 2) {
+    setNotice('Nét vẽ quá ngắn – kéo dài hơn rồi thả chuột');
+    return false;
+  }
+  if (points.some((p) => !p)) {
+    setNotice('Nét vẽ đi ra ngoài vùng – vẽ trong vùng hoặc đổi về toàn màn hình');
+    return false;
+  }
+  pickTarget = null;
+  updateStep(target.id, { points: points as StepPoint[], shape: undefined, shapeW: undefined, shapeH: undefined });
+  setEditor({ selected: target.id, notice: `Đã vẽ ${points.length} điểm cho ${target.ref}` });
+  setWindowMode('main');
   return true;
 }
 

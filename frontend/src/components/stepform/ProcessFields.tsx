@@ -1,13 +1,18 @@
 // Node Tiến trình (bước 43 S5): thao tác, tên + cách so khớp, ngưỡng CPU / thời gian yên của "chờ hết bận".
+import { useState } from 'react';
 import NumInput from '../NumInput';
 import Segmented from '../Segmented';
 import Select from '../Select';
 import VarTextInput from '../inputs/VarTextInput';
+import { ListProcesses } from '../../../wailsjs/go/main/App';
+import { errorText } from '../../engineStore';
+import { inWails } from '../../windowMode';
 import { updateStep, useScript } from '../../store';
 import { addInput } from '../../scriptInputs';
 import { PROC_OPS, type ProcOp } from '../../flow/process';
 import { WIN_MATCHES } from '../../flow/window';
 import { Step } from '../../types';
+import { ProcessPicker, type ProcGroup } from './ProcessPicker';
 import { Field, fmtSec, hint, NumField, selectBox, useNodeVars } from './shared';
 
 const OP_HINT: Record<ProcOp, (t: string) => string> = {
@@ -22,6 +27,15 @@ export default function ProcessFields({ step: s }: { step: Step }) {
   const nodeVars = useNodeVars(s.id);
   const set = (patch: Partial<Step>) => updateStep(s.id, patch);
   const op = s.procOp ?? '';
+  const [picking, setPicking] = useState(false);
+  const [procs, setProcs] = useState<ProcGroup[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string>();
+  const load = () => { // đọc CPU mất ~0,3 s – chỉ đọc khi mở danh sách
+    if (!inWails) return;
+    setLoading(true);
+    ListProcesses().then((l) => { setProcs(l ?? []); setError(undefined); }).catch((e) => setError(errorText(e))).finally(() => setLoading(false));
+  };
   const varProps = { inputs: script.inputs ?? [], nodeVars, rows: 1, compact: true, onCreateInput: (key: string) => addInput({ key, label: key, type: 'text' }) };
   return (
     <>
@@ -30,7 +44,13 @@ export default function ProcessFields({ step: s }: { step: Step }) {
           options={PROC_OPS.map((o) => ({ value: o.id, label: o.label }))} />
       </Field>
       <Field label="Tên tiến trình" wide group help="Tên trong Activity Monitor / Task Manager (notepad.exe, Google Chrome Helper). Khác tên app: tiến trình con tính riêng.">
-        <VarTextInput {...varProps} value={s.procName ?? ''} onChange={(v) => set({ procName: v || undefined })} placeholder="ffmpeg" />
+        <div className="flex items-start gap-2">
+          <div className="min-w-0 flex-1"><VarTextInput {...varProps} value={s.procName ?? ''} onChange={(v) => set({ procName: v || undefined })} placeholder="ffmpeg" /></div>
+          <button onClick={() => { if (!picking) load(); setPicking(!picking); }} aria-expanded={picking}
+            className="h-[34px] flex-none rounded-control border border-line px-2.5 text-[13px] text-muted hover:bg-hover hover:text-ink">Chọn…</button>
+        </div>
+        {picking && <ProcessPicker procs={procs} loading={loading} error={error} onRefresh={load}
+          onPick={(name) => { set({ procName: name, procMatch: 'exact' }); setPicking(false); }} />}
       </Field>
       <Field label="So khớp" wide group help="Chứa / Đúng: không phân biệt hoa thường, không dấu.">
         <Segmented value={s.procMatch ?? ''} full label="So khớp" onChange={(v) => set({ procMatch: v || undefined })} options={WIN_MATCHES} />

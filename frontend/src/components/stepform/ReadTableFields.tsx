@@ -1,5 +1,6 @@
 // Node Đọc bảng (bước 43 B5): phạm vi (bảng đầu tiên | bảng thứ N | bảng trong một phần tử) + ghi ra file .csv / .xlsx.
 import NumInput from '../NumInput';
+import PathInput from './PathInput';
 import VarTextInput from '../inputs/VarTextInput';
 import { updateStep, useScript } from '../../store';
 import { addInput } from '../../scriptInputs';
@@ -19,7 +20,7 @@ export default function ReadTableFields({ step: s }: { step: Step }) {
       <SwitchField label="Gồm phần ngoài khung nhìn" help="Mặc định chỉ đọc dòng đang hiện trên màn. Bật để lấy cả bảng dài chưa cuộn tới."
         on={!!s.pageAll} onChange={(pageAll) => updateStep(s.id, { pageAll: pageAll || undefined })} />
       <Field label="Ghi ra file" wide group help="Trống = không ghi. .csv hoặc .xlsx · GHI ĐÈ file cũ · ~ = thư mục người dùng">
-        <VarTextInput {...varProps} rows={1} compact value={s.filePath ?? ''} onChange={(v) => updateStep(s.id, { filePath: v || undefined })}
+        <PathInput kind="save" {...varProps} value={s.filePath ?? ''} onChange={(v) => updateStep(s.id, { filePath: v || undefined })}
           placeholder="~/Documents/don-hang.xlsx" />
         {badFile && <span className={errText}>Chỉ ghi được file .csv hoặc .xlsx – đổi đuôi file</span>}
       </Field>

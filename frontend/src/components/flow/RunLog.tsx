@@ -7,6 +7,10 @@ import { fmtMs, LogLines, StatusChip } from './PortField';
 import { openSettings } from '../../settingsNav';
 import { outputBlocks } from '../../flow/runOutputs';
 import RunOutputs from './RunOutputs';
+import OutputTable from './OutputTable';
+import { outputRows } from '../../flow/outputRows';
+import ElementMissView from './ElementMissView';
+import { elementMissOf } from '../../flow/elementMiss';
 
 export type RunTone = 'ok' | 'fail' | 'running' | 'muted';
 const TONE: Record<RunTone, string> = { ok: 'text-ok', fail: 'text-danger-text', running: 'text-accent-text', muted: 'text-muted' };
@@ -84,14 +88,14 @@ export default function RunLog({ title, summary, tone, rows, nodes, selected, on
               );
             })}
           </ol>
-          {row !== null && rows[row] && <Detail key={row} r={rows[row]} loadShot={loadShot} />}
+          {row !== null && rows[row] && <Detail key={row} r={rows[row]} refName={byId.get(rows[row].nodeId)?.ref ?? '?'} loadShot={loadShot} />}
         </div>
       )}
     </section>
   );
 }
 
-function Detail({ r, loadShot }: { r: RunRow; loadShot?: (shot: string) => Promise<string> }) {
+function Detail({ r, refName, loadShot }: { r: RunRow; refName: string; loadShot?: (shot: string) => Promise<string> }) {
   const [shot, setShot] = useState('');
   const [big, setBig] = useState(false);
   useEffect(() => {
@@ -101,12 +105,13 @@ function Detail({ r, loadShot }: { r: RunRow; loadShot?: (shot: string) => Promi
     <div className="flex w-[340px] flex-none flex-col gap-2 overflow-y-auto border-t border-l border-line p-3 max-[1100px]:w-[280px]">
       {r.error && <div className="rounded-control bg-danger-soft px-2.5 py-2 text-[13px] text-danger-text"><span className="font-mono text-xs">{r.error.code}</span> · {r.error.message}
         <PermLink detail={r.error.detail} /></div>}
+      {elementMissOf(r.error?.detail) && <ElementMissView miss={elementMissOf(r.error?.detail)!} />}
       {shot && (
         <button onClick={() => setBig(true)} title="Màn hình lúc node thất bại – bấm để phóng to" className="overflow-hidden rounded-control border border-line">
           <img src={shot} alt="Màn hình lúc node thất bại" className="block w-full" />
         </button>
       )}
-      {r.output && <pre className="overflow-x-auto rounded-control bg-soft px-2.5 py-2 font-mono text-xs">{JSON.stringify(r.output, null, 1)}</pre>}
+      {r.output && <OutputTable rows={outputRows(refName, r.output)} output={r.output} label={refName} />}
       {r.logs?.length ? <LogLines logs={r.logs} /> : <span className="text-xs text-muted">Không có log.</span>}
       {big && (
         <button onClick={() => setBig(false)} aria-label="Đóng ảnh" className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-6">

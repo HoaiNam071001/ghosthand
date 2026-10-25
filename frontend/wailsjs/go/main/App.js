@@ -130,6 +130,10 @@ export function ListApps() {
   return window['go']['main']['App']['ListApps']();
 }
 
+export function ListProcesses() {
+  return window['go']['main']['App']['ListProcesses']();
+}
+
 export function ListRuns(arg1, arg2) {
   return window['go']['main']['App']['ListRuns'](arg1, arg2);
 }
@@ -238,8 +242,16 @@ export function PickFolder(arg1, arg2) {
   return window['go']['main']['App']['PickFolder'](arg1, arg2);
 }
 
+export function PickPath(arg1, arg2, arg3) {
+  return window['go']['main']['App']['PickPath'](arg1, arg2, arg3);
+}
+
 export function PixelColorAt(arg1, arg2) {
   return window['go']['main']['App']['PixelColorAt'](arg1, arg2);
+}
+
+export function Platform() {
+  return window['go']['main']['App']['Platform']();
 }
 
 export function PreviewList(arg1) {
@@ -356,6 +368,10 @@ export function SetWindowMode(arg1) {
 
 export function StartRecording() {
   return window['go']['main']['App']['StartRecording']();
+}
+
+export function StepOnlyOS() {
+  return window['go']['main']['App']['StepOnlyOS']();
 }
 
 export function StepScript() {

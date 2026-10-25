@@ -30,6 +30,8 @@ export function overlayHint(h: HintState): string {
       return 'Con trỏ giả, không click thật';
     case 'region':
       return 'Kéo để khoanh vùng';
+    case 'stroke':
+      return 'Giữ chuột và kéo một nét liền theo đường cần vẽ – thả chuột là xong · Esc huỷ';
     case 'capture':
       if (h.captureRect) return h.captured ? 'Enter: dùng vùng này · kéo lại hoặc Esc: khoanh lại' : `Kéo khung quanh vùng cần chụp (${h.captureRef})`;
       return h.captured ? 'Enter: dùng ảnh này · kéo lại hoặc Esc: khoanh lại'

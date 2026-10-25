@@ -78,7 +78,7 @@ export default function FlowDemoInspector(p: Props) {
             <PortsPanel node={view} nodes={p.views} edges={p.edges} onConnect={p.onConnect} onDisconnect={p.onDisconnect} onJump={p.onJump} />
           </Section>
           {outputs.length > 0 && <Section title="Output" scope={scope} summary={outputsSummary(outputs.length)}><OutputsPanel refName={node.ref} fields={outputs} /></Section>}
-          {p.lastRun && <Section title="Lần chạy gần nhất" scope={scope} summary={<StatusChip status={p.lastRun.status} />}><LastRunPanel row={p.lastRun} /></Section>}
+          {p.lastRun && <Section title="Lần chạy gần nhất" scope={scope} summary={<StatusChip status={p.lastRun.status} />}><LastRunPanel row={p.lastRun} refName="n1" /></Section>}
           <div className={footerRow}>
             <button disabled={p.start} onClick={p.onSetStart} className={`${footerBtn} text-muted enabled:hover:text-ink`}>
               {p.start ? 'Đang là node bắt đầu' : 'Đặt làm bắt đầu'}

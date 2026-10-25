@@ -124,8 +124,9 @@ func textMiss(want string, read []vision.TextLine, area model.Rect) map[string]a
 }
 
 func elementMiss(selectors []string, nodes []element.Node, r element.Result, q element.Query) map[string]any {
+	dump, roles := element.Dump(nodes)
 	return map[string]any{"kind": "element", "selectors": selectors, "read": len(nodes), "count": r.Count,
-		"near": element.NearMatches(nodes, q, nearMax)}
+		"near": element.NearMatches(nodes, q, nearMax), "dump": dump, "roles": roles}
 }
 
 // webMiss – trạng thái lần tìm cuối; chỉ ghi trường có giá trị cho gọn. near: phần tử trong outline giống cách tìm.

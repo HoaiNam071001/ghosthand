@@ -2,6 +2,7 @@
 import Select from '../Select';
 import { Switch } from '../Switch';
 import VarTextInput from '../inputs/VarTextInput';
+import PathInput from './PathInput';
 import { updateStep, useScript } from '../../store';
 import { addInput } from '../../scriptInputs';
 import { FILE_OPS, folderOf, isDeleteOp, type FileOp } from '../../flow/file';
@@ -39,7 +40,7 @@ export function FileFields({ step: s }: { step: Step }) {
       )}
       {op !== 'emptyTrash' && (
         <Field label={folder ? 'Thư mục' : 'File'} wide group help="~ = thư mục người dùng · thư mục hệ thống, ~/Library bị chặn">
-          <VarTextInput {...varProps} rows={1} compact value={s.filePath ?? ''} onChange={(v) => set({ filePath: v || undefined })}
+          <PathInput kind={folder ? 'folder' : 'save'} {...varProps} value={s.filePath ?? ''} onChange={(v) => set({ filePath: v || undefined })}
             placeholder={folder ? '~/Downloads' : op === 'row' ? '~/Documents/don-hang.xlsx' : '~/Documents/nhat-ky.txt'} />
           {(!s.filePath?.trim() || badTable) && (
             <span className={errText}>{!s.filePath?.trim() ? `Chưa nhập ${folder ? 'thư mục' : 'file'} – chạy sẽ báo lỗi` : 'Thêm dòng chỉ cho file .csv hoặc .xlsx – đổi đuôi file'}</span>

@@ -16,9 +16,7 @@ export const GROUPS: PaletteGroup[] = [
       { icon: 'drag', label: 'Kéo thả', info: NODE_INFO.drag, key: 'drag', keywords: 'drag keo tha a b', type: 'drag', run: () => addPointStep('drag') },
       { icon: 'path', label: 'Vẽ đường', info: NODE_INFO.path, key: 'path', keywords: 've duong net hinh tron chu nhat sao ky ten draw path shape', type: 'path', run: () => addStep('path') },
       { icon: 'scroll', label: 'Cuộn', info: NODE_INFO.scroll, key: 'scroll', keywords: 'scroll lan chuot', type: 'scroll', run: () => addStep('scroll') },
-      { icon: 'clickImage', label: 'Click theo ảnh', info: NODE_INFO.clickImage, key: 'clickImage', keywords: 'image anh mau tim nut', type: 'clickImage', run: () => addImageStep('clickImage') },
-      { icon: 'clickImage', label: 'Click theo chữ', info: NODE_INFO.clickText, key: 'clickText', keywords: 'text chu ocr doc nut tim', run: () => addTextStep('clickImage') },
-      { icon: 'clickImage', label: 'Click theo phần tử', info: NODE_INFO.clickElement, key: 'clickElement', keywords: 'phan tu accessibility nut chrome thuong app aria role bam', run: () => addElementStep('clickImage') },
+      { icon: 'clickImage', label: 'Click theo ảnh / chữ / phần tử', info: NODE_INFO.clickImage, key: 'clickImage', keywords: 'image anh mau tim nut text chu ocr doc phan tu accessibility chrome thuong app aria role bam element', type: 'clickImage', run: () => addImageStep('clickImage') },
     ],
   },
   {

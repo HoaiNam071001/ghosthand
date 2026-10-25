@@ -35,6 +35,7 @@ func tabEngine() (*Engine, *browsertest.Fake) {
 	}}
 	e := New(&devicetest.FakeInput{}, model.Script{}, Options{})
 	e.tabs = f
+	e.wins = &devicetest.FakeWindows{Work: model.Rect{W: 1920, H: 1080}} // khung đặt theo vùng làm việc – không phụ thuộc màn máy test
 	return e, f
 }
 

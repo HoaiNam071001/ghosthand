@@ -1714,6 +1714,29 @@ export namespace perm {
 
 }
 
+export namespace procinfo {
+	
+	export class Group {
+	    name: string;
+	    count: number;
+	    cpu: number;
+	    memMB: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Group(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.name = source["name"];
+	        this.count = source["count"];
+	        this.cpu = source["cpu"];
+	        this.memMB = source["memMB"];
+	    }
+	}
+
+}
+
 export namespace samples {
 	
 	export class Info {

@@ -3,7 +3,7 @@
 import { MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { MousePos } from '../../wailsjs/go/main/App';
 import {
-  boundsOf, cancelPick, endpoints, hasPoints, movePoint, pickingPoint, pickingStep, placePoint, placingType, pointKey, refOf,
+  boundsOf, cancelPick, endpoints, hasPoints, movePoint, pickingPoint, pickingStep, placePoint, placeStroke, placingType, pointKey, refOf,
   regionMapping, RegionMapMode, selectedScreenPoints, selectStep, setDragMode, setFocusLock, setMulti, setRegion,
   setRegionMapped, startPick, transformedSteps, useEditor,
 } from '../store';
@@ -24,7 +24,8 @@ import { overlayHint } from '../overlay/hint';
 import { windowBoxes } from '../overlay/windowBoxes';
 import { WindowBoxes } from '../components/overlay/WindowBoxes';
 import { atBarEdge } from '../overlay/toolbarLayout';
-import { useAutoHideBar, useBarSide, useCapture, useDisplays, useFlash, useRefState } from '../components/overlay/hooks';
+import { useAutoHideBar, useBarSide, useCapture, useDisplays, useFlash, useRefState, useStroke } from '../components/overlay/hooks';
+import { StrokeLayer } from '../components/overlay/StrokeLayer';
 import { CaptureBox, FindBoxes, RegionBox } from '../components/overlay/Shapes';
 import { JitterBoxes, MarkerDots, OverlayLines } from '../components/overlay/MarkerLayer';
 import { CoordInfo, Crosshair, HintPill } from '../components/overlay/Hud';
@@ -87,6 +88,7 @@ export default function OverlayScreen() {
   const toScreenRect = (r: Rect): Rect => ({ ...toScreenFromClient(r), w: Math.round(r.w * map.kx), h: Math.round(r.h * map.ky) });
   const capture = useCapture(toScreenRect);
   const { cap, setCap, capRef } = capture;
+  const stroke = useStroke();
   const gesture = useTransformGesture(toScreenFromClient);
   const gestureRef = useRef(gesture);
   gestureRef.current = gesture;
@@ -116,6 +118,7 @@ export default function OverlayScreen() {
     setCursor(c);
     if (e.buttons === 0 && atBarEdge(barSide, c, { w: window.innerWidth, h: window.innerHeight }, EDGE)) bar.show();
     cursorRef.current = c;
+    if (stroke.active) stroke.add(c);
     const m = movingRef.current;
     if (m && !m.moved && Math.hypot(c.x - m.from.x, c.y - m.from.y) >= MIN_MOVE) setMoving({ ...m, moved: true });
     if (!inWails) return;
@@ -131,6 +134,7 @@ export default function OverlayScreen() {
 
   const onDown = (e: MouseEvent) => {
     skipClick.current = false; // bấm ngoài marker (marker chặn sự kiện này)
+    if (tool === 'stroke' && !onUI(e) && e.button === 0) return stroke.begin({ x: e.clientX, y: e.clientY });
     if (onUI(e) || e.button !== 0 || (tool !== 'region' && tool !== 'select' && tool !== 'capture') || focus) return; // kéo vùng / khung chọn / khoanh ảnh
     if (tool === 'capture') capture.reset();
     setDragFrom({ x: e.clientX, y: e.clientY });
@@ -160,13 +164,17 @@ export default function OverlayScreen() {
       return;
     }
     if (onUI(e) || preview) return;
-    if (focus ? !repickRef.current : tool === 'region' || tool === 'select' || tool === 'capture') return; // xem riêng: chỉ đặt điểm khi đang chọn lại
+    if (focus ? !repickRef.current : tool === 'region' || tool === 'select' || tool === 'capture' || tool === 'stroke') return; // xem riêng: chỉ đặt điểm khi đang chọn lại
     const screen = inWails ? await MousePos() : toScreenFromClient({ x: e.clientX, y: e.clientY });
     placePoint(screen);
     if (focus) setRepicking(pickingStep() !== null); // kéo thả: còn chờ B thì vẫn đang chọn
   };
 
   const onUp = async (e: MouseEvent) => {
+    if (stroke.active) {
+      placeStroke(stroke.end().map(toScreenFromClient)); // quá ngắn / ra ngoài vùng: ở lại để vẽ lại
+      return;
+    }
     const m = movingRef.current;
     if (m) {
       setMoving(null);
@@ -234,7 +242,7 @@ export default function OverlayScreen() {
   const hintIcon = preview ? <Eye className="h-3 w-3" /> : tool === 'region' && !focus ? <Region className="h-3 w-3" />
     : tool === 'select' && !focus ? <SelectIcon className="h-3 w-3" />
     : <StepIcon type={tool === 'drag' || focusStep?.type === 'drag' ? 'drag' : 'click'} className="h-3 w-3" />;
-  const toolName = focusStep ? `Node ${focusStep.ref}` : preview ? 'Xem trước' : TOOLS.find((t) => t.id === tool)?.label ?? '';
+  const toolName = focusStep ? `Node ${focusStep.ref}` : preview ? 'Xem trước' : tool === 'stroke' ? 'Vẽ đường' : TOOLS.find((t) => t.id === tool)?.label ?? '';
   const exitFocus = () => {
     cancelPick();
     setRepicking(false);
@@ -273,6 +281,7 @@ export default function OverlayScreen() {
         grabbing={!!moving} dragA={dragA && toClient(dragA)} onDown={onMarkerDown} />
 
       {preview && <SimulationLayer sim={sim} toClient={toClient} />}
+      {tool === 'stroke' && <StrokeLayer pts={stroke.pts} />}
       <Crosshair at={cursor} screen={toScreenFromClient(cursor)} hidden={preview} />
 
       <HintPill side={barSide} barOpen={bar.open} onEnter={bar.show} onLeave={bar.leave} icon={hintIcon} title={toolName} hint={hint}

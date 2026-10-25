@@ -20,7 +20,7 @@ export const NODE_INFO: Record<InfoKey, NodeInfo> = {
   openWeb: { desc: 'Mở trang web bằng Chrome riêng của app để các node Web tìm được phần tử trong trang.', use: 'Đặt trước các node Chờ / Click / Gõ / Đọc phần tử web.' },
   waitImage: { desc: 'Chờ tới khi ảnh mẫu (nút, biểu tượng) hiện trên màn hình, cho biết vị trí tìm thấy.', use: 'Đợi trang tải xong, đợi hộp thoại hiện, kiểm tra đã đăng nhập chưa.' },
   waitText: { desc: 'Chờ tới khi một dòng chữ hiện trên màn hình (đọc chữ bằng OCR), cho biết vị trí.', use: 'Đợi thông báo “Thành công”, đợi tên nút hiện – không cần chụp ảnh mẫu.' },
-  clickImage: { desc: 'Tìm ảnh mẫu trên màn hình rồi bấm vào đó.', use: 'Nút không nằm cố định (đổi chỗ theo cửa sổ, theo trang đã cuộn).' },
+  clickImage: { desc: 'Tìm rồi bấm vào đó – chọn cách tìm ngay trong node: ảnh mẫu, dòng chữ hoặc phần tử.', use: 'Nút đổi chỗ theo cửa sổ; bấm theo tên hiện trên màn, vd “Đăng nhập”.' },
   waitElement: { desc: 'Chờ tới khi một phần tử (nút, ô, chữ) có trong cửa sổ app – đọc qua Accessibility, không chụp màn hình.', use: 'Đợi nút / giá ở Chrome thường đã đăng nhập hoặc app khác hiện ra.' },
   clickElement: { desc: 'Tìm phần tử theo chữ / nhãn / vai trò qua Accessibility rồi bấm bằng chuột thật.', use: 'Bấm nút chỉ có icon, nút ở Chrome thường đã đăng nhập.' },
   clickText: { desc: 'Tìm một dòng chữ trên màn hình rồi bấm vào đó.', use: 'Bấm nút / liên kết theo tên hiện trên màn, vd “Đăng nhập”, “Xem thêm”.' },

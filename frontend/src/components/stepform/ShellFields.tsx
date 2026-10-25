@@ -1,6 +1,7 @@
 // Node Chạy lệnh (bước 43 S1): ngôn ngữ + nội dung lệnh (nguyên văn, KHÔNG nhận {{biến}}) + biến môi trường + thư mục + hết giờ.
 import Select from '../Select';
 import VarTextInput from '../inputs/VarTextInput';
+import PathInput from './PathInput';
 import { fieldBox } from '../NumInput';
 import { updateStep, useScript } from '../../store';
 import { addInput } from '../../scriptInputs';
@@ -27,7 +28,7 @@ export default function ShellFields({ step: s }: { step: Step }) {
       <KVTable title="Biến môi trường" rows={s.shellEnv} onChange={(shellEnv) => set({ shellEnv })} keyHint="TEN" valueHint="{{n1.output.text}}" varProps={varProps}
         help="Đọc trong lệnh bằng $TEN (zsh) · %TEN% (cmd) · $env:TEN (PowerShell) · system attribute “TEN” (AppleScript)." />
       <Field label="Thư mục chạy" wide group help="Trống = thư mục của app · ~ = thư mục người dùng">
-        <VarTextInput {...varProps} rows={1} compact value={s.filePath ?? ''} onChange={(v) => set({ filePath: v || undefined })} placeholder="~/Documents" />
+        <PathInput kind="folder" {...varProps} value={s.filePath ?? ''} onChange={(v) => set({ filePath: v || undefined })} placeholder="~/Documents" />
       </Field>
       <NumField label="Chờ tối đa" info="Quá giờ thì dừng cả cây tiến trình của lệnh và đi cổng Thất bại" step={s} field="timeoutMs" unit="ms" min={1} />
       <span className={`col-span-2 -mt-1 ${hint}`}>

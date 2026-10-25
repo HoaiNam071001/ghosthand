@@ -7,6 +7,8 @@ import Select from '../Select';
 import { useState } from 'react';
 import NumInput, { fieldBox } from '../NumInput';
 import { FlowEdgeView, FlowNodeView, PortKind, RunRow } from './model';
+import OutputTable from './OutputTable';
+import { outputRows } from '../../flow/outputRows';
 
 const dot: Record<PortKind, string> = { ok: 'bg-ok', fail: 'bg-danger', neutral: 'bg-muted' };
 // Mỗi panel chỉ là nội dung – tên khối + tóm tắt nằm ở Section (stepform/InspectorParts) bên ngoài.
@@ -87,7 +89,7 @@ export function OutputsPanel({ refName, fields }: { refName: string; fields: Out
   );
 }
 
-export function LastRunPanel({ row }: { row: RunRow }) {
+export function LastRunPanel({ row, refName, fields }: { row: RunRow; refName: string; fields?: OutputField[] }) {
   return (
     <div className={body}>
       <div className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs text-muted">
@@ -101,7 +103,7 @@ export function LastRunPanel({ row }: { row: RunRow }) {
           <span className="font-mono text-xs">{row.error.code}</span> · {row.error.message}
         </div>
       )}
-      {row.output && <pre className="overflow-x-auto rounded-control bg-soft px-2.5 py-2 font-mono text-xs text-ink">{JSON.stringify(row.output, null, 1)}</pre>}
+      {row.output && <OutputTable rows={outputRows(refName, row.output, fields)} output={row.output} label={refName} />}
       {!!row.logs?.length && <LogLines logs={row.logs} />}
     </div>
   );

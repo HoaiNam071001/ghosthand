@@ -8,6 +8,8 @@ import type { InfoKey, NodeInfo } from '../flow/nodeInfo';
 import type { StepType } from '../types';
 import { ILLUS } from './palette/illus';
 import { categoryName, NodeCategory } from '../flow/category';
+import { onlyLabel, unsupportedHere } from '../flow/platform';
+import { usePlatform } from './palette/usePlatform';
 
 // key: tên mô tả / hoạt hoạ (flow/nodeInfo); type: loại node thuần – chỉ mục có type mới hiện khi Đổi loại node.
 export type PaletteItem = { icon: StepIconName; label: string; keywords: string; info?: NodeInfo; key?: InfoKey; type?: StepType; run?: () => unknown; soon?: string };
@@ -26,6 +28,7 @@ export function PaletteView({ groups: all, onClose, onCancel, footer, context, l
     onClose();
   };
   const [q, setQ] = useState('');
+  const { goos, only } = usePlatform();
   const groups = useMemo(() => {
     const words = fold(q).split(/\s+/).filter(Boolean);
     return all
@@ -86,14 +89,17 @@ export function PaletteView({ groups: all, onClose, onCancel, footer, context, l
                 {g.items.map((it) => {
                   const i = ++n;
                   const on = i === sel;
+                  const tag = onlyLabel(only, it.type);
+                  const bad = unsupportedHere(only, it.type, goos);
                   return (
                     <button key={it.label} onClick={() => pick(it)} onMouseEnter={() => setSel(i)} aria-disabled={!it.run}
-                      title={it.soon ? `Sắp có (${it.soon})` : undefined}
+                      title={it.soon ? `Sắp có (${it.soon})` : bad ? `${tag} – không chạy được trên máy này` : undefined}
                       className={`flex min-h-[46px] items-center gap-2.5 rounded-card px-2.5 py-1.5 text-left ${on ? 'ring-selected' : 'border border-line bg-surface'} ${it.run ? '' : 'cursor-default'}`}>
-                      <span className={`grid h-[30px] w-[30px] flex-none place-items-center rounded-[7px] bg-cat-tile text-cat ${it.run ? '' : 'opacity-60'}`}>
+                      <span className={`grid h-[30px] w-[30px] flex-none place-items-center rounded-[7px] bg-cat-tile text-cat ${it.run && !bad ? '' : 'opacity-60'}`}>
                         <StepIcon type={it.icon} className="h-[15px] w-[15px]" />
                       </span>
-                      <span className={`min-w-0 flex-1 font-medium ${it.run ? '' : 'text-muted'}`}>{it.label}</span>
+                      <span className={`min-w-0 flex-1 font-medium ${it.run && !bad ? '' : 'text-muted'}`}>{it.label}</span>
+                      {tag && <span className={`rounded-full px-1.5 py-px text-[10px] font-semibold whitespace-nowrap ${bad ? 'bg-warn/15 text-warn' : 'bg-soft text-muted'}`}>{tag}</span>}
                       {it.soon && <span className="rounded-full bg-soft px-1.5 py-px text-[10px] font-semibold whitespace-nowrap text-muted">Sắp có</span>}
                     </button>
                   );
@@ -103,7 +109,7 @@ export function PaletteView({ groups: all, onClose, onCancel, footer, context, l
           ))}
         </div>
 
-        <PaletteDetail item={flat[sel]} />
+        <PaletteDetail item={flat[sel]} warn={unsupportedHere(only, flat[sel]?.type, goos) ? `${onlyLabel(only, flat[sel]?.type)} – node này không chạy được trên máy này (vẫn thêm được để dùng ở máy khác).` : ''} />
 
         <div className="flex flex-none flex-wrap items-center gap-4 border-t border-line bg-chrome px-4 py-2.5 text-xs text-muted">
           <span><span className="font-mono">↑↓←→</span> chọn</span>
@@ -115,7 +121,7 @@ export function PaletteView({ groups: all, onClose, onCancel, footer, context, l
 }
 
 // Mô tả mục đang chọn / rê chuột: hoạt hoạ minh hoạ bên trái, chữ bên phải – cao cố định để bảng không giật khi đổi mục.
-function PaletteDetail({ item }: { item?: Item }) {
+function PaletteDetail({ item, warn }: { item?: Item; warn: string }) {
   const scene = item?.key && ILLUS[item.key];
   return (
     <div aria-live="polite" className="flex h-[148px] flex-none items-center gap-4 border-t border-line px-4 py-3">
@@ -133,6 +139,7 @@ function PaletteDetail({ item }: { item?: Item }) {
             <span className="text-[13px] text-ink">{item.info.desc}</span>
             <span className="text-xs text-muted"><span className="font-semibold">Dùng khi:</span> {item.info.use}</span>
           </>}
+          {warn && <span className="text-xs font-medium text-warn">{warn}</span>}
         </div>
       </>}
     </div>

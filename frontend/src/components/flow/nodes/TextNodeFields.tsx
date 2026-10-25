@@ -57,14 +57,14 @@ function MatchForm({ ctx: { step: s, set, vars } }: { ctx: CondCtx }) {
 
 function CleanForm({ ctx: { step: s, set, vars } }: { ctx: CondCtx }) {
   return <>
-    <div className="grid grid-cols-2 gap-3">
+    <>
       <Field label="Thay" group>
         <VarTextInput {...vars} rows={1} compact value={s.replaceFrom ?? ''} onChange={(v) => set({ replaceFrom: v || undefined })} placeholder="chữ cần thay" />
       </Field>
       <Field label="Bằng" group help={s.replaceRegex ? '$1 = phần trong nhóm () thứ nhất' : 'Trống = xoá chữ cần thay'}>
         <VarTextInput {...vars} rows={1} compact value={s.replaceTo ?? ''} onChange={(v) => set({ replaceTo: v || undefined })} placeholder="trống = xoá" />
       </Field>
-    </div>
+    </>
     {s.replaceFrom && <SwitchField label="Chữ cần thay là regex" on={!!s.replaceRegex} onChange={(on) => set({ replaceRegex: on || undefined })} />}
     <SwitchField label="Bỏ dấu tiếng Việt" on={!!s.stripAccents} onChange={(on) => set({ stripAccents: on || undefined })} help="Đà Nẵng → Da Nang" />
     <Field label="Hoa / thường" group>
@@ -82,14 +82,14 @@ function NumberForm({ ctx: { step: s, set } }: { ctx: CondCtx }) {
       <Segmented value={s.numOp ?? ''} onChange={(v) => set({ numOp: v || undefined })} full label="Việc" options={NUM_OPS} />
     </Field>
     {s.numOp === 'format' && (
-      <div className="grid grid-cols-2 gap-3">
+      <>
         <Field label="Kiểu viết" group>
           <Segmented value={s.numStyle ?? ''} onChange={(v) => set({ numStyle: v || undefined })} full label="Kiểu viết" options={NUM_STYLES} />
         </Field>
         <Field label="Số lẻ" help="Số chữ số sau dấu thập phân (làm tròn)">
           <NumInput value={s.decimals ?? 0} onChange={(d) => set({ decimals: Math.min(d, 10) || undefined })} />
         </Field>
-      </div>
+      </>
     )}
     {s.numOp === 'date' && (
       <Field label="Mẫu ngày" group help="dd ngày · MM tháng · yyyy năm · HH giờ · mm phút · ss giây (d, M, H: không thêm số 0)">

@@ -2,7 +2,7 @@
 // Tâm hình / vị trí điểm sửa ở overlay (nút 👁) hoặc ô Vị trí (MouseFields).
 import NumInput from '../NumInput';
 import Segmented from '../Segmented';
-import { updateStep } from '../../store';
+import { drawPathFor, updateStep } from '../../store';
 import { fmtPoint, usesVar } from '../../anchor';
 import { SHAPES, type Shape } from '../../flow/shape';
 import { Step, StepPoint } from '../../types';
@@ -66,8 +66,12 @@ function PathPoints({ step: s }: { step: Step }) {
           </li>
         ))}
       </ol>
-      <button onClick={() => set([...s.points, shifted(s.points[s.points.length - 1], 80, 40)])}
-        className="h-8 w-fit rounded-control border border-dashed border-line-strong px-3 text-[13px] text-ink hover:bg-hover">+ Thêm điểm</button>
+      <div className="flex flex-wrap gap-2">
+        <button onClick={() => set([...s.points, shifted(s.points[s.points.length - 1], 80, 40)])}
+          className="h-8 w-fit rounded-control border border-dashed border-line-strong px-3 text-[13px] text-ink hover:bg-hover">+ Thêm điểm</button>
+        <button onClick={() => drawPathFor(s.id)} title="Mở màn hình, kéo chuột một nét liền – app tự lấy các điểm theo nét đó (thay các điểm hiện có)"
+          className="h-8 w-fit rounded-control border border-line px-3 text-[13px] text-ink hover:bg-hover">Vẽ trên màn hình…</button>
+      </div>
     </Field>
     <SwitchField label="Khép kín" help="Vẽ thêm đoạn từ điểm cuối về điểm đầu" on={!!s.closed} onChange={(on) => updateStep(s.id, { closed: on || undefined })} />
     </>
