@@ -35,7 +35,12 @@ echo "Chữ ký:"; codesign -dr - "$APP" 2>&1 | grep designated
 
 dmg="build/bin/Ghosthand-$VERSION.dmg"
 rm -f "$dmg"
-hdiutil create -volname "Ghosthand" -srcfolder "$APP" -ov -format UDZO "$dmg" >/dev/null
+# thư mục tạm có app + lối tắt Applications để kéo-thả cài
+stage="$(mktemp -d)"
+cp -R "$APP" "$stage/Ghosthand.app"
+ln -s /Applications "$stage/Applications"
+hdiutil create -volname "Ghosthand" -srcfolder "$stage" -ov -format UDZO "$dmg" >/dev/null
+rm -rf "$stage"
 echo "Xong: $dmg (phiên bản $VERSION)"
 echo "Phát hành: git tag v$VERSION && git push --tags && gh release create v$VERSION \"$dmg\" --generate-notes   # app của người dùng sẽ báo có bản mới"
 echo "Cài: kéo Ghosthand vào /Applications (cấp quyền cho bản trong /Applications, đừng cấp cho bản trong build/bin)."
