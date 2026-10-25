@@ -78,7 +78,6 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 | Canvas khi chạy + nhật ký từng node | Đường đã đi, node xong / lỗi / ×n, bảng nhật ký (output, log, ảnh lúc lỗi), lời nhắn Kết thúc thành công | [20 F5](phase3/20-flow.md) |
 | 🧪 | Lịch sử chạy, debug | Lưu 50 lần chạy gần nhất / kịch bản, mở lại từ thư viện; điểm dừng, từng node (F10), chạy từ node, chạy riêng một node | [20 F5](phase3/20-flow.md), [20 F7](phase3/20-flow.md) |
 | 🧪 | Hẹn giờ, thông báo, CLI / API local | Chạy lúc HH:mm, báo Telegram / Discord / webhook, lệnh `ghosthand run`, API local cho chương trình khác (tắt mặc định). **Xong code 2026-10-20**, chưa thử tay | [22](phase3/22-hen-gio-cli-api.md) |
-| ⬜ | Chạy theo từng dòng CSV | | [28](phase3/28-mo-rong.md) |
 
 ### AI
 
@@ -109,7 +108,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 > Bảng tự sinh – sau khi tick chạy `python3 scripts/tasks-index.py`. Bấm tên bước để mở file chi tiết.
 
 <!-- index:start -->
-**42 / 58 bước xong code** · 🧪 **[228 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
+**43 / 58 bước xong code** · 🧪 **[228 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
 
 ### Phase 3 – Design v2 & tự động hoá (theo thứ tự làm)
 
@@ -145,11 +144,11 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🟡 đang làm | [47. Hình minh hoạ động cho từng node](phase3/47-hinh-minh-hoa-node.md) | 6 / 7 | [3 việc](checks.md) |
 | 🟡 đang làm | [48. Kiểm tra quyền](phase3/48-kiem-tra-quyen.md) | 5 / 5 | [6 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | 12 / 12 | [16 việc](checks.md) |
-| 🟡 đang làm | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | 35 / 43 | [24 việc](checks.md) |
+| 🟡 đang làm | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | 35 / 42 | [24 việc](checks.md) |
 | 🟡 đang làm | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | 11 / 12 |  |
-| 🟡 đang làm | [39. Gom kịch bản: nhóm node, nhúng kịch bản khác](phase3/39-gom-kich-ban.md) | 2 / 3 | [6 việc](checks.md) |
+| 🧪 chờ kiểm tra tay | [39. Gom kịch bản: nhóm node, nhúng kịch bản khác](phase3/39-gom-kich-ban.md) | 2 / 2 | [6 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [24. Ghi macro](phase3/24-ghi-macro.md) | 1 / 1 | [2 việc](checks.md) |
-| ⬜ chưa làm | [28. Mở rộng](phase3/28-mo-rong.md) | 0 / 4 |  |
+| ⬜ chưa làm | [28. Mở rộng](phase3/28-mo-rong.md) | 0 / 3 |  |
 | ⬜ chưa làm | [36. Web qua Chrome của app – làm sau](phase3/36-chrome-app-sau.md) | 0 / 5 |  |
 
 ### Phase 0 – 2

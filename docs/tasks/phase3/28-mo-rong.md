@@ -2,7 +2,7 @@
 
 - [ ] **28. Mở rộng** – Làm sau cùng.
   - Chrome qua DOM: đã chuyển lên **25d** (2026-10-17)
-  - [ ] CSV: mỗi cột là một input key, chạy kịch bản cho từng dòng (mỗi dòng một lần `resolveInputs`) – lặp theo dòng *trong flow* dùng node Lặp qua danh sách ([42](42-du-lieu-luong.md) G2)
+  - ~~CSV: mỗi cột là một input key, chạy kịch bản cho từng dòng~~ → **bỏ khỏi plan** (2026-10-25, người dùng chọn): node Lặp qua danh sách ([42](42-du-lieu-luong.md) G2) đã đọc CSV / xlsx trong flow
   - [ ] OCR: đọc chữ trong vùng vào biến, rẽ nhánh theo nội dung (Tesseract)
   - Tìm phần tử bằng AI: đã chuyển sang **31d** (2026-10-18)
   - Cụm node có tên + subflow: đã chuyển sang **39** (2026-10-19)
