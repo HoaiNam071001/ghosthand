@@ -1,4 +1,4 @@
-// Package update – báo có bản mới (không tự cài): hỏi GitHub Releases của repo, so với phiên bản đang chạy.
+// Package update – báo có bản mới và tự cập nhật: hỏi GitHub Releases của repo, so phiên bản, tải + kiểm sha256 rồi cài đè (install*.go).
 package update
 
 import (

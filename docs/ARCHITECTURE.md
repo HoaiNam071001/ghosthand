@@ -255,6 +255,8 @@ Dừng / tạm dừng: `StopScript` (huỷ ctx), `PauseScript` / `ResumeScript` 
 
 `internal/schedule` – `schedule.go` (`Due`, `Loop`). `internal/notify` – `notify.go` (`Send`: Telegram / Discord / webhook, kèm PNG). Model hẹn giờ: `model/schedule.go` (`Schedule`, `Check`, `NextRun`); lưu: `store/schedules.go`; revision kịch bản `store/revision.go`; `store/apiinfo.go` (`api.json`, `NewToken`); cài đặt API trong `store/settings.go`.
 
+`internal/update` – bản mới + tự cập nhật: `update.go` (`Version`, `Check` hỏi GitHub Releases, so số phiên bản), `install.go` (`PickAsset`, `Download` tải + kiểm sha256, `ExtractExe`), `install_darwin.go` (mở dmg, `MacSwapScript`), `install_windows.go` (`WinInstallScript` / `WinPortableScript`), `install_other.go` (hệ khác: báo không hỗ trợ).
+
 **Root (package main)** – chỉ Wails: method `App` bind sang frontend, mỗi method vài dòng gọi xuống `internal/`.
 
 - `main.go`, `app.go` – Wails app, `App`; method mỏng: `NewStep` / `NewScript`, mô tả loại node, theme, input đã nhớ (`frontend/wailsjs/` tự sinh – không sửa tay, không cần đọc; namespace TS theo package Go: `model.Step`, `store.Settings`, `engine.FindResult`, `main.RunOptions`).

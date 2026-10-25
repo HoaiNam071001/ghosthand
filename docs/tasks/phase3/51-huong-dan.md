@@ -1,0 +1,30 @@
+# 51. Hướng dẫn sử dụng trong app (modal) – cho người dùng và AI
+
+- [ ] **51. Hướng dẫn sử dụng** *(người dùng yêu cầu 2026-10-25)* – Modal *Hướng dẫn* trong app: cách chạy cả hệ thống, các thiết lập, cách dùng từng node thật chi tiết (làm gì, nên / không nên dùng khi nào, chạy được với web / app nào, công nghệ bên dưới, độ chính xác + tốc độ theo ngữ cảnh, mẹo, ví dụ), có demo trực quan. AI đọc cùng nội dung qua MCP. Có node mới / tính năng mới / sửa → hướng dẫn phải cập nhật theo (test + check-docs bắt thiếu).
+  - **Chốt 2026-10-25:**
+    - Nội dung là **JSON chung Go + TS**: `internal/guide/` (go:embed) – frontend import thẳng (chạy được ở `#demo` không cần Go), MCP trả resource `ghosthand://guide`. Không chép lại chữ đã có: *làm gì / dùng khi* lấy từ `flow/nodeInfo.ts`, output từ `flow/view.ts` `outputsOf`, hệ điều hành từ `model/platform.go`, hoạt hoạ từ `palette/illus/` – JSON chỉ giữ phần mới (ngữ cảnh, công nghệ, độ chính xác, mẹo, ví dụ).
+    - Demo **vẽ bằng code + mẫu thử** (không ảnh chụp PNG): hoạt hoạ bước 47, sơ đồ flow mẫu nhỏ (`FlowCanvas` chỉ xem), nút *Mở mẫu thử* mở kịch bản mẫu (bước 33) chạy được ngay.
+    - Làm **3 đợt** H1 → H2 → H3, mỗi đợt dùng được ngay.
+    - Đồng bộ **test đỏ + check-docs**: thiếu trang cho loại node / tab Cài đặt → test đỏ; trường mới của node chưa nhắc trong hướng dẫn → check-docs cảnh báo; thêm mục vào skill `add-node-type`, `implement-step`, `wrap-up` + CLAUDE.md.
+  - **H1. Khung modal + chương chung**
+    - [ ] H1a. Định dạng nội dung: `internal/guide/chapters.json` (chương: id, tiêu đề, khối – đoạn chữ / danh sách bước / bảng / mẹo / cảnh báo / demo) + `nodes.json` (theo `InfoKey`); kiểu TS + Go cùng tên trường, test cả hai bên đọc được cùng file. Vite cho import từ `internal/` (`server.fs.allow`)
+    - [ ] H1b. Modal `components/guide/` (chỉ hiển thị: mục lục trái có ô tìm không dấu – `fold.ts`, nội dung phải; khối giao diện tách file) + store mở modal ở chương / node (`guideNav.ts` như `settingsNav.ts`). Mở bằng nút **?** trên `TitleBar`, phím F1, link *Xem hướng dẫn* ở khung mô tả của bảng Thêm node + `InfoButton` inspector (mở đúng trang node)
+    - [ ] H1c. Chương chung: Bắt đầu (cài đặt, quyền macOS Accessibility / Screen Recording / Automation, Windows), Giao diện (thư viện, canvas, inspector, overlay, thanh mini), Dựng flow (node, cạnh, cổng, rẽ nhánh, lặp), Biến + output (`{{nX.output.y}}`, `vars`, input lúc Chạy, bí mật), Chạy (Chạy / Xem trước / chạy đến node / hẹn giờ / CLI / API), Lịch sử + đọc lỗi, mỗi tab Cài đặt, AI qua MCP
+    - [ ] H1d. Chương **Chọn cách tìm** (quan trọng nhất cho người mới): bảng so sánh toạ độ · ảnh mẫu · chữ OCR · phần tử Accessibility · web DOM (Chrome của app) – độ chính xác, tốc độ, chịu đổi theme / cỡ cửa sổ / bị che, cần quyền gì, chạy với loại app nào (web thường, web đã đăng nhập, app native, Electron, game / canvas, remote desktop) + cây quyết định *nên dùng node nào*
+    - [ ] H1e. Màn mẫu `#demo-guide` (dữ liệu thật của hướng dẫn, không cần Go)
+  - **H2. Trang từng node** (theo nhóm của `palette/groups.ts`, mỗi nhóm một lượt commit)
+    - [ ] H2a. Khung trang node: hoạt hoạ lớn + *làm gì / dùng khi* + nên / không nên (thay bằng node nào) + web / app chạy được + công nghệ + độ chính xác / tốc độ + trường quan trọng + output (tự sinh) + hệ điều hành (tự sinh) + mẹo / lỗi hay gặp + ví dụ (sơ đồ flow mẫu nhỏ + *Mở mẫu thử*)
+    - [ ] H2b. Chuột + phím + chờ
+    - [ ] H2c. Tìm ảnh / chữ / phần tử (+ biến thể Click theo ảnh / chữ / phần tử)
+    - [ ] H2d. Rẽ nhánh / lặp / biến / kết thúc
+    - [ ] H2e. Cửa sổ / ứng dụng / trình duyệt / web (CDP vs Accessibility vs JXA)
+    - [ ] H2f. Dữ liệu + xử lý chữ + hệ thống (clipboard, HTTP, tệp, nén, lệnh, nguồn, màn hình, thông báo…)
+  - **H3. AI + giữ đồng bộ**
+    - [ ] H3a. MCP: resource `ghosthand://guide` (chương + node, dạng gọn cho AI), `get_node_guide(type)`; guide AI hiện có trỏ sang
+    - [ ] H3b. Test: mọi `InfoKey` có mục trong `nodes.json`, mọi `SettingsTab` có chương, mọi `example` mở được mẫu có thật (TS + Go)
+    - [ ] H3c. `check-docs.py`: cảnh báo trường mới trong `steptypes.go` của một node chưa được nhắc trong mục node đó; lỗi khi loại node thiếu mục hướng dẫn
+    - [ ] H3d. Skill `add-node-type` (mục *Hướng dẫn*), `implement-step` + `wrap-up` (tính năng / thiết lập đổi → sửa chương liên quan), CLAUDE.md, ARCHITECTURE.md (*muốn làm X → sửa ở đâu*)
+  - Rủi ro: nội dung ~60 node lớn – viết sai công nghệ / độ chính xác thì hại hơn không có → mỗi mục đối chiếu code (engine + device) lúc viết; `types.ts` (332 dòng) và `steptypes.go` (316) đã quá ngưỡng – tách trước nếu phải đụng.
+  - Chuẩn bị cho MCP (31): H3a – AI đọc cùng nội dung với người
+  - Kiểm tra tay: [checks.md](../checks.md) mục 51
+  - Xong khi: người mới mở *Hướng dẫn* tự cài quyền, dựng và chạy được một kịch bản; chọn đúng node cho trang / app của mình nhờ bảng so sánh; mọi node có trang riêng có hoạt hoạ + ví dụ mở được; thêm node mới mà quên hướng dẫn thì test đỏ.

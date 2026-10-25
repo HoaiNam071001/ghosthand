@@ -99,6 +99,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 |---|---|---|---|
 | ⬜ | Kiểm tra quyền trước khi chạy | Cài đặt → tab Quyền (Accessibility, Screen Recording, Automation Chrome / Finder / System Events, Thông báo…) + cảnh báo trên node và trước khi Chạy; Automation hỏi hệ điều hành không bật hộp thoại | [48](phase3/48-kiem-tra-quyen.md) |
 | 🧪 | Cài đặt rộng hơn, thanh overlay đặt cạnh + co giãn theo màn, Lịch sử xem mọi output | Modal Cài đặt ~760px; Cài đặt chọn thanh overlay top / left / right / bottom, tự gọn theo cỡ màn; Lịch sử có chế độ Tất cả output + Chép | [49](phase3/49-cai-dat-overlay-lich-su.md) |
+| ⬜ | Hướng dẫn sử dụng trong app (người + AI) | Modal Hướng dẫn: chương chung (cài đặt, quyền, chạy, biến, Cài đặt, chọn cách tìm) + trang từng node (ngữ cảnh, công nghệ, độ chính xác, hoạt hoạ, mẫu thử); JSON chung Go + TS, MCP `ghosthand://guide`; test bắt thiếu khi thêm node | [51](phase3/51-huong-dan.md) |
 | ✅ | Giao diện v2, theme sáng / tối | Kiểu Windows 11; UI dựng sẵn cho tính năng *Sắp có* | [27](phase3/27-ui-v2.md), [27b](phase3/27b-ui-sap-co.md) |
 | 🧪 | Giao diện v3 – gọn | Màu theo 7 nhóm node, thẻ node nhỏ (168), inspector thu gọn có tóm tắt, nút Chạy tách đôi + menu; theme tối giữ Slate | [38](phase3/38-ui-v3.md) |
 | 🟡 | Đa màn hình / DPI | macOS xong (chờ kiểm tra tay 2 màn); Windows 125 % thử thật qua (chuột, chụp, ảnh mẫu), còn 100 % / 150 % / 2 màn | [17](phase1-mvp.md) |
@@ -109,7 +110,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 > Bảng tự sinh – sau khi tick chạy `python3 scripts/tasks-index.py`. Bấm tên bước để mở file chi tiết.
 
 <!-- index:start -->
-**45 / 60 bước xong code** · 🧪 **[242 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
+**45 / 61 bước xong code** · 🧪 **[242 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
 
 ### Phase 3 – Design v2 & tự động hoá (theo thứ tự làm)
 
@@ -146,6 +147,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🟡 đang làm | [48. Kiểm tra quyền](phase3/48-kiem-tra-quyen.md) | 5 / 5 | [6 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [49. Chỉnh giao diện theo yêu cầu 2026-10-25](phase3/49-cai-dat-overlay-lich-su.md) | 4 / 4 | [4 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [50. Góp ý khi dùng node 2026-10-25](phase3/50-gop-y-dung-node.md) | 12 / 12 | [10 việc](checks.md) |
+| ⬜ chưa làm | [51. Hướng dẫn sử dụng](phase3/51-huong-dan.md) | 0 / 15 |  |
 | 🧪 chờ kiểm tra tay | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | 12 / 12 | [16 việc](checks.md) |
 | 🟡 đang làm | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | 35 / 42 | [24 việc](checks.md) |
 | 🟡 đang làm | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | 11 / 12 |  |
@@ -232,6 +234,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 16a1e | [48. Kiểm tra quyền trước khi chạy](phase3/48-kiem-tra-quyen.md) | Người dùng yêu cầu (2026-10-24): biết thiếu quyền trước khi chạy; chưa xếp trước 42 / 43 – chờ người dùng chọn lúc làm |
 | 16a1f | [49. Cài đặt, thanh overlay, lịch sử output](phase3/49-cai-dat-overlay-lich-su.md) | Người dùng yêu cầu (2026-10-25); chưa xếp thứ tự – chờ người dùng chọn lúc làm |
 | 16a1g | [50. Góp ý khi dùng node](phase3/50-gop-y-dung-node.md) | Người dùng yêu cầu (2026-10-25): sửa UI tràn + log Accessibility, nút chọn file mọi nơi, output dạng bảng, cửa sổ macOS, vẽ đường trên overlay, dán curl, chọn tiến trình – làm ngay, nhóm A → E |
+| 16a1h | [51. Hướng dẫn sử dụng](phase3/51-huong-dan.md) | Người dùng yêu cầu (2026-10-25): modal hướng dẫn cho người + AI, 3 đợt H1 → H3, giữ đồng bộ bằng test + check-docs |
 | 16a2 | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | Người dùng yêu cầu (2026-10-20): ngay sau 41 – chờ màn hình đứng yên thay Chờ cố định, lặp qua danh sách + tìm tất cả, tính toán / xử lý chữ; làm trên Mac được |
 | 16a3 | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | Người dùng yêu cầu (2026-10-20): sau 42, xen kẽ 40 O0–O3 (máy Windows) – trình duyệt Chromium thường không CDP, phần tử app không cần chuột, hệ điều hành, ảnh đánh số / cây giao diện cho AI trước 31c; mỗi việc một node |
 | 16b | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | Người dùng yêu cầu (2026-10-20): làm sau 31b, trước 31c – Windows chưa đọc được tiếng Việt (`Windows.Media.Ocr`); 31c (AI soạn bằng cách thử, ảnh mẫu) cần đọc chữ / tìm ảnh đáng tin |
