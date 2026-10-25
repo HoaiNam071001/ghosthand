@@ -262,3 +262,4 @@
 - 2026-10-25 44: màn #demo có hộp Thử trang; error.detail web kèm pageCheck
 - 2026-10-25 macOS: bundle ID app.ghosthand + scripts/mac-build.sh (ký tự tạo + dmg) để giữ quyền qua các bản build
 - 2026-10-25 Báo bản mới: internal/update (GitHub Releases), Cài đặt → Giới thiệu, version gắn qua ldflags (mac-build.sh + workflow Windows)
+- 2026-10-25 Phát hành: Makefile + scripts/release.sh / win-build.sh + workflow release-windows.yml (setup + portable); chưa chạy thật trên GitHub

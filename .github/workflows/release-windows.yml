@@ -1,0 +1,54 @@
+# Phát hành bản Windows khi đẩy tag vX.Y.Z: bộ cài (setup.exe) + bản không cài đặt (portable .zip, một file exe chạy luôn)
+# đính vào GitHub Release của tag đó (chưa có Release thì tự tạo). App báo bản mới theo Release này (internal/update).
+name: Release Windows
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Cài MinGW-w64 + NSIS + Wails CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 p7zip-full nsis zip
+          go install github.com/wailsapp/wails/v2/cmd/wails@v$(go list -m -f '{{.Version}}' github.com/wailsapp/wails/v2 | sed 's/^v//')
+      - name: Bộ Tesseract kèm exe (OCR tiếng Việt – bước 40)
+        run: bash scripts/fetch-tesseract.sh
+      - name: Build exe + bộ cài
+        # số phiên bản cho bộ cài / thuộc tính file exe (NSIS cần dạng X.Y.Z); app tự biết số qua -X update.Version
+        env:
+          CGO_ENABLED: '1'
+          CC: x86_64-w64-mingw32-gcc
+          CXX: x86_64-w64-mingw32-g++
+        run: |
+          VER="${TAG#v}"
+          jq --arg v "$VER" '. + {info: {productName: "Ghosthand", companyName: "Ghosthand", productVersion: $v}}' wails.json > wails.tmp && mv wails.tmp wails.json
+          wails build -platform windows/amd64 -skipbindings -trimpath -nsis \
+            -ldflags "-s -w -X ghosthand/internal/update.Version=$VER"
+      - name: Đóng gói + đính vào Release
+        run: |
+          VER="${TAG#v}"
+          cd build/bin
+          mv ghosthand-amd64-installer.exe "Ghosthand-$VER-setup.exe"
+          zip "Ghosthand-$VER-portable.zip" ghosthand.exe
+          cd ../..
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --generate-notes
+          gh release upload "$TAG" "build/bin/Ghosthand-$VER-setup.exe" "build/bin/Ghosthand-$VER-portable.zip" --clobber
