@@ -133,6 +133,7 @@ Dừng / tạm dừng: `StopScript` (huỷ ctx), `PauseScript` / `ResumeScript` 
 | Kho bí mật (43 S10) | `ListSecrets` (chỉ tên), `SetSecret`, `DeleteSecret` (`secretsapi.go`) – Cài đặt → Bí mật; không có method nào trả giá trị |
 | Cửa sổ / app khác (bước 26) | `ListWindows`, `ListApps` (inspector node Cửa sổ / Ứng dụng chọn từ danh sách, trạng thái đang chạy; cùng hàm cho tool MCP) |
 | Cấu hình | `GetSettings`, `SetTheme`, `SetAPISettings` (API cho chương trình khác) |
+| Phiên bản + bản mới (`updateapi.go`, `internal/update`) | `AppVersion`, `CheckUpdate` (hỏi GitHub Releases `releases/latest`, so số phiên bản; chỉ báo, không tự cài), `OpenReleasePage`. Số phiên bản gắn lúc build `-ldflags -X ghosthand/internal/update.Version=…` (`scripts/mac-build.sh` / workflow Windows lấy tag git; không có = `dev`, không nhắc). Mở app 5 giây sau gọi một lần; frontend `store/updateStore.ts` + `settings/AboutSettings` |
 | Lưu trữ (bước 41, `storagedirs.go`) | `StorageDefaults`, `SetStorageSettings`, `PickFolder` (hộp thoại chọn thư mục), `OpenFolder` (Finder / Explorer) |
 | MCP cho AI (bước 31, `mcpapi.go`) | `SetMCPSettings`, `MCPLog` (lệnh AI gần đây), `MCPClients` (cấu hình mẫu từng client), `ClaudeDesktopConfigPath`, `AddToClaudeDesktop`, `MCPTools`, `MCPSeenClients` |
 | Mẫu thử | `Samples`, `OpenSample(id)` (ghi sân thử ra `ConfigDir/sandbox`, trả kịch bản), `OpenSandboxPage(page)` |
@@ -153,6 +154,7 @@ Dừng / tạm dừng: `StopScript` (huỷ ctx), `PauseScript` / `ResumeScript` 
 | `script:changed` | `{path, revision, source}` | scriptFile (nạp lại, làm mới Mở gần đây) |
 | `mcp:open` | `path` | scriptFile (AI gọi `open_in_app` → mở như Mở gần đây) |
 | `mcp:nodePref` | `vision` | `web` | scriptFile (thông báo “AI đổi ưu tiên node”), AppSettings (cập nhật khi đang mở) |
+| `update:available` | `update.Info` (`current`, `latest`, `url`, `notes`, `newer`) | scriptFile (thông báo nhẹ), `updateStore` (tab Giới thiệu hiện luôn) |
 | `ai:ask` / `ai:ask-timeout` | `AIAsk{id, script, path, steps, from?, stopAt?, nodes?, resume?}` / `id` | aiAsk.ts → AIRunDialog (AI muốn chạy – mức Hỏi) |
 | `schedule:changed` / `schedule:error` | – / `{path, error}` | scheduleStore |
 

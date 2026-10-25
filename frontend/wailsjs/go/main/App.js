@@ -14,6 +14,10 @@ export function AnswerAIRun(arg1, arg2) {
   return window['go']['main']['App']['AnswerAIRun'](arg1, arg2);
 }
 
+export function AppVersion() {
+  return window['go']['main']['App']['AppVersion']();
+}
+
 export function BrowserStatus() {
   return window['go']['main']['App']['BrowserStatus']();
 }
@@ -28,6 +32,10 @@ export function CaptureTemplate(arg1) {
 
 export function CheckPage(arg1) {
   return window['go']['main']['App']['CheckPage'](arg1);
+}
+
+export function CheckUpdate() {
+  return window['go']['main']['App']['CheckUpdate']();
 }
 
 export function ClaudeDesktopConfigPath() {
@@ -180,6 +188,10 @@ export function OpenFolder(arg1) {
 
 export function OpenPermissionSettings(arg1) {
   return window['go']['main']['App']['OpenPermissionSettings'](arg1);
+}
+
+export function OpenReleasePage(arg1) {
+  return window['go']['main']['App']['OpenReleasePage'](arg1);
 }
 
 export function OpenSample(arg1) {

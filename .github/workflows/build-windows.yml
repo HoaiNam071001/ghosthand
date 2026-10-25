@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # cần tag git để gắn số phiên bản
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
@@ -33,7 +35,7 @@ jobs:
           CGO_ENABLED: '1'
           CC: x86_64-w64-mingw32-gcc
           CXX: x86_64-w64-mingw32-g++
-        run: wails build -platform windows/amd64 -skipbindings -trimpath -ldflags "-s -w"
+        run: wails build -platform windows/amd64 -skipbindings -trimpath -ldflags "-s -w -X ghosthand/internal/update.Version=$(git describe --tags --abbrev=0 2>/dev/null | sed s/^v// || echo dev)"
       - uses: actions/upload-artifact@v4
         with:
           name: ghosthand-windows-${{ github.sha }}

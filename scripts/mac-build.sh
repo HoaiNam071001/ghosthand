@@ -24,15 +24,18 @@ if ! security find-identity -v -p codesigning | grep -q "\"$CERT\""; then
   security add-trusted-cert -r trustRoot -p codeSign -k "$KEYCHAIN" "$tmp/cert.pem"
 fi
 
+# phiên bản = VERSION=1.2.0 scripts/mac-build.sh, không có thì lấy tag git gần nhất (v1.2.0), không có nữa = "dev" (app không nhắc cập nhật)
+VERSION="${VERSION:-$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//' || true)}"
+VERSION="${VERSION:-dev}"
 export PATH="$PATH:$HOME/go/bin"
-wails build
+wails build -ldflags "-X ghosthand/internal/update.Version=$VERSION"
 codesign --force --deep --sign "$CERT" --identifier "$BUNDLE_ID" "$APP"
 codesign --verify --deep --strict "$APP"
 echo "Chữ ký:"; codesign -dr - "$APP" 2>&1 | grep designated
 
-ver="$(plutil -extract CFBundleShortVersionString raw "$APP/Contents/Info.plist")"
-dmg="build/bin/Ghosthand-$ver.dmg"
+dmg="build/bin/Ghosthand-$VERSION.dmg"
 rm -f "$dmg"
 hdiutil create -volname "Ghosthand" -srcfolder "$APP" -ov -format UDZO "$dmg" >/dev/null
-echo "Xong: $dmg"
+echo "Xong: $dmg (phiên bản $VERSION)"
+echo "Phát hành: git tag v$VERSION && git push --tags && gh release create v$VERSION \"$dmg\" --generate-notes   # app của người dùng sẽ báo có bản mới"
 echo "Cài: kéo Ghosthand vào /Applications (cấp quyền cho bản trong /Applications, đừng cấp cho bản trong build/bin)."

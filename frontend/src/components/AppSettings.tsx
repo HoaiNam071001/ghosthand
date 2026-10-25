@@ -1,5 +1,5 @@
 // Cài đặt app (nút bánh răng trên thanh tiêu đề), chia tab: Lưu trữ – thư mục kịch bản / ảnh (bước 41, settings/StorageSettings),
-// Bí mật – kho mật khẩu / token (bước 43 S10, settings/SecretsSettings), Quyền – quyền hệ điều hành (bước 48, settings/PermSettings), API – dòng lệnh + API local (bước 22, settings/ApiSettings), AI qua MCP (bước 31, settings/McpSettings).
+// Bí mật – kho mật khẩu / token (bước 43 S10, settings/SecretsSettings), Quyền – quyền hệ điều hành (bước 48, settings/PermSettings), API – dòng lệnh + API local (bước 22, settings/ApiSettings), AI qua MCP (bước 31, settings/McpSettings), Giới thiệu – phiên bản + kiểm tra bản mới (settings/AboutSettings).
 import { useEffect, useState } from 'react';
 import {
   GetSettings, OpenFolder, PickFolder, SetAPISettings, SetMCPSettings, SetStorageSettings, StorageDefaults,
@@ -12,6 +12,8 @@ import { needs } from '../flow/perms';
 import { onOpenSettings, SettingsTab } from '../settingsNav';
 import { openPermSettings, refreshPerms, requestPerm, usePerms } from '../store/permStore';
 import { useScript } from '../store/editor';
+import { checkUpdate, loadVersion, openReleasePage, useUpdate } from '../store/updateStore';
+import AboutSettings from './settings/AboutSettings';
 import ApiSettings from './settings/ApiSettings';
 import McpSettings from './settings/McpSettings';
 import PermSettings from './settings/PermSettings';
@@ -20,7 +22,7 @@ import StorageSettings, { StorageKey } from './settings/StorageSettings';
 import Segmented from './Segmented';
 
 type Tab = SettingsTab;
-const TABS: { id: Tab; label: string }[] = [{ id: 'storage', label: 'Lưu trữ' }, { id: 'secrets', label: 'Bí mật' }, { id: 'perms', label: 'Quyền' }, { id: 'api', label: 'API' }, { id: 'mcp', label: 'AI (MCP)' }];
+const TABS: { id: Tab; label: string }[] = [{ id: 'storage', label: 'Lưu trữ' }, { id: 'secrets', label: 'Bí mật' }, { id: 'perms', label: 'Quyền' }, { id: 'api', label: 'API' }, { id: 'mcp', label: 'AI (MCP)' }, { id: 'about', label: 'Giới thiệu' }];
 
 export default function AppSettings() {
   const [open, setOpen] = useState(false);
@@ -28,6 +30,7 @@ export default function AppSettings() {
   const [error, setError] = useState('');
   const [tab, setTab] = useState<Tab>('storage');
   const perms = usePerms();
+  const upd = useUpdate();
   const script = useScript();
   const [defaults, setDefaults] = useState<store.StorageDefaults | null>(null);
 
@@ -46,6 +49,7 @@ export default function AppSettings() {
     window.addEventListener('focus', refreshPerms);
     return () => window.removeEventListener('focus', refreshPerms);
   }, [open, tab]);
+  useEffect(() => { if (open && tab === 'about') loadVersion(); }, [open, tab]);
   useEffect(() => {
     if (!open) return;
     // AI đổi ưu tiên node lúc đang mở Cài đặt (44) – cập nhật để lần lưu sau không ghi đè bằng giá trị cũ
@@ -100,6 +104,7 @@ export default function AppSettings() {
             )}
             {tab === 'api' && <ApiSettings api={settings.api} onChange={saveApi} />}
             {tab === 'mcp' && <McpSettings mcp={settings.mcp} onChange={saveMcp} />}
+            {tab === 'about' && <AboutSettings version={upd.version} info={upd.info} busy={upd.busy} error={upd.error} onCheck={checkUpdate} onOpen={openReleasePage} />}
             {error && <span className="text-danger-text">{error}</span>}
           </div>
         </div>

@@ -3,6 +3,7 @@
 import {web} from '../models';
 import {model} from '../models';
 import {main} from '../models';
+import {update} from '../models';
 import {script} from '../models';
 import {engine} from '../models';
 import {store} from '../models';
@@ -17,6 +18,8 @@ export function AddToClaudeDesktop():Promise<string>;
 
 export function AnswerAIRun(arg1:string,arg2:string):Promise<void>;
 
+export function AppVersion():Promise<string>;
+
 export function BrowserStatus():Promise<web.Status>;
 
 export function CancelPick():Promise<void>;
@@ -24,6 +27,8 @@ export function CancelPick():Promise<void>;
 export function CaptureTemplate(arg1:model.Rect):Promise<main.TemplateShot>;
 
 export function CheckPage(arg1:string):Promise<web.PageCheck>;
+
+export function CheckUpdate():Promise<update.Info>;
 
 export function ClaudeDesktopConfigPath():Promise<string>;
 
@@ -100,6 +105,8 @@ export function OpenAppBrowser(arg1:string):Promise<void>;
 export function OpenFolder(arg1:string):Promise<void>;
 
 export function OpenPermissionSettings(arg1:string):Promise<void>;
+
+export function OpenReleasePage(arg1:string):Promise<void>;
 
 export function OpenSample(arg1:string):Promise<model.Script>;
 
