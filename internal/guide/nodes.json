@@ -496,5 +496,192 @@
     "samples": [
       "tim-tat-ca"
     ]
+  },
+  "if": {
+    "tech": "Đánh giá một điều kiện (thấy chữ / ảnh / màu, so giá trị) rồi đi cổng đúng hoặc sai. Điều kiện nhìn màn hình dùng cùng cách tìm với các node Chờ. Đặt thời gian chờ thì xem lại đều đặn tới khi đúng, hết giờ coi là sai.",
+    "accuracy": "Theo điều kiện chọn (xem trang Chờ ảnh / chữ). Thiếu quyền hoặc ảnh mẫu hỏng thì node lỗi chứ không đi cổng sai.",
+    "speed": "Xem một lần là tức thì; có thời gian chờ thì tối đa bằng thời gian đó.",
+    "good": [
+      "Việc tuỳ chọn: có quảng cáo thì tắt, không thì đi tiếp",
+      "Rẽ nhánh theo biến, kết quả node trước hoặc cái đang hiện trên màn"
+    ],
+    "avoid": [
+      "Nhiều trạng thái (từ ba trở lên) → [[node:switch]] hoặc [[node:switchScreen]]",
+      "Chỉ chờ cho tới khi hiện → node Chờ, khỏi rẽ nhánh"
+    ],
+    "tips": [
+      "Thấy gì thì kết quả có toạ độ: nối [[node:clickImage]] chọn “theo node” trỏ vào node Nếu này.",
+      "Cần chờ trang kịp hiện rồi mới kết luận “không có”: đặt thời gian chờ thay vì xem một lần."
+    ],
+    "fields": [
+      "**Điều kiện** – thấy chữ / ảnh / màu hoặc so giá trị",
+      "**Thời gian chờ** – 0 là xem một lần"
+    ],
+    "samples": [
+      "neu-co-quang-cao"
+    ]
+  },
+  "switch": {
+    "tech": "So một giá trị (thường là {{biến}}) lần lượt với từng trường hợp: bằng, chứa (không phân biệt hoa thường) hoặc regex. Trường hợp khớp đầu tiên đi cổng của nó, không khớp thì đi cổng mặc định.",
+    "accuracy": "Chính xác tuyệt đối với chữ / số có sẵn trong biến; không nhìn màn hình.",
+    "speed": "Tức thì.",
+    "good": [
+      "Rẽ nhiều nhánh theo input lúc Chạy hoặc kết quả node trước",
+      "Phân loại text đọc được: “Thành công” / “Lỗi” / khác"
+    ],
+    "avoid": [
+      "Chỉ hai nhánh → [[node:if]]",
+      "Quyết định theo thứ đang hiện trên màn → [[node:switchScreen]]"
+    ],
+    "tips": [
+      "Thứ tự trường hợp quan trọng: khớp đầu tiên thắng.",
+      "Luôn nối cổng mặc định để kịch bản không dừng bất ngờ."
+    ],
+    "fields": [
+      "**Giá trị** – nhận {{biến}}",
+      "**Các trường hợp** – kiểu so + giá trị"
+    ],
+    "samples": [
+      "switch-gia-tri"
+    ]
+  },
+  "switchScreen": {
+    "tech": "Chụp màn hình định kỳ, xét các trường hợp theo thứ tự (thấy chữ / ảnh / màu) và đi cổng của trường hợp đúng trước. Hết giờ không trường hợp nào đúng thì đi cổng “không có”.",
+    "accuracy": "Theo từng điều kiện (như trang Chờ ảnh / chữ). Trường hợp xét trước thắng khi hai trạng thái cùng hiện.",
+    "speed": "Xong ngay khi một trường hợp đúng; tối đa bằng thời gian chờ. Cần quyền Screen Recording trên macOS.",
+    "good": [
+      "Trang có thể ở nhiều trạng thái: đăng nhập / đã vào / popup",
+      "Chờ “một trong nhiều kết quả” thay vì nhiều node Chờ"
+    ],
+    "avoid": [
+      "Quyết định theo biến → [[node:switch]]",
+      "Chỉ một trạng thái cần kiểm → [[node:if]]"
+    ],
+    "tips": [
+      "Đặt trường hợp bắt buộc xử lý trước (vd popup che màn) lên đầu."
+    ],
+    "fields": [
+      "**Các trường hợp** – điều kiện nhìn màn hình",
+      "**Thời gian chờ** và **chu kỳ nhìn**"
+    ],
+    "samples": [
+      "switch-man-hinh"
+    ]
+  },
+  "forEach": {
+    "tech": "Lặp thân vòng một lần cho mỗi phần tử của danh sách: nạp danh sách ở lần đầu vào, mỗi lần vào lấy phần tử kế qua cổng “item”, hết thì đi cổng “done”. Nguồn: dòng chữ, mảng JSON, file .csv hoặc .xlsx (dòng đầu là tên cột).",
+    "accuracy": "Đọc đúng dữ liệu nguồn; file hỏng hoặc mảng JSON sai thì node lỗi, dừng kịch bản. Danh sách rỗng đi “done” ngay.",
+    "speed": "Chỉ tốn thời gian của các node trong thân vòng.",
+    "good": [
+      "Làm cùng một việc cho từng dòng Excel / CSV",
+      "Bấm lần lượt mọi chỗ Tìm tất cả đã thấy"
+    ],
+    "avoid": [
+      "Lặp cố định N lần hoặc tới khi thấy thứ gì → [[node:counter]] hoặc vòng lặp của kịch bản"
+    ],
+    "tips": [
+      "Cuối thân vòng phải nối cạnh quay lại chính node này.",
+      "Đọc item: {{nX.output.item}} (chữ) hoặc {{nX.output.item.tên_cột}} (dòng bảng); {{nX.output.index}} đếm từ 1.",
+      "Một vòng kịch bản chạy tối đa 10000 lần node – danh sách rất dài cần chia nhỏ.",
+      "Nút Đọc thử trong inspector hiện ngay danh sách đọc được."
+    ],
+    "fields": [
+      "**Nguồn** – chữ / mảng JSON / file",
+      "**Sheet** (xlsx)"
+    ],
+    "samples": [
+      "lap-danh-sach"
+    ]
+  },
+  "counter": {
+    "tech": "Đếm số lần đi qua trong vòng: từ lần 1 tới giới hạn thì ra cổng “Còn lượt”, lần kế tiếp ra cổng “Đủ số” rồi đếm lại từ 0.",
+    "accuracy": "Đếm đúng số lần đi qua node trong một vòng chạy.",
+    "speed": "Tức thì.",
+    "good": [
+      "Giới hạn số lần thử: không thấy nút → Đếm → cuộn rồi tìm lại; đủ số thì báo lỗi",
+      "Làm một việc mỗi N lần"
+    ],
+    "avoid": [
+      "Duyệt qua danh sách có sẵn → [[node:forEach]]"
+    ],
+    "tips": [
+      "Đặt trên đường quay lại của vòng lặp; cổng “Đủ số” nối tới [[node:end]] báo thất bại."
+    ],
+    "fields": [
+      "**Số lần tối đa**"
+    ],
+    "samples": [
+      "dem-vong-lap"
+    ]
+  },
+  "end": {
+    "tech": "Kết thúc vòng chạy với trạng thái thành công hoặc thất bại kèm lời nhắn (nhận {{biến}}). Thất bại dừng cả kịch bản và báo lỗi mã “end”; thành công mà còn vòng lặp thì chạy vòng sau.",
+    "accuracy": "Không áp dụng.",
+    "speed": "Tức thì.",
+    "good": [
+      "Kết thúc nhánh lỗi với lời nhắn rõ ràng",
+      "Kết thúc sớm khi đã đủ việc"
+    ],
+    "avoid": [
+      "Cuối nhánh bình thường: không cần node Kết thúc, hết đường nối là kịch bản tự xong"
+    ],
+    "tips": [
+      "Lời nhắn thành công hiện cho người dùng khi chạy xong và có trong output.",
+      "Lời nhắn thất bại nên nêu nguyên nhân kèm biến, vd “Không thấy nút ở dòng {{n2.output.index}}”."
+    ],
+    "fields": [
+      "**Trạng thái** – thành công / thất bại",
+      "**Lời nhắn**"
+    ],
+    "samples": [
+      "ket-thuc-that-bai"
+    ]
+  },
+  "setVar": {
+    "tech": "Đặt hoặc cộng một biến để node sau đọc bằng {{vars.tên}}. Gán nhận {{biến}}; cộng thì giá trị chưa có coi là 0. Biến được đặt lại mỗi vòng chạy.",
+    "accuracy": "Không áp dụng.",
+    "speed": "Tức thì.",
+    "good": [
+      "Giữ kết quả để dùng ở nhiều node sau",
+      "Bộ đếm / tổng cộng dồn trong vòng"
+    ],
+    "avoid": [
+      "Tính từ số đọc được → [[node:calc]]",
+      "Chỉ cần dùng kết quả node ngay trước → dùng thẳng {{nX.output.…}}"
+    ],
+    "tips": [
+      "Biến mất sau mỗi vòng – cần giữ lâu hơn thì ghi vào file.",
+      "Cộng giá trị là chữ có đơn vị (vd “1.200 đ”): đổi thành số trước bằng node xử lý chữ."
+    ],
+    "fields": [
+      "**Tên biến**",
+      "**Thao tác** – gán / cộng",
+      "**Giá trị** – nhận {{biến}}"
+    ],
+    "samples": [
+      "dat-bien"
+    ]
+  },
+  "calc": {
+    "tech": "Bộ tính tự viết (Go và TS dùng chung bộ test): cộng trừ nhân chia, so sánh, and / or / not, round / floor / ceil / abs / min / max. Biến chữ chèn vào tự thành chuỗi.",
+    "accuracy": "Kết quả làm tròn 10 chữ số thập phân. Chia 0 hoặc sai kiểu thì node lỗi, dừng kịch bản.",
+    "speed": "Tức thì.",
+    "good": [
+      "Cộng / so sánh số đọc được từ màn hình hoặc API",
+      "Tính điều kiện phức rồi rẽ nhánh theo kết quả"
+    ],
+    "avoid": [
+      "Lấy số từ chữ như “1.234.000 đ” → dùng node xử lý chữ trước, rồi mới Tính toán"
+    ],
+    "tips": [
+      "Số thập phân dùng dấu chấm.",
+      "Rẽ nhánh theo kết quả: [[node:if]] so {{nX.output.value}} bằng true."
+    ],
+    "fields": [
+      "**Biểu thức**"
+    ],
+    "samples": [
+      "tinh-toan"
+    ]
   }
 }

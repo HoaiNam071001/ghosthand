@@ -273,3 +273,4 @@
 - 2026-10-26: bước 51 H2a – trang node thêm Trường quan trọng (fields) + Output tự sinh
 - 2026-10-26: bước 51 H2b – trang node chuột / phím / chờ
 - 2026-10-26: bước 51 H2c – trang node tìm ảnh / chữ / phần tử
+- 2026-10-26: bước 51 H2d – trang node rẽ nhánh / lặp / biến / kết thúc
