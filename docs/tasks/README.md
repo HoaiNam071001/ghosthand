@@ -147,7 +147,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🟡 đang làm | [48. Kiểm tra quyền](phase3/48-kiem-tra-quyen.md) | 5 / 5 | [6 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [49. Chỉnh giao diện theo yêu cầu 2026-10-25](phase3/49-cai-dat-overlay-lich-su.md) | 4 / 4 | [4 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [50. Góp ý khi dùng node 2026-10-25](phase3/50-gop-y-dung-node.md) | 12 / 12 | [10 việc](checks.md) |
-| 🟡 đang làm | [51. Hướng dẫn sử dụng](phase3/51-huong-dan.md) | 6 / 16 | [5 việc](checks.md) |
+| 🟡 đang làm | [51. Hướng dẫn sử dụng](phase3/51-huong-dan.md) | 7 / 16 | [5 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | 12 / 12 | [16 việc](checks.md) |
 | 🟡 đang làm | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | 38 / 42 | [29 việc](checks.md) |
 | 🟡 đang làm | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | 11 / 12 |  |
