@@ -290,5 +290,211 @@
     "samples": [
       "cho-den-gio"
     ]
+  },
+  "waitImage": {
+    "tech": "So khớp ảnh mẫu (chụp bằng app) với ảnh màn hình mỗi vòng, báo vị trí và % khớp. Tuỳ chọn so theo viền (chịu đổi theme sáng / tối), kiểm màu trung bình để phân biệt nút cùng hình khác màu, vùng trong suốt của ảnh mẫu không bị tính.",
+    "works": [
+      "App native, game, canvas, remote desktop – nơi không có chữ hay phần tử để đọc",
+      "Web / app bất kỳ miễn thấy được trên màn hình"
+    ],
+    "accuracy": "Cao khi cùng theme, cùng độ phóng; đổi cỡ chữ, zoom, DPI hoặc bị che một phần làm điểm khớp tụt. Chọn ngưỡng khớp vừa phải rồi thử trên cả hai theme.",
+    "speed": "Chậm hơn đọc phần tử, tuỳ cỡ vùng tìm – thu hẹp vùng tìm để nhanh hơn. Cần quyền Screen Recording trên macOS.",
+    "good": [
+      "Biểu tượng, logo, nút không có chữ",
+      "Game / canvas, app không đọc được phần tử"
+    ],
+    "avoid": [
+      "Nút có chữ rõ ràng và theme hay đổi → [[node:waitText]]",
+      "Web đăng nhập sẵn hoặc app có cây giao diện → [[node:waitElement]]"
+    ],
+    "tips": [
+      "Khoanh ảnh mẫu thật gọn, tránh nền đổi và số / chữ thay đổi (xoá phần đó thành trong suốt).",
+      "Không thấy: lỗi báo điểm khớp cao nhất để chỉnh ngưỡng.",
+      "Cần click vào chỗ thấy: dùng [[node:clickImage]] với “theo node” trỏ về node này."
+    ],
+    "fields": [
+      "**Ảnh mẫu** (khoanh bằng overlay)",
+      "**Độ khớp tối thiểu** (%)",
+      "**Cách so** – độ sáng hoặc viền, **sai lệch màu**",
+      "**Vùng tìm** và **thời gian chờ tối đa**"
+    ],
+    "samples": [
+      "cho-anh-logo",
+      "tim-anh-nang-cao"
+    ]
+  },
+  "waitText": {
+    "tech": "Đọc chữ trên màn hình bằng OCR (macOS: Vision; Windows: Tesseract kèm gói tiếng Việt) rồi tìm dòng chứa chữ cần tìm. Mặc định không phân biệt hoa thường, khoảng trắng và dấu.",
+    "works": [
+      "Mọi thứ có chữ hiện trên màn hình: web, app native, Electron",
+      "Không dùng được trên game / canvas vẽ chữ quá cách điệu"
+    ],
+    "accuracy": "Bền hơn ảnh khi đổi theme hay zoom. Chữ nhỏ, mờ, nền hoa văn hoặc chữ rất cách điệu có thể đọc sai – dùng khớp một phần thay vì cả dòng.",
+    "speed": "Chậm hơn đọc phần tử vì phải OCR cả vùng; thu hẹp vùng tìm. Cần quyền Screen Recording trên macOS.",
+    "good": [
+      "Đợi thông báo “Thành công”, tên nút hiện ra",
+      "Nút có nhãn chữ, theme hay đổi"
+    ],
+    "avoid": [
+      "Biểu tượng không chữ → [[node:waitImage]]",
+      "Cần chữ chính xác tuyệt đối, hoặc nội dung ô nhập → [[node:waitElement]]"
+    ],
+    "tips": [
+      "Có nhiều chỗ trùng chữ: đặt “chỗ thứ mấy” theo thứ tự đọc.",
+      "Cần phân biệt dấu (vd “ma” và “mà”): bật so đúng dấu.",
+      "Chữ cần tìm nhận {{biến}}."
+    ],
+    "fields": [
+      "**Chữ cần tìm** – nhận {{biến}}",
+      "**Cả dòng đúng** và **so đúng dấu**",
+      "**Chỗ thứ mấy**",
+      "**Vùng tìm**"
+    ],
+    "samples": [
+      "cho-chu",
+      "wiki-tim-bai"
+    ]
+  },
+  "waitElement": {
+    "tech": "Tìm phần tử (nút, ô, chữ) qua cây giao diện của hệ điều hành (Windows: UI Automation; macOS: Accessibility) theo chữ / nhãn / vai trò – không chụp màn hình, không OCR.",
+    "works": [
+      "Chrome / Edge thường đã đăng nhập sẵn",
+      "App native và Electron có hỗ trợ truy cập",
+      "Cửa sổ phải đang hiện trên màn (không thu nhỏ, không ở màn hình ảo khác)"
+    ],
+    "accuracy": "Cao nhất: đọc đúng chữ, giá trị ô nhập, nút chỉ có icon (nếu app đặt nhãn). App không đặt nhãn truy cập hoặc vẽ tự do (game, canvas) thì không có phần tử.",
+    "speed": "Nhanh, không phụ thuộc cỡ vùng. Phần tử ngoài khung nhìn tự được cuộn tới.",
+    "good": [
+      "Web đã đăng nhập mà không muốn dùng trình duyệt riêng của app",
+      "Nút chỉ có icon nhưng có nhãn truy cập",
+      "Đọc nội dung ô / giá để dùng ở node sau"
+    ],
+    "avoid": [
+      "Trang công khai không cần đăng nhập → các node Web (Chrome của app) ổn định hơn",
+      "Game / canvas → [[node:waitImage]]"
+    ],
+    "tips": [
+      "Dùng nút chọn phần tử trong inspector để app gợi ý cách tìm bền.",
+      "Chờ mãi không thấy: kiểm tra cửa sổ đang hiện, và app đã cấp quyền Accessibility / chạy cùng quyền."
+    ],
+    "fields": [
+      "**Cách tìm** – chữ / nhãn / vai trò",
+      "**App** – trống là app trên cùng",
+      "**Chỗ thứ mấy**",
+      "**Thời gian chờ tối đa**"
+    ],
+    "samples": [
+      "phan-tu-doc-gia",
+      "phan-tu-bam-icon"
+    ]
+  },
+  "clickImage": {
+    "tech": "Tìm rồi bấm vào tâm chỗ thấy (cộng độ lệch). Chọn cách tìm ngay trong node: ảnh mẫu, chữ OCR hoặc phần tử Accessibility / UI Automation – hoặc bấm vào chỗ một node Chờ phía trước đã thấy.",
+    "works": [
+      "Tuỳ cách tìm: ảnh cho mọi thứ nhìn thấy, chữ cho thứ có chữ, phần tử cho app có cây giao diện"
+    ],
+    "accuracy": "Theo cách tìm đã chọn (xem các trang Chờ ảnh / chữ / phần tử). Có thể cộng độ lệch để bấm lệch tâm.",
+    "speed": "Như cách tìm đã chọn; bấm tức thì khi đã thấy.",
+    "good": [
+      "Nút đổi chỗ theo cửa sổ hoặc nội dung",
+      "Bấm theo tên hiện trên màn, vd “Đăng nhập”"
+    ],
+    "avoid": [
+      "Nút luôn nằm cố định → [[node:click]] nhanh và đơn giản hơn",
+      "Cần kiểm tra có thấy hay không rồi rẽ nhánh → Chờ + Nếu"
+    ],
+    "tips": [
+      "Không thấy thì đi cổng thất bại – nối cổng đó tới nhánh xử lý lỗi.",
+      "Phần tử: node chờ khung đứng yên rồi mới bấm.",
+      "Biết chắc đã thấy ở node Chờ trước: chọn “theo node” để khỏi tìm lại."
+    ],
+    "fields": [
+      "**Cách tìm** – ảnh / chữ / phần tử, hoặc theo node chờ",
+      "**Độ lệch** so với tâm",
+      "**Nút chuột** và **số lần**"
+    ],
+    "samples": [
+      "cho-anh-logo",
+      "click-theo-chu"
+    ]
+  },
+  "clickText": {
+    "tech": "Là Click theo ảnh / chữ / phần tử với cách tìm = chữ: OCR (macOS: Vision; Windows: Tesseract tiếng Việt) rồi bấm vào dòng chứa chữ.",
+    "works": [
+      "Web, app native, Electron – bất cứ thứ gì có chữ hiện trên màn"
+    ],
+    "accuracy": "Bền khi đổi theme / zoom; chữ nhỏ hoặc nền rối có thể đọc sai. Bấm vào tâm dòng chứa chữ – dòng dài thì cộng độ lệch.",
+    "speed": "Chậm hơn phần tử vì OCR vùng tìm; thu hẹp vùng cho nhanh.",
+    "good": [
+      "Liên kết, nút có nhãn chữ",
+      "Nút đổi vị trí theo bố cục"
+    ],
+    "avoid": [
+      "Icon không chữ → Click theo ảnh",
+      "Cần chắc tuyệt đối chữ → Click theo phần tử"
+    ],
+    "tips": [
+      "Chữ xuất hiện nhiều nơi: đặt “chỗ thứ mấy”.",
+      "Chữ tìm nhận {{biến}}."
+    ],
+    "fields": [
+      "**Chữ cần tìm**",
+      "**Cả dòng đúng**, **so đúng dấu**, **chỗ thứ mấy**",
+      "**Độ lệch**"
+    ],
+    "samples": [
+      "click-theo-chu"
+    ]
+  },
+  "clickElement": {
+    "tech": "Là Click theo ảnh / chữ / phần tử với cách tìm = phần tử: tìm qua cây giao diện (Windows: UI Automation; macOS: Accessibility), chờ khung đứng yên rồi bấm bằng chuột thật.",
+    "works": [
+      "Chrome thường đã đăng nhập, app native, Electron có hỗ trợ truy cập"
+    ],
+    "accuracy": "Chính xác nhất khi app đặt nhãn truy cập; không có nhãn thì không tìm được.",
+    "speed": "Nhanh, không chụp màn hình.",
+    "good": [
+      "Nút chỉ có icon nhưng có nhãn",
+      "Web đăng nhập sẵn"
+    ],
+    "avoid": [
+      "Game / canvas → Click theo ảnh",
+      "Trang công khai → [[node:webClick]]"
+    ],
+    "tips": [
+      "Dùng nút chọn phần tử để app gợi ý cách tìm bền (ưu tiên nhãn thay vì thứ tự)."
+    ],
+    "fields": [
+      "**Cách tìm phần tử**",
+      "**App** – trống là app trên cùng",
+      "**Chỗ thứ mấy**"
+    ],
+    "samples": [
+      "phan-tu-bam-icon",
+      "phan-tu-thao-tac"
+    ]
+  },
+  "findAll": {
+    "tech": "Như node Chờ nhưng lấy mọi chỗ khớp (ảnh, chữ hoặc phần tử) và trả số chỗ cùng danh sách vị trí, xếp theo thứ tự đọc (trên → dưới, trái → phải). Ảnh mẫu tối đa 200 chỗ.",
+    "accuracy": "Như cách tìm đã chọn; ảnh mẫu gộp các chỗ chồng lấn. Phần tử chỉ lấy cái đang hiện trong khung nhìn.",
+    "speed": "Như cách tìm đã chọn; nhìn lại mỗi chu kỳ tới khi số chỗ đủ trong khoảng đặt.",
+    "good": [
+      "Bấm lần lượt mọi nút “Thêm” / “Theo dõi” trong trang",
+      "Đếm số kết quả để rẽ nhánh"
+    ],
+    "avoid": [
+      "Chỉ cần một chỗ → Chờ ảnh / chữ / phần tử"
+    ],
+    "tips": [
+      "Nối Tìm tất cả → [[node:forEach]] (danh sách = items) → Click theo item.x / item.y.",
+      "Hết giờ không đủ số chỗ tối thiểu → cổng thất bại, lỗi kèm số chỗ thấy."
+    ],
+    "fields": [
+      "**Cách tìm** như node Chờ",
+      "**Số chỗ tối thiểu / tối đa**"
+    ],
+    "samples": [
+      "tim-tat-ca"
+    ]
   }
 }

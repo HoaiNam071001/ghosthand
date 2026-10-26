@@ -272,3 +272,4 @@
 - **2026-10-26** – 51 H1: modal Hướng dẫn (nút ? / F1, mục lục tìm không dấu, chương chung + Chọn cách tìm, trang node tạm, link từ Thêm node + inspector, #demo-guide); nội dung JSON chung internal/guide. Sửa kèm: chromeui_real_test.go thiếu build tag windows làm go test ./internal/device hỏng trên Mac. go vet + go test, npm run build + npm test (459), check-docs 0 lỗi; xem #demo-guide sáng + tối bằng Chrome headless; chưa thử tay trong app.
 - 2026-10-26: bước 51 H2a – trang node thêm Trường quan trọng (fields) + Output tự sinh
 - 2026-10-26: bước 51 H2b – trang node chuột / phím / chờ
+- 2026-10-26: bước 51 H2c – trang node tìm ảnh / chữ / phần tử

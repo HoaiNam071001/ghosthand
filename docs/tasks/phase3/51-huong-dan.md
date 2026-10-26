@@ -17,7 +17,7 @@
   - **H2. Trang từng node** (theo nhóm của `palette/groups.ts`, mỗi nhóm một lượt commit)
     - [x] H2a. Khung trang node: hoạt hoạ lớn + *làm gì / dùng khi* + nên / không nên (thay bằng node nào) + web / app chạy được + công nghệ + độ chính xác / tốc độ + trường quan trọng + output (tự sinh) + hệ điều hành (tự sinh) + mẹo / lỗi hay gặp + ví dụ (sơ đồ flow mẫu nhỏ + *Mở mẫu thử*) *(xong trừ sơ đồ flow nhỏ – hiện chỉ có nút Mở mẫu thử; trường quan trọng = `fields` trong nodes.json, output tự sinh từ `outputsOf`)*
     - [x] H2b. Chuột + phím + chờ *(double, hold, drag, path, scroll, type, key, wait, waitPixel, waitScreen, waitUntil; waitImage / waitText / waitElement / findAll sang H2c; waitUIEvent / waitDownload sang H2e–f)*
-    - [ ] H2c. Tìm ảnh / chữ / phần tử (+ biến thể Click theo ảnh / chữ / phần tử)
+    - [x] H2c. Tìm ảnh / chữ / phần tử (+ biến thể Click theo ảnh / chữ / phần tử) *(waitImage, waitText, waitElement, clickImage, clickText, clickElement, findAll)*
     - [ ] H2d. Rẽ nhánh / lặp / biến / kết thúc
     - [ ] H2e. Cửa sổ / ứng dụng / trình duyệt / web (CDP vs Accessibility vs JXA)
     - [ ] H2f. Dữ liệu + xử lý chữ + hệ thống (clipboard, HTTP, tệp, nén, lệnh, nguồn, màn hình, thông báo…)
