@@ -57,15 +57,16 @@ type Node struct {
 	Works    []string `json:"works,omitempty"`    // chạy được với web / app nào
 	Accuracy string   `json:"accuracy,omitempty"` // độ chính xác theo ngữ cảnh
 	Speed    string   `json:"speed,omitempty"`
-	Good     []string `json:"good,omitempty"`  // nên dùng khi
-	Avoid    []string `json:"avoid,omitempty"` // không nên dùng khi (thay bằng node nào)
-	Tips     []string `json:"tips,omitempty"`  // mẹo / lỗi hay gặp
+	Good     []string `json:"good,omitempty"`   // nên dùng khi
+	Avoid    []string `json:"avoid,omitempty"`  // không nên dùng khi (thay bằng node nào)
+	Tips     []string `json:"tips,omitempty"`   // mẹo / lỗi hay gặp
+	Fields   []string `json:"fields,omitempty"` // trường quan trọng của node (tên trường: giải thích)
 	Samples  []string `json:"samples,omitempty"`
 	Blocks   []Block  `json:"blocks,omitempty"`
 }
 
 type Guide struct {
-	Chapters []Chapter      `json:"chapters"`
+	Chapters []Chapter       `json:"chapters"`
 	Nodes    map[string]Node `json:"nodes"`
 }
 

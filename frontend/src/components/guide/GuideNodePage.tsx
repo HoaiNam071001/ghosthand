@@ -1,12 +1,14 @@
 // Trang một loại node trong Hướng dẫn (chỉ hiển thị): hoạt hoạ lớn + làm gì / dùng khi (flow/nodeInfo) + phần riêng của nodes.json.
 import { ReactNode } from 'react';
+import { outputsOf } from '../../flow/view';
+import type { Step } from '../../types';
 import type { InfoKey, NodeInfo } from '../../flow/nodeInfo';
 import type { NodeGuide } from '../../guide/types';
 import { StepIcon, StepIconName } from '../icons';
 import { Blocks, GuideCtx, Inline, SampleRow, Scene } from './GuideBlocks';
 
-export function GuideNodePage({ k, label, icon, info, guide, os, ctx }: {
-  k: InfoKey; label: string; icon: StepIconName; info: NodeInfo; guide?: NodeGuide; os?: string; ctx: GuideCtx;
+export function GuideNodePage({ k, label, icon, type, info, guide, os, ctx }: {
+  k: InfoKey; type?: string; label: string; icon: StepIconName; info: NodeInfo; guide?: NodeGuide; os?: string; ctx: GuideCtx;
 }) {
   const t = (s: string) => <Inline text={s} ctx={ctx} />;
   return (
@@ -27,10 +29,13 @@ export function GuideNodePage({ k, label, icon, info, guide, os, ctx }: {
         <ListSection title="Chạy được với" items={guide.works} t={t} />
         <ListSection title="Nên dùng khi" items={guide.good} t={t} />
         <ListSection title="Không nên dùng khi" items={guide.avoid} t={t} />
+        <ListSection title="Trường quan trọng" items={guide.fields} t={t} />
         <ListSection title="Mẹo / lỗi hay gặp" items={guide.tips} t={t} />
+        <Outputs type={type ?? k} />
         {guide.blocks && <Blocks blocks={guide.blocks} ctx={ctx} />}
         {guide.samples?.map((id) => <SampleRow key={id} id={id} text="Kịch bản mẫu dùng node này" onSample={ctx.onSample} />)}
       </>}
+      {!guide && <Outputs type={type ?? k} />}
       {!guide && <p className="text-xs text-muted">Trang chi tiết của node này (công nghệ, độ chính xác, mẹo, ví dụ) đang được viết.</p>}
     </>
   );
@@ -52,6 +57,18 @@ function ListSection({ title, items, t }: { title: string; items?: string[]; t: 
     <section className="flex flex-col gap-1">
       <h3 className="text-[14px] font-semibold">{title}</h3>
       <ul className="flex list-disc flex-col gap-1 pl-5">{items.map((s, i) => <li key={i}>{t(s)}</li>)}</ul>
+    </section>
+  );
+}
+
+// Output tự sinh từ flow/view.ts (cùng nguồn với bảng output ở inspector) – node sau đọc bằng {{nX.output.<khoá>}}.
+function Outputs({ type }: { type: string }) {
+  const rows = outputsOf({ type } as Step).filter((o) => o.key !== 'startedAt' && o.key !== 'durationMs');
+  if (!rows.length) return null;
+  return (
+    <section className="flex flex-col gap-1">
+      <h3 className="text-[14px] font-semibold">Output</h3>
+      <ul className="flex flex-col gap-0.5">{rows.map((o) => <li key={o.key}><code className="rounded bg-soft px-1 font-mono text-[12px]">{o.key}</code> <span className="text-muted">– {o.desc}</span></li>)}</ul>
     </section>
   );
 }

@@ -18,7 +18,7 @@ export type Chapter = { id: string; group: string; title: string; summary: strin
 // Phần riêng của trang node – làm gì / dùng khi lấy từ flow/nodeInfo.ts, không chép.
 export type NodeGuide = {
   tech?: string; works?: string[]; accuracy?: string; speed?: string;
-  good?: string[]; avoid?: string[]; tips?: string[]; samples?: string[]; blocks?: Block[];
+  good?: string[]; avoid?: string[]; tips?: string[]; fields?: string[]; samples?: string[]; blocks?: Block[];
 };
 
 // Trang đang xem: một chương hoặc trang một loại node.

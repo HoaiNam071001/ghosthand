@@ -6,6 +6,7 @@
     "good": ["Cửa sổ đã cố định bằng node Cửa sổ", "Game / canvas không có chữ hay phần tử để tìm"],
     "avoid": ["Nút đổi chỗ theo nội dung → [[node:clickText]] hoặc [[node:clickElement]]", "Trang web công khai → [[node:webClick]]"],
     "tips": ["Thêm điểm nhanh: mở overlay, rê chuột tới nút, nhấn F6.", "Bấm nhiều lần: đặt số lần + khoảng cách giữa các lần ngay trong node, không cần lặp."],
+    "fields": ["**Điểm** – nơi bấm (toạ độ + neo theo cửa sổ)", "**Nút chuột** – trái / phải / giữa", "**Số lần** và **khoảng cách** – bấm nhiều lần trong một node", "**Giống người** – chuột đi đường cong, trễ ngẫu nhiên"],
     "samples": ["click-nhieu-lan"]
   }
 }

@@ -45,7 +45,7 @@ export function GuideDialog({ chapters, nodes, guides, only, page, onNav, onBack
               <p className="-mt-1 text-muted">{chapter.summary}</p>
               <Blocks blocks={chapter.blocks} ctx={ctx} />
             </>}
-            {node && <GuideNodePage k={node.key} label={node.label} icon={node.icon} info={NODE_INFO[node.key]} guide={guides[node.key]}
+            {node && <GuideNodePage k={node.key} label={node.label} icon={node.icon} type={node.type} info={NODE_INFO[node.key]} guide={guides[node.key]}
               os={onlyLabel(only, node.type ?? node.key)} ctx={ctx} />}
             {!chapter && !node && <p className="text-muted">Không có trang này.</p>}
           </div>
