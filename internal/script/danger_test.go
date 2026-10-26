@@ -45,3 +45,23 @@ func TestDangerOpsAppWindow(t *testing.T) {
 		t.Errorf("thoát + buộc thoát khi quá giờ: %+v", ops)
 	}
 }
+
+func TestDangerMarked(t *testing.T) {
+	click := model.Step{ID: "s1", Ref: "n1", Type: model.StepClick, Enabled: true}
+	shell := model.Step{ID: "s2", Ref: "n2", Type: model.StepShell, Enabled: true, Script: "ls", Confirm: true}
+	if ops, _ := DangerOps(model.Script{Steps: []model.Step{click}}); ops != nil {
+		t.Fatalf("chưa đánh dấu mà có thao tác: %+v", ops)
+	}
+	click.Confirm = true
+	ops, fp := DangerOps(model.Script{Steps: []model.Step{click, shell}})
+	if len(ops) != 2 || ops[0].Op != DangerMarked || ops[0].Ref != "n1" || ops[0].Target != model.StepClick || fp == "" {
+		t.Fatalf("ops %+v", ops)
+	}
+	if ops[1].Op != DangerShell || ops[1].Script != "ls" {
+		t.Errorf("node shell đánh dấu phải giữ dấu vân tay theo nội dung lệnh: %+v", ops[1])
+	}
+	click.Name = "đổi tên"
+	if _, fp2 := DangerOps(model.Script{Steps: []model.Step{click, shell}}); fp2 != fp {
+		t.Error("đổi tên node không được làm hỏi lại")
+	}
+}

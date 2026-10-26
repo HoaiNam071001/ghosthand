@@ -277,3 +277,4 @@
 - 2026-10-26 51 H2f: trang Hướng dẫn nhóm dữ liệu / chữ / hệ thống
 - **2026-10-26** – Bước 51 H3a–d: MCP resource `ghosthand://manual` + tool `get_node_guide`; test phủ InfoKey / SettingsTab / loại node (Go + TS); check-docs lỗi khi thiếu mục node, cảnh báo trường mới (nền `scripts/guide-fields-baseline.json`); cập nhật skill + CLAUDE.md + ARCHITECTURE. go vet/test, npm build/test, check-docs OK; MCP chưa thử với client thật.
 - **2026-10-26** – 46 C2: công tắc *Chỉ trong cửa sổ* (`onlyInWindow`) cho node chuột / phím – sai cửa sổ ở trước → `window_mismatch`, chưa thao tác. go vet/test, npm build/test OK; chưa thử tay (checks.md mục 46 C2).
+- **2026-10-26** – 46 C1: công tắc *Ghi / xoá dữ liệu* (`confirm`) – node đánh dấu vào `DangerOps` (xác nhận một lần trước lần chạy đầu, chặn AI / hẹn giờ / CLI tới khi đồng ý). go/npm test OK; chưa thử tay.

@@ -23,3 +23,8 @@ it('lệnh shell: câu, tiêu đề, nội dung nguyên văn', () => {
   expect(dangerScript({ ref: 'n2', op: 'trash' })).toBe('');
   expect(dangerTitle([d])).toBe('Kịch bản này sẽ chạy lệnh trên máy');
 });
+
+it('node người dùng đánh dấu ghi / xoá', () => {
+  expect(dangerOpText({ ref: 'n3', op: 'marked', target: 'click' })).toContain('Node n3 (Click)');
+  expect(dangerTitle([{ ref: 'n3', op: 'marked', target: 'click' }])).toBe('Kịch bản có thao tác cần xác nhận');
+});

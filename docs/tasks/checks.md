@@ -8,6 +8,10 @@ Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi t
 - [ ] Che cửa sổ Bảng click bằng app khác (bấm sang app khác ngay sau node Mở) → node phím báo “không ở trước (đang ở trước: …)”; thêm node Cửa sổ focus trước node phím thì chạy qua
 - [ ] Inspector node Click / Gõ / Phím có công tắc *Chỉ trong cửa sổ*, bật thì hiện App / Tiêu đề / So khớp; bật mà để trống → Chạy báo lỗi “chưa chọn cửa sổ”
 
+## 46 – C1 đánh dấu node ghi / xoá · [phase3/46-mcp-web-tinh-chinh.md](phase3/46-mcp-web-tinh-chinh.md)
+- [ ] Inspector mọi node (trừ Chờ): công tắc *Ghi / xoá dữ liệu*; bật trên một node Click rồi Chạy → hộp xác nhận liệt kê “Node nX (Click) – bạn đã đánh dấu…”; Đồng ý thì chạy, lần sau không hỏi; đổi tên node không hỏi lại, bật thêm node khác thì hỏi lại
+- [ ] AI (`run_script`) hoặc hẹn giờ chạy kịch bản có node đánh dấu khi chưa đồng ý → báo cần xác nhận trong app, không click
+
 ## 51 – Hướng dẫn sử dụng · đợt H1 (khung modal + chương chung) · [phase3/51-huong-dan.md](phase3/51-huong-dan.md)
 - [ ] Nút **?** trên thanh tiêu đề và phím **F1** mở modal Hướng dẫn; Esc / ✕ / bấm ra ngoài đóng; mở lại vẫn ở trang vừa xem
 - [ ] Ô tìm không dấu: gõ `quyen`, `dung khan cap`, `ocr` ra đúng chương / node; link trong bài (tên node, tên chương) chuyển trang, nút ← quay lại trang trước

@@ -1,6 +1,8 @@
 // Thao tác nguy hiểm cần người dùng đồng ý trước lần chạy đầu (script.DangerOps – internal/script/danger.go): xoá file
 // vào / dọn Thùng rác, buộc thoát app, thoát app có buộc thoát khi quá giờ, đóng cửa sổ.
 
+import { STEP_LABEL } from '../types';
+
 // Khớp script.DangerOp.
 export type DangerOp = { ref: string; op: string; folder?: string; pattern?: string; target?: string; lang?: string; script?: string; dir?: string };
 
@@ -15,6 +17,7 @@ export function dangerOpText(d: DangerOp): string {
     case 'quit': return `Thoát ${d.target}, quá giờ chưa thoát thì buộc thoát – mất dữ liệu chưa lưu`;
     case 'shell': return `Chạy lệnh${d.lang ? ` ${d.lang}` : ''}${d.dir ? ` trong ${d.dir}` : ''} – lệnh có toàn quyền như bạn trên máy này`;
     case 'power': return `${POWER_TEXT[d.target ?? ''] ?? 'Thao tác nguồn'} – mất công việc chưa lưu; đếm ngược để huỷ bằng Dừng`;
+    case 'marked': return `Node ${d.ref} (${STEP_LABEL[d.target as keyof typeof STEP_LABEL] ?? d.target}) – bạn đã đánh dấu là ghi / xoá dữ liệu`;
     case 'close': return `Đóng cửa sổ ${d.target} (app có thể hỏi lưu)`;
   }
   return d.op;

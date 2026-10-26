@@ -133,6 +133,7 @@ type Step struct {
 	WinApp       string `json:"winApp,omitempty"`       // tên app / bundle id / tên exe ("" = mọi app); nhận {{biến}}
 	WinTitle     string `json:"winTitle,omitempty"`     // tiêu đề ("" = mọi tiêu đề); nhận {{biến}}
 	WinMatch     string `json:"winMatch,omitempty"`     // NameMatches: "" = chứa (không phân biệt hoa thường, dấu) | exact | regex
+	Confirm      bool   `json:"confirm,omitempty"`      // người dùng đánh dấu node này ghi / xoá dữ liệu: phải được đồng ý trước lần chạy đầu như thao tác nguy hiểm (script.DangerMarked, 46 C1)
 	OnlyInWindow bool   `json:"onlyInWindow,omitempty"` // click / double / hold / drag / scroll / path / type / key: chỉ thao tác khi cửa sổ khớp WinApp + WinTitle đang ở trước, không thì lỗi window_mismatch (46 C2)
 	WinPreset    string `json:"winPreset,omitempty"`    // setBounds: WinPresets – "" = đúng WinRect | center | left | right | full
 	WinRect      *Rect  `json:"winRect,omitempty"`      // setBounds: khung đích (preset center / left / right: chỉ lấy w, h)

@@ -9,7 +9,7 @@ import (
 	"ghosthand/internal/model"
 )
 
-// Thao tác nguy hiểm (bước 35 N4, mở rộng ở bước 26): xoá file vào / dọn Thùng rác, buộc thoát app, thoát app có buộc
+// Thao tác nguy hiểm (bước 35 N4, mở rộng ở bước 26; node người dùng tự đánh dấu – 46 C1): xoá file vào / dọn Thùng rác, buộc thoát app, thoát app có buộc
 // thoát khi quá giờ, đóng cửa sổ, chạy lệnh (S1 – dấu vân tay theo nội dung lệnh). Lần chạy đầu (và mỗi khi đích đổi) người dùng phải đồng ý – main/dangerapi.go.
 
 // Op của DangerOp.
@@ -20,6 +20,7 @@ const (
 	DangerForceQuit  = "forceQuit"          // buộc thoát app Target
 	DangerClose      = "close"              // đóng cửa sổ Target
 	DangerPower      = "power"              // ngủ / đăng xuất / tắt / khởi động lại máy (node Nguồn, bước 43 S3) – hành động ở Target
+	DangerMarked     = "marked"             // node người dùng đánh dấu Step.Confirm (ghi / xoá dữ liệu trong app khác) – Target = loại node (46 C1)
 	DangerShell      = "shell"              // chạy lệnh Script bằng Lang (node Chạy lệnh, bước 43 S1)
 )
 
@@ -56,6 +57,8 @@ func dangerOf(s model.Step) (DangerOp, bool) {
 		if t := strings.TrimSpace(s.WinTitle); t != "" {
 			op.Target = strings.TrimSpace(op.Target + " “" + t + "”")
 		}
+	case s.Confirm: // node ghi / xoá do người dùng đánh dấu; loại đã có thao tác nguy hiểm riêng (shell, đóng cửa sổ…) giữ dấu vân tay riêng ở trên
+		op.Op, op.Target = DangerMarked, s.Type // theo loại, không theo tên – đổi tên node không hỏi lại
 	default:
 		return op, false
 	}

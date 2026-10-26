@@ -34,6 +34,7 @@ import { SavePdfFields } from './stepform/SavePdfFields';
 import { BrowserNormFields } from './stepform/BrowserNormFields';
 import { WindowFields } from './stepform/WindowFields';
 import WindowGuardField from './stepform/WindowGuardField';
+import ConfirmField from './stepform/ConfirmField';
 import { hasWindowGuard } from '../flow/windowGuard';
 import { WaitUntilFields } from './stepform/WaitUntilFields';
 import { PathFields } from './stepform/PathFields';
@@ -197,6 +198,7 @@ function TypeBody({ step: s, setPoint }: { step: Step; setPoint: (i: number, p: 
       {s.type === 'webKey' && <WebKeyFields step={s} />}
       {isMouse(s) && <JitterField step={s} />}
       {hasWindowGuard(s.type) && <WindowGuardField step={s} />}
+      {s.type !== 'wait' && <ConfirmField step={s} />}
       {usesHuman(s) && <HumanNodeField value={s.human} scriptLevel={script.human} onChange={(human) => updateStep(s.id, { human })} />}
     </>
   );

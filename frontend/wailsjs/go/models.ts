@@ -1307,6 +1307,7 @@ export namespace model {
 	    winApp?: string;
 	    winTitle?: string;
 	    winMatch?: string;
+	    confirm?: boolean;
 	    onlyInWindow?: boolean;
 	    winPreset?: string;
 	    winRect?: Rect;
@@ -1481,6 +1482,7 @@ export namespace model {
 	        this.winApp = source["winApp"];
 	        this.winTitle = source["winTitle"];
 	        this.winMatch = source["winMatch"];
+	        this.confirm = source["confirm"];
 	        this.onlyInWindow = source["onlyInWindow"];
 	        this.winPreset = source["winPreset"];
 	        this.winRect = this.convertValues(source["winRect"], Rect);
