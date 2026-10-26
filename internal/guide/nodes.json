@@ -683,5 +683,482 @@
     "samples": [
       "tinh-toan"
     ]
+  },
+  "open": {
+    "tech": "Mở URL bằng trình duyệt mặc định của hệ điều hành, hoặc mở file / ứng dụng bằng chương trình đã gắn với nó (macOS: open; Windows: ShellExecute). URL nhận {{biến}}.",
+    "accuracy": "Chỉ mở, không biết trang đã tải xong chưa – node không đọc nội dung trang.",
+    "speed": "Gần như tức thì; trang / app hiện sau đó vài trăm ms tới vài giây.",
+    "good": [
+      "Đầu kịch bản: mở trang, file Excel, ứng dụng",
+      "Trang cần tài khoản đã đăng nhập sẵn trong Chrome thường"
+    ],
+    "avoid": [
+      "Trang để các node Web điều khiển → [[node:openWeb]] (Chrome riêng của app)",
+      "Đổi trang trong tab đang có → [[node:browserGo]]"
+    ],
+    "tips": [
+      "Sau node Mở nên có node Chờ (ảnh / chữ / [[node:waitScreen]]) trước khi bấm.",
+      "Muốn tab này đóng lại được về sau: nối [[node:browserTab]] theo tab node Mở đã mở."
+    ],
+    "fields": [
+      "**Mở** – URL, file hoặc ứng dụng",
+      "**Trình duyệt** – chọn trình duyệt khi mở URL"
+    ],
+    "samples": [
+      "mo-url"
+    ]
+  },
+  "openWeb": {
+    "tech": "Bật Chrome (hoặc Edge / Brave) riêng của app với profile riêng và cổng điều khiển DevTools (CDP); các node Web nói chuyện với trang qua cổng đó nên đọc thẳng HTML, không nhìn màn hình.",
+    "accuracy": "Rất cao: tìm phần tử theo chữ / nhãn / CSS thay vì pixel. Trang chặn bot, captcha hay canvas thì không đọc được – dùng nút *Thử trang*.",
+    "speed": "Mở trình duyệt vài giây lần đầu; các lần sau dùng lại cửa sổ đang mở.",
+    "good": [
+      "Trang web công khai, form, bảng, feed",
+      "Chạy nền: cửa sổ bị che / thu nhỏ vẫn chạy"
+    ],
+    "avoid": [
+      "Trang cần tài khoản đang đăng nhập trong Chrome thường → [[node:clickElement]] (Accessibility) hoặc đăng nhập một lần trong Chrome của app",
+      "Game / canvas → [[node:clickImage]]"
+    ],
+    "tips": [
+      "Profile của app giữ đăng nhập giữa các lần chạy: đăng nhập tay một lần là đủ.",
+      "Bấm nút quả địa cầu *Thử trang* trước khi viết kịch bản để biết trang có bị chặn không."
+    ],
+    "fields": [
+      "**URL** – nhận {{biến}}",
+      "**Chờ tải** – chờ trang yên rồi mới đi tiếp"
+    ],
+    "samples": [
+      "web-dang-nhap"
+    ]
+  },
+  "window": {
+    "tech": "Liệt kê và điều khiển cửa sổ qua API hệ điều hành (macOS: Accessibility + CoreGraphics; Windows: Win32). Tìm cửa sổ theo tên app và tiêu đề.",
+    "accuracy": "Chính xác khi tên app / tiêu đề đúng. Đặt khung theo preset tính theo vùng làm việc từng màn hình.",
+    "speed": "Tức thì; *chờ mở / đóng* thì tới khi cửa sổ xuất hiện hoặc hết thời gian.",
+    "good": [
+      "Đầu kịch bản: đưa cửa sổ lên trước và đặt đúng vị trí + cỡ để toạ độ / ảnh mẫu không lệch",
+      "Chờ cửa sổ hộp thoại mở hoặc đóng"
+    ],
+    "avoid": [
+      "Chỉ cần biết app có chạy không → [[node:app]]",
+      "Cửa sổ nằm trong trang web → các node web"
+    ],
+    "tips": [
+      "Đặt cỡ bằng preset (nửa trái, nửa phải, giữa…) rồi bấm theo toạ độ neo cửa sổ.",
+      "Overlay vẽ khung đích để xem trước chỗ cửa sổ sẽ nằm."
+    ],
+    "fields": [
+      "**Việc** – đưa lên trước / chờ mở / chờ đóng / đặt khung / thu nhỏ / đóng",
+      "**Cửa sổ** – chọn từ danh sách đang mở hoặc gõ tên app + tiêu đề"
+    ],
+    "samples": [
+      "cua-so-dat-co"
+    ]
+  },
+  "app": {
+    "tech": "Hỏi hệ điều hành danh sách tiến trình ứng dụng; thoát qua yêu cầu đóng nhẹ nhàng, *buộc thoát* thì kết thúc tiến trình. Chặn app hệ thống.",
+    "accuracy": "Theo tên / mã ứng dụng – không nhìn màn hình.",
+    "speed": "Tức thì; chờ mở / thoát tới khi đổi trạng thái hoặc hết giờ.",
+    "good": [
+      "Kiểm tra app đã chạy chưa rồi rẽ nhánh (cổng Có / Không)",
+      "Cuối kịch bản tắt app"
+    ],
+    "avoid": [
+      "Cần thao tác trong cửa sổ → [[node:window]]",
+      "Xem CPU / RAM của tiến trình → [[node:process]]"
+    ],
+    "tips": [
+      "Mở app: node [[node:open]] rồi node Ứng dụng *chờ chạy*.",
+      "*Buộc thoát* và *đóng cửa sổ* là thao tác nguy hiểm – app hỏi xác nhận theo kịch bản."
+    ],
+    "fields": [
+      "**Việc** – kiểm tra / chờ chạy / chờ thoát / thoát / buộc thoát",
+      "**Ứng dụng** – chọn từ danh sách đang chạy"
+    ],
+    "samples": [
+      "ung-dung-mo-dong"
+    ]
+  },
+  "browserTab": {
+    "tech": "Điều khiển tab của Chrome / Edge / Brave / Cốc Cốc bạn đang dùng thường ngày: macOS qua JXA `osascript`, Windows qua UI Automation. Đóng đúng tab node Mở đã mở theo id tab.",
+    "accuracy": "Theo URL / tiêu đề tab. Cần cấp quyền Automation cho trình duyệt (macOS).",
+    "speed": "Vài chục tới vài trăm ms mỗi lệnh.",
+    "good": [
+      "Đọc URL / tiêu đề tab đang xem rồi rẽ nhánh",
+      "Dọn tab sau khi chạy: đóng tab node Mở đã mở"
+    ],
+    "avoid": [
+      "Điều khiển nội dung trang bằng DOM → [[node:openWeb]] + node web",
+      "Đổi trang trong tab → [[node:browserGo]]"
+    ],
+    "tips": [
+      "Liệt kê tab ra output rồi [[node:forEach]] qua từng tab.",
+      "Node Mở nhớ tab của nó khi có node Tab trỏ vào."
+    ],
+    "fields": [
+      "**Việc** – đọc / liệt kê / chuyển / mở / đóng / tải lại / chờ",
+      "**Trình duyệt** và **tab** – theo URL, tiêu đề, id hoặc node Mở"
+    ],
+    "samples": [
+      "tab-trinh-duyet"
+    ]
+  },
+  "browserGo": {
+    "tech": "Đổi địa chỉ của tab hiện tại qua AppleScript (macOS) / UI Automation (Windows) rồi chờ tab báo tải xong.",
+    "accuracy": "Đáng tin cho việc đổi trang; chờ tải theo trạng thái trình duyệt, không theo nội dung.",
+    "speed": "Theo tốc độ tải trang.",
+    "good": [
+      "Duyệt lần lượt nhiều trang trong cùng một tab, URL ghép từ biến",
+      "Muốn giữ đăng nhập của Chrome thường"
+    ],
+    "avoid": [
+      "Mở tab mới → [[node:open]]",
+      "Trang cần đọc DOM → [[node:openWeb]]"
+    ],
+    "tips": [
+      "Sau node này nối [[node:pageText]] hoặc [[node:readTable]] để đọc trang vừa tải."
+    ],
+    "fields": [
+      "**URL** – nhận {{biến}}",
+      "**Chờ tải** – tối đa bao lâu"
+    ],
+    "samples": [
+      "tab-trinh-duyet"
+    ]
+  },
+  "browserNorm": {
+    "tech": "Đặt trạng thái chuẩn cho cửa sổ trình duyệt: thoát toàn màn hình, đặt cỡ cửa sổ, đưa zoom về 100 %, đóng popup nhỏ.",
+    "accuracy": "Giúp toạ độ và ảnh mẫu không lệch giữa các lần chạy.",
+    "speed": "Vài trăm ms.",
+    "good": [
+      "Ngay sau node Mở, trước click theo toạ độ / ảnh / chữ"
+    ],
+    "avoid": [
+      "Đã dùng node web hoặc phần tử Accessibility (không phụ thuộc cỡ cửa sổ) thì khỏi cần"
+    ],
+    "tips": [
+      "Đặt cùng cỡ với lúc chụp ảnh mẫu."
+    ],
+    "fields": [
+      "**Cỡ cửa sổ**",
+      "**Zoom 100 %**",
+      "**Thoát toàn màn hình**"
+    ],
+    "samples": [
+      "chuan-hoa-trinh-duyet"
+    ]
+  },
+  "savePdf": {
+    "tech": "Gửi Cmd+P tới Chrome / Edge, chọn *Lưu dưới dạng PDF*, bấm nút Lưu, gõ đường dẫn vào hộp lưu file rồi chờ file xuất hiện.",
+    "accuracy": "Phụ thuộc hộp in của trình duyệt: đích in phải là *Lưu dưới dạng PDF*.",
+    "speed": "Vài giây.",
+    "good": [
+      "Lưu hoá đơn, báo cáo, trang đã đăng nhập thành PDF"
+    ],
+    "avoid": [
+      "Windows (chưa có) và trình duyệt không phải Chrome / Edge",
+      "Cần chữ trong trang → [[node:pageText]]"
+    ],
+    "tips": [
+      "Tên file nhận {{biến}}; file có sẵn thì không bị ghi đè.",
+      "Kết quả ra output `path`."
+    ],
+    "fields": [
+      "**Thư mục + tên file**",
+      "**Trình duyệt**"
+    ],
+    "samples": [
+      "luu-pdf"
+    ]
+  },
+  "elementAction": {
+    "tech": "Gọi thẳng hành động của phần tử qua cây Accessibility (macOS AX / Windows UIA): bấm, điền giá trị, tick, chọn – không dùng chuột thật.",
+    "accuracy": "Cao khi phần tử có tên / vai trò rõ; ô tuỳ biến có thể không nhận giá trị – dùng [[node:type]].",
+    "speed": "Nhanh (đọc cây một lần rồi gọi).",
+    "good": [
+      "Điền form, tick ô khi không muốn giành chuột",
+      "Cửa sổ bị che vẫn chạy"
+    ],
+    "avoid": [
+      "Phần tử chỉ nhận chuột thật → [[node:clickElement]]",
+      "Trang web công khai → [[node:webType]]"
+    ],
+    "tips": [
+      "Dùng *Chọn trên màn* và *Thử tìm* trong inspector để lấy đúng truy vấn."
+    ],
+    "fields": [
+      "**Việc** – bấm / điền / tick / chọn",
+      "**Tìm theo** – chữ / nhãn / vai trò + chỗ thứ N"
+    ],
+    "samples": [
+      "phan-tu-thao-tac"
+    ]
+  },
+  "elementRead": {
+    "tech": "Tìm phần tử trong cây Accessibility rồi đọc chữ / giá trị của nó (không OCR); tuỳ chọn đọc chữ cạnh nhãn.",
+    "accuracy": "Chữ nguyên văn – chính xác hơn OCR; không đọc được nơi app không công khai cây phần tử.",
+    "speed": "Nhanh.",
+    "good": [
+      "Lấy giá, số dư trên trang đã đăng nhập ở Chrome thường",
+      "Đọc ô nhập trong app"
+    ],
+    "avoid": [
+      "Trang web trong Chrome của app → [[node:webRead]]",
+      "Màn hình không có cây (game, remote) → [[node:waitText]]"
+    ],
+    "tips": [
+      "Đọc chữ cạnh nhãn: chọn nhãn rồi lấy giá trị bên cạnh.",
+      "Kết nối [[node:textNumber]] để lấy số."
+    ],
+    "fields": [
+      "**Tìm theo**",
+      "**Đọc** – chữ / giá trị / cạnh nhãn",
+      "**Lọc mẫu / lấy số**"
+    ],
+    "samples": [
+      "phan-tu-doc-gia"
+    ]
+  },
+  "readTable": {
+    "tech": "Đọc bảng (table / grid) qua cây Accessibility thành dòng + cột; tuỳ chọn ghi .csv / .xlsx.",
+    "accuracy": "Chính xác theo nội dung ô; bảng ảo hoá (chỉ vẽ phần đang thấy) chỉ đọc được phần hiện.",
+    "speed": "Nhanh; bảng dài tuỳ số ô.",
+    "good": [
+      "Lấy bảng đơn hàng / bảng giá rồi [[node:forEach]] từng dòng",
+      "Lưu bảng thành file Excel"
+    ],
+    "avoid": [
+      "Bảng trong Chrome của app → [[node:webRead]]"
+    ],
+    "tips": [
+      "Output `rows` / `items` / `columns` dùng ngay trong node sau."
+    ],
+    "fields": [
+      "**Bảng** – chọn bảng",
+      "**Ghi file** – .csv / .xlsx"
+    ],
+    "samples": [
+      "phan-tu-doc-bang"
+    ]
+  },
+  "readDocument": {
+    "tech": "Đọc nội dung ô soạn thảo / tài liệu qua Accessibility, giữ xuống dòng; hoặc chỉ phần đang chọn.",
+    "accuracy": "Nguyên văn.",
+    "speed": "Nhanh.",
+    "good": [
+      "Lấy ghi chú trong TextEdit / Word rồi tách dòng"
+    ],
+    "avoid": [
+      "Trang web → [[node:pageText]]"
+    ],
+    "tips": [
+      "Chọn một đoạn bằng tay hoặc Cmd/Ctrl+A rồi bật *chỉ phần đang chọn*."
+    ],
+    "fields": [
+      "**Chỉ phần đang chọn**"
+    ],
+    "samples": [
+      "doc-tai-lieu"
+    ]
+  },
+  "pageText": {
+    "tech": "Duyệt cây Accessibility của cửa sổ / một khung rồi gom mọi chữ đang hiện.",
+    "accuracy": "Nguyên văn, không OCR.",
+    "speed": "Nhanh.",
+    "good": [
+      "Lấy cả trang / danh sách trên trang đã đăng nhập rồi tách dòng"
+    ],
+    "avoid": [
+      "Cần chữ một chỗ → [[node:elementRead]]"
+    ],
+    "tips": [
+      "Nối [[node:textSplit]] / [[node:textMatch]] để rút dữ liệu."
+    ],
+    "fields": [
+      "**Phạm vi** – cả cửa sổ hoặc một khung",
+      "**Output** `text` / `lines` / `count`"
+    ],
+    "samples": [
+      "phan-tu-doc-chu-trang"
+    ]
+  },
+  "waitUIEvent": {
+    "tech": "Đọc lại cây Accessibility mỗi 200 ms để phát hiện cửa sổ mới, đổi cửa sổ trên cùng, phần tử mới hoặc giá trị đổi.",
+    "accuracy": "Chắc hơn chờ ảnh: không phụ thuộc giao diện.",
+    "speed": "Phát hiện trong vòng ~200 ms.",
+    "good": [
+      "Nút mở hộp thoại chậm hiện",
+      "Chờ app mở cửa sổ mới"
+    ],
+    "avoid": [
+      "Chờ theo chữ / ảnh trên màn → [[node:waitText]], [[node:waitImage]]"
+    ],
+    "tips": [
+      "Đặt thời gian chờ vừa đủ để báo lỗi sớm."
+    ],
+    "fields": [
+      "**Sự kiện**",
+      "**Thời gian chờ**"
+    ],
+    "samples": [
+      "cho-su-kien-giao-dien"
+    ]
+  },
+  "waitDownload": {
+    "tech": "Quét thư mục tải về, tìm file mới khớp mẫu tên, đợi hết đuôi tạm (.crdownload, .part) và cỡ đứng yên.",
+    "accuracy": "Rất chắc cho file tải bằng trình duyệt.",
+    "speed": "Theo tốc độ tải.",
+    "good": [
+      "Sau nút Tải / Xuất file trên web, rồi mở hoặc đọc file"
+    ],
+    "avoid": [
+      "Gọi API tải file trực tiếp → [[node:http]]"
+    ],
+    "tips": [
+      "Output `path` / `name` / `size` dùng cho node tệp / nén."
+    ],
+    "fields": [
+      "**Mẫu tên**",
+      "**Thư mục**",
+      "**Thời gian chờ**"
+    ],
+    "samples": [
+      "cho-tai-xong"
+    ]
+  },
+  "webWait": {
+    "tech": "Chạy qua Chrome của app (CDP): tìm phần tử trong HTML, kể cả iframe cùng nguồn, rồi thao tác bằng sự kiện trình duyệt; cửa sổ bị che vẫn chạy.",
+    "accuracy": "Rất cao: theo chữ / nhãn / CSS, không phụ thuộc pixel hay theme.",
+    "speed": "Nhanh hơn chờ ảnh; chờ khung đứng yên rồi mới kết luận.",
+    "good": [
+      "Đợi trang tải, đợi kết quả tìm kiếm",
+      "Đợi phần tử biến mất (spinner)"
+    ],
+    "avoid": [
+      "Trang chặn bot / canvas → [[node:waitImage]]"
+    ],
+    "tips": [
+      "Selector thử bằng *Thử tìm*, lấy bằng *Chọn phần tử trên trang*."
+    ],
+    "fields": [
+      "**Tìm theo** – chữ / aria / role / label / css / xpath",
+      "**Hiện / biến mất**",
+      "**Phạm vi** – cả trang hoặc hộp thoại"
+    ],
+    "samples": [
+      "web-bam-nut-chay"
+    ]
+  },
+  "webClick": {
+    "tech": "Chạy qua Chrome của app (CDP): tìm phần tử trong HTML, kể cả iframe cùng nguồn, rồi thao tác bằng sự kiện trình duyệt; cửa sổ bị che vẫn chạy.",
+    "accuracy": "Rất cao: theo chữ / nhãn / CSS, không phụ thuộc pixel hay theme.",
+    "speed": "Nhanh; thử hover trước khi bấm để chắc trúng phần tử.",
+    "good": [
+      "Trang hay đổi bố cục / theme làm ảnh mẫu lệch",
+      "Bấm nút trong hộp thoại (phạm vi *dialog*)"
+    ],
+    "avoid": [
+      "Trang cần đăng nhập thường → [[node:clickElement]]"
+    ],
+    "tips": [
+      "Nhiều phần tử trùng chữ: đặt *Chỗ thứ N* hoặc giới hạn trong hộp thoại."
+    ],
+    "fields": [
+      "**Tìm theo**",
+      "**Chỗ thứ N**",
+      "**Phạm vi**"
+    ],
+    "samples": [
+      "web-hop-thoai-form"
+    ]
+  },
+  "webType": {
+    "tech": "Chạy qua Chrome của app (CDP): tìm phần tử trong HTML, kể cả iframe cùng nguồn, rồi thao tác bằng sự kiện trình duyệt; cửa sổ bị che vẫn chạy.",
+    "accuracy": "Rất cao: theo chữ / nhãn / CSS, không phụ thuộc pixel hay theme.",
+    "speed": "Nhanh; gõ qua sự kiện trình duyệt.",
+    "good": [
+      "Điền form, ô tìm kiếm, bình luận"
+    ],
+    "avoid": [
+      "App ngoài trình duyệt → [[node:type]] hoặc [[node:elementAction]]"
+    ],
+    "tips": [
+      "Bật xoá chữ cũ trước khi gõ.",
+      "Ô khó nhập: thử [[node:webKey]]."
+    ],
+    "fields": [
+      "**Ô nhập**",
+      "**Chữ** – nhận {{biến}}",
+      "**Xoá chữ cũ**"
+    ],
+    "samples": [
+      "web-dang-nhap"
+    ]
+  },
+  "webRead": {
+    "tech": "Chạy qua Chrome của app (CDP): tìm phần tử trong HTML, kể cả iframe cùng nguồn, rồi thao tác bằng sự kiện trình duyệt; cửa sổ bị che vẫn chạy.",
+    "accuracy": "Rất cao: theo chữ / nhãn / CSS, không phụ thuộc pixel hay theme.",
+    "speed": "Nhanh.",
+    "good": [
+      "Lấy giá, mã đơn, số dư, link vào biến"
+    ],
+    "avoid": [
+      "Chữ trong app ngoài → [[node:elementRead]]"
+    ],
+    "tips": [
+      "Đọc thuộc tính như href, src, value.",
+      "Nối [[node:textNumber]] để lấy số."
+    ],
+    "fields": [
+      "**Tìm theo**",
+      "**Đọc** – chữ / giá trị / thuộc tính"
+    ],
+    "samples": [
+      "web-lich-su-don"
+    ]
+  },
+  "webKey": {
+    "tech": "Gửi phím vào tab của Chrome của app qua CDP – không cần trình duyệt ở trước, không đụng bàn phím thật.",
+    "accuracy": "Chắc: phím rơi đúng trang.",
+    "speed": "Tức thì.",
+    "good": [
+      "Esc đóng hộp thoại, Tab sang ô kế, Enter gửi form"
+    ],
+    "avoid": [
+      "Phím tắt hệ điều hành → [[node:key]]"
+    ],
+    "tips": [
+      "Dùng khi bấm nút không ăn nhưng Enter thì ăn."
+    ],
+    "fields": [
+      "**Phím / tổ hợp**"
+    ],
+    "samples": [
+      "web-phim-tren-trang"
+    ]
+  },
+  "webScroll": {
+    "tech": "Chạy qua Chrome của app (CDP): tìm phần tử trong HTML, kể cả iframe cùng nguồn, rồi thao tác bằng sự kiện trình duyệt; cửa sổ bị che vẫn chạy.",
+    "accuracy": "Rất cao: theo chữ / nhãn / CSS, không phụ thuộc pixel hay theme.",
+    "speed": "Nhanh; cuộn mượt theo từng bước.",
+    "good": [
+      "Đưa nút cuối trang vào tầm nhìn",
+      "Lăn feed tới khi thấy phần tử"
+    ],
+    "avoid": [
+      "Cuộn app ngoài → [[node:scroll]]"
+    ],
+    "tips": [
+      "Cuộn trong khung riêng: chọn khung đó, không cuộn cả trang."
+    ],
+    "fields": [
+      "**Kiểu cuộn** – tới phần tử / trong khung / tới khi thấy",
+      "**Giới hạn lần**"
+    ],
+    "samples": [
+      "web-feed-cuon",
+      "web-cuon-trong-khung"
+    ]
   }
 }

@@ -19,7 +19,7 @@
     - [x] H2b. Chuột + phím + chờ *(double, hold, drag, path, scroll, type, key, wait, waitPixel, waitScreen, waitUntil; waitImage / waitText / waitElement / findAll sang H2c; waitUIEvent / waitDownload sang H2e–f)*
     - [x] H2c. Tìm ảnh / chữ / phần tử (+ biến thể Click theo ảnh / chữ / phần tử) *(waitImage, waitText, waitElement, clickImage, clickText, clickElement, findAll)*
     - [x] H2d. Rẽ nhánh / lặp / biến / kết thúc *(if, switch, switchScreen, forEach, counter, end, setVar, calc)*
-    - [ ] H2e. Cửa sổ / ứng dụng / trình duyệt / web (CDP vs Accessibility vs JXA)
+    - [x] H2e. Cửa sổ / ứng dụng / trình duyệt / web (CDP vs Accessibility vs JXA) *(open, openWeb, window, app, browserTab, browserGo, browserNorm, savePdf, elementAction, elementRead, readTable, readDocument, pageText, waitUIEvent, waitDownload, 6 node web)*
     - [ ] H2f. Dữ liệu + xử lý chữ + hệ thống (clipboard, HTTP, tệp, nén, lệnh, nguồn, màn hình, thông báo…)
   - **H3. AI + giữ đồng bộ**
     - [ ] H3a. MCP: resource `ghosthand://guide` (chương + node, dạng gọn cho AI), `get_node_guide(type)`; guide AI hiện có trỏ sang
