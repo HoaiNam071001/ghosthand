@@ -274,3 +274,4 @@
 - 2026-10-26: bước 51 H2b – trang node chuột / phím / chờ
 - 2026-10-26: bước 51 H2c – trang node tìm ảnh / chữ / phần tử
 - 2026-10-26: bước 51 H2d – trang node rẽ nhánh / lặp / biến / kết thúc
+- 2026-10-26 51 H2f: trang Hướng dẫn nhóm dữ liệu / chữ / hệ thống

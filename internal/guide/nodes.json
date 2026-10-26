@@ -1160,5 +1160,403 @@
       "web-feed-cuon",
       "web-cuon-trong-khung"
     ]
+  },
+  "screenshot": {
+    "tech": "Chụp màn hình qua API hệ điều hành (macOS cần quyền Screen Recording), cắt theo vùng rồi lưu PNG; có thể chép vào clipboard.",
+    "accuracy": "Đúng pixel thật của màn hình.",
+    "speed": "Vài chục ms tới vài trăm ms.",
+    "good": [
+      "Lưu bằng chứng sau khi đặt hàng / chuyển tiền",
+      "Chụp kết quả để gửi đi qua [[node:http]] hoặc [[node:clipboard]]"
+    ],
+    "avoid": [
+      "Chỉ cần chữ trên màn → [[node:waitText]] (không cần lưu ảnh)",
+      "Chụp một tab web ngầm → AI dùng tool `screenshot`"
+    ],
+    "tips": [
+      "Output `path` dùng cho node sau; file không ghi đè nhau.",
+      "Thư mục ảnh đổi ở Cài đặt → Lưu trữ."
+    ],
+    "fields": [
+      "**Vùng** – vùng kịch bản / cả màn / cố định / chỗ node trước thấy",
+      "**Chép vào clipboard**"
+    ],
+    "samples": [
+      "chup-man-hinh"
+    ]
+  },
+  "clipboard": {
+    "tech": "Đọc / ghi clipboard của hệ điều hành (chữ hoặc ảnh PNG).",
+    "accuracy": "Nguyên văn; ảnh ghi từ file.",
+    "speed": "Tức thì.",
+    "good": [
+      "Copy / paste lượng chữ lớn nhanh hơn gõ từng phím",
+      "Chép ảnh vừa chụp để dán vào chat"
+    ],
+    "avoid": [
+      "Gõ ít chữ → [[node:type]] (không đụng clipboard của bạn)"
+    ],
+    "tips": [
+      "Ghép với [[node:key]] Cmd/Ctrl+C và Cmd/Ctrl+V.",
+      "Ghi đè clipboard đang có – đừng dùng khi bạn đang copy tay."
+    ],
+    "fields": [
+      "**Việc** – đọc chữ / ghi chữ / ghi ảnh",
+      "**Chữ** – nhận {{biến}}"
+    ],
+    "samples": [
+      "clipboard-copy-dan"
+    ]
+  },
+  "http": {
+    "tech": "Gọi HTTP từ máy bạn (GET / POST / PUT / PATCH / DELETE) với tham số, header, thân JSON / form; đọc JSON vào output.",
+    "accuracy": "Theo phản hồi server; mã trạng thái có trong output.",
+    "speed": "Theo mạng và server.",
+    "good": [
+      "Lấy dữ liệu / gửi đơn / báo kết quả về Telegram, webhook",
+      "Gọi API thay vì thao tác giao diện"
+    ],
+    "avoid": [
+      "API cần đăng nhập phức tạp bằng trình duyệt → thao tác trên trang bằng node web"
+    ],
+    "tips": [
+      "Khoá API để ở Cài đặt → Bí mật rồi gọi `{{secret.<tên>}}` – giá trị được che trong kết quả.",
+      "Đọc trường JSON lồng nhau bằng đường dẫn trong output."
+    ],
+    "fields": [
+      "**Phương thức + URL**",
+      "**Header / tham số / thân**",
+      "**Thời gian chờ**"
+    ],
+    "samples": [
+      "http-goi-api",
+      "chup-gui-http"
+    ]
+  },
+  "file": {
+    "tech": "Thao tác tệp qua hệ điều hành: ghi chữ, thêm dòng .csv / .xlsx, tạo thư mục, xoá vào Thùng rác, dọn Thùng rác.",
+    "accuracy": "Chính xác; xoá luôn vào Thùng rác (khôi phục được) trừ khi chọn dọn Thùng rác.",
+    "speed": "Nhanh.",
+    "good": [
+      "Ghi nhật ký / kết quả từng vòng vào Excel",
+      "Dọn ảnh chụp cũ"
+    ],
+    "avoid": [
+      "Đọc bảng từ trang → [[node:readTable]]"
+    ],
+    "tips": [
+      "Xoá và dọn Thùng rác là thao tác nguy hiểm – app hỏi xác nhận.",
+      "Tên file nhận {{biến}}."
+    ],
+    "fields": [
+      "**Việc** – ghi / thêm dòng / tạo thư mục / xoá / dọn",
+      "**Đường dẫn**"
+    ],
+    "samples": [
+      "tep-thu-muc"
+    ]
+  },
+  "system": {
+    "tech": "Chỉnh âm lượng loa qua API âm thanh của hệ điều hành.",
+    "accuracy": "Mức 0–100.",
+    "speed": "Tức thì.",
+    "good": [
+      "Bật nhạc vừa đủ nghe, tắt tiếng trước khi họp"
+    ],
+    "avoid": [
+      "Đổi loa / micro, phát âm báo → [[node:display]]"
+    ],
+    "tips": [
+      "Đọc mức hiện tại để khôi phục lại cuối kịch bản."
+    ],
+    "fields": [
+      "**Việc** – đặt mức / tăng / giảm / tắt / bật tiếng"
+    ],
+    "samples": [
+      "he-thong-am-luong"
+    ]
+  },
+  "display": {
+    "tech": "Điều khiển màn hình / âm thanh của hệ điều hành: chế độ sáng / tối, độ sáng, thiết bị loa / micro mặc định, phát âm báo; hoặc đọc trạng thái.",
+    "accuracy": "Theo API hệ điều hành; một số máy không cho đổi độ sáng.",
+    "speed": "Tức thì.",
+    "good": [
+      "Chuyển sang tai nghe trước cuộc gọi",
+      "Phát tiếng báo khi xong"
+    ],
+    "avoid": [
+      "Chỉ chỉnh âm lượng → [[node:system]]",
+      "Hiện thông báo chữ → [[node:notify]]"
+    ],
+    "tips": [
+      "Đọc trạng thái rồi rẽ nhánh bằng [[node:if]]."
+    ],
+    "fields": [
+      "**Việc** – chế độ tối / độ sáng / thiết bị âm thanh / âm báo / đọc"
+    ],
+    "samples": [
+      "man-hinh-am-thanh"
+    ]
+  },
+  "power": {
+    "tech": "Gọi lệnh nguồn của hệ điều hành: khoá màn, tắt màn hình, ngủ, đăng xuất, tắt, khởi động lại; hoặc giữ máy thức trong lúc chạy.",
+    "accuracy": "Chắc chắn, nhưng hành động mất phiên cần bạn đồng ý và có đếm ngược để huỷ.",
+    "speed": "Tức thì sau đếm ngược.",
+    "good": [
+      "Tắt máy khi chạy xong việc dài qua đêm",
+      "Giữ máy không ngủ khi chạy lâu"
+    ],
+    "avoid": [
+      "Chỉ muốn báo xong → [[node:notify]]"
+    ],
+    "tips": [
+      "Đặt node nguồn ở cuối, sau mọi việc cần máy còn bật.",
+      "Đếm ngược cho bạn thời gian bấm Huỷ."
+    ],
+    "fields": [
+      "**Việc**",
+      "**Đếm ngược**",
+      "**Giữ máy thức**"
+    ],
+    "samples": [
+      "nguon"
+    ]
+  },
+  "notify": {
+    "tech": "Hiện thông báo hệ điều hành (macOS Notification Center, Windows toast) với tiêu đề + nội dung.",
+    "accuracy": "Chỉ hiện chữ, chưa có nút bấm.",
+    "speed": "Tức thì.",
+    "good": [
+      "Báo kịch bản xong / cần chú ý khi app đang thu nhỏ"
+    ],
+    "avoid": [
+      "Báo từ xa → [[node:http]] gọi Telegram / webhook",
+      "Hộp hỏi người dùng → input lúc Chạy"
+    ],
+    "tips": [
+      "Tiêu đề và nội dung nhận {{biến}}."
+    ],
+    "fields": [
+      "**Tiêu đề**",
+      "**Nội dung**"
+    ],
+    "samples": [
+      "thong-bao"
+    ]
+  },
+  "zip": {
+    "tech": "Nén thư mục / file thành .zip theo mẫu tên, hoặc giải nén .zip; giải nén chặn zip slip (không ghi ra ngoài thư mục đích).",
+    "accuracy": "Nguyên vẹn nội dung.",
+    "speed": "Theo dung lượng.",
+    "good": [
+      "Gói kết quả trước khi gửi",
+      "Mở gói vừa tải về ([[node:waitDownload]])"
+    ],
+    "avoid": [
+      "Chỉ cần chép file → [[node:shell]]"
+    ],
+    "tips": [
+      "Mẫu tên nhận {{biến}}, ví dụ ngày giờ từ [[node:textNumber]]."
+    ],
+    "fields": [
+      "**Việc** – nén / giải nén",
+      "**Nguồn + đích**"
+    ],
+    "samples": [
+      "nen-giai-nen"
+    ]
+  },
+  "inputSource": {
+    "tech": "Đọc / đổi bộ gõ của hệ điều hành (macOS Input Source, Windows layout); báo khi Unikey / EVKey đang chạy.",
+    "accuracy": "Theo hệ điều hành; Unikey / EVKey tự gõ dấu nên chỉ được báo, không điều khiển được.",
+    "speed": "Tức thì.",
+    "good": [
+      "Đặt ABC trước khi gõ để dấu không bị méo",
+      "Rẽ nhánh theo bộ gõ đang dùng"
+    ],
+    "avoid": [
+      "Bật / tắt gõ tiếng Việt bằng phím tắt của app gõ → node [[node:key]]"
+    ],
+    "tips": [
+      "Đặt ngay trước [[node:type]]."
+    ],
+    "fields": [
+      "**Việc** – đọc / đổi",
+      "**Bộ gõ**"
+    ],
+    "samples": [
+      "bo-go"
+    ]
+  },
+  "process": {
+    "tech": "Đọc CPU / RAM của tiến trình qua API hệ điều hành; liệt kê, chờ chạy / thoát / hết bận.",
+    "accuracy": "Số đo tại thời điểm đọc; CPU lấy mẫu trong khoảng ngắn.",
+    "speed": "Vài trăm ms.",
+    "good": [
+      "Chờ render / xuất file xong",
+      "Dừng khi app ngốn quá nhiều RAM"
+    ],
+    "avoid": [
+      "Chỉ cần biết app chạy chưa → [[node:app]]"
+    ],
+    "tips": [
+      "Chờ *hết bận* thay cho chờ cố định."
+    ],
+    "fields": [
+      "**Việc** – đọc / liệt kê / chờ chạy / chờ thoát / chờ hết bận",
+      "**Tiến trình**"
+    ],
+    "samples": [
+      "tien-trinh"
+    ]
+  },
+  "sysInfo": {
+    "tech": "Đọc pin, CPU / RAM, ổ đĩa trống, màn hình, mạng và tên máy một lần.",
+    "accuracy": "Số đo tức thời.",
+    "speed": "Tức thì.",
+    "good": [
+      "Pin yếu thì dừng, ổ gần đầy thì báo, mất mạng thì chờ"
+    ],
+    "avoid": [
+      "Xem một tiến trình → [[node:process]]"
+    ],
+    "tips": [
+      "Nối [[node:if]] hoặc [[node:calc]] để so với ngưỡng."
+    ],
+    "fields": [
+      "**Output** pin / cpu / ram / ổ / mạng / tên máy"
+    ],
+    "samples": [
+      "thong-tin-may"
+    ]
+  },
+  "osShortcut": {
+    "tech": "Chạy một Shortcut trong ứng dụng Phím tắt của macOS, đưa chữ vào và lấy chữ trả về. Chỉ macOS.",
+    "accuracy": "Theo Shortcut bạn tạo.",
+    "speed": "Theo Shortcut.",
+    "good": [
+      "Dùng lại việc đã làm sẵn thành Shortcut"
+    ],
+    "avoid": [
+      "Windows → [[node:shell]]"
+    ],
+    "tips": [
+      "Thử Shortcut trong app Phím tắt trước."
+    ],
+    "fields": [
+      "**Tên Shortcut**",
+      "**Input chữ**"
+    ],
+    "samples": [
+      "os-shortcut"
+    ]
+  },
+  "shell": {
+    "tech": "Chạy đoạn lệnh qua shell / PowerShell / AppleScript, lấy chữ in ra và mã thoát.",
+    "accuracy": "Theo lệnh; mã thoát khác 0 báo lỗi.",
+    "speed": "Theo lệnh.",
+    "good": [
+      "Việc chưa có node riêng, đổi tên hàng loạt, gọi công cụ dòng lệnh"
+    ],
+    "avoid": [
+      "Có node riêng làm việc đó (tệp, nén, tiến trình) thì dùng node đó"
+    ],
+    "tips": [
+      "Mỗi nội dung lệnh phải được bạn đồng ý – đổi lệnh thì hỏi lại.",
+      "Chữ in ra vào output để lọc tiếp."
+    ],
+    "fields": [
+      "**Loại lệnh**",
+      "**Nội dung lệnh**",
+      "**Thời gian chờ**"
+    ],
+    "samples": [
+      "chay-lenh"
+    ]
+  },
+  "textMatch": {
+    "tech": "Khớp biểu thức chính quy (regex) trong chữ, lấy chỗ đầu hoặc mọi chỗ; không khớp ra cổng *Không khớp*.",
+    "accuracy": "Chính xác theo mẫu / quy tắc; không đoán.",
+    "speed": "Tức thì.",
+    "good": [
+      "Lấy mã đơn, số điện thoại, email trong đoạn dài"
+    ],
+    "avoid": [
+      "Nội dung ở màn hình chưa thành chữ → đọc bằng [[node:waitText]] hoặc [[node:elementRead]] trước"
+    ],
+    "tips": [
+      "Có nút Chạy thử trong inspector."
+    ],
+    "fields": [
+      "**Mẫu regex**",
+      "**Chỗ đầu / mọi chỗ**"
+    ],
+    "samples": [
+      "xu-ly-chu"
+    ]
+  },
+  "textSplit": {
+    "tech": "Tách chữ thành danh sách theo dấu phẩy, chấm phẩy hoặc mỗi dòng.",
+    "accuracy": "Chính xác theo mẫu / quy tắc; không đoán.",
+    "speed": "Tức thì.",
+    "good": [
+      "Từ khoá “a, b, c” → [[node:forEach]] làm từng cái"
+    ],
+    "avoid": [
+      "Nội dung ở màn hình chưa thành chữ → đọc bằng [[node:waitText]] hoặc [[node:elementRead]] trước"
+    ],
+    "tips": [
+      "Output danh sách đưa thẳng vào Lặp qua danh sách."
+    ],
+    "fields": [
+      "**Dấu tách**"
+    ],
+    "samples": [
+      "xu-ly-chu"
+    ]
+  },
+  "textClean": {
+    "tech": "Làm sạch chữ: thay chữ, bỏ dấu, đổi hoa / thường, bỏ khoảng trắng thừa.",
+    "accuracy": "Chính xác theo mẫu / quy tắc; không đoán.",
+    "speed": "Tức thì.",
+    "good": [
+      "Đổi “Đà Nẵng” thành “da-nang” cho URL",
+      "Chuẩn hoá trước khi so sánh"
+    ],
+    "avoid": [
+      "Nội dung ở màn hình chưa thành chữ → đọc bằng [[node:waitText]] hoặc [[node:elementRead]] trước"
+    ],
+    "tips": [
+      "Làm nhiều bước liên tiếp bằng nhiều node."
+    ],
+    "fields": [
+      "**Việc**",
+      "**Chữ cần thay**"
+    ],
+    "samples": [
+      "xu-ly-chu"
+    ]
+  },
+  "textNumber": {
+    "tech": "Lấy số từ chữ kiểu “1.234.000 đ”, viết số có dấu ngăn nghìn, hoặc đọc và viết lại ngày giờ.",
+    "accuracy": "Chính xác theo mẫu / quy tắc; không đoán.",
+    "speed": "Tức thì.",
+    "good": [
+      "Đọc giá → lấy số → [[node:calc]] so ngưỡng",
+      "Ghi ngày hôm nay vào tên file"
+    ],
+    "avoid": [
+      "Nội dung ở màn hình chưa thành chữ → đọc bằng [[node:waitText]] hoặc [[node:elementRead]] trước"
+    ],
+    "tips": [
+      "Chỉnh dấu ngăn nghìn / thập phân cho đúng kiểu số."
+    ],
+    "fields": [
+      "**Việc** – lấy số / viết số / ngày giờ",
+      "**Định dạng**"
+    ],
+    "samples": [
+      "xu-ly-chu"
+    ]
   }
 }
