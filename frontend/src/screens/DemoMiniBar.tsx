@@ -1,6 +1,7 @@
 // Màn #demo-minibar (bước 27b): các trạng thái thanh mini, gồm trạng thái chưa có logic –
 // đang chờ ảnh (vòng theo thời gian chờ, bước 25), thử lại (25b), tên bộ giá trị input (21b).
 import { MiniBarView } from './MiniBar';
+import { RecordBarView } from '../components/minibar/RecordBar';
 
 const noop = () => {};
 const STATES: { note: string; props: Parameters<typeof MiniBarView>[0] }[] = [
@@ -56,6 +57,10 @@ export default function DemoMiniBar() {
           <MiniBarView {...s.props} />
         </div>
       ))}
+      <div className="flex flex-col gap-1.5">
+        <span className="text-xs text-muted">Đang ghi macro (bước 24) – bấm Dừng ghi hoặc F9</span>
+        <RecordBarView elapsed="00:07" onStop={noop} />
+      </div>
     </div>
   );
 }

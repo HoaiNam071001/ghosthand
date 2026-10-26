@@ -240,3 +240,13 @@ func (b *builder) script() model.Script {
 	}
 	return sc
 }
+
+// TrimLastClick bỏ cú bấm cuối (nhấn + thả nút Dừng trên thanh mini) khỏi sự kiện thô.
+func TrimLastClick(events []Event) []Event {
+	for i := len(events) - 1; i >= 0; i-- {
+		if events[i].Kind == MouseDown {
+			return events[:i]
+		}
+	}
+	return events
+}

@@ -79,3 +79,31 @@ func TestBuildEmpty(t *testing.T) {
 		t.Fatalf("%+v", sc)
 	}
 }
+
+func TestTrimLastClickDropsStopButton(t *testing.T) {
+	ev := []Event{
+		{Kind: MouseDown, At: 0, X: 5, Y: 5, Button: "left"},
+		{Kind: MouseUp, At: 40 * ms, X: 5, Y: 5, Button: "left"},
+		{Kind: MouseDown, At: 900 * ms, X: 300, Y: 10, Button: "left"},
+		{Kind: MouseUp, At: 940 * ms, X: 300, Y: 10, Button: "left"},
+	}
+	got := TrimLastClick(ev)
+	if len(got) != 2 || got[1].Kind != MouseUp {
+		t.Fatalf("còn %d sự kiện: %+v", len(got), got)
+	}
+	if len(TrimLastClick(nil)) != 0 {
+		t.Error("rỗng phải giữ rỗng")
+	}
+}
+
+func TestBuildShiftDigitIsKeyWithShift(t *testing.T) {
+	sc := Build([]Event{
+		{Kind: KeyDown, At: 0, Key: "shift"},
+		{Kind: KeyDown, At: 10 * ms, Key: "1"},
+		{Kind: KeyUp, At: 20 * ms, Key: "1"},
+		{Kind: KeyUp, At: 30 * ms, Key: "shift"},
+	}, model.Rect{})
+	if len(sc.Steps) != 1 || sc.Steps[0].Type != model.StepKey || sc.Steps[0].Keys[0] != "1" || sc.Steps[0].Modifiers[0] != "shift" {
+		t.Fatalf("%+v", sc.Steps)
+	}
+}

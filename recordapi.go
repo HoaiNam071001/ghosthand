@@ -81,7 +81,8 @@ func (r *recorder) feed(ev hook.Event) (stop bool) {
 	return false
 }
 
-// StartRecording bắt đầu ghi: thu nhỏ cửa sổ app để không ghi cú bấm vào chính nó. F9 dừng (event "record:done").
+// StartRecording bắt đầu ghi. Frontend đổi cửa sổ sang thanh mini (nút Dừng + F9) để cú bấm vào app không lẫn vào
+// lúc ghi; xong thì event "record:done".
 func (a *App) StartRecording() error {
 	if a.sess.Running() != "" {
 		return errors.New("đang chạy kịch bản – dừng trước khi ghi")
@@ -93,24 +94,24 @@ func (a *App) StartRecording() error {
 	}
 	rec.on, rec.t0, rec.events, rec.done = true, time.Now(), nil, nil
 	rec.mu.Unlock()
-	runtime.WindowMinimise(a.ctx)
 	return nil
 }
 
-// StopRecording dừng ghi (nút trên app khi cửa sổ còn thấy); sự kiện record:done báo frontend lấy kết quả.
-func (a *App) StopRecording() { a.endRecording() }
+// StopRecording dừng ghi bằng nút trên thanh mini; bỏ cú bấm vào nút đó khỏi kết quả.
+func (a *App) StopRecording() { a.endRecording(true) }
 
-func (a *App) endRecording() {
+func (a *App) endRecording(clickedStop bool) {
 	rec.mu.Lock()
 	if !rec.on {
 		rec.mu.Unlock()
 		return
 	}
 	rec.on, rec.done = false, rec.events
+	if clickedStop {
+		rec.done = record.TrimLastClick(rec.done)
+	}
 	rec.events = nil
 	rec.mu.Unlock()
-	runtime.WindowUnminimise(a.ctx)
-	runtime.WindowShow(a.ctx)
 	runtime.EventsEmit(a.ctx, "record:done")
 }
 

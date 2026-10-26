@@ -24,7 +24,7 @@ func (a *App) startHotkeys() {
 		for ev := range evs {
 			if rec.active() {
 				if rec.feed(ev) {
-					a.endRecording()
+					a.endRecording(false)
 				}
 				continue
 			}

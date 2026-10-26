@@ -6,7 +6,8 @@ import { Pause, Play, Stop, StepIcon, StepIconName, StepOver } from '../componen
 import { AiChip, AiLevelRow } from '../components/minibar/AiChip';
 import { useAiLevel, useCaptureDot } from '../components/minibar/hooks';
 import { elapsedNow, fmtElapsed, Progress, useEngine } from '../engineStore';
-import { useScript } from '../store';
+import { RecordBarView } from '../components/minibar/RecordBar';
+import { stopRecording, useRecording, useScript } from '../store';
 import { inWails, setWindowMode } from '../windowMode';
 import { fmtCountdown } from '../flow/waitUntil';
 import { counterText, progressNode } from '../flow/progress';
@@ -24,6 +25,20 @@ const WAIT_LABEL: Record<string, string> = { image: 'đang tìm', text: 'đang t
 const BREAK_LABEL: Record<string, string> = { breakpoint: 'điểm dừng', step: 'node kế' };
 
 export default function MiniBar() {
+  const rec = useRecording();
+  return rec ? <RecordBar since={rec.since} /> : <RunBar />;
+}
+
+function RecordBar({ since }: { since: number }) {
+  const [, tick] = useReducer((n: number) => n + 1, 0);
+  useEffect(() => {
+    const id = setInterval(tick, 500);
+    return () => clearInterval(id);
+  }, []);
+  return <RecordBarView elapsed={fmtElapsed(Date.now() - since)} onStop={stopRecording} />;
+}
+
+function RunBar() {
   const engine = useEngine();
   const { steps } = useScript();
   const p = engine.progress ?? (inWails ? null : sample);

@@ -46,7 +46,8 @@ Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi t
 - [ ] Chạy một kịch bản có node đọc chữ / HTTP… → Thư viện → Lịch sử chạy (hoặc Nhật ký dưới canvas) → tab *Tất cả output*: thấy output mọi node, nhiều vòng có "vòng N"; nút chép từng node / tất cả dán ra JSON đúng; biến bí mật vẫn bị che
 
 ## 24 – Ghi macro · [phase3/24-ghi-macro.md](phase3/24-ghi-macro.md)
-- [ ] Menu Chạy ▾ → *Ghi thao tác*: app thu nhỏ; click vài chỗ, kéo một đoạn, cuộn, gõ chữ, bấm Enter, Ctrl/⌘+C rồi F9 (macOS: fn+F9) → app hiện lại, có khung *Ghi hh:mm:ss* với đúng các node; nối vào flow rồi Chạy lại → thao tác lặp lại đúng chỗ, nhịp nghỉ gần như lúc ghi
+- [ ] Menu Chạy ▾ → *Ghi thao tác*: app thành thanh mini *Đang ghi thao tác* (chấm đỏ nhấp nháy, giờ chạy); click vài chỗ, kéo một đoạn, cuộn, gõ chữ, bấm Enter, Ctrl/⌘+C rồi bấm *Dừng ghi* trên thanh mini (hoặc F9, macOS: fn+F9) → app hiện lại, có khung *Ghi hh:mm:ss* với đúng các node; nối vào flow rồi Chạy lại → thao tác lặp lại đúng chỗ, nhịp nghỉ gần như lúc ghi
+- [ ] Dừng bằng nút *Dừng ghi*: khung ghi không có node click thừa ở chỗ nút Dừng; ghi Shift+1 ra node Phím `1` kèm shift
 - [ ] Cuộn lăn xuống ra node hướng *down* (không ngược); click đôi nhanh ra một node *Số lần = 2*; ghi trên kịch bản có vùng riêng → click vẫn đúng chỗ; macOS: cấp quyền Accessibility / Input Monitoring nếu không ghi được
 
 ## 39 – Gom kịch bản: khung nhóm node (G1) + nhúng kịch bản (G2) · [phase3/39-gom-kich-ban.md](phase3/39-gom-kich-ban.md)
