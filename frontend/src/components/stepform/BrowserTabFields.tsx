@@ -9,6 +9,8 @@ import { BrowserField, TabTargetFields, useTabVarProps } from './TabTargetFields
 
 // Hết cầu nối tạm khi có bản Windows (43 B1w).
 export const MAC_ONLY = 'Hiện chỉ chạy trên macOS – lần đầu macOS hỏi cho phép điều khiển trình duyệt.';
+/** Ghi chú nền tảng chung cho node tab / đi tới URL / chuẩn hoá. */
+export const TAB_PLATFORM = 'macOS: lần đầu hỏi cho phép điều khiển trình duyệt. Windows: đọc qua UI Automation – chỉ tab đang hiện có URL, tab khác tìm theo tiêu đề; thao tác tải lại / đi tới URL đổi sang tab đó và cần cửa sổ ở trước.';
 
 const OP_HINT: Record<TabOp, (t: string) => string> = {
   '': () => 'Chỉ đọc URL + tiêu đề tab, không đổi gì – nối Nếu để rẽ nhánh theo trang đang mở.',
@@ -47,7 +49,7 @@ export function BrowserTabFields({ step: s }: { step: Step }) {
           placeholder={op === 'list' ? 'trống = mọi tab' : op.startsWith('wait') ? 'vd mail.google.com' : 'trống = tab đang hiện'} />
       )}
       {tabTargeted(op) && <NumField label="Chờ tối đa" info="Chưa thấy tab thì chờ tối đa – quá giờ đi cổng Thất bại" step={s} field="timeoutMs" unit="ms" min={0} />}
-      <span className={`col-span-2 -mt-1 ${hint}`}>{OP_HINT[op](fmtSec(s.timeoutMs))} {MAC_ONLY}</span>
+      <span className={`col-span-2 -mt-1 ${hint}`}>{OP_HINT[op](fmtSec(s.timeoutMs))} {TAB_PLATFORM}</span>
     </>
   );
 }

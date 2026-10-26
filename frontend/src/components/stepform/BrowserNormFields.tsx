@@ -2,7 +2,7 @@
 import { updateStep } from '../../store';
 import { Step } from '../../types';
 import { BoundsFields } from './BoundsFields';
-import { MAC_ONLY } from './BrowserTabFields';
+import { TAB_PLATFORM } from './BrowserTabFields';
 import { errText, fmtSec, hint, NumField, SwitchField } from './shared';
 import { BrowserField, TabTargetFields } from './TabTargetFields';
 
@@ -25,7 +25,7 @@ export function BrowserNormFields({ step: s }: { step: Step }) {
       {none && <span className={`col-span-2 ${errText}`}>Chưa bật việc nào</span>}
       {s.normSize && <BoundsFields step={s} />}
       <NumField label="Chờ tối đa" info="Chờ tìm tab, mỗi việc tối đa – quá giờ đi cổng Thất bại" step={s} field="timeoutMs" unit="ms" min={0} />
-      <span className={`col-span-2 -mt-1 ${hint}`}>Đặt ngay sau node Mở, trước các bước click theo ảnh / chữ để toạ độ không lệch. Không thấy tab sau {fmtSec(s.timeoutMs)} → Thất bại. {MAC_ONLY}</span>
+      <span className={`col-span-2 -mt-1 ${hint}`}>Đặt ngay sau node Mở, trước các bước click theo ảnh / chữ để toạ độ không lệch. Không thấy tab sau {fmtSec(s.timeoutMs)} → Thất bại. {TAB_PLATFORM}</span>
     </>
   );
 }

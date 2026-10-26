@@ -53,7 +53,7 @@ var stepTypeUses = map[string]TypeUse{
 	StepSystem:        {grpData, "Chỉnh âm lượng / tắt tiếng máy. Không đụng chuột / phím."},
 	StepWindow:        {grpWin, "Đưa cửa sổ lên trước, đặt vị trí / cỡ (setBounds), chờ cửa sổ hiện / mất. Đặt sau open để toạ độ luôn đúng."},
 	StepApp:           {grpWin, "Kiểm tra app đang chạy (cổng yes / no), chờ app khởi động, hoặc thoát app. Kiểm tra đầu kịch bản trước khi open."},
-	StepBrowserTab:    {grpBrowser, "Liệt kê / chuyển / mở / đóng / tải lại tab của Chrome, Edge, Brave, Cốc Cốc người dùng đang dùng (đã đăng nhập). Chỉ macOS; chưa có Windows."},
+	StepBrowserTab:    {grpBrowser, "Liệt kê / chuyển / mở / đóng / tải lại tab của Chrome, Edge, Brave, Cốc Cốc người dùng đang dùng (đã đăng nhập). macOS + Windows (Windows: chỉ tab đang hiện có url)."},
 	StepBrowserGo:     {grpBrowser, "Đổi URL của tab trình duyệt thường rồi chờ tải xong (khác open: không mở tab mới)."},
 	StepBrowserNorm:   {grpBrowser, "Chuẩn hoá cửa sổ trình duyệt thường (thoát toàn màn hình, đặt cỡ, zoom 100 %, đóng popup) ngay sau open, trước khi click theo ảnh / chữ."},
 	StepSavePdf:       {grpBrowser, "In tab trình duyệt thường ra file PDF (hộp in Chrome → Lưu dưới dạng PDF). Lưu cả trang bằng ảnh chụp thì screenshot."},

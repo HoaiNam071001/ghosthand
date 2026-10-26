@@ -4,7 +4,7 @@ import { updateStep } from '../../store';
 import { Step } from '../../types';
 import { errText, Field, fmtSec, hint, NumField } from './shared';
 import { BrowserField, TabTargetFields, useTabVarProps } from './TabTargetFields';
-import { MAC_ONLY } from './BrowserTabFields';
+import { TAB_PLATFORM } from './BrowserTabFields';
 
 export function BrowserGoFields({ step: s }: { step: Step }) {
   const varProps = useTabVarProps(s);
@@ -18,7 +18,7 @@ export function BrowserGoFields({ step: s }: { step: Step }) {
       <BrowserField step={s} />
       <TabTargetFields step={s} fromOK need={false} placeholder="trống = tab đang hiện" />
       <NumField label="Chờ tối đa" info="Chờ tìm tab và chờ trang tải xong, mỗi việc tối đa – quá giờ đi cổng Thất bại" step={s} field="timeoutMs" unit="ms" min={0} />
-      <span className={`col-span-2 -mt-1 ${hint}`}>Đổi trang ngay trong tab (không mở tab mới), không cần cửa sổ ở trước; chờ tới khi trang tải xong, quá {fmtSec(s.timeoutMs)} → Thất bại. {MAC_ONLY}</span>
+      <span className={`col-span-2 -mt-1 ${hint}`}>Đổi trang ngay trong tab (không mở tab mới); chờ tới khi trang tải xong, quá {fmtSec(s.timeoutMs)} → Thất bại. {TAB_PLATFORM}</span>
     </>
   );
 }

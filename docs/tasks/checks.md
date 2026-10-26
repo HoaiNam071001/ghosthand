@@ -3,12 +3,19 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## 43 – Node chuyên sâu · Trình duyệt trên Windows (B1w–B3w) · [phase3/43-node-chuyen-sau.md](phase3/43-node-chuyen-sau.md)
+- [ ] Windows + Chrome mở sẵn vài tab: node *Tab trình duyệt* `list` ra đủ tab đúng thứ tự, tiêu đề không còn đuôi "– Mức sử dụng bộ nhớ"; chỉ tab đang hiện có URL; *Chuyển tới tab* theo tiêu đề đưa đúng tab + cửa sổ lên trước
+- [ ] Mẫu *tab-trinh-duyet*: node Mở mở trang → *Đóng tab do node Mở tạo* đóng đúng tab đó (không đóng tab khác), *Đi tới URL* sang trang Gõ chữ và chờ tải xong (đo thời gian output `ms`)
+- [ ] Mẫu *chuan-hoa-trinh-duyet*: bấm F11 trước → chạy: thoát toàn màn hình, cửa sổ về đúng cỡ đặt, Ctrl+0 đưa zoom về 100 %
+- [ ] Thử thêm Edge / Brave / Cốc Cốc (nếu có): chọn trình duyệt trong node, mở / liệt kê / đóng tab như Chrome
+- [ ] Cửa sổ Chrome ẩn danh / nhiều cửa sổ / 2 màn hình: tab liệt kê đủ, cửa sổ ở trước nhất đứng đầu
+
 ## 50 – Góp ý khi dùng node: nút chọn file, bảng output, cửa sổ macOS, vẽ đường… · [phase3/50-gop-y-dung-node.md](phase3/50-gop-y-dung-node.md)
 - [ ] Node *Số & ngày* và *Làm sạch chữ*: hẹp inspector → nút *Lấy số / Định dạng số / Ngày giờ* và *Hoa / thường* xuống hàng, không tràn; *Định dạng số* / *Ngày giờ* không bị nhãn đè lên ô
 - [ ] Node *Thao tác phần tử* (app / Chrome thường) tìm phần tử không có → Nhật ký → bấm dòng lỗi: hộp *App đã đọc N phần tử* liệt kê tên + vai trò; đối chiếu với Accessibility Inspector xem phần tử bạn thấy có trong danh sách không; nút chép dán ra được
 - [ ] Nút *Chọn…* có ở: Tệp / thư mục, Nén / giải nén (nén: *File…* + *Thư mục…*), Chạy lệnh (thư mục chạy), Lưu PDF, Chờ tải xong, Chụp màn hình (thư mục), Clipboard (file ảnh), Đọc bảng (ghi ra file); chọn xong ô điền đường dẫn, gõ tay / chèn `{{biến}}` vẫn được; mở hộp thoại ở đúng thư mục đang nhập
 - [ ] Inspector → *Lần chạy gần nhất*, Nhật ký, tab *Tất cả output*: output hiện bảng Nhãn · Biến · Giá trị; nút chép JSON dán ra đúng
-- [ ] Thêm node (Ctrl+K): *Tab trình duyệt / Đi tới URL / Chuẩn hoá trình duyệt / Lưu trang PDF / Shortcuts* có nhãn *Chỉ macOS*; trên Windows các mục này mờ + dòng cảnh báo ở khung mô tả. Chỉ còn một mục *Click theo ảnh / chữ / phần tử*, đổi cách tìm bằng ô *Tìm theo*
+- [ ] Thêm node (Ctrl+K): *Lưu trang PDF / Shortcuts* có nhãn *Chỉ macOS* (Tab trình duyệt / Đi tới URL / Chuẩn hoá trình duyệt đã chạy được trên Windows – 43 B1w); trên Windows các mục này mờ + dòng cảnh báo ở khung mô tả. Chỉ còn một mục *Click theo ảnh / chữ / phần tử*, đổi cách tìm bằng ô *Tìm theo*
 - [ ] **macOS – node Cửa sổ / Ứng dụng**: mở Chrome + Notes; node Cửa sổ chọn app → Focus đưa lên trước; Đặt khung (Trái / Giữa / Đầy) đúng chỗ; Thu nhỏ rồi Khôi phục; Đóng (app hỏi lưu thì không tự bấm); node Ứng dụng: Đang chạy / Chờ thoát / Thoát. Cần quyền Accessibility; Chrome có cửa sổ thu nhỏ vẫn liệt kê
 - [ ] Vẽ đường → *Vẽ trên màn hình…*: overlay mở, kéo một nét cong dài, thả chuột → về app, node có các điểm theo nét (≤ 80), chạy node vẽ lại đúng nét; kéo nét quá ngắn → ở lại overlay báo; Esc huỷ
 - [ ] HTTP → *Dán lệnh curl…*: dán lệnh *Copy as cURL* của Chrome (có `-H`, `-b`, `--data-raw`) → method, URL (query tách vào bảng Tham số), header, body JSON điền đủ; dán `curl -u user:pass` có header Authorization Basic
