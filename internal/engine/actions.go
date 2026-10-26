@@ -55,6 +55,9 @@ func (e *Engine) pointAt(s model.Step, p model.Point) (model.Point, error) {
 // runStep chạy hành động của node; output là giá trị node trả về cho node sau ({{nX.output.key}}).
 // wait: thời gian chờ sau node (delayAfter đã tính) – output ms của node Chờ.
 func (e *Engine) runStep(ctx context.Context, s model.Step, wait int) (map[string]any, error) {
+	if err := e.guardWindow(s); err != nil {
+		return nil, err
+	}
 	switch s.Type {
 	case model.StepWaitImage:
 		h, err := e.findImage(ctx, s)

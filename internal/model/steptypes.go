@@ -28,6 +28,7 @@ const commonFieldsDoc = `id (ổn định – cạnh, start, imageFrom trỏ the
 	`type, name (tên hiện trên thẻ, tuỳ chọn), enabled (false = bỏ qua, đi tiếp cổng success), delayAfter (ms chờ sau khi thành công), ` +
 	`jitterMs (± ms ngẫu nhiên), pos {x, y} (vị trí thẻ trên canvas, tuỳ chọn). ` +
 	`retry {count, delayMs}: thất bại thì thử lại thêm count lần (0–100), nghỉ delayMs giữa các lần; hết lượt vẫn lỗi → cổng "fail". ` +
+	`onlyInWindow (click / double / hold / drag / scroll / path / type / key): true + winApp / winTitle (+ winMatch) = chỉ thao tác khi cửa sổ đó đang ở trước, không thì lỗi window_mismatch (chưa bấm / gõ gì) – dùng khi cửa sổ có thể đóng / bị che; thêm node window focus trước. ` +
 	`human: mức thao tác giống người riêng của node ("" = theo kịch bản | off | low | medium | high).`
 
 // flowDoc – cấu trúc kịch bản dạng flow (bước 20).

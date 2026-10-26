@@ -24,17 +24,18 @@ const (
 
 // StepError.Code – loại lỗi, để UI / AI xử lý theo loại thay vì đọc chữ.
 const (
-	ErrNotFound     = "not_found"     // chờ ảnh / chữ / màu hết giờ không thấy
-	ErrHTTPStatus   = "http_status"   // HTTP trả mã ngoài 2xx (output status / body vẫn có)
-	ErrNetwork      = "network"       // HTTP không gửi được: sai địa chỉ, mất mạng, hết giờ chờ
-	ErrTimeout      = "timeout"       // quá thời gian khác
-	ErrPermission   = "permission"    // thiếu quyền (Screen Recording, Accessibility)
-	ErrInvalidInput = "invalid_input" // dữ liệu node sai lúc chạy (biến trống, điểm ngoài màn…)
-	ErrCancelled    = "cancelled"
-	ErrEnd          = "end"       // node Kết thúc báo thất bại (lời nhắn của người soạn)
-	ErrBrowser      = "browser"   // không nối được trình duyệt (Chrome của app chưa mở / mất kết nối) – bước 25d
-	ErrExitCode     = "exit_code" // lệnh (node Chạy lệnh) thoát với mã ≠ 0 (output stdout / stderr / exitCode vẫn có)
-	ErrInternal     = "internal"
+	ErrNotFound       = "not_found"     // chờ ảnh / chữ / màu hết giờ không thấy
+	ErrHTTPStatus     = "http_status"   // HTTP trả mã ngoài 2xx (output status / body vẫn có)
+	ErrNetwork        = "network"       // HTTP không gửi được: sai địa chỉ, mất mạng, hết giờ chờ
+	ErrTimeout        = "timeout"       // quá thời gian khác
+	ErrPermission     = "permission"    // thiếu quyền (Screen Recording, Accessibility)
+	ErrInvalidInput   = "invalid_input" // dữ liệu node sai lúc chạy (biến trống, điểm ngoài màn…)
+	ErrCancelled      = "cancelled"
+	ErrEnd            = "end"             // node Kết thúc báo thất bại (lời nhắn của người soạn)
+	ErrBrowser        = "browser"         // không nối được trình duyệt (Chrome của app chưa mở / mất kết nối) – bước 25d
+	ErrExitCode       = "exit_code"       // lệnh (node Chạy lệnh) thoát với mã ≠ 0 (output stdout / stderr / exitCode vẫn có)
+	ErrWindowMismatch = "window_mismatch" // node chuột / phím đặt onlyInWindow nhưng cửa sổ đích mất hoặc không ở trước – chưa thao tác gì
+	ErrInternal       = "internal"
 )
 
 // StepResult – kết quả một lần chạy node. Engine gửi lên UI (event engine:node), lưu vào nhật ký chạy;

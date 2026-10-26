@@ -24,7 +24,7 @@ export const CAN_FAIL: StepType[] = ['waitImage', 'clickImage', 'waitPixel', 'wa
 // Cạnh: node from đi ra cổng port thì chạy node to. Mỗi cổng tối đa một cạnh. Khớp Edge trong model.go.
 export interface Edge { id: string; from: string; port: string; to: string }
 export type StepStatus = 'success' | 'fail' | 'skipped' | 'cancelled';
-export type ErrorCode = 'not_found' | 'timeout' | 'permission' | 'invalid_input' | 'cancelled' | 'end' | 'browser' | 'http_status' | 'network' | 'exit_code' | 'internal';
+export type ErrorCode = 'not_found' | 'timeout' | 'permission' | 'invalid_input' | 'cancelled' | 'end' | 'browser' | 'http_status' | 'network' | 'exit_code' | 'window_mismatch' | 'internal';
 // Kết quả một lần chạy node (event engine:node) – khớp StepResult trong flow.go.
 export interface StepResult {
   nodeId: string;

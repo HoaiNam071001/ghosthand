@@ -1,0 +1,37 @@
+{
+ "meta": {
+  "name": "Chỉ thao tác trong đúng cửa sổ",
+  "description": "Mở Bảng click, chờ cửa sổ hiện, rồi bấm phím Tab với công tắc *Chỉ trong cửa sổ* bật cho tiêu đề “Bảng click – Sân thử”. Đúng: node phím thành công, lời kết thúc ghi cửa sổ đang ở trước. Thử lỗi: sửa tiêu đề trong node phím thành một tên không có (vd “Không có”) rồi chạy – node dừng báo window_mismatch (không thấy cửa sổ) và không phím nào được gõ; hoặc bấm vào app khác ngay lúc node phím chạy (tăng “Chờ sau khi xong” của node Mở) – báo cửa sổ không ở trước.",
+  "app": "Cửa sổ / app",
+  "level": 1,
+  "page": "click.html",
+  "real": false,
+  "prep": "Cần đọc được danh sách cửa sổ (macOS: quyền Screen Recording để thấy tiêu đề)."
+ },
+ "script": {
+  "steps": [
+   {
+    "type": "open",
+    "target": "{{sandbox}}/click.html",
+    "delayAfter": 500
+   },
+   {
+    "type": "window",
+    "winOp": "waitOpen",
+    "winTitle": "Bảng click – Sân thử",
+    "timeoutMs": 15000
+   },
+   {
+    "type": "key",
+    "keys": ["tab"],
+    "onlyInWindow": true,
+    "winTitle": "Bảng click – Sân thử"
+   },
+   {
+    "type": "end",
+    "endStatus": "success",
+    "message": "Đã gõ {{n3.output.keys}} vào “{{n3.output.window}}” ({{n3.output.windowApp}})"
+   }
+  ]
+ }
+}

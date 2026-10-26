@@ -129,12 +129,13 @@ type Step struct {
 	Color     string `json:"color,omitempty"`     // waitPixel: #RRGGBB
 	Tolerance int    `json:"tolerance,omitempty"` // waitPixel: sai số mỗi kênh màu (0–255)
 	// Cửa sổ (bước 26, engine/window.go) – TimeoutMs: chờ cửa sổ khớp; Display: màn của WinPreset (0 = màn chứa cửa sổ)
-	WinOp     string `json:"winOp,omitempty"`     // WinOps: "" = focus | waitOpen | waitClose | setBounds | minimize | maximize | restore | close | read
-	WinApp    string `json:"winApp,omitempty"`    // tên app / bundle id / tên exe ("" = mọi app); nhận {{biến}}
-	WinTitle  string `json:"winTitle,omitempty"`  // tiêu đề ("" = mọi tiêu đề); nhận {{biến}}
-	WinMatch  string `json:"winMatch,omitempty"`  // NameMatches: "" = chứa (không phân biệt hoa thường, dấu) | exact | regex
-	WinPreset string `json:"winPreset,omitempty"` // setBounds: WinPresets – "" = đúng WinRect | center | left | right | full
-	WinRect   *Rect  `json:"winRect,omitempty"`   // setBounds: khung đích (preset center / left / right: chỉ lấy w, h)
+	WinOp        string `json:"winOp,omitempty"`        // WinOps: "" = focus | waitOpen | waitClose | setBounds | minimize | maximize | restore | close | read
+	WinApp       string `json:"winApp,omitempty"`       // tên app / bundle id / tên exe ("" = mọi app); nhận {{biến}}
+	WinTitle     string `json:"winTitle,omitempty"`     // tiêu đề ("" = mọi tiêu đề); nhận {{biến}}
+	WinMatch     string `json:"winMatch,omitempty"`     // NameMatches: "" = chứa (không phân biệt hoa thường, dấu) | exact | regex
+	OnlyInWindow bool   `json:"onlyInWindow,omitempty"` // click / double / hold / drag / scroll / path / type / key: chỉ thao tác khi cửa sổ khớp WinApp + WinTitle đang ở trước, không thì lỗi window_mismatch (46 C2)
+	WinPreset    string `json:"winPreset,omitempty"`    // setBounds: WinPresets – "" = đúng WinRect | center | left | right | full
+	WinRect      *Rect  `json:"winRect,omitempty"`      // setBounds: khung đích (preset center / left / right: chỉ lấy w, h)
 	// Ứng dụng (bước 26, engine/app.go) – TimeoutMs: chờ app chạy / thoát
 	AppOp    string `json:"appOp,omitempty"`    // AppOps: "" = kiểm tra đang chạy (cổng yes / no) | waitStart | waitQuit | quit | forceQuit
 	AppName  string `json:"appName,omitempty"`  // tên app / bundle id / tên exe; nhận {{biến}}

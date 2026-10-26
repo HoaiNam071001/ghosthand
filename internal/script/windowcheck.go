@@ -96,3 +96,16 @@ func validateApp(i int, s model.Step) error {
 	}
 	return nil
 }
+
+// validateGuard – node chuột / phím đặt onlyInWindow: phải chọn cửa sổ đích (46 C2), loại node khác không có công tắc này.
+func validateGuard(i int, s model.Step) error {
+	switch s.Type {
+	case model.StepClick, model.StepDouble, model.StepHold, model.StepDrag, model.StepScroll, model.StepPath, model.StepText, model.StepKey:
+	default:
+		return stepErr(i, s, "onlyInWindow", "loại node này không có công tắc onlyInWindow (chỉ chuột / phím)")
+	}
+	if !slices.Contains(model.NameMatches, s.WinMatch) {
+		return stepErr(i, s, "winMatch", "cách so tên không hợp lệ: %q (trống = chứa | exact | regex)", s.WinMatch)
+	}
+	return validateWindow(i, s)
+}

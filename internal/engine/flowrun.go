@@ -293,6 +293,7 @@ func errCode(err error) string {
 	var network *networkErr
 	var late *timeoutErr
 	var exit *exitErr
+	var mismatch *windowMismatchErr
 	switch {
 	case errors.As(err, &nf), errors.Is(err, browser.ErrTabGone):
 		return model.ErrNotFound
@@ -306,6 +307,8 @@ func errCode(err error) string {
 		return model.ErrHTTPStatus
 	case errors.As(err, &network):
 		return model.ErrNetwork
+	case errors.As(err, &mismatch):
+		return model.ErrWindowMismatch
 	case errors.As(err, &exit):
 		return model.ErrExitCode
 	case errors.As(err, &late):

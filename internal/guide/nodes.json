@@ -13,7 +13,8 @@
     ],
     "tips": [
       "Thêm điểm nhanh: mở overlay, rê chuột tới nút, nhấn F6.",
-      "Bấm nhiều lần: đặt số lần + khoảng cách giữa các lần ngay trong node, không cần lặp."
+      "Bấm nhiều lần: đặt số lần + khoảng cách giữa các lần ngay trong node, không cần lặp.",
+      "Khi nhiều app dễ che nhau: bật *Chỉ trong cửa sổ* (`onlyInWindow` + app / tiêu đề) – cửa sổ đã đóng hoặc không ở trước thì node báo `window_mismatch` và chưa bấm / gõ gì; thêm node [[node:window]] focus trước để đưa nó lên."
     ],
     "fields": [
       "**Điểm** – nơi bấm (toạ độ + neo theo cửa sổ)",
@@ -38,7 +39,8 @@
       "Ô web có nút riêng → [[node:webClick]] ổn định hơn"
     ],
     "tips": [
-      "Nhấp đúp không ăn: thử Click rồi Click lại với khoảng cách nhỏ, hoặc bấm Enter để mở mục đang chọn."
+      "Nhấp đúp không ăn: thử Click rồi Click lại với khoảng cách nhỏ, hoặc bấm Enter để mở mục đang chọn.",
+      "Khi nhiều app dễ che nhau: bật *Chỉ trong cửa sổ* (`onlyInWindow` + app / tiêu đề) – cửa sổ đã đóng hoặc không ở trước thì node báo `window_mismatch` và chưa bấm / gõ gì; thêm node [[node:window]] focus trước để đưa nó lên."
     ],
     "fields": [
       "**Điểm** – nơi nhấp (toạ độ + neo theo cửa sổ)",
@@ -61,7 +63,8 @@
       "Kéo từ điểm này sang điểm khác → [[node:drag]]"
     ],
     "tips": [
-      "Đặt thời gian giữ dư một chút so với thời gian app yêu cầu."
+      "Đặt thời gian giữ dư một chút so với thời gian app yêu cầu.",
+      "Khi nhiều app dễ che nhau: bật *Chỉ trong cửa sổ* (`onlyInWindow` + app / tiêu đề) – cửa sổ đã đóng hoặc không ở trước thì node báo `window_mismatch` và chưa bấm / gõ gì; thêm node [[node:window]] focus trước để đưa nó lên."
     ],
     "fields": [
       "**Điểm** – nơi giữ",
@@ -86,7 +89,8 @@
     ],
     "tips": [
       "Kéo không ăn: tăng thời gian kéo, hoặc bật Giống người để chuột đi có gia tốc.",
-      "Kéo từ nơi vừa tìm được: dùng tuỳ chọn bắt đầu từ chỗ chuột dừng ở node trước."
+      "Kéo từ nơi vừa tìm được: dùng tuỳ chọn bắt đầu từ chỗ chuột dừng ở node trước.",
+      "Khi nhiều app dễ che nhau: bật *Chỉ trong cửa sổ* (`onlyInWindow` + app / tiêu đề) – cửa sổ đã đóng hoặc không ở trước thì node báo `window_mismatch` và chưa bấm / gõ gì; thêm node [[node:window]] focus trước để đưa nó lên."
     ],
     "fields": [
       "**Điểm A / B**",
@@ -111,7 +115,8 @@
     ],
     "tips": [
       "Xem trước nét vẽ ngay trên overlay trước khi chạy.",
-      "Bật Giống người: mỗi đoạn hơi cong, nhịp tăng / giảm tốc như tay thật."
+      "Bật Giống người: mỗi đoạn hơi cong, nhịp tăng / giảm tốc như tay thật.",
+      "Khi nhiều app dễ che nhau: bật *Chỉ trong cửa sổ* (`onlyInWindow` + app / tiêu đề) – cửa sổ đã đóng hoặc không ở trước thì node báo `window_mismatch` và chưa bấm / gõ gì; thêm node [[node:window]] focus trước để đưa nó lên."
     ],
     "fields": [
       "**Điểm** (≥ 2) hoặc **Hình** (tròn / chữ nhật / sao + cỡ)",
@@ -135,7 +140,8 @@
       "Cần cuộn tới khi thấy một thứ → đặt Cuộn trong vòng lặp cùng [[node:waitImage]]"
     ],
     "tips": [
-      "Cuộn không ăn: đặt điểm trên vùng cần cuộn để chuột đứng đúng khung đó."
+      "Cuộn không ăn: đặt điểm trên vùng cần cuộn để chuột đứng đúng khung đó.",
+      "Khi nhiều app dễ che nhau: bật *Chỉ trong cửa sổ* (`onlyInWindow` + app / tiêu đề) – cửa sổ đã đóng hoặc không ở trước thì node báo `window_mismatch` và chưa bấm / gõ gì; thêm node [[node:window]] focus trước để đưa nó lên."
     ],
     "fields": [
       "**Hướng** và **số nấc**",
@@ -161,7 +167,8 @@
     "tips": [
       "Gõ ra đúng dấu {{ thì viết \\{{.",
       "Chữ tiếng Việt méo: đổi cách nhập sang Dán.",
-      "Cần Enter sau khi gõ: thêm node [[node:key]]."
+      "Cần Enter sau khi gõ: thêm node [[node:key]].",
+      "Khi nhiều app dễ che nhau: bật *Chỉ trong cửa sổ* (`onlyInWindow` + app / tiêu đề) – cửa sổ đã đóng hoặc không ở trước thì node báo `window_mismatch` và chưa bấm / gõ gì; thêm node [[node:window]] focus trước để đưa nó lên."
     ],
     "fields": [
       "**Nội dung** – nhận {{biến}}",
@@ -186,7 +193,8 @@
     ],
     "tips": [
       "Cmd (macOS) và Ctrl (Windows) khác nhau: kịch bản dùng cho cả hai nên kiểm tra từng máy.",
-      "Tên phím theo robotgo: enter, tab, esc, f5, a…"
+      "Tên phím theo robotgo: enter, tab, esc, f5, a…",
+      "Khi nhiều app dễ che nhau: bật *Chỉ trong cửa sổ* (`onlyInWindow` + app / tiêu đề) – cửa sổ đã đóng hoặc không ở trước thì node báo `window_mismatch` và chưa bấm / gõ gì; thêm node [[node:window]] focus trước để đưa nó lên."
     ],
     "fields": [
       "**Phím** và **phím kèm** (cmd, ctrl, alt, shift)",

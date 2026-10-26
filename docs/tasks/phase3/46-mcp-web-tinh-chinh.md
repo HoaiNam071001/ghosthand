@@ -15,7 +15,7 @@
     - [x] B4. `screenshot` nhận `webTab`; ảnh `shots: each` kèm chỉ số node và trả theo thứ tự node – mục 5 **(xong code 2026-10-21: `web.Chrome.Screenshot` chụp khung nhìn tab qua CDP (`active` = tab đang hiện, chỉ http(s)), `scale` theo CSS px; ảnh gửi kèm run_script / wait_run theo thứ tự chạy, mỗi ảnh có dòng chú thích “Ảnh … – node #N nX sau node / lúc lỗi”)**
   - **Đợt C – để sau (ghi lại, chưa làm)**
     - [ ] C1. Cờ `confirm` trên node ghi / xoá + log node tạo thay đổi (mục 7) – cần chốt cách nhận diện "node ghi" (người dùng đánh dấu tay vs đoán theo chữ); hiện đã có công tắc AI 4 mức + hộp hỏi (31b)
-    - [ ] C2. Click / gõ nhắm một cửa sổ cụ thể, từ chối chạy nếu cửa sổ mất / không foreground (mục 1) – làm cùng 43 (chồng với node Cửa sổ, 26)
+    - [x] C2. Click / gõ nhắm một cửa sổ cụ thể, từ chối chạy nếu cửa sổ mất / không foreground (mục 1) **(xong code 2026-10-26: trường `onlyInWindow` + `winApp` / `winTitle` / `winMatch` cho click / double / hold / drag / scroll / path / type / key; `engine/windowguard.go` `guardWindow` chạy đầu `runStep` – cửa sổ khớp không phải cửa sổ ở trước (hoặc mất, hoặc không đọc được danh sách) → lỗi `window_mismatch`, chưa bấm / gõ gì; `script/windowcheck.go` `validateGuard`; inspector `WindowGuardField`, `flow/windowGuard.ts`; mẫu `chi-trong-cua-so`; hướng dẫn node + `commonFieldsDoc`)**
     - OCR không đọc placeholder xám (mục 5): hạn chế OCR, không sửa – dùng `webRead readFrom: "value"` + A2
   - Chuẩn bị cho MCP (31): mọi tool / trường mới cập nhật `get_step_types`, guide, `examples`
   - Kiểm tra tay: [checks.md](../checks.md) mục 46

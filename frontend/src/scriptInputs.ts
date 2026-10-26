@@ -41,7 +41,9 @@ export function mapVarText(s: Step, f: (t: string) => string): Step {
 // Loại node có điểm nhận toạ độ từ biến – khớp hasPoints (varfields.go).
 const POINT_TYPES: Step['type'][] = ['click', 'double', 'hold', 'drag', 'scroll', 'waitPixel', 'path'];
 
-function mapFieldText(s: Step, f: (t: string) => string): Step {
+function mapFieldText(step: Step, f: (t: string) => string): Step {
+  // cửa sổ đích của công tắc chỉ-thao-tác-trong-cửa-sổ (khớp VarFields Go)
+  const s: Step = step.onlyInWindow ? { ...step, winApp: step.winApp && f(step.winApp), winTitle: step.winTitle && f(step.winTitle) } : step;
   const cond = (c: Cond): Cond =>
     c.kind === 'text' ? { ...c, findText: f(c.findText ?? '') }
       : c.kind === 'element' ? { ...c, selectors: c.selectors?.map(f), elementApp: c.elementApp && f(c.elementApp) }

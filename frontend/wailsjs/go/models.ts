@@ -1307,6 +1307,7 @@ export namespace model {
 	    winApp?: string;
 	    winTitle?: string;
 	    winMatch?: string;
+	    onlyInWindow?: boolean;
 	    winPreset?: string;
 	    winRect?: Rect;
 	    appOp?: string;
@@ -1480,6 +1481,7 @@ export namespace model {
 	        this.winApp = source["winApp"];
 	        this.winTitle = source["winTitle"];
 	        this.winMatch = source["winMatch"];
+	        this.onlyInWindow = source["onlyInWindow"];
 	        this.winPreset = source["winPreset"];
 	        this.winRect = this.convertValues(source["winRect"], Rect);
 	        this.appOp = source["appOp"];

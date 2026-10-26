@@ -39,6 +39,11 @@ func ValidateScript(sc model.Script, screen model.Rect) error {
 		}
 		s = withNumVarPlaceholders(s)
 		enabled++
+		if s.OnlyInWindow {
+			if err := validateGuard(i, s); err != nil {
+				return err
+			}
+		}
 		need := 0
 		switch s.Type {
 		case model.StepClick, model.StepDouble, model.StepHold:

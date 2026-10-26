@@ -37,6 +37,10 @@ func VarFields(s *model.Step) []VarField {
 	for i := range s.NumVars {
 		out = append(out, VarField{Name: fmt.Sprintf("numVars[%d].expr", i), Ptr: &s.NumVars[i].Expr, Num: true})
 	}
+	if s.OnlyInWindow { // cửa sổ đích của công tắc chỉ-thao-tác-trong-cửa-sổ (46 C2); node Cửa sổ / chờ sự kiện tự thêm bên dưới
+		add("winApp", &s.WinApp, false)
+		add("winTitle", &s.WinTitle, false)
+	}
 	switch s.Type {
 	case model.StepText:
 		add("text", &s.Text, false)

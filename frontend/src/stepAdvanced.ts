@@ -64,6 +64,7 @@ export interface AdvancedFields {
   winOp?: WinOp; // bỏ trống = focus
   winApp?: string; // tên app / tên exe / bundle id; nhận {{biến}}
   winTitle?: string; // tiêu đề; nhận {{biến}}
+  onlyInWindow?: boolean; // click / double / hold / drag / scroll / path / type / key: chỉ thao tác khi cửa sổ winApp + winTitle đang ở trước, không thì lỗi window_mismatch (flow/windowGuard.ts)
   winMatch?: WinMatch; // bỏ trống = chứa (không phân biệt hoa thường, dấu)
   winPreset?: WinPreset; // setBounds: bỏ trống = đúng winRect
   winRect?: Rect; // setBounds: khung đích (preset trái / giữa / phải: chỉ lấy w, h)

@@ -3,6 +3,11 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## 46 – C2 chỉ thao tác trong cửa sổ · [phase3/46-mcp-web-tinh-chinh.md](phase3/46-mcp-web-tinh-chinh.md)
+- [ ] Mẫu *chi-trong-cua-so*: chạy xong báo đã gõ Tab vào “Bảng click – Sân thử”; đổi tiêu đề trong node phím thành tên không có → lỗi `window_mismatch` “không thấy cửa sổ…”, không có phím nào được gõ
+- [ ] Che cửa sổ Bảng click bằng app khác (bấm sang app khác ngay sau node Mở) → node phím báo “không ở trước (đang ở trước: …)”; thêm node Cửa sổ focus trước node phím thì chạy qua
+- [ ] Inspector node Click / Gõ / Phím có công tắc *Chỉ trong cửa sổ*, bật thì hiện App / Tiêu đề / So khớp; bật mà để trống → Chạy báo lỗi “chưa chọn cửa sổ”
+
 ## 51 – Hướng dẫn sử dụng · đợt H1 (khung modal + chương chung) · [phase3/51-huong-dan.md](phase3/51-huong-dan.md)
 - [ ] Nút **?** trên thanh tiêu đề và phím **F1** mở modal Hướng dẫn; Esc / ✕ / bấm ra ngoài đóng; mở lại vẫn ở trang vừa xem
 - [ ] Ô tìm không dấu: gõ `quyen`, `dung khan cap`, `ocr` ra đúng chương / node; link trong bài (tên node, tên chương) chuyển trang, nút ← quay lại trang trước
