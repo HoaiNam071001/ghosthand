@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"testing"
 
+	"ghosthand/internal/model"
 	"ghosthand/internal/samples"
 )
 
@@ -82,5 +83,18 @@ func TestCheckBlocks(t *testing.T) {
 	}
 	if err := checkBlocks([]Block{{Kind: KindTable, Head: []string{"a"}, Rows: [][]string{{"1"}}}}); err != nil {
 		t.Error(err)
+	}
+}
+
+// Thêm loại node mà quên trang hướng dẫn thì test đỏ (biến thể như waitText chỉ có ở frontend nên không xét ở đây).
+func TestEveryStepTypeHasPage(t *testing.T) {
+	g, err := Load()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, d := range model.StepTypeDocs() {
+		if _, ok := g.Nodes[d.Type]; !ok {
+			t.Errorf("loại node %q chưa có mục trong nodes.json", d.Type)
+		}
 	}
 }

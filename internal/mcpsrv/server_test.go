@@ -242,7 +242,14 @@ func TestListAndDocs(t *testing.T) {
 	if _, isErr := call(t, cs, "get_step_types", map[string]any{"type": "bay"}); !isErr {
 		t.Error("loại lạ phải lỗi")
 	}
-	for _, uri := range []string{"ghosthand://guide", "ghosthand://schema", "ghosthand://examples"} {
+	out, _ = call(t, cs, "get_node_guide", map[string]any{"type": "click"})
+	if out["tech"] == "" {
+		t.Errorf("get_node_guide click: %v", out)
+	}
+	if _, isErr := call(t, cs, "get_node_guide", map[string]any{"type": "bay"}); !isErr {
+		t.Error("node lạ phải lỗi")
+	}
+	for _, uri := range []string{"ghosthand://guide", "ghosthand://manual", "ghosthand://schema", "ghosthand://examples"} {
 		res, err := cs.ReadResource(context.Background(), &mcp.ReadResourceParams{URI: uri})
 		if err != nil || !json.Valid([]byte(res.Contents[0].Text)) {
 			t.Errorf("%s: %v", uri, err)

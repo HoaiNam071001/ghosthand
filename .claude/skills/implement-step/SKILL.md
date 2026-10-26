@@ -30,6 +30,8 @@ description: Làm một bước / mục con theo plan trong docs/tasks (vd "làm
 
 Tính năng mới người dùng thử được (loại bước, trường mới, hành vi mới của bước cũ) → thêm / sửa **kịch bản mẫu** trong `internal/samples/` (bước 33) để người dùng mở từ *Mẫu thử* và thử tay ngay.
 
+Tính năng / thiết lập / node đổi hành vi → sửa luôn chương hoặc trang node tương ứng của *Hướng dẫn* (`internal/guide/*.json`), không để lệch.
+
 Trong lúc làm: mục con xong là tick `[x]` ngay; việc phát sinh thêm thành mục con.
 
 ## 4. Kiểm tra (bắt buộc, báo kết quả thật)

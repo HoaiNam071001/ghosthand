@@ -7,6 +7,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+	"sort"
 )
 
 //go:embed chapters.json
@@ -123,4 +124,20 @@ func checkBlocks(bs []Block) error {
 		}
 	}
 	return nil
+}
+
+// Manual – bản cho AI đọc bao quát: chương đầy đủ + mỗi node chỉ khoá / công nghệ / tốc độ (chi tiết: Guide.Nodes[khoá]).
+func (g Guide) Manual() map[string]any {
+	nodes := make([]map[string]string, 0, len(g.Nodes))
+	keys := make([]string, 0, len(g.Nodes))
+	for k := range g.Nodes {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	for _, k := range keys {
+		n := g.Nodes[k]
+		nodes = append(nodes, map[string]string{"key": k, "tech": n.Tech, "speed": n.Speed})
+	}
+	return map[string]any{"chapters": g.Chapters, "nodes": nodes,
+		"note": "Chi tiết một node (ngữ cảnh, độ chính xác, mẹo, trường): get_node_guide type=<key>."}
 }

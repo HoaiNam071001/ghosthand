@@ -9,6 +9,7 @@ Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi t
 - [ ] Ctrl/Cmd+K → rê một mục → *Xem hướng dẫn →* mở đúng trang node; inspector → ⓘ → *Xem hướng dẫn →* (thử cả Click theo chữ / phần tử)
 - [ ] *Mở mẫu thử* trong chương (vd Bắt đầu nhanh → click-theo-chu): kịch bản đang có thay đổi thì hỏi lưu, rồi mẫu hiện trên canvas, modal đóng
 - [ ] Đọc nội dung các chương *Bắt đầu nhanh*, *Quyền*, *Chọn cách tìm* – chỗ nào sai với app thật / khó hiểu thì báo; xem cả theme sáng + tối
+- [ ] (H3) AI qua MCP: resource `ghosthand://manual` đọc được; tool `get_node_guide type=clickText` trả công nghệ / độ chính xác / mẹo; type lạ báo lỗi rõ
 
 ## 43 – Node chuyên sâu · Trình duyệt trên Windows (B1w–B3w) · [phase3/43-node-chuyen-sau.md](phase3/43-node-chuyen-sau.md)
 - [ ] Windows + Chrome mở sẵn vài tab: node *Tab trình duyệt* `list` ra đủ tab đúng thứ tự, tiêu đề không còn đuôi "– Mức sử dụng bộ nhớ"; chỉ tab đang hiện có URL; *Chuyển tới tab* theo tiêu đề đưa đúng tab + cửa sổ lên trước

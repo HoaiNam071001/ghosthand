@@ -1,0 +1,478 @@
+{
+ "app": [
+  "appOp",
+  "appName",
+  "appMatch",
+  "appForce",
+  "timeoutMs"
+ ],
+ "browserGo": [
+  "url",
+  "browser",
+  "tabMatch",
+  "tabFrom",
+  "timeoutMs"
+ ],
+ "browserNorm": [
+  "normZoom",
+  "normFullscreen",
+  "normSize",
+  "normPopups",
+  "winPreset",
+  "winRect",
+  "display",
+  "browser",
+  "tab",
+  "tabMatch",
+  "tabFrom",
+  "timeoutMs"
+ ],
+ "browserTab": [
+  "tabOp",
+  "browser",
+  "tabMatch",
+  "tabFrom",
+  "url",
+  "timeoutMs"
+ ],
+ "calc": [],
+ "click": [
+  "points",
+  "coordSpace",
+  "button",
+  "clicks",
+  "clickInterval",
+  "jitterPx"
+ ],
+ "clickImage": [
+  "imageSource",
+  "dx",
+  "dy",
+  "button",
+  "template",
+  "templateScale",
+  "threshold",
+  "matchMode",
+  "colorTol",
+  "timeoutMs",
+  "intervalMs",
+  "searchArea",
+  "findBy",
+  "findText",
+  "textExact",
+  "textAccent",
+  "occurrence",
+  "selectors",
+  "elementApp",
+  "jitterPx"
+ ],
+ "clipboard": [
+  "clipOp",
+  "text",
+  "filePath"
+ ],
+ "counter": [
+  "max"
+ ],
+ "display": [
+  "displayOp",
+  "displayValue",
+  "soundWait"
+ ],
+ "double": [
+  "points",
+  "coordSpace",
+  "button",
+  "jitterPx"
+ ],
+ "drag": [
+  "points",
+  "coordSpace",
+  "button",
+  "dragMs",
+  "dragFromPrev",
+  "dragRelative",
+  "jitterPx"
+ ],
+ "elementAction": [
+  "elementApp",
+  "selectors",
+  "occurrence",
+  "textAccent",
+  "elementAct",
+  "text",
+  "timeoutMs",
+  "intervalMs"
+ ],
+ "elementRead": [
+  "selectors",
+  "elementApp",
+  "textAccent",
+  "occurrence",
+  "searchArea",
+  "findBy",
+  "findText",
+  "textExact",
+  "readNear",
+  "readSpan",
+  "readPattern",
+  "readNumber",
+  "readChange",
+  "timeoutMs",
+  "intervalMs"
+ ],
+ "end": [
+  "endStatus",
+  "message"
+ ],
+ "file": [
+  "fileOp",
+  "filePath",
+  "text",
+  "fileAppend",
+  "cells",
+  "sheet",
+  "filePattern"
+ ],
+ "findAll": [
+  "findBy",
+  "template",
+  "templateScale",
+  "threshold",
+  "matchMode",
+  "colorTol",
+  "findText",
+  "textExact",
+  "textAccent",
+  "selectors",
+  "elementApp",
+  "searchArea",
+  "minCount",
+  "maxCount",
+  "timeoutMs",
+  "intervalMs"
+ ],
+ "forEach": [
+  "listFrom",
+  "value",
+  "filePath",
+  "sheet"
+ ],
+ "hold": [
+  "points",
+  "coordSpace",
+  "button",
+  "holdMs",
+  "jitterPx"
+ ],
+ "http": [
+  "method",
+  "url",
+  "query",
+  "headers",
+  "bodyType",
+  "body",
+  "timeoutMs"
+ ],
+ "if": [
+  "cond",
+  "timeoutMs",
+  "intervalMs"
+ ],
+ "inputSource": [
+  "inputOp",
+  "inputLayout",
+  "inputHotkey"
+ ],
+ "key": [
+  "keys",
+  "modifiers",
+  "keyMode"
+ ],
+ "notify": [
+  "notifyTitle",
+  "text"
+ ],
+ "open": [
+  "target",
+  "webBrowser"
+ ],
+ "osShortcut": [
+  "shortcutName",
+  "text",
+  "timeoutMs"
+ ],
+ "pageText": [
+  "elementApp",
+  "selectors",
+  "occurrence",
+  "textAccent",
+  "pageAll",
+  "timeoutMs",
+  "intervalMs"
+ ],
+ "path": [
+  "points",
+  "shape",
+  "shapeW",
+  "shapeH",
+  "closed",
+  "button",
+  "dragMs",
+  "jitterPx"
+ ],
+ "power": [
+  "powerOp",
+  "countdownSec"
+ ],
+ "process": [
+  "procOp",
+  "procName",
+  "procMatch",
+  "cpuBelow",
+  "stableMs",
+  "timeoutMs",
+  "intervalMs"
+ ],
+ "readDocument": [
+  "elementApp",
+  "selectors",
+  "occurrence",
+  "textAccent",
+  "selectionOnly",
+  "timeoutMs",
+  "intervalMs"
+ ],
+ "readTable": [
+  "elementApp",
+  "selectors",
+  "occurrence",
+  "textAccent",
+  "pageAll",
+  "filePath",
+  "sheet",
+  "timeoutMs",
+  "intervalMs"
+ ],
+ "savePdf": [
+  "filePath",
+  "browser",
+  "tab",
+  "tabMatch",
+  "tabFrom",
+  "timeoutMs",
+  "intervalMs"
+ ],
+ "screenshot": [
+  "shotArea",
+  "display",
+  "shotRect",
+  "imageFrom",
+  "saveDir",
+  "fileName",
+  "toClipboard"
+ ],
+ "scroll": [
+  "direction",
+  "amount",
+  "points",
+  "jitterPx"
+ ],
+ "setVar": [
+  "varName",
+  "varOp",
+  "value"
+ ],
+ "shell": [
+  "shellLang",
+  "script",
+  "shellEnv",
+  "filePath",
+  "timeoutMs"
+ ],
+ "switch": [
+  "value",
+  "cases"
+ ],
+ "switchScreen": [
+  "cases",
+  "timeoutMs",
+  "intervalMs"
+ ],
+ "sysInfo": [
+  "filePath"
+ ],
+ "system": [
+  "sysOp",
+  "volume"
+ ],
+ "textClean": [
+  "value",
+  "replaceFrom",
+  "replaceTo",
+  "replaceRegex",
+  "stripAccents",
+  "caseMode",
+  "trim"
+ ],
+ "textMatch": [
+  "value",
+  "pattern",
+  "matchAll"
+ ],
+ "textNumber": [
+  "value",
+  "numOp",
+  "decimals",
+  "numStyle",
+  "dateLayout"
+ ],
+ "textSplit": [
+  "value",
+  "separator"
+ ],
+ "type": [
+  "typeMode"
+ ],
+ "wait": [],
+ "waitDownload": [
+  "filePath",
+  "filePattern",
+  "timeoutMs",
+  "intervalMs"
+ ],
+ "waitImage": [
+  "template",
+  "templateScale",
+  "threshold",
+  "matchMode",
+  "colorTol",
+  "timeoutMs",
+  "intervalMs",
+  "searchArea",
+  "findBy",
+  "findText",
+  "textExact",
+  "textAccent",
+  "occurrence",
+  "selectors",
+  "elementApp"
+ ],
+ "waitPixel": [
+  "points",
+  "color",
+  "timeoutMs",
+  "intervalMs"
+ ],
+ "waitScreen": [
+  "waitMode",
+  "stableMs",
+  "diffPct",
+  "shotArea",
+  "display",
+  "shotRect",
+  "imageFrom",
+  "timeoutMs",
+  "intervalMs"
+ ],
+ "waitUIEvent": [
+  "uiEvent",
+  "winApp",
+  "winTitle",
+  "winMatch",
+  "elementApp",
+  "selectors",
+  "occurrence",
+  "textAccent",
+  "timeoutMs"
+ ],
+ "waitUntil": [
+  "at",
+  "ifPassed",
+  "useNtp"
+ ],
+ "webClick": [
+  "selectors",
+  "tab",
+  "webScope",
+  "occurrence",
+  "webBackground",
+  "button",
+  "clicks",
+  "clickInterval",
+  "dx",
+  "dy",
+  "timeoutMs",
+  "intervalMs"
+ ],
+ "webKey": [
+  "keys",
+  "modifiers",
+  "keyMode"
+ ],
+ "webRead": [
+  "selectors",
+  "tab",
+  "webScope",
+  "occurrence",
+  "readFrom",
+  "attr",
+  "timeoutMs",
+  "intervalMs"
+ ],
+ "webScroll": [
+  "selectors",
+  "tab",
+  "webScope",
+  "occurrence",
+  "webBackground",
+  "scrollMode",
+  "direction",
+  "amount",
+  "scrollIn",
+  "timeoutMs",
+  "intervalMs"
+ ],
+ "webType": [
+  "selectors",
+  "tab",
+  "webScope",
+  "occurrence",
+  "webBackground",
+  "text",
+  "typeMode",
+  "webClear",
+  "webEnter",
+  "skipFocusCheck",
+  "dx",
+  "dy",
+  "timeoutMs",
+  "intervalMs"
+ ],
+ "webWait": [
+  "selectors",
+  "tab",
+  "webScope",
+  "occurrence",
+  "webGone",
+  "webBackground",
+  "timeoutMs",
+  "intervalMs"
+ ],
+ "window": [
+  "winOp",
+  "winApp",
+  "winTitle",
+  "winMatch",
+  "winPreset",
+  "winRect",
+  "display",
+  "timeoutMs"
+ ],
+ "zip": [
+  "filePath",
+  "zipOp",
+  "zipTo",
+  "filePattern"
+ ]
+}

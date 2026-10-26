@@ -25,6 +25,7 @@ Quy ước chung: mục con làm xong là tick ngay (không đợi tới đây);
 - [ ] `log.md`: **thêm bằng `>>`, không Read / Edit cả file** – một dòng `- **YYYY-MM-DD** – <việc>. <kết quả kiểm tra: lệnh nào OK / chưa thử tay>.`
 - [ ] `docs/ARCHITECTURE.md`: đổi luồng, thêm method `App` / event / file lõi / cổng → sửa.
 - [ ] `docs/ARCHITECTURE.md` §8 *Bản đồ file*: thêm / xoá / đổi tên file → sửa dòng tương ứng.
+- [ ] **Hướng dẫn** (bước 51): tính năng / thiết lập / hành vi đổi → sửa chương liên quan trong `internal/guide/chapters.json` (hoặc mục node trong `nodes.json`); `check-docs.py` cảnh báo trường node mới chưa được nhắc.
 - [ ] `decisions.md`: người dùng vừa chốt điều gì mới → ghi (ngày, lý do).
 - [ ] `python3 scripts/tasks-index.py` rồi `python3 scripts/check-docs.py` (phải 0 lỗi).
 

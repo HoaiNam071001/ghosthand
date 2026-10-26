@@ -9,6 +9,7 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
+	manual "ghosthand/internal/guide"
 	"ghosthand/internal/model"
 )
 
@@ -40,6 +41,9 @@ func (s *Server) addReadTools() {
 	addTool(s, KindRead, &mcp.Tool{Name: "get_step_types", Description: "Hướng dẫn viết kịch bản: cấu trúc flow, biến {{…}}, trường chung, " +
 		"từng loại node app hỗ trợ (mô tả, trường, ví dụ JSON, output, cổng ra) và mẹo viết kịch bản bền. Đọc trước khi tạo / sửa. " +
 		"Đầy đủ rất dài: compact=true để xem danh sách gọn mọi node trước, rồi type=<tên> lấy chi tiết loại cần dùng."}, s.stepTypes)
+	addTool(s, KindRead, &mcp.Tool{Name: "get_node_guide", Description: "Trang hướng dẫn của một loại node (cùng nội dung modal Hướng dẫn của người dùng): " +
+		"công nghệ bên dưới, chạy được với web / app nào, độ chính xác, tốc độ, nên / không nên dùng, mẹo, trường quan trọng. " +
+		"Dùng để chọn đúng node cho trang / app; trường + ví dụ JSON lấy ở get_step_types. Khoá = tên loại node (vd clickText, waitImage)."}, s.nodeGuide)
 	addTool(s, KindRead, &mcp.Tool{Name: "list_secrets", Description: "Tên các bí mật người dùng đã lưu trong Cài đặt → Bí mật (mật khẩu, token…). " +
 		"CHỈ có tên, không bao giờ có giá trị. Dùng trong ô chữ của node bằng {{secret.<tên>}}; app điền giá trị thật lúc chạy và che trong kết quả. " +
 		"Cần bí mật chưa có thì bảo người dùng thêm ở Cài đặt → Bí mật, đừng xin giá trị."}, s.listSecrets)
@@ -111,6 +115,22 @@ func (s *Server) stepTypes(_ context.Context, _ *mcp.CallToolRequest, in typesIn
 		return ok(toCompact(g))
 	}
 	return ok(g)
+}
+
+type nodeGuideIn struct {
+	Type string `json:"type" jsonschema:"khoá node, vd clickText, waitImage, browserTab – danh sách ở resource ghosthand://manual"`
+}
+
+func (s *Server) nodeGuide(_ context.Context, _ *mcp.CallToolRequest, in nodeGuideIn) (*mcp.CallToolResult, any, error) {
+	g, err := manual.Load()
+	if err != nil {
+		return fail(err)
+	}
+	n, found := g.Nodes[in.Type]
+	if !found {
+		return fail(&model.ScriptError{Field: "type", Msg: "chưa có trang hướng dẫn cho " + in.Type + " – xem danh sách ở resource ghosthand://manual"})
+	}
+	return ok(n)
 }
 
 func (s *Server) screenInfo(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp.CallToolResult, any, error) {

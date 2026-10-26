@@ -1,6 +1,6 @@
 # 51. Hướng dẫn sử dụng trong app (modal) – cho người dùng và AI
 
-- [ ] **51. Hướng dẫn sử dụng** *(người dùng yêu cầu 2026-10-25)* – Modal *Hướng dẫn* trong app: cách chạy cả hệ thống, các thiết lập, cách dùng từng node thật chi tiết (làm gì, nên / không nên dùng khi nào, chạy được với web / app nào, công nghệ bên dưới, độ chính xác + tốc độ theo ngữ cảnh, mẹo, ví dụ), có demo trực quan. AI đọc cùng nội dung qua MCP. Có node mới / tính năng mới / sửa → hướng dẫn phải cập nhật theo (test + check-docs bắt thiếu).
+- [x] **51. Hướng dẫn sử dụng** *(người dùng yêu cầu 2026-10-25)* – Modal *Hướng dẫn* trong app: cách chạy cả hệ thống, các thiết lập, cách dùng từng node thật chi tiết (làm gì, nên / không nên dùng khi nào, chạy được với web / app nào, công nghệ bên dưới, độ chính xác + tốc độ theo ngữ cảnh, mẹo, ví dụ), có demo trực quan. AI đọc cùng nội dung qua MCP. Có node mới / tính năng mới / sửa → hướng dẫn phải cập nhật theo (test + check-docs bắt thiếu).
   - **Chốt 2026-10-25:**
     - Nội dung là **JSON chung Go + TS**: `internal/guide/` (go:embed) – frontend import thẳng (chạy được ở `#demo` không cần Go), MCP trả resource `ghosthand://guide`. Không chép lại chữ đã có: *làm gì / dùng khi* lấy từ `flow/nodeInfo.ts`, output từ `flow/view.ts` `outputsOf`, hệ điều hành từ `model/platform.go`, hoạt hoạ từ `palette/illus/` – JSON chỉ giữ phần mới (ngữ cảnh, công nghệ, độ chính xác, mẹo, ví dụ).
     - Demo **vẽ bằng code + mẫu thử** (không ảnh chụp PNG): hoạt hoạ bước 47, sơ đồ flow mẫu nhỏ (`FlowCanvas` chỉ xem), nút *Mở mẫu thử* mở kịch bản mẫu (bước 33) chạy được ngay.
@@ -22,10 +22,10 @@
     - [x] H2e. Cửa sổ / ứng dụng / trình duyệt / web (CDP vs Accessibility vs JXA) *(open, openWeb, window, app, browserTab, browserGo, browserNorm, savePdf, elementAction, elementRead, readTable, readDocument, pageText, waitUIEvent, waitDownload, 6 node web)*
     - [x] H2f. Dữ liệu + xử lý chữ + hệ thống (clipboard, HTTP, tệp, nén, lệnh, nguồn, màn hình, thông báo…)
   - **H3. AI + giữ đồng bộ**
-    - [ ] H3a. MCP: resource `ghosthand://guide` (chương + node, dạng gọn cho AI), `get_node_guide(type)`; guide AI hiện có trỏ sang
-    - [ ] H3b. Test: mọi `InfoKey` có mục trong `nodes.json`, mọi `SettingsTab` có chương, mọi `example` mở được mẫu có thật (TS + Go)
-    - [ ] H3c. `check-docs.py`: cảnh báo trường mới trong `steptypes.go` của một node chưa được nhắc trong mục node đó; lỗi khi loại node thiếu mục hướng dẫn
-    - [ ] H3d. Skill `add-node-type` (mục *Hướng dẫn*), `implement-step` + `wrap-up` (tính năng / thiết lập đổi → sửa chương liên quan), CLAUDE.md, ARCHITECTURE.md (*muốn làm X → sửa ở đâu*)
+    - [x] H3a. MCP: resource `ghosthand://manual` (tên `guide` đã dùng cho hướng dẫn viết kịch bản) (chương + node, dạng gọn cho AI), `get_node_guide(type)`; guide AI hiện có trỏ sang
+    - [x] H3b. Test: mọi `InfoKey` có mục trong `nodes.json`, mọi `SettingsTab` có chương, mọi `example` mở được mẫu có thật (TS + Go)
+    - [x] H3c. `check-docs.py`: cảnh báo trường mới trong `steptypes.go` của một node chưa được nhắc trong mục node đó; lỗi khi loại node thiếu mục hướng dẫn
+    - [x] H3d. Skill `add-node-type` (mục *Hướng dẫn*), `implement-step` + `wrap-up` (tính năng / thiết lập đổi → sửa chương liên quan), CLAUDE.md, ARCHITECTURE.md (*muốn làm X → sửa ở đâu*)
   - Rủi ro: nội dung ~60 node lớn – viết sai công nghệ / độ chính xác thì hại hơn không có → mỗi mục đối chiếu code (engine + device) lúc viết; `types.ts` (332 dòng) và `steptypes.go` (316) đã quá ngưỡng – tách trước nếu phải đụng.
   - Chuẩn bị cho MCP (31): H3a – AI đọc cùng nội dung với người
   - Kiểm tra tay: [checks.md](../checks.md) mục 51

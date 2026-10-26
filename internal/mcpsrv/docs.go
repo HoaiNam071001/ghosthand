@@ -8,6 +8,7 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
+	manual "ghosthand/internal/guide"
 	"ghosthand/internal/model"
 	"ghosthand/internal/samples"
 )
@@ -162,6 +163,14 @@ func (s *Server) addDocs() {
 	}
 	res("ghosthand://guide", "guide", "Hướng dẫn viết kịch bản: flow, biến, từng loại node, mẹo viết bền", "application/json",
 		func() (any, error) { return guideDoc(s.back.MCP().NodePreference()), nil })
+	res("ghosthand://manual", "manual", "Sách hướng dẫn Ghosthand cho người dùng: chương chung + công nghệ / tốc độ từng node (chi tiết: get_node_guide)", "application/json",
+		func() (any, error) {
+			g, err := manual.Load()
+			if err != nil {
+				return nil, err
+			}
+			return g.Manual(), nil
+		})
 	res("ghosthand://schema", "schema", "JSON Schema của file kịch bản", "application/schema+json",
 		func() (any, error) { return ScriptSchema() })
 	res("ghosthand://examples", "examples", "Kịch bản mẫu dạng gọn (chạy được với create_script)", "application/json", examples)
