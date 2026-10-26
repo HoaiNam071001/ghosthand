@@ -57,7 +57,8 @@ import ControlSection from './stepform/ControlSection';
 import InputsTab from './stepform/InputsTab';
 import { HumanNodeField } from './HumanFields';
 import { usesHuman } from '../flow/human';
-import { nodeInfo } from '../flow/nodeInfo';
+import { infoKey, nodeInfo } from '../flow/nodeInfo';
+import { openGuide } from '../guideNav';
 import PermNotice from './stepform/PermNotice';
 
 // Loại node hành động đổi qua lại được trong ô loại node ở đầu (node điều khiển có trường riêng, không đổi loại)
@@ -81,7 +82,7 @@ export default function StepForm({ step: s }: { step: Step }) {
             className="w-full truncate bg-transparent text-[15px] font-semibold outline-none placeholder:text-ink" />}
           sub={<><RefInput step={s} /><TypeSelect step={s} /></>}
           actions={<>
-            <InfoButton info={nodeInfo(s)} />
+            <InfoButton info={nodeInfo(s)} onGuide={() => openGuide({ node: infoKey(s) })} />
             {atPoint && (
               <button onClick={() => openOverlay('point', s.id)} aria-label="Xem trên màn hình"
                 title="Xem / sửa vị trí riêng node này trên màn hình – các node khác mờ đi" className={iconBtn}><Eye /></button>

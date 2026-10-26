@@ -1,0 +1,303 @@
+[
+  {
+    "id": "bat-dau",
+    "group": "Bắt đầu",
+    "title": "Bắt đầu nhanh",
+    "summary": "Cài app, cấp quyền, chạy thử kịch bản đầu tiên trong 5 phút.",
+    "blocks": [
+      { "kind": "p", "text": "Ghosthand chạy **kịch bản** thay bạn: bấm chuột, gõ phím, chờ ảnh / chữ hiện ra, rẽ nhánh, lặp. Kịch bản là một **flow** – các node nối với nhau bằng cạnh, giống n8n." },
+      { "kind": "h", "text": "Cài đặt" },
+      { "kind": "list", "items": [
+        "**macOS:** mở file `.dmg`, kéo Ghosthand vào Applications. Lần đầu mở bị Gatekeeper chặn thì chuột phải vào app → **Mở**.",
+        "**Windows – không cài đặt:** giải nén `portable.zip`, chạy `ghosthand.exe` (đã kèm sẵn OCR tiếng Việt).",
+        "**Windows – bộ cài:** chạy `setup.exe`. SmartScreen cảnh báo thì chọn *More info → Run anyway* (app chưa ký số).",
+        "Có bản mới app tự báo; bấm **Cập nhật ngay** để tải, kiểm tra và cài đè (xem [[chapter:settings-about]])."
+      ] },
+      { "kind": "h", "text": "Cấp quyền (macOS)" },
+      { "kind": "p", "text": "macOS chặn app điều khiển chuột và chụp màn hình cho tới khi bạn cho phép. Tối thiểu cần **Trợ năng (Accessibility)** và **Ghi màn hình (Screen Recording)** – chi tiết từng quyền ở [[chapter:quyen]]. Windows không cần cấp quyền riêng." },
+      { "kind": "h", "text": "Chạy thử kịch bản đầu tiên" },
+      { "kind": "steps", "items": [
+        "Ở thư viện bên trái bấm nút **Mẫu thử** (ô lưới) – danh sách kịch bản mẫu, mỗi mẫu thử một loại node trên trang sân thử có sẵn.",
+        "Chọn một mẫu dễ, vd *Click theo chữ*, bấm **Dùng mẫu** – kịch bản hiện trên canvas.",
+        "Bấm **Mở trang** trên thẻ mẫu để mở trang sân thử trong trình duyệt.",
+        "Bấm **Chạy** (hoặc F8). Muốn dừng ngay: bấm F8 lần nữa hoặc rê chuột vào một góc màn hình.",
+        "Xem nhật ký dưới canvas: node nào xanh là xong, đỏ là lỗi – bấm vào để xem lý do."
+      ] },
+      { "kind": "sample", "sample": "click-theo-chu", "text": "Mẫu dễ nhất để bắt đầu: tìm dòng chữ trên trang rồi bấm vào." },
+      { "kind": "tip", "text": "Chưa biết nên dùng node nào để tìm nút trên trang / app của bạn? Đọc [[chapter:chon-cach-tim]] trước – chọn đúng cách tìm quyết định kịch bản có chạy bền hay không." }
+    ]
+  },
+  {
+    "id": "quyen",
+    "group": "Bắt đầu",
+    "title": "Quyền hệ điều hành",
+    "summary": "Quyền nào cần cho node nào, cấp ở đâu, vì sao cấp rồi vẫn báo thiếu.",
+    "blocks": [
+      { "kind": "p", "text": "Thiếu quyền thì node chạy lỗi `permission`. App kiểm tra trước: tab **Cài đặt → Quyền** liệt kê trạng thái từng quyền, inspector của node báo thiếu, bấm Chạy cũng hỏi trước khi chạy." },
+      { "kind": "table", "head": ["Quyền (macOS)", "Cần cho", "Cấp ở đâu"], "rows": [
+        ["Trợ năng (Accessibility)", "Mọi thao tác chuột / phím; đọc phần tử màn hình (Chờ / Click / Đọc phần tử, Cửa sổ)", "System Settings → Privacy & Security → Accessibility"],
+        ["Ghi màn hình (Screen Recording)", "Chụp màn hình, tìm ảnh mẫu, đọc chữ OCR, chờ màu pixel, Chờ màn hình", "Privacy & Security → Screen & System Audio Recording – cấp xong thường phải mở lại app"],
+        ["Tự động hoá → Google Chrome", "Tab trình duyệt, Đi tới URL, Lưu PDF", "Mở Chrome rồi bấm **Cấp quyền** trong tab Quyền – macOS hỏi một lần"],
+        ["Tự động hoá → Finder", "Node Tệp khi xoá vào Thùng rác", "Tab Quyền → Cấp quyền"],
+        ["Tự động hoá → System Events", "Cửa sổ, Nguồn, Màn hình / âm thanh, Bộ gõ", "Tab Quyền → Cấp quyền"],
+        ["Thông báo", "Node Thông báo hệ thống", "System Settings → Notifications (app không tự kiểm tra được)"]
+      ] },
+      { "kind": "warn", "text": "Quyền gắn với **đúng bản app** đã cấp. Chạy bằng `wails dev` thì cấp cho Terminal / VS Code; chạy bản trong Applications thì cấp cho bản đó. Cấp rồi vẫn báo thiếu: tắt quyền, bật lại, rồi mở lại app." },
+      { "kind": "h", "text": "Windows" },
+      { "kind": "list", "items": [
+        "Không có hộp xin quyền như macOS, nhưng app **không điều khiển được cửa sổ chạy bằng quyền Administrator** (Task Manager, bộ cài…) khi chính nó chạy quyền thường – chạy Ghosthand bằng *Run as administrator* nếu cần.",
+        "Màn hình phóng to 125 % / 150 % vẫn đúng toạ độ: app đọc pixel thật của màn hình."
+      ] }
+    ]
+  },
+  {
+    "id": "chon-cach-tim",
+    "group": "Bắt đầu",
+    "title": "Chọn cách tìm",
+    "summary": "Toạ độ, ảnh mẫu, chữ OCR, phần tử Accessibility hay web DOM – cách nào cho trang / app nào.",
+    "blocks": [
+      { "kind": "p", "text": "Phần lớn kịch bản là *tìm một chỗ trên màn hình rồi bấm / đọc*. Có năm cách tìm, khác nhau về độ chính xác, tốc độ và độ bền khi giao diện đổi. Chọn sai cách thì kịch bản chạy được hôm nay nhưng hỏng ngày mai." },
+      { "kind": "table", "head": ["Cách", "Node", "Chính xác", "Tốc độ", "Chịu đổi theme / cỡ cửa sổ / bị che", "Cần quyền (macOS)"], "rows": [
+        ["Toạ độ cố định", "[[node:click]], [[node:drag]], [[node:scroll]]…", "Đúng pixel – nếu cửa sổ không xê dịch", "Tức thì", "Không: cửa sổ dời / đổi cỡ là bấm trượt (giảm bằng vùng + neo, node [[node:window]])", "Trợ năng"],
+        ["Ảnh mẫu", "[[node:waitImage]], [[node:clickImage]], [[node:findAll]]", "Cao khi giao diện giống lúc chụp mẫu", "Nhanh (tìm trong vùng nhỏ nhanh hơn cả màn)", "Kém với đổi theme / zoom / font; bị che thì không thấy", "Ghi màn hình"],
+        ["Chữ (OCR)", "[[node:waitText]], [[node:clickText]]", "Tốt với chữ rõ, cỡ vừa; chữ nhỏ / nền rối dễ đọc sai", "Chậm hơn ảnh (đọc cả vùng)", "Chịu đổi theme / cỡ tốt; bị che thì không thấy", "Ghi màn hình"],
+        ["Phần tử (Accessibility)", "[[node:waitElement]], [[node:clickElement]], [[node:elementRead]], [[node:elementAction]]", "Đúng tuyệt đối – đọc chữ thật của app, không đoán", "Nhanh với app nhỏ; trang web lớn chậm hơn", "Chịu tốt; [[node:elementAction]] chạy được cả khi cửa sổ bị che", "Trợ năng"],
+        ["Web DOM (Chrome của app)", "[[node:openWeb]], [[node:webClick]], [[node:webType]], [[node:webRead]]…", "Đúng tuyệt đối theo CSS / chữ / nhãn", "Nhanh", "Chịu tốt; chạy nền được", "Không"]
+      ] },
+      { "kind": "h", "text": "Mỗi cách chạy được với loại app nào" },
+      { "kind": "table", "head": ["Loại app / trang", "Nên dùng", "Tránh"], "rows": [
+        ["Web cần đăng nhập (Facebook, ngân hàng, Google) trên Chrome bạn đang dùng", "Phần tử (Accessibility), chữ OCR, node trình duyệt ([[node:browserTab]], [[node:pageText]], [[node:readTable]])", "Chrome của app – đăng nhập ở đó dễ bị captcha / khoá tài khoản"],
+        ["Web công khai, không cần đăng nhập", "Web DOM (Chrome của app) – bền nhất, chạy nền", "Toạ độ cố định"],
+        ["App native (Finder, Excel, Zalo PC, phần mềm kế toán)", "Phần tử, rồi tới chữ OCR", "Toạ độ khi cửa sổ hay đổi cỡ"],
+        ["App Electron (Slack, Discord, VS Code)", "Phần tử (đọc được khá đủ), chữ OCR", "Ảnh mẫu khi app hay đổi theme"],
+        ["Game, canvas, video, app vẽ", "Ảnh mẫu, màu pixel, toạ độ (ghép [[node:window]] để cố định cửa sổ)", "Phần tử / web DOM – không có cây phần tử"],
+        ["Remote desktop, máy ảo, màn hình chia sẻ", "Ảnh mẫu, chữ OCR, toạ độ", "Phần tử – chỉ thấy một khung ảnh"]
+      ] },
+      { "kind": "h", "text": "Cây quyết định" },
+      { "kind": "steps", "items": [
+        "Trang web **không cần đăng nhập**? → dùng node Web trên Chrome của app ([[node:openWeb]] rồi [[node:webClick]] / [[node:webType]]).",
+        "App / trang có **chữ hoặc nhãn rõ ràng** trên nút? → thử **Phần tử** trước ([[node:clickElement]]); bấm *Thử tìm* trong inspector để xem có thấy không.",
+        "Không thấy phần tử (game, remote, canvas) nhưng **chữ đọc được**? → [[node:clickText]].",
+        "Nút **chỉ có icon**, không chữ? → ảnh mẫu ([[node:clickImage]]), khoanh sát icon.",
+        "Mọi thứ cố định, cửa sổ đã đặt đúng chỗ bằng [[node:window]]? → toạ độ ([[node:click]]) – nhanh nhất.",
+        "Chỉ cần **biết đã xong chưa** (trang tải, hiệu ứng dừng)? → [[node:waitScreen]] thay vì [[node:wait]] cố định."
+      ] },
+      { "kind": "tip", "text": "Ghép cách: [[node:waitText]] tìm dòng *Đăng nhập* rồi [[node:clickImage]] chọn *Chỗ node trước thấy* – không phải tìm lại hai lần." },
+      { "kind": "tip", "text": "Mở đầu kịch bản bền cho app desktop: [[node:app]] kiểm tra app đang chạy → chưa thì [[node:open]] + chờ mở xong → [[node:window]] đặt vị trí + cỡ. Sau đó toạ độ và ảnh mẫu không còn lệch giữa các lần chạy." },
+      { "kind": "sample", "sample": "phan-tu-doc-gia", "text": "Đọc giá trên trang bằng phần tử Accessibility – không OCR, không chụp ảnh mẫu." },
+      { "kind": "sample", "sample": "web-bam-nut-chay", "text": "Bấm nút trên trang bằng node Web (Chrome của app) – trang đổi bố cục vẫn chạy." }
+    ]
+  },
+  {
+    "id": "giao-dien",
+    "group": "Dùng app",
+    "title": "Giao diện",
+    "summary": "Thư viện, canvas, inspector, thanh công cụ, overlay chọn vùng, thanh mini lúc chạy.",
+    "blocks": [
+      { "kind": "list", "items": [
+        "**Thư viện** (trái): kịch bản mới / mở / lưu, Mẫu thử, Mở gần đây, Lịch sử chạy, hẹn giờ của từng kịch bản.",
+        "**Canvas** (giữa): các node và cạnh nối. Kéo node để xếp, kéo từ cổng ra của node này sang node khác để nối. Ctrl+K (macOS: Cmd+K) mở bảng **Thêm node** có ô tìm không dấu.",
+        "**Inspector** (phải): trường của node đang chọn. Nút ⓘ cạnh tên node cho biết node làm gì; *Xem hướng dẫn* mở trang của node đó trong modal này.",
+        "**Thanh công cụ**: tên kịch bản, *Soạn / Xem trước*, nút số vòng (lặp, đếm ngược), nút **Chạy** kèm menu ▾.",
+        "**Status bar** (dưới): trạng thái, toạ độ chuột hiện tại, cách dừng khẩn cấp."
+      ] },
+      { "kind": "h", "text": "Overlay – chọn vùng và điểm" },
+      { "kind": "p", "text": "Overlay phủ lên màn hình để khoanh **vùng** kịch bản, chọn điểm click, khoanh ảnh mẫu. Đang ở overlay, rê chuột tới chỗ cần bấm rồi nhấn **F6** để thêm điểm. Điểm lưu theo vùng + **neo** (bám cạnh trái / phải / giữa / theo tỉ lệ), nên cửa sổ đổi cỡ thì điểm vẫn bám đúng nút." },
+      { "kind": "h", "text": "Thanh mini lúc chạy" },
+      { "kind": "p", "text": "Khi chạy, cửa sổ thu thành thanh mini luôn nổi trên cùng: vòng tiến độ, node đang chạy, Tạm dừng / Dừng. Kịch bản chạy từ ngoài app (CLI, API, hẹn giờ, AI) cũng hiện thanh này." },
+      { "kind": "tip", "text": "Đổi giao diện sáng / tối bằng nút mặt trời / mặt trăng trên thanh tiêu đề." }
+    ]
+  },
+  {
+    "id": "dung-flow",
+    "group": "Dùng app",
+    "title": "Dựng flow",
+    "summary": "Node, cạnh, cổng thành công / thất bại, rẽ nhánh, lặp.",
+    "blocks": [
+      { "kind": "p", "text": "Mỗi node làm một việc. Chạy xong, node đi ra một **cổng** và cạnh nối từ cổng đó quyết định node chạy tiếp. Thứ tự chạy theo cạnh, không theo vị trí trên canvas. Node có cờ ▶ là node **bắt đầu**." },
+      { "kind": "table", "head": ["Node", "Cổng ra"], "rows": [
+        ["Hành động (click, gõ, chờ ảnh…)", "Thành công / Thất bại"],
+        ["[[node:if]]", "Đúng / Sai"],
+        ["[[node:switch]], [[node:switchScreen]]", "Một cổng cho mỗi trường hợp + Mặc định / Không khớp"],
+        ["[[node:counter]]", "Còn lượt / Hết lượt"],
+        ["[[node:forEach]]", "Mỗi phần tử / Hết danh sách"],
+        ["[[node:app]] (kiểm tra)", "Đang chạy / Không chạy"],
+        ["[[node:end]]", "Không có – kết thúc vòng"]
+      ] },
+      { "kind": "list", "items": [
+        "Cổng **Thất bại** không nối: lỗi thì dừng kịch bản và báo lỗi. Nối nó sang node khác để tự xử lý (vd không thấy nút thì cuộn rồi thử lại).",
+        "Cổng khác không nối: hết vòng, sang vòng sau (nếu còn vòng).",
+        "**Lặp một đoạn**: nối cạnh quay lại node trước, đặt [[node:counter]] để giới hạn số lần.",
+        "**Lặp qua danh sách**: [[node:forEach]] → thân vòng → cạnh quay lại forEach.",
+        "Node tắt (công tắc trong inspector) bị bỏ qua, đi thẳng ra cổng thành công."
+      ] },
+      { "kind": "scene", "scene": "forEach", "text": "Lặp qua danh sách: mỗi phần tử chạy thân vòng một lần." },
+      { "kind": "sample", "sample": "lap-danh-sach", "text": "Lặp qua danh sách khách hàng, gõ từng tên vào form." },
+      { "kind": "sample", "sample": "dem-vong-lap", "text": "Thử lại tối đa N lần bằng node Đếm." }
+    ]
+  },
+  {
+    "id": "bien",
+    "group": "Dùng app",
+    "title": "Biến và output",
+    "summary": "Lấy kết quả node trước, input lúc Chạy, biến tự đặt, bí mật.",
+    "blocks": [
+      { "kind": "p", "text": "Ô chữ của node (chữ gõ, URL, chữ cần tìm, điều kiện…) nhận **biến** trong `{{…}}`. Lúc chạy, biến được thay bằng giá trị thật. Gõ `{{` trong ô để mở gợi ý: input của kịch bản rồi tới output các node khác – ↑↓ chọn, Enter chèn." },
+      { "kind": "table", "head": ["Biến", "Là gì"], "rows": [
+        ["`{{n2.output.x}}`", "Output của node có mã n2 trong vòng này (mỗi loại node có output riêng – xem trang của node)"],
+        ["`{{n2.status}}`, `{{n2.error.message}}`", "Kết quả node n2: success / fail / skipped, lỗi nếu có"],
+        ["`{{last.output.text}}`", "Output của node vừa chạy trước"],
+        ["`{{ten_khach}}`", "Input của kịch bản – hỏi lúc bấm Chạy"],
+        ["`{{vars.so_lan}}`", "Biến do [[node:setVar]] đặt / cộng"],
+        ["`{{secret.mat_khau}}`", "Bí mật lưu trong Cài đặt – không bao giờ hiện ra nhật ký (••••)"]
+      ] },
+      { "kind": "list", "items": [
+        "Mọi node đều có thêm output `startedAt` (giờ bắt đầu) và `durationMs` (chạy mất bao lâu).",
+        "Toạ độ điểm click lấy từ biến được: vd click vào `{{n2.output.x}} + 20`, `{{n2.output.y}}` – bấm lệch phải 20 px so với chỗ node n2 thấy.",
+        "Trường số (số lần click, thời gian chờ…) bật được chế độ biến để tính lúc chạy.",
+        "Biến đặt lại đầu mỗi vòng."
+      ] },
+      { "kind": "sample", "sample": "dat-bien", "text": "Đặt và cộng biến giữa các nhánh." },
+      { "kind": "sample", "sample": "bi-mat", "text": "Điền mật khẩu từ kho bí mật mà không lộ ra kịch bản." }
+    ]
+  },
+  {
+    "id": "chay",
+    "group": "Dùng app",
+    "title": "Chạy kịch bản",
+    "summary": "Chạy, xem trước, chạy từng node, dừng khẩn cấp, vòng lặp, hẹn giờ, dòng lệnh, API.",
+    "blocks": [
+      { "kind": "table", "head": ["Cách chạy", "Dùng khi"], "rows": [
+        ["**Chạy** / F8", "Chạy cả kịch bản. Có input thì hiện form hỏi trước (lưu được bộ giá trị hay dùng)."],
+        ["Xem trước", "Con trỏ giả đi qua các điểm trên màn hình, không bấm thật – kiểm tra điểm có đúng chỗ."],
+        ["Chạy từ node đang chọn", "Sửa một đoạn giữa kịch bản, không muốn chạy lại từ đầu."],
+        ["Chạy riêng node đang chọn", "Thử một node."],
+        ["Chạy từng node (F10)", "Dò lỗi: mỗi node dừng chờ bạn bấm Tiếp / F10. Đặt **Điểm dừng** ở chân inspector để dừng trước một node."]
+      ] },
+      { "kind": "warn", "text": "**Dừng khẩn cấp:** nhấn F8 hoặc rê chuột vào một góc màn hình. Luôn thử kịch bản mới với số vòng nhỏ." },
+      { "kind": "h", "text": "Vòng lặp và giống người" },
+      { "kind": "list", "items": [
+        "Nút số vòng trên thanh công cụ: số vòng (0 = chạy mãi), giới hạn phút, đếm ngược trước khi chạy để kịp chuyển sang app cần thao tác.",
+        "**Giống người** (thấp / vừa / cao): chuột đi đường cong, bấm lệch quanh tâm, gõ nhịp không đều – chậm hơn nhưng giảm nguy cơ bị nhận là bot (không đảm bảo)."
+      ] },
+      { "kind": "h", "text": "Chạy không cần ngồi canh" },
+      { "kind": "list", "items": [
+        "**Hẹn giờ**: một lần, hằng ngày hoặc ngày làm việc; báo kết quả qua Telegram / Discord được. App phải đang mở – tắt app thì lỡ giờ, không chạy bù.",
+        "**Dòng lệnh**: `ghosthand run kich-ban.json --set ten=An --preset \"Bộ 1\"` gửi sang app (chưa mở thì tự mở – xem [[chapter:settings-api]]).",
+        "**API local** cho chương trình khác và **AI qua MCP** – xem [[chapter:ai-mcp]]."
+      ] }
+    ]
+  },
+  {
+    "id": "lich-su",
+    "group": "Dùng app",
+    "title": "Lịch sử và đọc lỗi",
+    "summary": "Xem lại lần chạy, output từng node, hiểu mã lỗi.",
+    "blocks": [
+      { "kind": "p", "text": "Mỗi lần chạy lưu nhật ký: node nào chạy, ra cổng nào, output gì, mất bao lâu, ảnh màn hình lúc lỗi. Mở **Lịch sử chạy** ở thư viện; *Xem trên flow* tô đường đã đi lên canvas." },
+      { "kind": "table", "head": ["Mã lỗi", "Nghĩa", "Thường do / cách sửa"], "rows": [
+        ["`not_found`", "Hết giờ chờ mà không thấy ảnh / chữ / màu / phần tử", "Giao diện đổi, sai vùng tìm, ngưỡng quá chặt – xem chi tiết lỗi: chỗ giống nhất, chữ đọc được"],
+        ["`timeout`", "Node chạy quá thời gian cho phép", "Tăng thời gian chờ hoặc kiểm tra app có treo"],
+        ["`permission`", "Thiếu quyền hệ điều hành", "[[chapter:quyen]]"],
+        ["`invalid_input`", "Giá trị không hợp lệ – vd biến trỏ node chưa chạy, số âm", "Kiểm tra biến và thứ tự node"],
+        ["`browser`", "Chrome của app chưa mở / mất kết nối", "Đặt node Mở trang (Chrome của app) trước node Web"],
+        ["`end`", "Node Kết thúc thất bại", "Do chính kịch bản báo – đọc lời nhắn"],
+        ["`cancelled`", "Bạn dừng giữa chừng", "–"]
+      ] },
+      { "kind": "tip", "text": "Xoá lịch sử cũ hoặc đổi nơi lưu ở [[chapter:settings-storage]]." }
+    ]
+  },
+  {
+    "id": "ai-mcp",
+    "group": "Dùng app",
+    "title": "AI qua MCP",
+    "summary": "Cho Claude / AI khác đọc màn hình, soạn và chạy kịch bản.",
+    "blocks": [
+      { "kind": "p", "text": "MCP là cách để AI (Claude Desktop, Claude Code, Codex…) dùng Ghosthand như một công cụ: xem màn hình, tìm phần tử, soạn kịch bản, chạy thử. AI đọc cùng hướng dẫn này để chọn đúng node." },
+      { "kind": "steps", "items": [
+        "Bật MCP ở **Cài đặt → AI (MCP)**.",
+        "Bấm *Thêm vào Claude Desktop* hoặc chép cấu hình mẫu vào AI bạn dùng (dạng lệnh `ghosthand --mcp` hoặc địa chỉ HTTP).",
+        "Chọn **mức chạy** của AI: *Chỉ soạn*, *Hỏi trước khi chạy* hay *Tự chạy*.",
+        "Chọn tool cho từng loại AI và **ưu tiên node** (vd ưu tiên phần tử hơn ảnh mẫu)."
+      ] },
+      { "kind": "warn", "text": "Kịch bản AI tạo có nhãn **AI** trong thư viện – xem kỹ trước khi chạy. Node Chạy lệnh / Nguồn luôn cần bạn đồng ý." }
+    ]
+  },
+  {
+    "id": "settings-storage",
+    "group": "Cài đặt",
+    "title": "Lưu trữ",
+    "summary": "Thư mục kịch bản, kịch bản AI, ảnh chụp; lịch sử chạy.",
+    "blocks": [
+      { "kind": "list", "items": [
+        "Đổi thư mục lưu kịch bản, kịch bản AI tạo, ảnh chụp màn hình: **Chọn…** để đổi, **Mở** để xem trong Finder / Explorer, **Về mặc định** để trả lại chỗ cũ.",
+        "Đặt thư mục trong Google Drive / OneDrive / Dropbox để có kịch bản trên nhiều máy."
+      ] }
+    ]
+  },
+  {
+    "id": "settings-overlay",
+    "group": "Cài đặt",
+    "title": "Chọn vùng",
+    "summary": "Đặt thanh công cụ overlay ở cạnh nào của màn hình.",
+    "blocks": [
+      { "kind": "p", "text": "Thanh công cụ của overlay (chọn vùng, thêm điểm) đặt được ở cạnh Trên / Dưới / Trái / Phải – chọn cạnh không che chỗ bạn hay thao tác. Thanh tự co giãn theo cỡ màn hình." }
+    ]
+  },
+  {
+    "id": "settings-secrets",
+    "group": "Cài đặt",
+    "title": "Bí mật",
+    "summary": "Lưu mật khẩu / token để kịch bản dùng mà không lộ ra.",
+    "blocks": [
+      { "kind": "p", "text": "Thêm bí mật (tên + giá trị) rồi dùng trong ô chữ bằng `{{secret.<tên>}}`. Giá trị không nằm trong file kịch bản – gửi kịch bản cho người khác không lộ mật khẩu – và mọi nhật ký / output / AI chỉ thấy `••••`." },
+      { "kind": "sample", "sample": "bi-mat", "text": "Mẫu dùng bí mật để đăng nhập." }
+    ]
+  },
+  {
+    "id": "settings-perms",
+    "group": "Cài đặt",
+    "title": "Quyền",
+    "summary": "Trạng thái từng quyền hệ điều hành, xin quyền, mở đúng mục System Settings.",
+    "blocks": [
+      { "kind": "p", "text": "Liệt kê quyền app cần, quyền nào kịch bản đang mở cần được đưa lên đầu. **Cấp quyền** bật hộp xin quyền của macOS; **Mở System Settings** mở đúng mục. Cấp xong quay lại app – tab tự kiểm tra lại. Chi tiết: [[chapter:quyen]]." }
+    ]
+  },
+  {
+    "id": "settings-api",
+    "group": "Cài đặt",
+    "title": "API",
+    "summary": "Chạy kịch bản từ dòng lệnh hoặc chương trình khác.",
+    "blocks": [
+      { "kind": "p", "text": "App nhận lệnh chạy từ ngoài: dòng lệnh `ghosthand run` (luôn bật – app chưa mở thì tự mở) và API HTTP cho chương trình khác (bật riêng, có token)." },
+      { "kind": "table", "head": ["Tuỳ chọn dòng lệnh", "Nghĩa"], "rows": [
+        ["`--preset \"Tên bộ\"`", "Bộ giá trị input đã lưu trong form Chạy"],
+        ["`--set KEY=GIÁ_TRỊ`", "Giá trị một input, lặp lại được, ghi đè preset"],
+        ["`--countdown GIÂY`", "Đếm ngược trước khi chạy"],
+        ["`--no-wait`", "Gửi lệnh rồi thoát ngay (mặc định chờ chạy xong, in tiến độ)"]
+      ] }
+    ]
+  },
+  {
+    "id": "settings-mcp",
+    "group": "Cài đặt",
+    "title": "AI (MCP)",
+    "summary": "Bật MCP, mức chạy của AI, tool, ưu tiên node, lệnh AI gần đây.",
+    "blocks": [
+      { "kind": "p", "text": "Công tắc MCP, mức chạy của AI, chọn tool cho từng loại AI, ưu tiên node, cấu hình mẫu cho Claude Desktop và nhật ký các lệnh AI vừa gọi. Cách dùng: [[chapter:ai-mcp]]." }
+    ]
+  },
+  {
+    "id": "settings-about",
+    "group": "Cài đặt",
+    "title": "Giới thiệu",
+    "summary": "Phiên bản đang chạy, kiểm tra và cài bản mới.",
+    "blocks": [
+      { "kind": "list", "items": [
+        "App tự hỏi có bản mới khoảng 5 giây sau khi mở; bấm **Kiểm tra bản mới** để hỏi lại.",
+        "**Cập nhật ngay**: tải, kiểm tra sha256, cài đè rồi mở lại. macOS giữ nguyên quyền đã cấp.",
+        "Không cập nhật khi đang chạy kịch bản hoặc kịch bản chưa lưu."
+      ] }
+    ]
+  }
+]

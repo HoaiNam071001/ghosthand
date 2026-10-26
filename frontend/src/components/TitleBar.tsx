@@ -3,10 +3,12 @@ import { Quit, WindowMinimise, WindowToggleMaximise } from '../../wailsjs/runtim
 import { inWails } from '../windowMode';
 import { ReactNode } from 'react';
 import { usePopover } from './usePopover';
-import { Logo, Monitor, Moon, Sun } from './icons';
+import { Help, Logo, Monitor, Moon, Sun } from './icons';
 import { setTheme, Theme, useTheme } from '../theme';
 import AppSettings from './AppSettings';
 import PageCheckButton from './pagecheck/PageCheckButton';
+import Guide from './guide/Guide';
+import { openGuide } from '../guideNav';
 
 const winBase = 'grid h-9 w-11 place-items-center text-ink';
 const winBtn = `${winBase} hover:bg-hover`;
@@ -22,6 +24,9 @@ export default function TitleBar() {
       <Logo className="h-[15px] w-[15px] flex-none" />
       <span className="text-xs text-muted">Ghosthand</span>
       <ThemeSwitch />
+      <button onClick={() => openGuide()} aria-label="Hướng dẫn" title="Hướng dẫn (F1)"
+        className="grid h-9 w-9 place-items-center text-muted hover:bg-hover hover:text-ink"><Help /></button>
+      <Guide />
       {inWails && <PageCheckButton />}
       {inWails && <AppSettings />}
       {inWails && (

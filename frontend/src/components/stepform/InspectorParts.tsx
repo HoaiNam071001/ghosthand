@@ -50,7 +50,8 @@ export function InspectorHead({ cat, icon, name, sub, actions }: {
 export const iconBtn = 'grid h-[30px] w-[30px] flex-none place-items-center rounded-control text-muted hover:bg-hover hover:text-ink';
 
 // ⓘ: mô tả loại node (bước 35 N0) trong popup nhỏ thay vì thẻ to cố định trên các trường.
-export function InfoButton({ info }: { info: NodeInfo }) {
+// onGuide: link mở trang node trong modal Hướng dẫn (bước 51).
+export function InfoButton({ info, onGuide }: { info: NodeInfo; onGuide?: () => void }) {
   const { open, setOpen, ref } = usePopover();
   return (
     <div ref={ref}>
@@ -60,6 +61,7 @@ export function InfoButton({ info }: { info: NodeInfo }) {
         <div role="tooltip" className="absolute inset-x-0 top-full z-30 mt-1.5 flex flex-col gap-1 rounded-[8px] bg-ink px-3 py-2.5 text-[12.5px] leading-snug text-bg shadow-[0_8px_24px_rgb(0_0_0/.18)]">
           <span>{info.desc}</span>
           <span className="opacity-75"><span className="font-semibold">Dùng khi:</span> {info.use}</span>
+          {onGuide && <button onClick={() => { setOpen(false); onGuide(); }} className="self-start font-semibold underline-offset-2 hover:underline">Xem hướng dẫn →</button>}
         </div>
       )}
     </div>

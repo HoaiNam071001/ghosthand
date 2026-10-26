@@ -95,6 +95,10 @@ export const Eye = ({ className = 'h-4 w-4' }: P) => (
 export const Info = ({ className = 'h-4 w-4' }: P) => (
   <svg viewBox="0 0 24 24" className={className} {...base}><circle cx="12" cy="12" r="9" /><path d="M12 11v5M12 8v.01" /></svg>
 );
+// Hướng dẫn (nút ? trên thanh tiêu đề)
+export const Help = ({ className = 'h-4 w-4' }: P) => (
+  <svg viewBox="0 0 24 24" className={className} {...base}><circle cx="12" cy="12" r="9" /><path d="M9.5 9.5a2.5 2.5 0 0 1 4.9.7c0 1.6-2.4 2-2.4 3.6M12 17v.01" /></svg>
+);
 
 // Icon loại bước – design v2 (design/DESIGN.md, "Icon bước"): SVG 24×24, nét 1.8, đầu tròn.
 // Có cả loại chưa làm (scroll, open, waitImage…) để dựng sẵn UI (bước 27b).

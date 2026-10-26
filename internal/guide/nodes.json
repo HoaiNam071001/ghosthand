@@ -1,0 +1,11 @@
+{
+  "click": {
+    "tech": "Đưa chuột tới toạ độ rồi bấm qua API nhập liệu của hệ điều hành (macOS: CGEvent; Windows: SendInput, toạ độ pixel thật nên đúng ở 125 % / 150 %).",
+    "accuracy": "Đúng từng pixel – miễn cửa sổ không xê dịch. Điểm lưu theo vùng + neo nên cửa sổ đổi cỡ vẫn bám đúng nút nếu neo đúng cạnh.",
+    "speed": "Tức thì; bật Giống người thì chuột đi đường cong, chậm hơn vài trăm ms.",
+    "good": ["Cửa sổ đã cố định bằng node Cửa sổ", "Game / canvas không có chữ hay phần tử để tìm"],
+    "avoid": ["Nút đổi chỗ theo nội dung → [[node:clickText]] hoặc [[node:clickElement]]", "Trang web công khai → [[node:webClick]]"],
+    "tips": ["Thêm điểm nhanh: mở overlay, rê chuột tới nút, nhấn F6.", "Bấm nhiều lần: đặt số lần + khoảng cách giữa các lần ngay trong node, không cần lặp."],
+    "samples": ["click-nhieu-lan"]
+  }
+}

@@ -20,8 +20,9 @@ type Item = PaletteItem;
 const COLS = 3;
 
 // context: dòng ghi bước / node mới sẽ nối vào đâu (vd "Nối từ n2 · Thất bại").
-export function PaletteView({ groups: all, onClose, onCancel, footer, context, label = 'Thêm bước' }: {
-  groups: PaletteGroup[]; onClose: () => void; onCancel?: () => void; footer?: ReactNode; context?: ReactNode; label?: string;
+// onGuide: link "Xem hướng dẫn" ở khung mô tả – mở trang node trong modal Hướng dẫn (bước 51).
+export function PaletteView({ groups: all, onClose, onCancel, onGuide, footer, context, label = 'Thêm bước' }: {
+  groups: PaletteGroup[]; onClose: () => void; onCancel?: () => void; onGuide?: (key: InfoKey) => void; footer?: ReactNode; context?: ReactNode; label?: string;
 }) {
   const cancel = () => {
     onCancel?.();
@@ -109,7 +110,7 @@ export function PaletteView({ groups: all, onClose, onCancel, footer, context, l
           ))}
         </div>
 
-        <PaletteDetail item={flat[sel]} warn={unsupportedHere(only, flat[sel]?.type, goos) ? `${onlyLabel(only, flat[sel]?.type)} – node này không chạy được trên máy này (vẫn thêm được để dùng ở máy khác).` : ''} />
+        <PaletteDetail item={flat[sel]} onGuide={onGuide && ((k) => { cancel(); onGuide(k); })} warn={unsupportedHere(only, flat[sel]?.type, goos) ? `${onlyLabel(only, flat[sel]?.type)} – node này không chạy được trên máy này (vẫn thêm được để dùng ở máy khác).` : ''} />
 
         <div className="flex flex-none flex-wrap items-center gap-4 border-t border-line bg-chrome px-4 py-2.5 text-xs text-muted">
           <span><span className="font-mono">↑↓←→</span> chọn</span>
@@ -121,7 +122,7 @@ export function PaletteView({ groups: all, onClose, onCancel, footer, context, l
 }
 
 // Mô tả mục đang chọn / rê chuột: hoạt hoạ minh hoạ bên trái, chữ bên phải – cao cố định để bảng không giật khi đổi mục.
-function PaletteDetail({ item, warn }: { item?: Item; warn: string }) {
+function PaletteDetail({ item, warn, onGuide }: { item?: Item; warn: string; onGuide?: (key: InfoKey) => void }) {
   const scene = item?.key && ILLUS[item.key];
   return (
     <div aria-live="polite" className="flex h-[148px] flex-none items-center gap-4 border-t border-line px-4 py-3">
@@ -138,6 +139,7 @@ function PaletteDetail({ item, warn }: { item?: Item; warn: string }) {
           {item.info && <>
             <span className="text-[13px] text-ink">{item.info.desc}</span>
             <span className="text-xs text-muted"><span className="font-semibold">Dùng khi:</span> {item.info.use}</span>
+            {onGuide && item.key && <button onClick={() => onGuide(item.key!)} className="self-start text-xs font-medium text-accent-text hover:underline">Xem hướng dẫn →</button>}
           </>}
           {warn && <span className="text-xs font-medium text-warn">{warn}</span>}
         </div>
