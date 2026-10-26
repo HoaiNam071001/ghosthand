@@ -3,10 +3,292 @@
     "tech": "Đưa chuột tới toạ độ rồi bấm qua API nhập liệu của hệ điều hành (macOS: CGEvent; Windows: SendInput, toạ độ pixel thật nên đúng ở 125 % / 150 %).",
     "accuracy": "Đúng từng pixel – miễn cửa sổ không xê dịch. Điểm lưu theo vùng + neo nên cửa sổ đổi cỡ vẫn bám đúng nút nếu neo đúng cạnh.",
     "speed": "Tức thì; bật Giống người thì chuột đi đường cong, chậm hơn vài trăm ms.",
-    "good": ["Cửa sổ đã cố định bằng node Cửa sổ", "Game / canvas không có chữ hay phần tử để tìm"],
-    "avoid": ["Nút đổi chỗ theo nội dung → [[node:clickText]] hoặc [[node:clickElement]]", "Trang web công khai → [[node:webClick]]"],
-    "tips": ["Thêm điểm nhanh: mở overlay, rê chuột tới nút, nhấn F6.", "Bấm nhiều lần: đặt số lần + khoảng cách giữa các lần ngay trong node, không cần lặp."],
-    "fields": ["**Điểm** – nơi bấm (toạ độ + neo theo cửa sổ)", "**Nút chuột** – trái / phải / giữa", "**Số lần** và **khoảng cách** – bấm nhiều lần trong một node", "**Giống người** – chuột đi đường cong, trễ ngẫu nhiên"],
-    "samples": ["click-nhieu-lan"]
+    "good": [
+      "Cửa sổ đã cố định bằng node Cửa sổ",
+      "Game / canvas không có chữ hay phần tử để tìm"
+    ],
+    "avoid": [
+      "Nút đổi chỗ theo nội dung → [[node:clickText]] hoặc [[node:clickElement]]",
+      "Trang web công khai → [[node:webClick]]"
+    ],
+    "tips": [
+      "Thêm điểm nhanh: mở overlay, rê chuột tới nút, nhấn F6.",
+      "Bấm nhiều lần: đặt số lần + khoảng cách giữa các lần ngay trong node, không cần lặp."
+    ],
+    "fields": [
+      "**Điểm** – nơi bấm (toạ độ + neo theo cửa sổ)",
+      "**Nút chuột** – trái / phải / giữa",
+      "**Số lần** và **khoảng cách** – bấm nhiều lần trong một node",
+      "**Giống người** – chuột đi đường cong, trễ ngẫu nhiên"
+    ],
+    "samples": [
+      "click-nhieu-lan"
+    ]
+  },
+  "double": {
+    "tech": "Hai lần bấm liên tiếp qua API nhập liệu của hệ điều hành (như node Click, số lần = 2), khoảng cách giữa hai lần đủ nhanh để app nhận là nhấp đúp.",
+    "accuracy": "Đúng từng pixel như Click; app chậm phản hồi có thể không nhận nhấp đúp nếu máy đang bận.",
+    "speed": "Tức thì.",
+    "good": [
+      "Mở file / thư mục, chọn cả một từ",
+      "Phóng to cửa sổ bằng cách nhấp đúp thanh tiêu đề"
+    ],
+    "avoid": [
+      "Chỗ cần bấm đổi vị trí theo nội dung → đổi sang [[node:clickImage]] rồi bấm theo ảnh / chữ / phần tử",
+      "Ô web có nút riêng → [[node:webClick]] ổn định hơn"
+    ],
+    "tips": [
+      "Nhấp đúp không ăn: thử Click rồi Click lại với khoảng cách nhỏ, hoặc bấm Enter để mở mục đang chọn."
+    ],
+    "fields": [
+      "**Điểm** – nơi nhấp (toạ độ + neo theo cửa sổ)",
+      "**Giống người** – chuột đi đường cong tới điểm"
+    ],
+    "samples": [
+      "double-click"
+    ]
+  },
+  "hold": {
+    "tech": "Nhấn nút chuột, giữ đúng số mili giây rồi nhả; luôn nhả chuột kể cả khi bạn bấm Dừng giữa chừng.",
+    "accuracy": "Đúng vị trí; thời gian giữ lệch vài chục ms theo độ bận của máy.",
+    "speed": "Bằng đúng thời gian giữ bạn đặt.",
+    "good": [
+      "Nút phải giữ mới chạy (giữ để xác nhận, giữ để ghi âm)",
+      "Game cần giữ chuột"
+    ],
+    "avoid": [
+      "Chỉ cần bấm một lần → [[node:click]]",
+      "Kéo từ điểm này sang điểm khác → [[node:drag]]"
+    ],
+    "tips": [
+      "Đặt thời gian giữ dư một chút so với thời gian app yêu cầu."
+    ],
+    "fields": [
+      "**Điểm** – nơi giữ",
+      "**Nút chuột** – trái / phải / giữa",
+      "**Thời gian giữ** (ms)"
+    ],
+    "samples": [
+      "giu-chuot"
+    ]
+  },
+  "drag": {
+    "tech": "Đưa chuột tới điểm A, nhấn giữ, di chuột tới điểm B trong khoảng thời gian đặt rồi nhả (luôn nhả khi bị dừng). Có thể bắt đầu từ chỗ chuột đang đứng hoặc tính điểm B theo độ lệch.",
+    "accuracy": "Đúng pixel nếu cửa sổ không xê dịch; app kiểm tra sự kiện kéo kỹ cần đặt thời gian kéo dài hơn một chút.",
+    "speed": "Bằng thời gian kéo đặt trong node.",
+    "good": [
+      "Kéo thẻ kanban, kéo file vào thư mục",
+      "Kéo thanh trượt, bôi đen chữ"
+    ],
+    "avoid": [
+      "Kéo theo đường cong / nhiều điểm → [[node:path]]",
+      "Điểm bắt đầu đổi chỗ → tìm bằng [[node:clickImage]] rồi nối vào Kéo thả qua biến toạ độ"
+    ],
+    "tips": [
+      "Kéo không ăn: tăng thời gian kéo, hoặc bật Giống người để chuột đi có gia tốc.",
+      "Kéo từ nơi vừa tìm được: dùng tuỳ chọn bắt đầu từ chỗ chuột dừng ở node trước."
+    ],
+    "fields": [
+      "**Điểm A / B**",
+      "**Thời gian kéo** (ms)",
+      "**Bắt đầu từ chỗ chuột dừng** và **B là độ lệch**"
+    ],
+    "samples": [
+      "keo-tha",
+      "kanban-keo-the"
+    ]
+  },
+  "path": {
+    "tech": "Giữ nút chuột rồi kéo một nét liền: đi qua các điểm, hoặc vẽ sẵn hình tròn / chữ nhật / sao quanh một tâm. Thời gian chia theo độ dài từng đoạn.",
+    "accuracy": "Bám đúng các điểm / hình đã đặt; app vẽ xử lý sự kiện chuột chậm có thể làm nét thô – kéo dài thời gian vẽ.",
+    "speed": "Bằng thời gian vẽ đặt trong node.",
+    "good": [
+      "App vẽ, chữ ký, mở khoá bằng hình vẽ",
+      "Kéo qua nhiều điểm trong một nét"
+    ],
+    "avoid": [
+      "Chỉ kéo thẳng A → B → [[node:drag]]"
+    ],
+    "tips": [
+      "Xem trước nét vẽ ngay trên overlay trước khi chạy.",
+      "Bật Giống người: mỗi đoạn hơi cong, nhịp tăng / giảm tốc như tay thật."
+    ],
+    "fields": [
+      "**Điểm** (≥ 2) hoặc **Hình** (tròn / chữ nhật / sao + cỡ)",
+      "**Nối điểm cuối về đầu**",
+      "**Thời gian vẽ** (ms)"
+    ],
+    "samples": [
+      "ve-hinh"
+    ]
+  },
+  "scroll": {
+    "tech": "Gửi sự kiện lăn chuột (số nấc, lên / xuống / trái / phải) tại điểm đặt hoặc chỗ chuột đang đứng.",
+    "accuracy": "Một nấc cuộn bao nhiêu pixel do app và hệ điều hành quyết định – không cuộn đúng số dòng cố định.",
+    "speed": "Tức thì mỗi nấc.",
+    "good": [
+      "Xem thêm nội dung, feed, danh sách dài",
+      "Cuộn từng chút rồi kiểm tra bằng Chờ / Tìm"
+    ],
+    "avoid": [
+      "Cuộn trong khung của trang web → [[node:webScroll]] chính xác hơn",
+      "Cần cuộn tới khi thấy một thứ → đặt Cuộn trong vòng lặp cùng [[node:waitImage]]"
+    ],
+    "tips": [
+      "Cuộn không ăn: đặt điểm trên vùng cần cuộn để chuột đứng đúng khung đó."
+    ],
+    "fields": [
+      "**Hướng** và **số nấc**",
+      "**Điểm** – chỗ cuộn (tuỳ chọn)"
+    ],
+    "samples": [
+      "cuon-trang",
+      "cuon-toi-khi-thay"
+    ]
+  },
+  "type": {
+    "tech": "Hai cách nhập: gõ từng phím, hoặc dán qua clipboard rồi trả lại chữ cũ. Mặc định tự chọn: Windows không giống người thì dán, còn lại gõ phím.",
+    "accuracy": "Gõ phím chính xác với chữ không dấu; bộ gõ tiếng Việt chạy nền (UniKey, EVKey…) có thể làm méo chữ có dấu khi gõ phím – chọn cách nhập Dán hoặc tắt bộ gõ.",
+    "speed": "Dán gần như tức thì; gõ phím theo số ký tự, chậm hơn khi bật Giống người (nhịp không đều, thỉnh thoảng gõ nhầm rồi xoá).",
+    "good": [
+      "Điền form, ô tìm kiếm, tin nhắn (sau Click vào ô)",
+      "Nhập giá trị từ biến, vd {{n3.output.text}}"
+    ],
+    "avoid": [
+      "Ô web có selector rõ → [[node:webType]]",
+      "Ô chặn dán thì không chọn Dán"
+    ],
+    "tips": [
+      "Gõ ra đúng dấu {{ thì viết \\{{.",
+      "Chữ tiếng Việt méo: đổi cách nhập sang Dán.",
+      "Cần Enter sau khi gõ: thêm node [[node:key]]."
+    ],
+    "fields": [
+      "**Nội dung** – nhận {{biến}}",
+      "**Cách nhập** – tự chọn / gõ phím / dán"
+    ],
+    "samples": [
+      "go-chu",
+      "chu-tieng-viet"
+    ]
+  },
+  "key": {
+    "tech": "Bấm phím hoặc tổ hợp qua API nhập liệu của hệ điều hành. Chế độ chord giữ cùng lúc (Ctrl+C); chế độ sequence giữ phím kèm rồi gõ lần lượt.",
+    "accuracy": "Đúng phím; phím cần cửa sổ đang focus mới có tác dụng – kiểm tra cửa sổ trước bằng node Cửa sổ.",
+    "speed": "Tức thì.",
+    "good": [
+      "Enter gửi, Tab chuyển ô, Esc đóng",
+      "Copy / paste, chuyển tab, mở ô tìm của máy"
+    ],
+    "avoid": [
+      "Gõ cả đoạn chữ → [[node:type]]",
+      "Phím cho trang web mà cửa sổ có thể mất focus → [[node:webKey]]"
+    ],
+    "tips": [
+      "Cmd (macOS) và Ctrl (Windows) khác nhau: kịch bản dùng cho cả hai nên kiểm tra từng máy.",
+      "Tên phím theo robotgo: enter, tab, esc, f5, a…"
+    ],
+    "fields": [
+      "**Phím** và **phím kèm** (cmd, ctrl, alt, shift)",
+      "**Kiểu bấm** – chord / sequence"
+    ],
+    "samples": [
+      "phim-tat"
+    ]
+  },
+  "wait": {
+    "tech": "Chỉ chờ đúng số mili giây (dừng và tạm dừng vẫn ăn ngay giữa lúc chờ).",
+    "accuracy": "Đúng thời gian đặt, không biết trang / app đã sẵn sàng chưa.",
+    "speed": "Bằng thời gian đặt – dễ chờ thừa hoặc chờ thiếu.",
+    "good": [
+      "Khoảng nghỉ ngắn giữa hai thao tác",
+      "Không có ảnh, chữ hay phần tử nào để chờ"
+    ],
+    "avoid": [
+      "Chờ trang tải xong → [[node:waitScreen]] hoặc [[node:waitImage]]",
+      "Chờ tới giờ hẹn → [[node:waitUntil]]"
+    ],
+    "tips": [
+      "Mỗi node đều có ô *chờ sau* – nghỉ ngắn thì đặt ở đó, khỏi thêm node."
+    ],
+    "fields": [
+      "**Thời gian chờ** (ms)"
+    ],
+    "samples": [
+      "cho-giua-cac-click"
+    ]
+  },
+  "waitPixel": {
+    "tech": "Đọc màu một điểm màn hình mỗi vòng, so từng kênh RGB với màu mong muốn (sai số tolerance). Không di chuột. Cần quyền Screen Recording trên macOS.",
+    "accuracy": "Đúng điểm đã chọn; hiệu ứng làm mờ / chuyển màu cần sai số lớn hơn. Đổi theme hay cỡ cửa sổ làm điểm lệch.",
+    "speed": "Nhanh hơn chờ ảnh – chỉ đọc một pixel.",
+    "good": [
+      "Đèn trạng thái đổi màu, thanh tiến độ đầy",
+      "Nút chuyển từ xám sang xanh"
+    ],
+    "avoid": [
+      "Cần biết chỗ xuất hiện của thứ có hình dạng → [[node:waitImage]]",
+      "Chờ trang tải xong → [[node:waitScreen]]"
+    ],
+    "tips": [
+      "Hết thời gian chờ: lỗi báo màu đọc được ở điểm đó – dùng để chỉnh lại màu hoặc sai số."
+    ],
+    "fields": [
+      "**Điểm**",
+      "**Màu** (#RRGGBB) và **sai số**",
+      "**Thời gian chờ tối đa**"
+    ],
+    "samples": [
+      "cho-mau-pixel"
+    ]
+  },
+  "waitScreen": {
+    "tech": "Chụp một vùng mỗi vòng rồi so trên ảnh xám thu nhỏ: đứng yên (hai lần chụp liền nhau gần giống đủ lâu) hoặc đổi khác so với lúc bắt đầu. Cần quyền Screen Recording trên macOS.",
+    "accuracy": "Tốt cho trang / hiệu ứng thay đổi cả vùng. Vòng quay nhỏ trong vùng lớn đổi chưa tới 1 % – thu hẹp vùng hoặc hạ ngưỡng về 0.",
+    "speed": "Xong ngay khi vùng ổn định – không chờ thừa như Chờ cố định.",
+    "good": [
+      "Sau khi mở trang / bấm nút: chờ trang tải xong",
+      "Chế độ *đổi khác* ngay sau Click để biết app đã phản hồi"
+    ],
+    "avoid": [
+      "Biết chính xác thứ sẽ hiện → [[node:waitImage]] chắc hơn",
+      "Vùng có đồng hồ / quảng cáo chạy liên tục sẽ không bao giờ đứng yên"
+    ],
+    "tips": [
+      "Lỗi hết thời gian kèm % khác biệt lần cuối để chỉnh ngưỡng."
+    ],
+    "fields": [
+      "**Vùng** – cả màn / vùng chọn",
+      "**Kiểu chờ** – đứng yên hoặc đổi khác",
+      "**Ngưỡng khác biệt** và **thời gian đứng yên**"
+    ],
+    "samples": [
+      "cho-man-hinh"
+    ]
+  },
+  "waitUntil": {
+    "tech": "Chờ tới giờ hẹn theo đồng hồ máy hoặc giờ chuẩn internet (NTP). Còn xa nghỉ từng đoạn ≤ 1 s, sát giờ chờ vòng rất ngắn.",
+    "accuracy": "Lệch vài ms. Bật giờ chuẩn thì đồng hồ máy lệch vẫn đúng giờ; không lấy được giờ chuẩn thì dùng giờ máy (output ntpOffsetMs = 0).",
+    "speed": "Theo giờ hẹn; Dừng / tạm dừng ăn ngay trong lúc chờ.",
+    "good": [
+      "Săn sale, đặt vé đúng giờ mở",
+      "Chạy việc hằng ngày kèm vòng lặp"
+    ],
+    "avoid": [
+      "Chạy theo lịch cả kịch bản → hẹn giờ trong Cài đặt",
+      "Chờ một việc xong → các node Chờ khác"
+    ],
+    "tips": [
+      "Giờ đã qua lúc tới node: chọn đi tiếp, chờ ngày mai hoặc báo lỗi.",
+      "Máy phải bật và không ngủ trong lúc chờ."
+    ],
+    "fields": [
+      "**Giờ hẹn** – HH:mm[:ss[.mmm]], có thể kèm ngày",
+      "**Nếu giờ đã qua**",
+      "**Dùng giờ chuẩn (NTP)**"
+    ],
+    "samples": [
+      "cho-den-gio"
+    ]
   }
 }
