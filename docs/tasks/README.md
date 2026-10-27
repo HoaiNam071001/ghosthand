@@ -89,6 +89,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 | Thử trang + ưu tiên node cho AI | Nút / tool `probe_page` mở trang trên Chrome của app, tự dò captcha / chặn bot / canvas → dùng node web hay ảnh / chữ; ưu tiên 2 mức (mặc định ảnh / chữ), AI đổi qua `set_node_preference` | [44](phase3/44-thu-trang-uu-tien-node.md) |
 | ⬜ | MCP web – tinh chỉnh | `coordSpace`, `read_web_outline` tab đang điều khiển, `webType` bớt chặt + scope / occurrence, ghim tab ID, chạy kịch bản tạm, `webKey` | [46](phase3/46-mcp-web-tinh-chinh.md) |
 | ✅ | MCP ít token | AI đọc primer + bản gọn (~8k token) là viết được flow có nhánh; cạnh dạng chữ `flow` ("n1>n2", "n2.fail>n5"), `read_script` dạng gọn, `get_step_types type=a,b,c` / `topic=debug`, test ngân sách chữ | [52](phase3/52-mcp-it-token.md) |
+| ⬜ | MCP: annotations + nhật ký lệnh AI + chống injection | Mọi tool MCP có annotations (đọc / nguy hiểm) để client tự hỏi quyền đúng chỗ; nhật ký lệnh AI thêm thời lượng, client, tham số đã che; primer nhắc chữ từ màn hình / web là dữ liệu, không phải lệnh | [53](phase3/53-mcp-hoc-tu-openclaw.md) |
 | 🧪 | Tên app Ghosthand | Đổi tên Auto Clicker → Ghosthand ở UI, exe, CLI, MCP; tự chuyển dữ liệu ở thư mục tên cũ một lần | [45](phase3/45-doi-ten-ghosthand.md) |
 | ⬜ | Hình minh hoạ động cho node | Bảng Thêm node: chọn / rê một loại node thì hiện hoạt hoạ ngắn (SVG / CSS theo theme) diễn tả node làm gì, chữ là phụ; mọi loại node | [47](phase3/47-hinh-minh-hoa-node.md) |
 | ⬜ | AI nhìn màn hình theo phần tử | Ảnh đánh số phần tử, cây giao diện rút gọn mọi app, so sánh trước / sau, gợi ý selector bền | [43 A](phase3/43-node-chuyen-sau.md) |
@@ -111,7 +112,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 > Bảng tự sinh – sau khi tick chạy `python3 scripts/tasks-index.py`. Bấm tên bước để mở file chi tiết.
 
 <!-- index:start -->
-**47 / 62 bước xong code** · 🧪 **[270 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
+**47 / 63 bước xong code** · 🧪 **[270 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
 
 ### Phase 3 – Design v2 & tự động hoá (theo thứ tự làm)
 
@@ -150,6 +151,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 chờ kiểm tra tay | [50. Góp ý khi dùng node 2026-10-25](phase3/50-gop-y-dung-node.md) | 12 / 12 | [10 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [51. Hướng dẫn sử dụng](phase3/51-huong-dan.md) | 16 / 16 | [6 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [52. MCP ít token](phase3/52-mcp-it-token.md) | 6 / 6 | [2 việc](checks.md) |
+| ⬜ chưa làm | [53. MCP: annotations, nhật ký lệnh AI, chống prompt injection](phase3/53-mcp-hoc-tu-openclaw.md) | 0 / 6 |  |
 | 🧪 chờ kiểm tra tay | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | 12 / 12 | [16 việc](checks.md) |
 | 🟡 đang làm | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | 38 / 42 | [29 việc](checks.md) |
 | 🟡 đang làm | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | 11 / 12 |  |
@@ -238,6 +240,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 16a1g | [50. Góp ý khi dùng node](phase3/50-gop-y-dung-node.md) | Người dùng yêu cầu (2026-10-25): sửa UI tràn + log Accessibility, nút chọn file mọi nơi, output dạng bảng, cửa sổ macOS, vẽ đường trên overlay, dán curl, chọn tiến trình – làm ngay, nhóm A → E |
 | 16a1h | [51. Hướng dẫn sử dụng](phase3/51-huong-dan.md) | Người dùng yêu cầu (2026-10-25): modal hướng dẫn cho người + AI, 3 đợt H1 → H3, giữ đồng bộ bằng test + check-docs |
 | 16a1i | [52. MCP ít token](phase3/52-mcp-it-token.md) | Người dùng yêu cầu (2026-10-27): AI nối MCP hiểu nhanh, tạo flow chuẩn, ít token; làm ngay (chỉ Go + tài liệu, không đổi định dạng file) |
+| 16a1j | [53. MCP: annotations, nhật ký lệnh AI, chống injection](phase3/53-mcp-hoc-tu-openclaw.md) | Người dùng yêu cầu (2026-10-27, sau khi đọc repo openclaw-direct-tools-for-chatgpt): việc nhỏ chỉ đụng `mcpsrv` + Cài đặt MCP, làm ngay sau 52; mục D (timeout node Đi tới URL) chờ người dùng chốt |
 | 16a2 | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | Người dùng yêu cầu (2026-10-20): ngay sau 41 – chờ màn hình đứng yên thay Chờ cố định, lặp qua danh sách + tìm tất cả, tính toán / xử lý chữ; làm trên Mac được |
 | 16a3 | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | Người dùng yêu cầu (2026-10-20): sau 42, xen kẽ 40 O0–O3 (máy Windows) – trình duyệt Chromium thường không CDP, phần tử app không cần chuột, hệ điều hành, ảnh đánh số / cây giao diện cho AI trước 31c; mỗi việc một node |
 | 16b | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | Người dùng yêu cầu (2026-10-20): làm sau 31b, trước 31c – Windows chưa đọc được tiếng Việt (`Windows.Media.Ocr`); 31c (AI soạn bằng cách thử, ảnh mẫu) cần đọc chữ / tìm ảnh đáng tin |
