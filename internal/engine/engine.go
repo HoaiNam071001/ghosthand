@@ -129,10 +129,11 @@ type Engine struct {
 	rng   *rand.Rand        // ngẫu nhiên của thao tác giống người (human.go) – test đặt seed
 	human *humanize.Profile // mức giống người của node đang chạy (setHuman); nil = tắt
 
-	pasteAuto bool     // gõ chữ TypeAuto thì dán (Windows – New đặt; test để false: gõ phím, không đụng clipboard thật)
-	imeCheck  bool     // gõ phím thì xem bộ gõ tiếng Việt có chạy không để nhắc (New đặt)
-	ime       *string  // kết quả runningIME (nil = chưa tra)
-	notes     []string // lời nhắc của node đang chạy (note) – execNode ghi vào nhật ký
+	pasteAuto  bool     // gõ chữ TypeAuto thì dán (Windows – New đặt; test để false: gõ phím, không đụng clipboard thật)
+	focusClick bool     // click thì đưa cửa sổ dưới chuột lên trước (focusclick.go) – Options.FocusClick
+	imeCheck   bool     // gõ phím thì xem bộ gõ tiếng Việt có chạy không để nhắc (New đặt)
+	ime        *string  // kết quả runningIME (nil = chưa tra)
+	notes      []string // lời nhắc của node đang chạy (note) – execNode ghi vào nhật ký
 
 	mu       sync.Mutex
 	prog     Progress

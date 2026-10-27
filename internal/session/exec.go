@@ -46,7 +46,7 @@ func (m *Manager) exec(ctx context.Context, r *run, canDanger bool) {
 	}
 	defer closeBr()
 	eng := engine.New(in, r.sc, engine.Options{
-		Screen: m.deps.Screen(), Displays: m.deps.Displays(), Debug: st.Source == SourceUser, StepMode: r.opt.Step, KeepShots: true, ShotEach: r.opt.ShotEach,
+		Screen: m.deps.Screen(), Displays: m.deps.Displays(), Debug: st.Source == SourceUser, StepMode: r.opt.Step, FocusClick: true, KeepShots: true, ShotEach: r.opt.ShotEach,
 		Browser: br, AllowDanger: canDanger, StopAt: r.opt.StopAt, Seed: r.seed, Pins: r.opt.Pins, ShotsDir: m.deps.ShotsDir(), Secrets: r.secrets,
 		OnProgress: func(p engine.Progress) {
 			m.mu.Lock()

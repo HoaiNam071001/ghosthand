@@ -32,6 +32,7 @@ type Options struct {
 	Simulate    *Simulate                   // chạy thử khô (31c): node không điều khiển không chạy thật, trả kết quả giả
 	Pins        map[string]model.StepResult // node ghim (31c): không chạy, trả luôn Output + cổng đã ghim (theo id node)
 	Secrets     map[string]string           // giá trị {{secret.<tên>}} (kho bí mật, bước 43 S10) – chỉ các tên kịch bản dùng; giá trị bị che ở mọi kết quả rời engine
+	FocusClick  bool                        // click thì focus cửa sổ dưới chuột trước (phiên chạy thật; test để false – không đụng cửa sổ thật)
 	ShotsDir    string                      // thư mục ảnh trong Cài đặt cho node Chụp màn hình để trống saveDir ("" = Pictures/Ghosthand)
 }
 
@@ -65,6 +66,7 @@ func New(in device.Input, sc model.Script, o Options) *Engine {
 	e.screen, e.displays, e.onNode, e.debug, e.browser, e.allowDanger = o.Screen, o.Displays, o.OnNode, o.Debug, o.Browser, o.AllowDanger
 	e.stopAt, e.seed, e.shotsDir, e.pins, e.sim = o.StopAt, o.Seed, o.ShotsDir, o.Pins, o.Simulate
 	e.rv.secrets, e.mask = o.Secrets, newMasker(o.Secrets)
+	e.focusClick = o.FocusClick
 	e.pasteAuto, e.imeCheck = goruntime.GOOS == "windows", true
 	e.step.Store(o.StepMode)
 	if o.KeepShots {

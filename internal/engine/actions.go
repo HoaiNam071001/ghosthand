@@ -21,6 +21,9 @@ const scrollGapMs = 30
 // click bấm tại chỗ chuột đang đứng; giống người thì nhấn giữ ClickHold rồi nhả (double click giữ cách của hệ điều hành
 // – tự gửi 2 lần nhấn / nhả không được nhận là double click trên macOS).
 func (e *Engine) click(ctx context.Context, button string, double bool) error {
+	if err := e.focusUnderCursor(ctx); err != nil {
+		return err
+	}
 	var err error
 	if e.human != nil && !double {
 		err = e.humanClick(ctx, button)
