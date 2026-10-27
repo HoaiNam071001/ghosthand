@@ -8,13 +8,13 @@ import (
 	"ghosthand/internal/vision"
 )
 
-// Kịch bản flow mẫu cho AI đọc được và chạy qua kiểm tra đầy đủ (input lấy mặc định).
+// Kịch bản flow mẫu (dạng gọn) cho AI đọc được và chạy qua kiểm tra đầy đủ (input lấy mặc định).
 func TestFlowExampleValidates(t *testing.T) {
-	sc, err := DecodeScript([]byte(model.Guide().Example))
-	if err != nil {
-		t.Fatal(err)
+	sc := compactScript(t, model.Guide().Example)
+	if len(sc.Edges) != 7 { // Checked lặng lẽ bỏ cạnh hỏng – đếm để biết flow viết đúng
+		t.Fatalf("edges %v", sc.Edges)
 	}
-	sc, err = ResolveInputs(sc, nil)
+	sc, err := ResolveInputs(sc, nil)
 	if err != nil {
 		t.Fatal(err)
 	}

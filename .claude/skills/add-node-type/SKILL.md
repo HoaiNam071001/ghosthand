@@ -18,7 +18,8 @@ description: Thêm một loại node mới vào flow (vd focus cửa sổ, web D
 - [ ] `internal/model/flow.go` `PortsOf` nếu cổng khác `success` / `fail`.
 - [ ] `internal/script/varfields.go` `VarFields`: ô chữ nhận `{{biến}}`.
 - [ ] `internal/model/steptypes.go`: mô tả, output, ví dụ JSON (test kiểm đủ loại).
-- [ ] `internal/model/steptypes_use.go`: nhóm + "dùng khi / đừng dùng → node nào" (AI đọc ở `get_step_types compact=true`; test bắt đủ loại).
+- [ ] `internal/model/steptypes_use.go`: nhóm + "dùng khi / đừng dùng → node nào" (AI đọc ở `get_step_types compact=true`; test bắt đủ loại). **Một câu, ≤ ~300 byte** – đây là dòng mọi AI đọc mỗi lần tạo kịch bản; chi tiết trường / cách dùng để ở `desc` (`steptypes.go`, AI chỉ đọc khi `type=<tên>`). Cổng động (theo case / thao tác) → thêm ca ở `portsLabel` (`mcpsrv/docs.go`).
+- [ ] Hướng dẫn cho AI vẫn gọn: `go test ./internal/mcpsrv -run TokenBudget` (ngân sách `budget_test.go`). Vượt → viết gọn chỗ vừa thêm hoặc dời sang `type=…` / `topic=debug`, chỉ nâng ngưỡng khi thật cần (ghi lý do trong file bước). Mẹo chung chỉ thêm vào `tips` (`mcpsrv/docs.go`) khi AI hay chọn sai node; mẹo chạy thử / đọc lỗi → `debugTips`.
 - [ ] Test: `nodes_test.go` / `flowrun_test.go` / file test riêng – chạy đúng, cổng đúng, output đúng, lỗi đúng mã, dừng được giữa chừng.
 - [ ] **Kịch bản mẫu** (bước 33, bắt buộc – `TestEveryStepTypeHasSample` đỏ nếu thiếu): ≥ 1 mẫu trong `internal/samples/scripts/<id>.json` (JSON gọn `{meta, script}`, node chỉ ghi trường cần) chạy trên trang sân thử `internal/samples/pages/` – cần trang mới thì thêm trang (tự hiện kết quả, chữ to cho OCR, không chép chữ đích vào nhật ký trang) + dòng trong `pages/index.html`. Chạy thật: `GHOSTHAND_REAL=1 GHOSTHAND_SAMPLES=<id> go test ./internal/samples/ -run TestRealSamples -v`.
 

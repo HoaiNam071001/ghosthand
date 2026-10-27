@@ -19,7 +19,7 @@ type StepTypeDoc struct {
 
 func init() {
 	for i := range stepTypeDocs {
-		stepTypeDocs[i].Ports = portsOf(Step{Type: stepTypeDocs[i].Type})
+		stepTypeDocs[i].Ports = PortsOf(Step{Type: stepTypeDocs[i].Type})
 	}
 }
 
@@ -33,8 +33,9 @@ const commonFieldsDoc = `id (ổn định – cạnh, start, imageFrom trỏ the
 	`human: mức thao tác giống người riêng của node ("" = theo kịch bản | off | low | medium | high).`
 
 // flowDoc – cấu trúc kịch bản dạng flow (bước 20).
-const flowDoc = `Kịch bản là flow: steps = danh sách node (thứ tự trong mảng không quyết định thứ tự chạy), start = id node chạy đầu, ` +
-	`edges = [{id, from, port, to}]: node from chạy xong đi ra cổng port thì chạy node to; mỗi cổng tối đa một cạnh, không nối node vào chính nó. ` +
+const flowDoc = `Kịch bản là flow: steps = danh sách node (thứ tự trong mảng không quyết định thứ tự chạy), start = id / ref node chạy đầu (trống = node đầu mảng), ` +
+	`cạnh: flow = ["n1>n2>n3", "n2.fail>n5.next>n6>n2"] – mỗi dòng một chuỗi node theo ref, cổng ghi sau node nguồn (không ghi = success), ` +
+	`node nguồn chạy xong đi ra cổng đó thì chạy node kế; mỗi cổng tối đa một cạnh, không nối node vào chính nó (file lưu thành edges [{id, from, port, to}], gửi edges cũng được). ` +
 	`Node hành động có cổng "success" / "fail". Cổng fail không nối = lỗi thì dừng kịch bản và báo lỗi; cổng khác không nối = kết thúc vòng. ` +
 	`Vòng lặp = cạnh quay lại node trước (tối đa 10000 lần chạy node mỗi vòng). ` +
 	`Mở đầu chuẩn khi thao tác trên một app: app (kiểm tra) → cổng "no" → open → app waitStart → window setBounds; cổng "yes" nối thẳng window setBounds – lần chạy nào app cũng đã mở, cửa sổ đúng chỗ, đúng cỡ trước khi click toạ độ / tìm ảnh. ` +
@@ -63,26 +64,18 @@ const flowDoc = `Kịch bản là flow: steps = danh sách node (thứ tự tron
 	`Kết quả mỗi node: {nodeId, ref, status, port, output, error {code, message}, logs, attempts, durationMs}; ` +
 	`error.code: not_found (chờ ảnh / chữ / màu / phần tử hết giờ), browser (chưa mở Chrome của app), permission (Screen Recording / Accessibility), invalid_input (biến trỏ node chưa chạy…), end (node Kết thúc thất bại), internal.`
 
-// flowExample – kịch bản mẫu: mở trang → chờ chữ "Nhắn tin" → click → gõ; không thấy thì cuộn rồi chờ lại, tối đa
-// 10 lần (node Đếm) rồi kết thúc báo lỗi (test chạy qua script.ValidateScript).
-const flowExample = `{"version":4,"name":"Nhắn tin","loops":1,"start":"s1",
-"steps":[
- {"id":"s1","ref":"n1","type":"open","target":"facebook.com/{{profile}}","delayAfter":3000,"enabled":true},
- {"id":"s2","ref":"n2","type":"waitImage","findBy":"text","findText":"Nhắn tin","threshold":90,"timeoutMs":3000,"intervalMs":250,"searchArea":"screen","enabled":true},
- {"id":"s3","ref":"n3","type":"clickImage","imageSource":"node","imageFrom":"s2","button":"left","delayAfter":500,"enabled":true},
- {"id":"s4","ref":"n4","type":"scroll","direction":"down","amount":3,"delayAfter":500,"enabled":true},
- {"id":"s5","ref":"n5","type":"type","text":"xin chào – thấy nút ở {{n2.output.x}}, {{n2.output.y}}","enabled":true},
- {"id":"s6","ref":"n6","type":"counter","max":10,"enabled":true},
- {"id":"s7","ref":"n7","type":"end","endStatus":"fail","message":"Không thấy nút Nhắn tin sau {{n6.output.count}} lần","enabled":true}],
-"edges":[
- {"id":"e1","from":"s1","port":"success","to":"s2"},
- {"id":"e2","from":"s2","port":"success","to":"s3"},
- {"id":"e3","from":"s2","port":"fail","to":"s6"},
- {"id":"e4","from":"s6","port":"next","to":"s4"},
- {"id":"e5","from":"s6","port":"done","to":"s7"},
- {"id":"e6","from":"s4","port":"success","to":"s2"},
- {"id":"e7","from":"s3","port":"success","to":"s5"}],
-"inputs":[{"key":"profile","type":"text","default":"lan.nguyen"}]}`
+// flowExample – kịch bản mẫu dạng gọn (script.Compact): mở trang → chờ chữ "Nhắn tin" → click → gõ; không thấy thì cuộn
+// rồi chờ lại, tối đa 10 lần (node Đếm) rồi kết thúc báo lỗi (test chạy qua script.ValidateScript).
+const flowExample = `{"name":"Nhắn tin","steps":[
+ {"type":"open","target":"facebook.com/{{profile}}","delayAfter":3000},
+ {"type":"waitImage","findBy":"text","findText":"Nhắn tin","timeoutMs":3000},
+ {"type":"clickImage","imageSource":"node","imageFrom":"n2","delayAfter":500},
+ {"type":"type","text":"xin chào – thấy nút ở {{n2.output.x}}, {{n2.output.y}}"},
+ {"type":"counter","max":10},
+ {"type":"scroll","direction":"down","amount":3,"delayAfter":500},
+ {"type":"end","endStatus":"fail","message":"Không thấy nút Nhắn tin sau {{n5.output.count}} lần"}],
+"flow":["n1>n2>n3>n4","n2.fail>n5.next>n6>n2","n5.done>n7"],
+"inputs":[{"key":"profile","label":"Trang cá nhân","type":"text","default":"lan.nguyen"}]}`
 
 var stepTypeDocs = []StepTypeDoc{
 	{StepClick, "Click", "Click chuột Clicks lần tại points[0] (neo theo cạnh vùng, xem script/anchor.go). coordSpace \"absolute\" = toạ độ màn hình thật như ảnh screenshot (mặc định cộng gốc vùng của kịch bản).",

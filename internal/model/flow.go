@@ -71,7 +71,7 @@ type LogLine struct {
 }
 
 // PortsOf – cổng ra hợp lệ của node, theo thứ tự hiện trên thẻ (trên → dưới). frontend/src/flow/model.ts cùng công thức.
-func portsOf(s Step) []string {
+func PortsOf(s Step) []string {
 	switch s.Type {
 	case StepIf:
 		return []string{PortTrue, PortFalse}
@@ -96,7 +96,7 @@ func portsOf(s Step) []string {
 }
 
 func HasPort(s Step, port string) bool {
-	for _, p := range portsOf(s) {
+	for _, p := range PortsOf(s) {
 		if p == port {
 			return true
 		}
@@ -143,7 +143,7 @@ func FlowOrder(sc Script) []string {
 		}
 		seen[id] = true
 		order = append(order, id)
-		ports := portsOf(byID[id])
+		ports := PortsOf(byID[id])
 		for i := len(ports) - 1; i >= 0; i-- { // đẩy ngược để cổng đầu được lấy ra trước
 			if to := EdgeOut(sc.Edges, id, ports[i]); to != "" && !seen[to] {
 				if _, ok := byID[to]; ok {

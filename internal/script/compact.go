@@ -9,7 +9,7 @@ import (
 )
 
 // Compact – kịch bản dạng gọn (Mẫu thử – bước 33, AI qua MCP – 31): node chỉ ghi trường cần, còn lại lấy mặc định của
-// model.NewStep; không có edges thì nối các node theo thứ tự bằng cổng success; cạnh / start trỏ id hoặc ref (n2).
+// model.NewStep; không có edges / flow thì nối các node theo thứ tự bằng cổng success; cạnh / start trỏ id hoặc ref (n2).
 type Compact struct {
 	Name       string              `json:"name"`
 	Loops      int                 `json:"loops"`
@@ -18,9 +18,11 @@ type Compact struct {
 	Start      string              `json:"start"`
 	Steps      []json.RawMessage   `json:"steps"`
 	Edges      []model.Edge        `json:"edges"`
+	Flow       []string            `json:"flow"` // cạnh dạng chữ "n1>n2.fail>n3" (flowtext.go), cộng thêm vào edges
 	Inputs     []model.ScriptInput `json:"inputs"`
 	AnchorMode string              `json:"anchorMode"`
-	Human      *string             `json:"human"`  // nil = mặc định của kịch bản mới
+	Human      *string             `json:"human"` // nil = mặc định của kịch bản mới
+	KeepAwake  bool                `json:"keepAwake"`
 	Groups     []model.Group       `json:"groups"` // khung nhóm node; members ghi id hoặc ref
 }
 
@@ -37,6 +39,7 @@ func Expand(c Compact) (model.Script, error) {
 		sc.Human = *c.Human
 	}
 	sc.MaxMinutes, sc.Region, sc.Inputs, sc.AnchorMode, sc.Groups = c.MaxMinutes, c.Region, c.Inputs, c.AnchorMode, c.Groups
+	sc.KeepAwake = c.KeepAwake
 	for i, raw := range c.Steps {
 		st, err := ExpandStep(raw, fmt.Sprintf("s%d", i+1), fmt.Sprintf("n%d", i+1))
 		if err != nil {
@@ -44,7 +47,11 @@ func Expand(c Compact) (model.Script, error) {
 		}
 		sc.Steps = append(sc.Steps, st)
 	}
-	sc.Edges = append([]model.Edge{}, c.Edges...)
+	flow, err := ParseFlow(c.Flow)
+	if err != nil {
+		return model.Script{}, err
+	}
+	sc.Edges = append(append([]model.Edge{}, c.Edges...), flow...)
 	if len(sc.Edges) == 0 {
 		for i := 1; i < len(sc.Steps); i++ {
 			sc.Edges = append(sc.Edges, model.Edge{From: sc.Steps[i-1].ID, Port: model.PortSuccess, To: sc.Steps[i].ID})

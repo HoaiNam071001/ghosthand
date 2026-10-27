@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"image"
 	"os"
 	"path/filepath"
@@ -167,6 +168,28 @@ func TestCreateReadUpdate(t *testing.T) {
 	if saved.Steps[0].DelayAfter != 4000 || saved.Steps[0].Target == "" || len(saved.Steps) != 4 || len(saved.Edges) != 3 {
 		t.Errorf("sau update: %+v", saved)
 	}
+	if f := fmt.Sprint(out["flow"]); f != "[n1>n2>n3>n4]" {
+		t.Errorf("update trả flow: %s", f)
+	}
+
+	// read_script mặc định dạng gọn: trường bằng mặc định bị bỏ, cạnh thành flow; full = đủ trường
+	read, _ = call(t, cs, "read_script", map[string]any{"path": path})
+	gon := read["script"].(map[string]any)
+	n2 := gon["steps"].([]any)[1].(map[string]any)
+	if gon["edges"] != nil || gon["flow"] == nil || n2["enabled"] != nil || n2["findText"] == nil {
+		t.Errorf("read_script gọn: %v", gon)
+	}
+	read, _ = call(t, cs, "read_script", map[string]any{"path": path, "full": true})
+	if read["script"].(map[string]any)["edges"] == nil {
+		t.Errorf("read_script full: %v", read["script"])
+	}
+
+	// flow + xoá cạnh theo node.cổng
+	out, isErr = call(t, cs, "update_script", map[string]any{"path": path, "revision": read["revision"],
+		"removeEdges": []string{"n3"}, "flow": []string{"n2.fail>n4"}})
+	if f := fmt.Sprint(out["flow"]); isErr || f != "[n1>n2>n3 n2.fail>n4]" {
+		t.Errorf("update flow: %s %v", f, out)
+	}
 
 	// revision cũ → conflict
 	out, isErr = call(t, cs, "update_script", map[string]any{"path": path, "revision": rev, "name": "X"})
@@ -236,8 +259,22 @@ func TestListAndDocs(t *testing.T) {
 		t.Errorf("get_step_types thiếu: %v", out["tips"])
 	}
 	out, _ = call(t, cs, "get_step_types", map[string]any{"compact": true})
-	if cl := out["stepTypes"].([]any); len(cl) != len(model.StepTypeDocs()) || cl[0].(map[string]any)["example"] != nil || cl[0].(map[string]any)["use"] == "" {
-		t.Errorf("compact: %v", cl[0])
+	nodes, _ := out["nodes"].(string)
+	for _, d := range model.StepTypeDocs() { // mỗi loại một dòng "type…: dùng khi"
+		if !strings.Contains(nodes, "\n"+d.Type+": ") && !strings.Contains(nodes, "\n"+d.Type+" [") {
+			t.Errorf("compact thiếu %s", d.Type)
+		}
+	}
+	if out["stepTypes"] != nil || strings.Contains(out["tips"].(string), "resume_run") {
+		t.Error("compact không kèm chi tiết từng loại / mẹo thử – sửa")
+	}
+	out, _ = call(t, cs, "get_step_types", map[string]any{"type": "waitImage, forEach"})
+	if ts, _ := out["types"].([]any); len(ts) != 2 || ts[1].(map[string]any)["ports"] == nil {
+		t.Errorf("nhiều loại: %v", out)
+	}
+	out, _ = call(t, cs, "get_step_types", map[string]any{"topic": "debug"})
+	if !strings.Contains(out["debug"].(string), "resume_run") {
+		t.Errorf("topic debug: %v", out)
 	}
 	if _, isErr := call(t, cs, "get_step_types", map[string]any{"type": "bay"}); !isErr {
 		t.Error("loại lạ phải lỗi")
@@ -268,7 +305,9 @@ func TestExamplesCreate(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, e := range ex.(map[string]any)["compact"].([]map[string]any) {
+	m := ex.(map[string]any)
+	all := append(m["samples"].([]map[string]any), map[string]any{"id": "flowExample", "script": m["flowExample"]})
+	for _, e := range all {
 		var sc map[string]any
 		json.Unmarshal(e["script"].(json.RawMessage), &sc)
 		if out, isErr := call(t, cs, "create_script", map[string]any{"script": sc}); isErr {

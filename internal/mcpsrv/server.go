@@ -95,16 +95,18 @@ type Server struct {
 	snap   snapshots   // cây phần tử AI vừa xem (số # → phần tử) và cây “trước” của screen_changes (43 A)
 }
 
-const instructions = `Ghosthand – app tự động click / gõ theo kịch bản dạng flow (node + cạnh, như n8n).
-Tạo kịch bản: đọc get_step_types compact=true (danh sách gọn mọi node + khi nào dùng; chi tiết một loại: type=…; hoặc resource ghosthand://guide) → viết kịch bản → validate_script → create_script.
-Sửa: read_script (lấy revision) → update_script theo id / ref node. Thiếu thông tin (app nào, giá trị nào là input) thì hỏi lại người dùng trước.
-Thử – sửa: run_script (cả / stopAt / only; script = kịch bản tạm, không tạo file) → node lỗi có error.detail + ảnh → update_script (kịch bản tạm: gửi script sửa vào resume_run) → resume_run (chạy tiếp từ node lỗi, giữ biến).
-Soạn bằng cách thử: run_step chạy từng node thật, thành công thì vào nháp (biến node trước dùng được), draft save ghi thành kịch bản.
-Kiểm tra nhánh / biến trước khi chạy thật: simulate_script (không đụng máy; outcomes cho node nhìn màn hình).
-Ảnh mẫu: capture_template khoanh vùng → "tpl:N" ghi vào template của node; find_image thử trước. get_mouse_position / list_windows để lấy toạ độ / cửa sổ.
-Xem màn hình: describe_screen (chữ + cửa sổ, rẻ) trước, screenshot khi cần nhìn. App có Accessibility: describe_screen elements=true (cây phần tử đánh số #N) hoặc screenshot marks=true → suggest_selector {mark} lấy selector bền cho node phần tử (không dùng toạ độ cứng); screen_changes start/end để biết thao tác có tác dụng không. Người dùng muốn xem / tự chạy: open_in_app.
-Trang web: get_preferences – nodePref web thì probe_page(url) trước, verdict ok mới dùng node web; mặc định (vision) dùng node ảnh / chữ.
-Đang thao tác dở trên trang (popup, hộp thoại): read_web_outline (dialog true = chỉ hộp thoại) lấy selector, tab = id tab trong tabs.
+// instructions – client nạp sẵn khi kết nối (trước mọi tool): đủ mô hình + cú pháp gọn để viết flow đơn giản ngay, và
+// chỉ đường rẻ nhất tới chi tiết. Giữ ngắn – budget_test.go chặn phình.
+const instructions = `Ghosthand – app tự động thao tác chuột / phím / màn hình trên máy theo kịch bản flow (node + cạnh, như n8n).
+Kịch bản gọn: {"name":"…","steps":[{"type":"open","target":"…"},{"type":"waitImage","findBy":"text","findText":"…"},…],"flow":["n1>n2>n3","n2.fail>n4"],"inputs":[{"key":"k","label":"…","type":"text","default":"…"}]}
+- Node chỉ ghi type + trường khác mặc định; node thứ i trong steps có ref ni. flow: "nguồn.cổng>đích", không ghi cổng = success; không có flow = nối thẳng theo thứ tự (đã ghi flow thì ghi đủ mọi cạnh). Cổng fail không nối = lỗi thì dừng kịch bản.
+- Biến trong ô chữ: {{k}} input, {{n2.output.x}} kết quả node n2, {{vars.x}}, {{secret.tên}} (list_secrets – không ghi mật khẩu thẳng vào kịch bản).
+Tạo (ít token nhất): get_step_types compact=true (một lần: flow, biến, mỗi loại node một dòng khi nào dùng + cổng) → get_step_types type=a,b,c (chỉ các loại sẽ dùng) → validate_script tới khi ok → create_script → open_in_app. Thiếu thông tin (app / trang nào, giá trị nào đổi mỗi lần chạy → inputs) thì hỏi người dùng trước.
+Sửa: read_script (dạng gọn + revision) → update_script chỉ gửi phần đổi: steps [{ref, trường đổi}] (ref mới = thêm node), flow thêm / thay cạnh, removeEdges ["n2.fail"], removeSteps; kết quả trả flow mới để soát.
+Bền: mở thẳng URL / app, phím tắt, tìm chữ (waitImage findBy text → clickImage imageSource node) hơn toạ độ cứng; chờ thứ cần thấy thay vì wait cố định; lặp dữ liệu bằng forEach, không chép node.
+Thử – sửa (mẹo + cách đọc error.detail: get_step_types topic=debug): run_script (cả / stopAt / only; script = kịch bản tạm, không tạo file) → node lỗi có error.detail + ảnh → update_script (kịch bản tạm: gửi script sửa vào resume_run) → resume_run (chạy tiếp từ node lỗi, giữ biến). Soạn từng node thật: run_step + draft. Không đụng máy: simulate_script.
+Xem màn hình: describe_screen (chữ + cửa sổ, rẻ) trước, screenshot khi cần nhìn; elements=true / marks=true → suggest_selector {mark} lấy selector bền; screen_changes start/end biết thao tác có tác dụng. Ảnh mẫu: capture_template → "tpl:N", find_image thử. get_mouse_position / list_windows.
+Trang web: get_preferences – nodePref web thì probe_page(url), verdict ok mới dùng node web; mặc định (vision) dùng node ảnh / chữ. Popup / hộp thoại đang mở: read_web_outline.
 App có thể chỉ cho soạn hoặc hỏi người dùng trước khi chạy (Cài đặt) – bị từ chối thì báo người dùng, không thử lại liên tục.`
 
 func New(back Backend) *Server {

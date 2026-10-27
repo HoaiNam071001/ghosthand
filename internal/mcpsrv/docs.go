@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"reflect"
+	"slices"
+	"strings"
 
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
@@ -11,6 +13,7 @@ import (
 	manual "ghosthand/internal/guide"
 	"ghosthand/internal/model"
 	"ghosthand/internal/samples"
+	"ghosthand/internal/script"
 )
 
 // tips – cách viết kịch bản bền (resource ghosthand://guide, get_step_types).
@@ -27,9 +30,10 @@ const tips = `Viết kịch bản bền:
 - Chờ có thể hết giờ → nối cổng fail (thử lại bằng counter + cạnh quay lại, hoặc end fail kèm message rõ ràng) thay vì để kịch bản dừng không rõ lý do.
 - Toạ độ (click theo điểm) theo hệ của get_screen_info; chưa biết vị trí thì hỏi người dùng hoặc tìm theo chữ. Điểm đọc từ ảnh screenshot / describe_screen là toạ độ tuyệt đối trên màn hình: đặt coordSpace "absolute" cho node đó (mặc định "region" = cộng gốc vùng của kịch bản, sẽ lệch nếu kịch bản có region).
 - Không dùng loại node không có trong danh sách. Ảnh mẫu (template) chỉ chụp được bằng app – AI dùng tìm theo chữ (findBy "text").
-- Dạng gọn: node chỉ cần type + trường cần (còn lại lấy mặc định), id / ref tự đặt (s1, s2… / n1, n2…) nếu bỏ trống, không có edges thì nối các node theo thứ tự bằng cổng success.
+- Dạng gọn: node chỉ cần type + trường cần (còn lại lấy mặc định), id / ref tự đặt (s1, s2… / n1, n2… theo vị trí trong steps) nếu bỏ trống, không có flow / edges thì nối các node theo thứ tự bằng cổng success. Đã ghi flow / edges thì phải ghi đủ mọi cạnh, kể cả cạnh thẳng (không còn tự nối theo thứ tự).`
 
-Thử – sửa (chạy thật trên máy người dùng):
+// debugTips – vòng thử – sửa, đọc lỗi node (get_step_types topic=debug; bản đầy đủ).
+const debugTips = `Thử – sửa (chạy thật trên máy người dùng):
 - Chưa biết màn hình có gì: describe_screen (chữ + khung + cửa sổ) trước, screenshot khi cần nhìn bố cục. Chọn nút / ô trong app: describe_screen elements=true hoặc screenshot marks=true cho số #N → suggest_selector {mark: N} trả selector bền (unique trước) để ghi vào selectors / occurrence / elementApp, thay cho toạ độ. Biết thao tác có tác dụng chưa: screen_changes start → làm → end.
 - Thử nhanh một vài thao tác / dò cách tìm: run_script với script (kịch bản tạm) – không tạo file, không ghi lịch sử; sửa thì gửi bản sửa vào resume_run. Chỉ create_script khi người dùng muốn giữ kịch bản.
 - Kịch bản dài: run_script với stopAt chạy từng đoạn, xem output từng node rồi resume_run from node kế để chạy tiếp – không chạy lại đoạn đã đúng.
@@ -43,6 +47,7 @@ Thử – sửa (chạy thật trên máy người dùng):
 type guide struct {
 	model.FlowGuideDoc
 	Tips       string    `json:"tips"`
+	Debug      string    `json:"debug"`
 	StepTypes  []typeDoc `json:"stepTypes"`
 	CommonOuts []string  `json:"commonOutputs"`
 	NodePref   string    `json:"nodePref"`     // ưu tiên node hiện tại (44)
@@ -51,7 +56,7 @@ type guide struct {
 
 // guideDoc – pref: ưu tiên node hiện tại (store.MCPSettings.NodePreference).
 func guideDoc(pref string) guide {
-	return guide{FlowGuideDoc: model.Guide(), Tips: tips, StepTypes: stepTypeDocs(), CommonOuts: model.CommonOutputs,
+	return guide{FlowGuideDoc: model.Guide(), Tips: tips, Debug: debugTips, StepTypes: stepTypeDocs(), CommonOuts: model.CommonOutputs,
 		NodePref: pref, NodeTips: nodePrefTips[pref]}
 }
 
@@ -63,32 +68,62 @@ type typeDoc struct {
 
 func withUse(d model.StepTypeDoc) typeDoc { return typeDoc{d, model.UseOf(d.Type)} }
 
-// compactGuide – như guide nhưng mỗi loại node chỉ còn nhóm / tên / khi nào dùng / cổng; chi tiết lấy bằng get_step_types type=….
+// compactGuide – như guide nhưng mỗi loại node một dòng "type [cổng]: khi nào dùng" theo nhóm, không mẹo thử – sửa:
+// đủ để chọn node + viết flow mà ~1/3 token bản đầy đủ. Chi tiết lấy bằng get_step_types type=… / topic=debug.
 type compactGuide struct {
 	model.FlowGuideDoc
-	Tips      string        `json:"tips"`
-	Pick      string        `json:"pick"`
-	StepTypes []compactType `json:"stepTypes"`
-	NodePref  string        `json:"nodePref"`
-	NodeTips  string        `json:"nodePrefTips"`
-	Note      string        `json:"note"`
-}
-
-type compactType struct {
-	Type  string   `json:"type"`
-	Label string   `json:"label"`
-	Group string   `json:"group"`
-	Use   string   `json:"use"`
-	Ports []string `json:"ports"`
+	Tips     string `json:"tips"`
+	Pick     string `json:"pick"`
+	Nodes    string `json:"nodes"`
+	NodePref string `json:"nodePref"`
+	NodeTips string `json:"nodePrefTips"`
+	Note     string `json:"note"`
 }
 
 func toCompact(g guide) compactGuide {
-	c := compactGuide{FlowGuideDoc: g.FlowGuideDoc, Tips: g.Tips, Pick: model.Pick, NodePref: g.NodePref, NodeTips: g.NodeTips,
-		Note: "Bản gọn: trường, mô tả, ví dụ JSON, output của từng loại → get_step_types type=<tên>."}
-	for _, d := range g.StepTypes {
-		c.StepTypes = append(c.StepTypes, compactType{d.Type, d.Label, d.Group, d.Use, d.Ports})
+	return compactGuide{FlowGuideDoc: g.FlowGuideDoc, Tips: g.Tips, Pick: model.Pick, Nodes: nodeLines(g.StepTypes),
+		NodePref: g.NodePref, NodeTips: g.NodeTips,
+		Note: "Trường, ví dụ JSON, output: get_step_types type=<tên> (nhiều loại: type=a,b,c). Thử – sửa, đọc error.detail: get_step_types topic=debug."}
+}
+
+// portsLabel – cổng ra để AI ghi flow; "" = success / fail như mọi node hành động. Cổng tuỳ trường (case, appOp) ghi
+// theo dạng chung vì Ports của bảng chỉ tính cho node mặc định.
+func portsLabel(d typeDoc) string {
+	switch d.Type {
+	case model.StepSwitch:
+		return "case:<key>…|default"
+	case model.StepSwitchScreen:
+		return "case:<key>…|none"
+	case model.StepApp:
+		return "appOp check: yes|no; khác: success|fail"
+	case model.StepEnd:
+		return "không cổng"
 	}
-	return c
+	if slices.Equal(d.Ports, []string{model.PortSuccess, model.PortFail}) {
+		return ""
+	}
+	return strings.Join(d.Ports, "|")
+}
+
+// nodeLines – "# nhóm" rồi mỗi loại "type: dùng khi…", cổng ghi [a|b] khi khác success / fail. Nhóm theo thứ tự gặp đầu.
+func nodeLines(docs []typeDoc) string {
+	byGroup := map[string][]string{}
+	var groups []string
+	for _, d := range docs {
+		if _, ok := byGroup[d.Group]; !ok {
+			groups = append(groups, d.Group)
+		}
+		line := d.Type
+		if p := portsLabel(d); p != "" {
+			line += " [" + p + "]"
+		}
+		byGroup[d.Group] = append(byGroup[d.Group], line+": "+d.Use)
+	}
+	var b strings.Builder
+	for _, g := range groups {
+		b.WriteString("# " + g + "\n" + strings.Join(byGroup[g], "\n") + "\n")
+	}
+	return strings.TrimSuffix(b.String(), "\n")
 }
 
 func stepTypeDocs() []typeDoc {
@@ -154,7 +189,7 @@ func (s *Server) addDocs() {
 				if err != nil {
 					return nil, err
 				}
-				b, err := json.MarshalIndent(v, "", " ")
+				b, err := script.MarshalRaw(v)
 				if err != nil {
 					return nil, err
 				}
@@ -193,7 +228,7 @@ func examples() (any, error) {
 		}
 		out = append(out, map[string]any{"id": id, "script": raw})
 	}
-	return map[string]any{"full": json.RawMessage(model.Guide().Example), "compact": out}, nil
+	return map[string]any{"flowExample": json.RawMessage(model.Guide().Example), "samples": out}, nil
 }
 
 func promptText(goal string) string {
@@ -208,5 +243,5 @@ Trước khi tạo, hỏi lại tôi những gì còn thiếu (mỗi lần vài 
 3. Giá trị nào đổi mỗi lần chạy (thành input {{key}}), giá trị nào cố định?
 4. Lặp bao nhiêu lần, lỗi thì thử lại hay dừng?
 
-Sau đó: get_step_types → viết kịch bản (ưu tiên mở URL / phím tắt / tìm chữ hơn toạ độ) → validate_script tới khi ok → create_script → open_in_app, rồi tóm tắt các bước cho tôi.`
+Sau đó: get_step_types compact=true → get_step_types type=<các loại sẽ dùng> → viết kịch bản dạng gọn (flow cho cạnh) (ưu tiên mở URL / phím tắt / tìm chữ hơn toạ độ) → validate_script tới khi ok → create_script → open_in_app, rồi tóm tắt các bước cho tôi.`
 }

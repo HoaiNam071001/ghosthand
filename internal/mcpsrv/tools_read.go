@@ -11,15 +11,22 @@ import (
 
 	manual "ghosthand/internal/guide"
 	"ghosthand/internal/model"
+	"ghosthand/internal/script"
 )
 
 type pathIn struct {
 	Path string `json:"path" jsonschema:"đường dẫn file kịch bản (từ list_scripts) hoặc tên kịch bản"`
 }
 
+type readIn struct {
+	Path string `json:"path" jsonschema:"đường dẫn file kịch bản (từ list_scripts) hoặc tên kịch bản"`
+	Full bool   `json:"full,omitempty" jsonschema:"true = đủ mọi trường (mặc định: dạng gọn – chỉ trường khác mặc định, cạnh thành flow)"`
+}
+
 type typesIn struct {
-	Type    string `json:"type,omitempty" jsonschema:"chỉ lấy một loại node (vd waitImage); trống = mọi loại kèm hướng dẫn flow"`
-	Compact bool   `json:"compact,omitempty" jsonschema:"true = hướng dẫn flow + danh sách gọn (type, label, desc, cổng ra) để nắm bao quát; sau đó gọi lại với type để xem trường / ví dụ / output"`
+	Type    string `json:"type,omitempty" jsonschema:"chi tiết loại node (trường, ví dụ, output), nhiều loại cách dấu phẩy: waitImage,clickImage,forEach"`
+	Compact bool   `json:"compact,omitempty" jsonschema:"true = hướng dẫn flow + mỗi loại node một dòng (khi nào dùng, cổng) – đọc cái này trước"`
+	Topic   string `json:"topic,omitempty" jsonschema:"debug = mẹo thử – sửa: run_script, đọc error.detail, ảnh lỗi"`
 }
 
 // ScriptEntry – một kịch bản trong list_scripts.
@@ -37,10 +44,11 @@ func (s *Server) addReadTools() {
 	addTool(s, KindRead, &mcp.Tool{Name: "list_scripts", Description: "Danh sách kịch bản: mở gần đây trên app + thư mục kịch bản của AI. " +
 		"Mỗi mục: path, name, số node, createdBy (ai), open / unsaved (đang mở trên app)."}, s.listScripts)
 	addTool(s, KindRead, &mcp.Tool{Name: "read_script", Description: "Đọc một kịch bản: {path, revision, script}. " +
+		"script dạng gọn như create_script (node xếp theo thứ tự chạy, trường bằng mặc định bị bỏ, cạnh = flow). " +
 		"Giữ revision để gửi kèm update_script."}, s.readScript)
 	addTool(s, KindRead, &mcp.Tool{Name: "get_step_types", Description: "Hướng dẫn viết kịch bản: cấu trúc flow, biến {{…}}, trường chung, " +
 		"từng loại node app hỗ trợ (mô tả, trường, ví dụ JSON, output, cổng ra) và mẹo viết kịch bản bền. Đọc trước khi tạo / sửa. " +
-		"Đầy đủ rất dài: compact=true để xem danh sách gọn mọi node trước, rồi type=<tên> lấy chi tiết loại cần dùng."}, s.stepTypes)
+		"Đầy đủ rất dài: compact=true trước, rồi type=a,b,c lấy chi tiết các loại sẽ dùng; topic=debug khi chạy thử."}, s.stepTypes)
 	addTool(s, KindRead, &mcp.Tool{Name: "get_node_guide", Description: "Trang hướng dẫn của một loại node (cùng nội dung modal Hướng dẫn của người dùng): " +
 		"công nghệ bên dưới, chạy được với web / app nào, độ chính xác, tốc độ, nên / không nên dùng, mẹo, trường quan trọng. " +
 		"Dùng để chọn đúng node cho trang / app; trường + ví dụ JSON lấy ở get_step_types. Khoá = tên loại node (vd clickText, waitImage)."}, s.nodeGuide)
@@ -88,7 +96,7 @@ func (s *Server) listScripts(_ context.Context, _ *mcp.CallToolRequest, _ struct
 	return ok(map[string]any{"scripts": list, "aiFolder": dir})
 }
 
-func (s *Server) readScript(_ context.Context, _ *mcp.CallToolRequest, in pathIn) (*mcp.CallToolResult, any, error) {
+func (s *Server) readScript(_ context.Context, _ *mcp.CallToolRequest, in readIn) (*mcp.CallToolResult, any, error) {
 	path, err := s.resolvePath(in.Path)
 	if err != nil {
 		return fail(err)
@@ -97,18 +105,34 @@ func (s *Server) readScript(_ context.Context, _ *mcp.CallToolRequest, in pathIn
 	if err != nil {
 		return fail(err)
 	}
+	var body any = sc
+	if !in.Full {
+		if body, err = script.Shrink(sc); err != nil {
+			return fail(err)
+		}
+	}
 	ed := s.back.Editor()
-	return ok(map[string]any{"path": path, "revision": rev, "script": sc, "unsaved": samePath(path, ed.Path) && ed.Dirty})
+	return ok(map[string]any{"path": path, "revision": rev, "script": body, "unsaved": samePath(path, ed.Path) && ed.Dirty})
 }
 
 func (s *Server) stepTypes(_ context.Context, _ *mcp.CallToolRequest, in typesIn) (*mcp.CallToolResult, any, error) {
+	if in.Topic == "debug" {
+		return ok(map[string]string{"debug": debugTips})
+	}
 	if in.Type != "" {
-		for _, d := range model.StepTypeDocs() {
-			if d.Type == in.Type {
-				return ok(withUse(d))
+		var out []typeDoc
+		for _, t := range strings.Split(in.Type, ",") {
+			t = strings.TrimSpace(t)
+			i := slices.IndexFunc(model.StepTypeDocs(), func(d model.StepTypeDoc) bool { return d.Type == t })
+			if i < 0 {
+				return fail(&model.ScriptError{Field: "type", Msg: "không có loại node " + t + " – xem danh sách ở get_step_types compact=true"})
 			}
+			out = append(out, withUse(model.StepTypeDocs()[i]))
 		}
-		return fail(&model.ScriptError{Field: "type", Msg: "không có loại node " + in.Type + " – gọi get_step_types không tham số để xem danh sách"})
+		if len(out) == 1 {
+			return ok(out[0])
+		}
+		return ok(map[string]any{"types": out})
 	}
 	g := guideDoc(s.back.MCP().NodePreference())
 	if in.Compact {

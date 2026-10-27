@@ -1,7 +1,6 @@
 package mcpsrv
 
 import (
-	"encoding/json"
 	"errors"
 	"io/fs"
 	"path/filepath"
@@ -10,12 +9,14 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
 	"ghosthand/internal/model"
+	"ghosthand/internal/script"
 	"ghosthand/internal/store"
 )
 
-// ok – kết quả tool dạng chữ JSON (client không đọc structuredContent vẫn dùng được).
+// ok – kết quả tool dạng chữ JSON (client không đọc structuredContent vẫn dùng được). Không thụt lề, không đổi < > &
+// thành \u003c… – AI đọc như nhau mà ít token hơn.
 func ok(v any) (*mcp.CallToolResult, any, error) {
-	b, err := json.MarshalIndent(v, "", " ")
+	b, err := script.MarshalRaw(v)
 	if err != nil {
 		return nil, nil, err
 	}

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"slices"
+	"strings"
 
 	"ghosthand/internal/model"
 )
@@ -20,7 +21,8 @@ type Patch struct {
 	Steps       []json.RawMessage   `json:"steps,omitempty"`       // node có id / ref đã có → đè các trường gửi lên; chưa có → thêm (mặc định theo loại)
 	RemoveSteps []string            `json:"removeSteps,omitempty"` // xoá node + mọi cạnh nối vào / ra
 	Edges       []model.Edge        `json:"edges,omitempty"`       // thêm cạnh; cổng from + port đã có cạnh thì thay
-	RemoveEdges []string            `json:"removeEdges,omitempty"` // id cạnh
+	Flow        []string            `json:"flow,omitempty"`        // thêm cạnh dạng chữ (flowtext.go), như edges
+	RemoveEdges []string            `json:"removeEdges,omitempty"` // id cạnh hoặc "<node>.<cổng>" (n2.fail; n2 = n2.success)
 }
 
 // ApplyPatch trả bản sao kịch bản đã sửa (chưa kiểm tra – gọi Checked sau) và các cạnh bị bỏ vì node đổi loại không còn
@@ -58,12 +60,16 @@ func ApplyPatch(sc model.Script, p Patch) (model.Script, []model.Edge, error) {
 	}
 	for _, id := range p.RemoveEdges {
 		n := len(sc.Edges)
-		sc.Edges = slices.DeleteFunc(sc.Edges, func(e model.Edge) bool { return e.ID == id })
+		sc.Edges = slices.DeleteFunc(sc.Edges, edgeMatch(&sc, id))
 		if len(sc.Edges) == n {
 			return model.Script{}, nil, &model.ScriptError{Field: "edges", Edge: id, Msg: fmt.Sprintf("không có cạnh %q", id)}
 		}
 	}
-	for _, e := range p.Edges {
+	flow, err := ParseFlow(p.Flow)
+	if err != nil {
+		return model.Script{}, nil, err
+	}
+	for _, e := range append(slices.Clone(p.Edges), flow...) {
 		e.From, e.To = NodeID(sc.Steps, e.From), NodeID(sc.Steps, e.To)
 		sc.Edges = slices.DeleteFunc(sc.Edges, func(o model.Edge) bool { return o.From == e.From && o.Port == e.Port })
 		if e.ID == "" || slices.ContainsFunc(sc.Edges, func(o model.Edge) bool { return o.ID == e.ID }) {
@@ -124,6 +130,20 @@ func upsertStep(sc *model.Script, raw json.RawMessage) ([]model.Edge, error) {
 	st.ID = sc.Steps[at].ID // id ổn định – cạnh trỏ theo id
 	sc.Steps[at] = st
 	return nil, nil
+}
+
+// edgeMatch – cạnh theo id; không cạnh nào mang id đó thì theo nguồn + cổng "n2.fail" (mỗi cổng một cạnh; không ghi
+// cổng = success).
+func edgeMatch(sc *model.Script, key string) func(model.Edge) bool {
+	if slices.ContainsFunc(sc.Edges, func(e model.Edge) bool { return e.ID == key }) {
+		return func(e model.Edge) bool { return e.ID == key }
+	}
+	from, port, _ := strings.Cut(key, ".")
+	if port == "" {
+		port = model.PortSuccess
+	}
+	from = NodeID(sc.Steps, from)
+	return func(e model.Edge) bool { return e.From == from && e.Port == port }
 }
 
 func mergeJSON(base any, raw json.RawMessage) ([]byte, error) {
