@@ -3,6 +3,12 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## Thêm – nút Xoá nhóm trên khung nhóm node
+- [ ] Khung nhóm (mở và thu gọn) có nút thùng rác cạnh nút Bỏ nhóm → bấm: khung + mọi node trong đó + cạnh nối biến mất; Ctrl+Z một lần khôi phục đủ
+
+## Sửa – đặt nhiều điểm trên overlay không tự nối thành chuỗi
+- [ ] Flow có sẵn vài node → nút Chọn vùng (hoặc Ctrl+K khi không chọn node) → công cụ Điểm, click 3 chỗ → về flow: 3 node click mới nối tiếp nhau theo thứ tự click, nối sau node cuối của flow; flow rỗng thì node đầu thành bắt đầu
+
 ## Sửa – overlay chọn vùng lệch khi rê chuột, không phủ thanh menu, thanh công cụ nhấp nháy
 - [ ] macOS: mở Chọn vùng / Xem trước → lớp mờ phủ trọn màn kể cả thanh menu + Dock; rê chuột khắp màn, dừng nhiều chỗ: khung vùng, marker, nền xem trước đứng yên (không nhích)
 - [ ] Đặt điểm trên vùng thanh menu (toàn màn hình) → nhận điểm, không báo "nằm ngoài vùng"; click thử điểm đó trúng chỗ

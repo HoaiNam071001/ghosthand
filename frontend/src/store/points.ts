@@ -8,7 +8,8 @@ import { makeStep, Anchor, Point, Step, STEP_LABEL, StepPoint, StepType } from '
 import { inWails, openOverlay, setWindowMode } from '../windowMode';
 import { getEditor, setEditor, setNotice } from './editor';
 import { boundsOf, centerPoint, endpoints, toRelative, toScreen } from './geometry';
-import { clearInsertAt, insertAfterSelected, insertNode, newId, updateStep } from './nodes';
+import { clearInsertAt, insertAfterSelected, insertNode, insertTarget, newId, setInsertAt, updateStep } from './nodes';
+import { flowTail } from '../flow/edit';
 import { updateCond } from './control';
 import type { CondAt } from '../flow/cond';
 
@@ -181,6 +182,9 @@ export function placePoint(screen: Point): boolean {
     else setWindowMode('main');
     return true;
   }
+  // Mở overlay không từ cổng nào (nút Chọn vùng, thêm khi chưa chọn node): node đầu nối vào cuối flow, các điểm sau
+  // nối tiếp nhau (insertNode dời insertAt sang node vừa thêm) – đặt nhiều điểm thành chuỗi đúng thứ tự.
+  if (!insertTarget()) setInsertAt(flowTail(sc));
   if (a) {
     const relA = toRelative(a, sc.region)!;
     const step = makeStep({ id: newId(), type: 'drag', ...STEP_DEFAULTS.drag, points: [relA, rel] });

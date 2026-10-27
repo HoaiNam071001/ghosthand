@@ -6,7 +6,7 @@ import { groupColor } from '../../flow/groups';
 import { GroupColorButton } from './GroupColorButton';
 import { FlowGroupView, inputY } from './model';
 
-export type GroupActions = { onToggle: (id: string) => void; onUngroup: (id: string) => void; onRename: (id: string, name: string) => void; onColor: (id: string, color: string) => void };
+export type GroupActions = { onToggle: (id: string) => void; onUngroup: (id: string) => void; onDelete: (id: string) => void; onRename: (id: string, name: string) => void; onColor: (id: string, color: string) => void };
 export type GroupData = { view: FlowGroupView } & GroupActions;
 export type GroupFrameNode = Node<GroupData, 'group'>;
 export type GroupCardNode = Node<GroupData, 'groupCard'>;
@@ -30,7 +30,7 @@ function Title({ view, onRename }: { view: FlowGroupView; onRename: GroupActions
   return <span onDoubleClick={() => setEdit(true)} title="Bấm đúp để đổi tên" className="min-w-0 flex-1 truncate text-[12px] font-semibold">{view.name}</span>;
 }
 
-function Buttons({ view, onToggle, onUngroup, onColor }: Pick<GroupActions, 'onToggle' | 'onUngroup' | 'onColor'> & { view: FlowGroupView }) {
+function Buttons({ view, onToggle, onUngroup, onDelete, onColor }: Pick<GroupActions, 'onToggle' | 'onUngroup' | 'onDelete' | 'onColor'> & { view: FlowGroupView }) {
   const btn = 'nodrag grid h-5 w-5 flex-none place-items-center rounded text-muted hover:bg-hover hover:text-ink';
   return (
     <>
@@ -41,7 +41,10 @@ function Buttons({ view, onToggle, onUngroup, onColor }: Pick<GroupActions, 'onT
         </svg>
       </button>
       <button onClick={() => onUngroup(view.id)} aria-label="Bỏ nhóm" title="Bỏ nhóm (node giữ nguyên)" className={btn}>
-        <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" aria-hidden><path d="M6 6l12 12M18 6L6 18" /></svg>
+        <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" aria-hidden><rect x="3" y="3" width="8" height="8" rx="1.5" /><rect x="13" y="13" width="8" height="8" rx="1.5" /></svg>
+      </button>
+      <button onClick={() => onDelete(view.id)} aria-label="Xoá nhóm" title="Xoá nhóm cùng mọi node trong đó" className={`${btn} hover:!text-danger-text`}>
+        <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" /></svg>
       </button>
     </>
   );
@@ -54,7 +57,7 @@ export function GroupFrame({ data }: NodeProps<GroupFrameNode>) {
       <div className="group-head flex h-[30px] cursor-grab items-center gap-1 px-2.5 text-muted">
         <Title view={view} onRename={data.onRename} />
         <span className="flex-none font-mono text-[10.5px]">{view.members.length}</span>
-        <Buttons view={view} onToggle={data.onToggle} onUngroup={data.onUngroup} onColor={data.onColor} />
+        <Buttons view={view} onToggle={data.onToggle} onUngroup={data.onUngroup} onDelete={data.onDelete} onColor={data.onColor} />
       </div>
     </div>
   );
@@ -68,7 +71,7 @@ export function GroupCard({ data, selected }: NodeProps<GroupCardNode>) {
       <Handle type="target" position={Position.Left} id="in" style={{ top: inputY }} className="flow-handle flow-handle-in" />
       <div className="flex items-center gap-1">
         <Title view={view} onRename={data.onRename} />
-        <Buttons view={view} onToggle={data.onToggle} onUngroup={data.onUngroup} onColor={data.onColor} />
+        <Buttons view={view} onToggle={data.onToggle} onUngroup={data.onUngroup} onDelete={data.onDelete} onColor={data.onColor} />
       </div>
       <span className="font-mono text-[11px] text-muted">{view.members.length} node</span>
       <Handle type="source" position={Position.Right} id="out" style={{ top: inputY }} className="flow-handle flow-port-neutral" />

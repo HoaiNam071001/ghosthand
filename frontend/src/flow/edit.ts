@@ -3,7 +3,7 @@
 // Quy tắc: mỗi cổng ra tối đa 1 cạnh; không nối node vào chính nó qua cùng một cạnh vô nghĩa (cho phép vòng lặp qua node khác).
 
 import type { Edge, Script, Step } from '../types';
-import { PORT_SUCCESS, portsOf } from './model';
+import { flowOrder, PORT_SUCCESS, portsOf } from './model';
 
 export type { Edge };
 export type Graph<N extends { id: string }> = { nodes: N[]; edges: Edge[] };
@@ -82,6 +82,19 @@ export function insertNode(g: FlowGraph, node: Step, at: InsertAt | null): FlowG
   if (!at || !g.steps.some((s) => s.id === at.from)) return { steps, edges: g.edges, start };
   const r = addConnected({ nodes: g.steps, edges: g.edges }, node, at.from, at.port, portsOf(node)[0]);
   return { steps, edges: r.edges, start };
+}
+
+// Cuối flow: node đi tới được từ start, xếp sau cùng theo flowOrder mà cổng đầu (success / true / next…) còn trống –
+// node đặt điểm trên overlay không có chỗ nối định sẵn thì nối vào đây (các điểm đặt liên tiếp thành chuỗi theo thứ tự).
+export function flowTail(g: FlowGraph): InsertAt | null {
+  const seen = reachable(g.edges, g.start);
+  const byId = new Map(g.steps.map((s) => [s.id, s]));
+  const order = flowOrder(g).filter((id) => seen.has(id) && byId.has(id));
+  for (let i = order.length - 1; i >= 0; i--) {
+    const port = portsOf(byId.get(order[i])!)[0];
+    if (port && !g.edges.some((e) => e.from === order[i] && e.port === port)) return { from: order[i], port };
+  }
+  return null;
 }
 
 // Đổi loại node: bỏ cạnh đi ra từ cổng loại mới không có.

@@ -1,7 +1,7 @@
 // Khung nhóm node (bước 39 G1): nhóm lại / bỏ nhóm / thu gọn / đổi tên / dời cả cụm. Phép tính ở flow/groups.ts.
 import { addGroup, nextGroupName, patchGroup, removeGroup, shiftPositions } from '../flow/groups';
 import { getEditor, setEditor, updateScript } from './editor';
-import { newId } from './nodes';
+import { newId, removeSteps } from './nodes';
 
 const script = () => getEditor().script;
 
@@ -17,6 +17,12 @@ export function groupPicked() {
 export function ungroup(id: string) {
   updateScript({ groups: removeGroup(script().groups, id) });
   setEditor({ notice: 'Đã bỏ nhóm – node giữ nguyên chỗ' });
+}
+
+// Xoá cả khung lẫn node thành viên (kèm cạnh) – một lần hoàn tác.
+export function deleteGroup(id: string) {
+  const g = script().groups?.find((x) => x.id === id);
+  if (g) removeSteps(g.members);
 }
 
 export const toggleGroup = (id: string) => updateScript({ groups: patchGroup(script().groups, id, { collapsed: !script().groups?.find((g) => g.id === id)?.collapsed }) });

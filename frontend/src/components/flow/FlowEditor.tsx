@@ -18,7 +18,7 @@ import NodeMenu from './NodeMenu';
 import { nodeMenuItems } from './nodeMenuItems';
 import {
   applyLayout, clearInsertAt, connectPort, copySelected, insertAfterSelected, moveNode, pasteClip, removeEdge, removeSteps, selectNodes, selectStep,
-  getEditor, groupPicked, moveGroup, renameGroup, setGroupColor, setInsertAt, setRegion, toggleGroup, toggleMultiStep, ungroup, useEditor,
+  deleteGroup, getEditor, groupPicked, moveGroup, renameGroup, setGroupColor, setInsertAt, setRegion, toggleGroup, toggleMultiStep, ungroup, useEditor,
 } from '../../store';
 import { stepInputCount } from '../../scriptInputs';
 import { useEngine } from '../../engineStore';
@@ -28,7 +28,7 @@ import { closeRunLog, shotUrl, useRunLog } from '../../runStore';
 import { openOverlay } from '../../windowMode';
 import type { Script } from '../../types';
 
-const groupActions = { onToggle: toggleGroup, onUngroup: ungroup, onRename: renameGroup, onColor: setGroupColor };
+const groupActions = { onToggle: toggleGroup, onUngroup: ungroup, onDelete: deleteGroup, onRename: renameGroup, onColor: setGroupColor };
 const isMac = navigator.platform.startsWith('Mac');
 
 // Xếp tự động cho kịch bản (vị trí theo id node)

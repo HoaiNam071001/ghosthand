@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addConnected, chain, connect, copyNodes, pasteNodes, disconnect, Edge, insertNode, nextRef, pruneEdges, reachable, removeNode } from './edit';
+import { addConnected, chain, connect, copyNodes, pasteNodes, disconnect, Edge, flowTail, insertNode, nextRef, pruneEdges, reachable, removeNode } from './edit';
 import { makeStep } from '../types';
 
 const e = (id: string, from: string, port: string, to: string): Edge => ({ id, from, port, to });
@@ -62,6 +62,14 @@ describe('flowEdit – kịch bản', () => {
     expect(g.edges.map((e) => `${e.from}.${e.port}>${e.to}`).sort()).toEqual(['a.success>c', 'c.success>b']);
     // start trỏ node đã xoá → node mới thành start
     expect(insertNode({ steps: [node('x')], edges: [], start: 'gone' }, node('y'), null).start).toBe('y');
+  });
+
+  it('flowTail: node cuối chuỗi còn cổng trống, bỏ node rời; flow rỗng → null', () => {
+    const steps = [node('a'), node('b'), node('lone')];
+    expect(flowTail({ steps, edges: chain(['a', 'b']), start: 'a' })).toEqual({ from: 'b', port: 'success' });
+    expect(flowTail({ steps: [], edges: [], start: '' })).toBeNull();
+    // vòng kín: không còn cổng đầu trống → null (node mới đứng riêng)
+    expect(flowTail({ steps: [node('a'), node('b')], edges: [...chain(['a', 'b']), e('x', 'b', 'success', 'a')], start: 'a' })).toBeNull();
   });
 
   it('pruneEdges bỏ cạnh của cổng không còn / node không còn', () => {

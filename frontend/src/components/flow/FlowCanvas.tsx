@@ -59,7 +59,7 @@ function Canvas({
   const dragFrom = useRef<Record<string, { x: number; y: number }>>({}); // vị trí thành viên lúc bắt đầu kéo khung
   useEffect(() => {
     const hidden = new Set(groups?.filter((g) => g.collapsed).flatMap((g) => g.members));
-    const act = groupActions ?? { onToggle() {}, onUngroup() {}, onRename() {}, onColor() {} };
+    const act = groupActions ?? { onToggle() {}, onUngroup() {}, onDelete() {}, onRename() {}, onColor() {} };
     // khung nằm dưới các thẻ (zIndex -1); thẻ nhóm thu gọn nằm cùng lớp với thẻ node
     const boxes = (groups ?? []).map((g) => g.collapsed
       ? { id: g.id, type: 'groupCard' as const, position: { x: g.box.x, y: g.box.y }, data: { view: g, ...act }, dragHandle: GROUP_HANDLE, selectable: false, deletable: false }

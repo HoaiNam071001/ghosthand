@@ -227,7 +227,7 @@ export function PageBackdrop({ kind: k, rect, s, offset, range }: {
   const L = rect.h / s + range.maxY - range.minY;
   return (
     <div className="pointer-events-none absolute overflow-hidden" style={{ left: rect.x, top: rect.y, width: rect.w, height: rect.h }} aria-hidden>
-      <svg width={W * s} height={L * s} className="absolute top-0 left-0 opacity-[.62]"
+      <svg width={W * s} height={L * s} className="absolute top-0 left-0 opacity-[.4]"
         style={{ transform: `translate(${-(offset.x - range.minX) * s}px, ${-(offset.y - range.minY) * s}px)` }}>
         <MockPage kind={k} W={W} L={L} s={s} />
       </svg>
