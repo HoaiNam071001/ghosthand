@@ -3,6 +3,9 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## Thêm – kéo node thả lên node khác để nối nhanh
+- [ ] Giữ Ctrl / Cmd, kéo node A thả lên node B → nối cổng thành công A → B, A về chỗ cũ; Option thay Ctrl → cổng thất bại; node switch giữ Ctrl + F2 → nối case thứ 2; kéo không giữ phím → chỉ dời node như cũ
+
 ## 52 – MCP ít token · [52](phase3/52-mcp-it-token.md)
 - [ ] Claude Desktop / Code nối MCP, nhờ tạo kịch bản có rẽ nhánh (vd chờ chữ, không thấy thì cuộn thử lại 5 lần): AI gọi `get_step_types compact=true` rồi `type=a,b,c` (không gọi bản đầy đủ), gửi cạnh bằng `flow`, `validate_script` ok, mở trên app đúng nhánh
 - [ ] Nhờ AI sửa kịch bản đó (vd đổi số lần thử, thêm node): AI `read_script` (dạng gọn) → `update_script` chỉ gửi phần đổi; kịch bản trên app giữ nguyên vị trí thẻ node

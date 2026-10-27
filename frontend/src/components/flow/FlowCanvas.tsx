@@ -10,6 +10,7 @@ import FlowEdge, { edgeColor, FlowEdgeType } from './FlowEdge';
 import { GroupActions, GroupCard, GroupCardNode, GROUP_HANDLE, GroupFrame, GroupFrameNode } from './GroupNodes';
 import { FlowEdgeView, FlowGroupView, FlowNodeView } from './model';
 import type { Positions } from '../../flow/layout';
+import { fnOfKey, portForDrag } from '../../flow/dragConnect';
 
 export type FlowCanvasProps = {
   nodes: FlowNodeView[];
@@ -49,7 +50,19 @@ function Canvas({
   nodes, edges, start, positions, selected, picked, onSelect, onSelectBox, onMove, onConnect, onDeleteEdge, onDeleteNodes, onDropPort, onNodeMenu, onLayout, fitKey, focus,
   taken, activeEdge, groups, groupActions, onMoveGroup,
 }: FlowCanvasProps) {
-  const { fitView, getZoom, screenToFlowPosition, setCenter, setViewport, zoomIn, zoomOut } = useReactFlow();
+  const { fitView, getZoom, getIntersectingNodes, screenToFlowPosition, setCenter, setViewport, zoomIn, zoomOut } = useReactFlow();
+  const fnKey = useRef(0); // phím F1..F9 đang giữ (chọn cổng khi kéo node nối node)
+  useEffect(() => {
+    const set = (e: KeyboardEvent, down: boolean) => {
+      const n = fnOfKey(e.code);
+      if (!n) return;
+      fnKey.current = down ? n : 0;
+      if (down) e.preventDefault();
+    };
+    const dn = (e: KeyboardEvent) => set(e, true), up = (e: KeyboardEvent) => set(e, false);
+    window.addEventListener('keydown', dn); window.addEventListener('keyup', up);
+    return () => { window.removeEventListener('keydown', dn); window.removeEventListener('keyup', up); };
+  }, []);
   const store = useStoreApi();
   const tall = useStore((s) => s.height > 520); // canvas thấp (đang mở nhật ký) thì ẩn minimap cho đỡ che node
   const [edgeSel, setEdgeSel] = useState<string | null>(null);
@@ -112,6 +125,19 @@ function Canvas({
     setCenter(x + (n.measured.width ?? 0) / 2, y + (n.measured.height ?? 0) / 2, { zoom: getZoom(), duration: 250 });
   }, [focus, store, setCenter, getZoom]);
 
+  // Kéo node thả lên node khác kèm phím (xem flow/dragConnect.ts): nối cổng, node về chỗ cũ.
+  const linkByDrop = (ev: MouseEvent | TouchEvent, n: { id: string }) => {
+    const from = nodes.find((v) => v.id === n.id);
+    const target = getIntersectingNodes({ id: n.id }).find((t) => t.type === 'card' && t.id !== n.id);
+    const m = ev as MouseEvent;
+    const port = from && target && portForDrag(from.ports.map((p) => p.id), { mod: m.ctrlKey || m.metaKey, alt: m.altKey, fn: fnKey.current });
+    if (!port || !target) return false;
+    const home = positions[n.id];
+    if (home) setRfNodes((cur) => cur.map((c) => (c.id === n.id ? { ...c, position: home } : c)));
+    onConnect(n.id, port, target.id);
+    return true;
+  };
+
   return (
     <ReactFlow className="flow-canvas" nodes={rfNodes} edges={rfEdges} nodeTypes={nodeTypes} edgeTypes={edgeTypes}
       onNodesChange={onNodesChange}
@@ -125,7 +151,8 @@ function Canvas({
         const dx = n.position.x - g.box.x, dy = n.position.y - g.box.y;
         setRfNodes((cur) => cur.map((c) => (dragFrom.current[c.id] ? { ...c, position: { x: dragFrom.current[c.id].x + dx, y: dragFrom.current[c.id].y + dy } } : c)));
       }}
-      onNodeDragStop={(_, n) => {
+      onNodeDragStop={(ev, n) => {
+        if (n.type === 'card' && linkByDrop(ev, n)) return;
         if (n.type === 'card') return onMove(n.id, { x: Math.round(n.position.x), y: Math.round(n.position.y) });
         const g = groups?.find((x) => x.id === n.id);
         if (g) onMoveGroup?.(g.id, Math.round(n.position.x - g.box.x), Math.round(n.position.y - g.box.y));
@@ -166,7 +193,7 @@ function Canvas({
   );
 }
 
-const HELP = 'Kéo từ chấm cổng ra sang node để nối · thả ở chỗ trống để thêm node · Shift + kéo chọn nhiều · Delete xoá';
+const HELP = 'Kéo từ chấm cổng ra sang node để nối · giữ Ctrl/Cmd (thành công) hoặc Option (thất bại) rồi kéo node này thả lên node kia để nối nhanh, thêm F1/F2… chọn cổng/case thứ n · thả ở chỗ trống để thêm node · Shift + kéo chọn nhiều · Delete xoá';
 
 function ToolBtn({ label, onClick, d }: { label: string; onClick: () => void; d: string }) {
   return (
