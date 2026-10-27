@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"math/rand"
 	"sync/atomic"
 	"time"
 )
@@ -135,7 +136,15 @@ func NewStep(stepType string) (Step, error) {
 	return s, nil
 }
 
+var nameAdjectives = []string{"nhanh", "cham", "xanh", "do", "vang", "tim", "trang", "den", "lanh", "nong", "nho", "to", "sang", "toi", "em", "vui"}
+var nameNouns = []string{"cao", "ho", "meo", "cho", "cua", "ca", "chim", "ngua", "rong", "bao", "voi", "soi", "tho", "gau", "huou", "rua"}
+
+// DefaultScriptName: tên kịch bản mới dạng <từ-ngẫu-nhiên không dấu>-<ddMMyy> (vd "xanh-meo-271026").
+func DefaultScriptName(now time.Time) string {
+	return nameAdjectives[rand.Intn(len(nameAdjectives))] + "-" + nameNouns[rand.Intn(len(nameNouns))] + "-" + now.Format("020106")
+}
+
 // NewScript trả kịch bản rỗng mặc định.
 func NewScript() Script {
-	return Script{Version: ScriptVersion, Name: "Kịch bản 1", Loops: 1, Steps: []Step{}, Edges: []Edge{}, Human: HumanMedium}
+	return Script{Version: ScriptVersion, Name: DefaultScriptName(time.Now()), Loops: 1, Steps: []Step{}, Edges: []Edge{}, Human: HumanMedium}
 }
