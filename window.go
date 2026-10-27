@@ -73,9 +73,9 @@ func (a *App) SetWindowMode(mode string) error {
 			// Dời về góc màn hiện tại TRƯỚC rồi mới phóng to: Wails lấy "màn hiện tại" là màn chứa phần lớn
 			// cửa sổ, phóng to trước thì cửa sổ có thể tràn sang màn bên cạnh và overlay mở nhầm màn.
 			// SetSize giữ nguyên mép trên nên cửa sổ vẫn ở góc màn này.
-			// macOS: vị trí tính từ vùng hiển thị (dưới menu bar) → overlay tự đo độ lệch toạ độ.
 			runtime.WindowSetPosition(a.ctx, 0, 0)
 			runtime.WindowSetSize(a.ctx, sw, sh)
+			winfloat.CoverScreen() // macOS: phủ cả thanh menu – overlay đúng bằng màn, toạ độ = khung màn
 		} else {
 			runtime.WindowSetSize(a.ctx, miniBarW, miniBarH)
 			runtime.WindowSetPosition(a.ctx, (sw-miniBarW)/2, 16)
@@ -162,6 +162,7 @@ func (a *App) SetOverlayDisplay(i int) error {
 	}
 	runtime.WindowSetPosition(a.ctx, 0, 0)
 	runtime.WindowSetSize(a.ctx, sw, sh)
+	winfloat.CoverScreen()
 	return nil
 }
 

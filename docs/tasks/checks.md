@@ -3,6 +3,13 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## Sửa – overlay chọn vùng lệch khi rê chuột, không phủ thanh menu, thanh công cụ nhấp nháy
+- [ ] macOS: mở Chọn vùng / Xem trước → lớp mờ phủ trọn màn kể cả thanh menu + Dock; rê chuột khắp màn, dừng nhiều chỗ: khung vùng, marker, nền xem trước đứng yên (không nhích)
+- [ ] Đặt điểm trên vùng thanh menu (toàn màn hình) → nhận điểm, không báo "nằm ngoài vùng"; click thử điểm đó trúng chỗ
+- [ ] Kéo vùng nhỏ → chỉ khung nét đứt, lớp mờ không đổi; 2 màn hình: chọn màn kia → overlay phủ trọn màn đó, điểm đặt ở màn đó click trúng
+- [ ] Thanh công cụ (thử cạnh Trên + Trái): rê sát mép → hiện, rê vào gợi ý / thanh / nút → không nhấp nháy, rời ra xa → ẩn sau ~0,35 s
+- [ ] Windows 125 % (taskbar dưới và thử taskbar trên): điểm đặt click trúng; dòng *Toạ độ: tỷ lệ 1.25 · gốc …* góc trái trên
+
 ## 46 – C2 chỉ thao tác trong cửa sổ · [phase3/46-mcp-web-tinh-chinh.md](phase3/46-mcp-web-tinh-chinh.md)
 - [ ] Mẫu *chi-trong-cua-so*: chạy xong báo đã gõ Tab vào “Bảng click – Sân thử”; đổi tiêu đề trong node phím thành tên không có → lỗi `window_mismatch` “không thấy cửa sổ…”, không có phím nào được gõ
 - [ ] Che cửa sổ Bảng click bằng app khác (bấm sang app khác ngay sau node Mở) → node phím báo “không ở trước (đang ở trước: …)”; thêm node Cửa sổ focus trước node phím thì chạy qua

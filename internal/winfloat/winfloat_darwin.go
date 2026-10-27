@@ -58,6 +58,24 @@ static void set_floating(int on, int focus) {
 		}
 	});
 }
+// Phủ trọn khung màn đang chứa cửa sổ, kể cả thanh menu + Dock (Wails chỉ đặt vị trí từ dưới thanh menu). Cửa sổ
+// frameless không bị AppKit ép vào vùng hiển thị; mức NSStatusWindowLevel (set_floating) cao hơn thanh menu.
+// Chạy sau SetSize / SetPosition của Wails (cùng hàng đợi luồng chính) nên lấy màn theo tâm cửa sổ Wails vừa đặt.
+static void cover_screen(void) {
+	dispatch_async(dispatch_get_main_queue(), ^{
+		for (NSWindow *w in [NSApp windows]) {
+			if (![w isVisible]) continue;
+			NSRect f = [w frame];
+			NSPoint c = NSMakePoint(NSMidX(f), NSMidY(f));
+			for (NSScreen *s in [NSScreen screens]) {
+				if (NSPointInRect(c, [s frame])) {
+					[w setFrame:[s frame] display:YES];
+					break;
+				}
+			}
+		}
+	});
+}
 */
 import "C"
 
@@ -78,3 +96,6 @@ func Set(on, focus bool) {
 	}
 	C.set_floating(b(on), b(focus))
 }
+
+// CoverScreen cho cửa sổ (overlay) phủ trọn màn đang chứa nó – gọi sau khi Wails đã dời / đổi cỡ cửa sổ.
+func CoverScreen() { C.cover_screen() }

@@ -1,14 +1,16 @@
 // Hook nhỏ của overlay.
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Displays, GetSettings, SetOverlayDisplay } from '../../../wailsjs/go/main/App';
+import { Displays, GetSettings, MousePos, SetOverlayDisplay } from '../../../wailsjs/go/main/App';
 import { main } from '../../../wailsjs/go/models';
 import { inWails } from '../../windowMode';
 import { applyCapture } from '../../imageSteps';
 import { Point, Rect } from '../../types';
 import { BarSide, toBarSide } from '../../overlay/toolbarLayout';
+import { addSample, currentMapping, setDisplay } from '../../coordMap';
 
 const BAR_HIDE_MS = 350; // rời thanh / gợi ý bao lâu thì ẩn
 const BAR_INTRO_MS = 2500; // mở overlay: hiện thanh một lúc cho dễ thấy
+const CALIBRATE_MS = 150; // chuột đứng yên bao lâu thì lấy mẫu kiểm tra toạ độ (coordMap.ts)
 
 // State kèm ref luôn mới nhất – cho listener phím gắn một lần (useEffect []) đọc được giá trị hiện tại.
 export function useRefState<T>(init: T) {
@@ -21,20 +23,27 @@ export function useRefState<T>(init: T) {
   return [value, set, ref] as const;
 }
 
-// Thanh công cụ tự ẩn: mở khi chuột sát mép trên / rê vào gợi ý, đóng khi rời. Lúc mở overlay hiện một lúc.
+// Thanh công cụ tự ẩn: mở khi chuột sát mép / rê vào gợi ý, đóng khi rời. Lúc mở overlay hiện một lúc.
+// leave gọi liên tục khi rê chuột ngoài thanh → hẹn đóng đang chờ thì giữ hẹn cũ (đặt lại thì không bao giờ đóng).
 export function useAutoHideBar() {
   const [open, setOpen] = useState(true);
   const timer = useRef<number | undefined>(undefined);
+  const hideIn = (ms: number) => {
+    timer.current = window.setTimeout(() => {
+      timer.current = undefined;
+      setOpen(false);
+    }, ms);
+  };
   const show = useCallback(() => {
     clearTimeout(timer.current);
+    timer.current = undefined;
     setOpen(true);
   }, []);
   const leave = useCallback(() => {
-    clearTimeout(timer.current);
-    timer.current = window.setTimeout(() => setOpen(false), BAR_HIDE_MS);
+    if (timer.current === undefined) hideIn(BAR_HIDE_MS);
   }, []);
   useEffect(() => {
-    timer.current = window.setTimeout(() => setOpen(false), BAR_INTRO_MS);
+    hideIn(BAR_INTRO_MS);
     return () => clearTimeout(timer.current);
   }, []);
   return { open, show, leave };
@@ -70,8 +79,8 @@ export function useFlash(value: string, ms: number) {
   return on;
 }
 
-// Nhiều màn hình: chọn màn cho overlay (Go dời cửa sổ, nhớ lựa chọn cho lần mở sau); onSwitched để đo lại toạ độ.
-export function useDisplays(onSwitched: () => void) {
+// Nhiều màn hình: chọn màn cho overlay (Go dời cửa sổ, phủ cả màn mới, nhớ lựa chọn cho lần mở sau).
+export function useDisplays() {
   const [displays, setDisplays] = useState<main.DisplayInfo[]>([]);
   const load = () => { if (inWails) Displays().then(setDisplays).catch(() => {}); };
   useEffect(load, []);
@@ -83,10 +92,32 @@ export function useDisplays(onSwitched: () => void) {
     } catch {
       return;
     }
-    onSwitched();
     load();
   };
   return { displays, current, pick };
+}
+
+// px thật / CSS px theo cách robotgo tính toạ độ: Windows pixel thật, macOS point (= CSS px dù màn Retina).
+const pixelScale = () => (navigator.platform.startsWith('Win') ? window.devicePixelRatio : 1);
+
+// Ánh xạ cửa sổ overlay ↔ toạ độ click (coordMap.ts) theo khung màn overlay đang phủ – cố định khi rê chuột.
+// sample: gọi mỗi lần chuột di chuyển; chuột đứng yên CALIBRATE_MS thì so với MousePos (chỉ sửa khi cửa sổ lệch góc màn).
+export function useCoordMap(disp: Rect | undefined) {
+  const [map, setMap] = useState(currentMapping);
+  const timer = useRef<number | undefined>(undefined);
+  useEffect(() => { if (disp) setMap(setDisplay(disp, pixelScale())); }, [disp?.x, disp?.y, disp?.w, disp?.h]);
+  useEffect(() => () => clearTimeout(timer.current), []);
+  const sample = useCallback((c: Point, now: () => Point) => {
+    if (!inWails) return;
+    clearTimeout(timer.current);
+    timer.current = window.setTimeout(async () => {
+      const s = await MousePos();
+      const n = now();
+      if (n.x === c.x && n.y === c.y) setMap(addSample(c, s)); // chuột đã đi tiếp → bỏ mẫu này
+    }, CALIBRATE_MS);
+  }, []);
+  const cancel = useCallback(() => clearTimeout(timer.current), []);
+  return { map, sample, cancel };
 }
 
 // Khoanh ảnh mẫu (bước 25): khung đã kéo xong (toạ độ cửa sổ), chờ "Dùng ảnh này" (use) / "Khoanh lại" (reset).

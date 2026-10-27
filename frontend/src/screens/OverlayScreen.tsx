@@ -11,7 +11,7 @@ import { frameRect, MapDialog, modKeyName, paramsPreview, TransformBar, Transfor
 import { bbox, NO_TF, TfParams } from '../transform';
 import { Point, Rect } from '../types';
 import { inWails, OverlayTool, overlayFocus, overlayTool, setWindowMode } from '../windowMode';
-import { addSample, currentMapping, isMeasured, resetSamples, toClientPt, toScreenPt } from '../coordMap';
+import { toClientPt, toScreenPt } from '../coordMap';
 import { scrollRange, useSimulation } from '../components/Simulation';
 import SimulationLayer from '../components/simulation/SimulationLayer';
 import { branchNodes } from '../flow/preview';
@@ -23,8 +23,8 @@ import { anchorLinesOf, buildMarkers, MIN_REGION, pathOutlines, rectOf, scrollAr
 import { overlayHint } from '../overlay/hint';
 import { windowBoxes } from '../overlay/windowBoxes';
 import { WindowBoxes } from '../components/overlay/WindowBoxes';
-import { atBarEdge } from '../overlay/toolbarLayout';
-import { useAutoHideBar, useBarSide, useCapture, useDisplays, useFlash, useRefState, useStroke } from '../components/overlay/hooks';
+import { atBarEdge, inBarHold } from '../overlay/toolbarLayout';
+import { useAutoHideBar, useBarSide, useCapture, useCoordMap, useDisplays, useFlash, useRefState, useStroke, useViewport } from '../components/overlay/hooks';
 import { StrokeLayer } from '../components/overlay/StrokeLayer';
 import { CaptureBox, FindBoxes, RegionBox } from '../components/overlay/Shapes';
 import { JitterBoxes, MarkerDots, OverlayLines } from '../components/overlay/MarkerLayer';
@@ -32,7 +32,6 @@ import { CoordInfo, Crosshair, HintPill } from '../components/overlay/Hud';
 import { OverlayToolbar, TOOLS } from '../components/overlay/OverlayToolbar';
 import { useOverlayKeys } from '../components/overlay/useOverlayKeys';
 
-const CALIBRATE_MS = 150; // chuột đứng yên bao lâu thì lấy mẫu đo toạ độ (coordMap.ts)
 const MIN_MOVE = 3; // px – kéo marker ít hơn coi như click (chọn bước)
 const EDGE = 12; // px – chuột sát cạnh đặt thanh thì hiện thanh công cụ
 const NOTICE_MS = 3500; // thông báo trong gợi ý tự tắt
@@ -46,8 +45,6 @@ export default function OverlayScreen() {
   const [picking] = useState(pickingStep); // id bước đang chọn lại điểm (nút ⌖), null = thêm bước mới
   const [tool, setTool] = useState<OverlayTool>(overlayTool);
   const [cursor, setCursor] = useState<Point>({ x: -100, y: -100 });
-  const [map, setMap] = useState(currentMapping);
-  const [measured, setMeasured] = useState(isMeasured);
   const [dragFrom, setDragFrom, dragRef] = useRefState<Point | null>(null); // toạ độ cửa sổ
   const [moving, setMoving, movingRef] = useRefState<Moving | null>(null);
   const { finds } = useImageState();
@@ -68,19 +65,17 @@ export default function OverlayScreen() {
   const [mapMode, setMapMode] = useState<RegionMapMode>('anchor');
   const toolRef = useRef(tool);
   toolRef.current = tool;
-  const { displays, current: curDisp, pick: pickDisplay } = useDisplays(() => {
-    resetSamples(); // đổi màn thì đo lại toạ độ
-    setMeasured(false);
-  });
+  const { displays, current: curDisp, pick: pickDisplay } = useDisplays();
+  const { map, sample, cancel: cancelSample } = useCoordMap(curDisp?.rect);
   // "Toàn màn hình" (vùng = nil) là màn chính; ở màn phụ thì nút đặt vùng = cả màn đó.
   const fullRegion: Rect | null = curDisp && !curDisp.main ? curDisp.rect : null;
   const isFull = fullRegion ? !!region && ['x', 'y', 'w', 'h'].every((k) => region[k as keyof Rect] === fullRegion[k as keyof Rect]) : !region;
+  const vp = useViewport(); // đổi màn → cửa sổ đổi cỡ → vẽ lại nền theo cỡ mới
   const bar = useAutoHideBar();
   const barSide = useBarSide();
   const noticeOn = useFlash(notice, NOTICE_MS);
   const skipClick = useRef(false); // click sinh ra sau khi thả marker không được tính là đặt điểm
   const cursorRef = useRef(cursor);
-  const timer = useRef<number | undefined>(undefined);
 
   const toScreenFromClient = useCallback((p: Point): Point => toScreenPt(map, p), [map]);
   const toClient = (p: Point): Point => toClientPt(map, p);
@@ -96,7 +91,7 @@ export default function OverlayScreen() {
   useOverlayKeys({
     toolRef, pendingRef, capRef, useCapture: capture.use, gestureRef, simRef, movingRef, dragRef, repickRef,
     clearMoving: () => setMoving(null), clearDrag: () => setDragFrom(null), clearCap: () => setCap(null), endRepick: () => setRepicking(false), setAlt,
-    onLeave: () => clearTimeout(timer.current),
+    onLeave: cancelSample,
   });
 
   useEffect(() => setDragMode(tool === 'drag'), [tool]);
@@ -116,20 +111,17 @@ export default function OverlayScreen() {
   const onMove = (e: MouseEvent) => {
     const c = { x: e.clientX, y: e.clientY };
     setCursor(c);
-    if (e.buttons === 0 && atBarEdge(barSide, c, { w: window.innerWidth, h: window.innerHeight }, EDGE)) bar.show();
+    // Thanh: mở khi sát mép; đang mở thì giữ khi còn trong dải sát mép hoặc trên thanh / gợi ý, ra ngoài mới hẹn đóng.
+    if (e.buttons === 0) {
+      const vpNow = { w: window.innerWidth, h: window.innerHeight };
+      if (atBarEdge(barSide, c, vpNow, EDGE) || (bar.open && (inBarHold(barSide, c, vpNow) || onUI(e)))) bar.show();
+      else if (bar.open) bar.leave();
+    }
     cursorRef.current = c;
     if (stroke.active) stroke.add(c);
     const m = movingRef.current;
     if (m && !m.moved && Math.hypot(c.x - m.from.x, c.y - m.from.y) >= MIN_MOVE) setMoving({ ...m, moved: true });
-    if (!inWails) return;
-    clearTimeout(timer.current);
-    timer.current = window.setTimeout(async () => {
-      const s = await MousePos();
-      const now = cursorRef.current;
-      if (now.x !== c.x || now.y !== c.y) return; // chuột đã đi tiếp → bỏ mẫu này
-      setMap(addSample(c, s));
-      setMeasured(true);
-    }, CALIBRATE_MS);
+    sample(c, () => cursorRef.current);
   };
 
   const onDown = (e: MouseEvent) => {
@@ -255,7 +247,7 @@ export default function OverlayScreen() {
       // macOS: overlay nằm dưới menu bar – rê nhanh lên trên có thể vượt mép mà không qua vùng TOP_EDGE
       onMouseLeave={(e) => e.buttons === 0 && atBarEdge(barSide, { x: e.clientX, y: e.clientY }, { w: window.innerWidth, h: window.innerHeight }, EDGE * 3) && bar.show()}>
       {/* nền trang mẫu (đúng tỷ lệ px thật) trong vùng / màn hình, trượt theo các bước cuộn */}
-      {preview && <PageBackdrop kind={pageKind} rect={toClientRect(boundsOf(region))} s={1 / map.kx} offset={sim.offset} range={scrollRange(steps)} />}
+      {preview && <PageBackdrop kind={pageKind} rect={region ? toClientRect(region) : { x: 0, y: 0, w: vp.w, h: vp.h }} s={1 / map.kx} offset={sim.offset} range={scrollRange(steps)} />}
       {!preview && <FindBoxes steps={steps} finds={finds} focus={focus} toClient={toClient} />}
       {capShown && (
         <CaptureBox forRect={capturesRect()} rect={capShown} size={toScreenRect(capShown)} confirmed={!!cap && !dragFrom} busy={capture.busy} err={capture.err}
@@ -288,7 +280,7 @@ export default function OverlayScreen() {
         extra={preview && (sim.route || sim.label) ? [sim.route, sim.label].filter(Boolean).join('  ·  ') : undefined}
         notice={noticeOn ? notice : undefined} />
       <CoordInfo region={region} displays={displays} current={curDisp} focusStep={focusStep} focusEnds={focus ? ends.get(focus) : undefined}
-        measure={inWails ? { map, measured } : null} />
+        map={inWails ? map : null} />
       <OverlayToolbar side={barSide} open={bar.open} onEnter={bar.show} onLeave={bar.leave} onDone={() => setWindowMode('main')}
         focusStep={focusStep} repicking={repicking}
         onToggleRepick={() => { if (repicking) exitFocus(); else if (focus) { startPick(focus); setRepicking(true); } }}

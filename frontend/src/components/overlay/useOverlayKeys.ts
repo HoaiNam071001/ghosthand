@@ -3,7 +3,6 @@
 import { MutableRefObject, useEffect, useRef } from 'react';
 import { cancelDragA, cancelPick, getEditor, selectToolKey, setMulti } from '../../store';
 import { OverlayTool, setWindowMode } from '../../windowMode';
-import { resetSamples } from '../../coordMap';
 
 const isMac = navigator.platform.startsWith('Mac');
 
@@ -30,7 +29,6 @@ export function useOverlayKeys(keys: OverlayKeys) {
   const k = useRef(keys);
   k.current = keys;
   useEffect(() => {
-    resetSamples(); // overlay có thể đang mở trên màn khác lần trước
     const onKey = (e: KeyboardEvent) => {
       const h = k.current;
       // Chọn nhiều: mod+A, mũi tên – trừ khi đang gõ trong ô số hoặc đang chờ chọn cách đổi vùng

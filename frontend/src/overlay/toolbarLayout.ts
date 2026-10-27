@@ -41,3 +41,10 @@ export function atBarEdge(side: BarSide, p: { x: number; y: number }, vp: { w: n
     case 'right': return p.x >= vp.w - edge;
   }
 }
+
+// Thanh đang mở: giữ mở khi chuột còn trong dải này (ngoài thanh / gợi ý thì người gọi tự xét). Cạnh trên tính cả
+// gợi ý (dời xuống dưới thanh lúc mở) – dải hẹp hơn thì rê vào gợi ý → mở → gợi ý dời khỏi chuột → đóng → nhấp nháy.
+const HOLD_TOP = 120; // px – thanh (8 + ~54) + gợi ý (76 + 32) + dư
+const HOLD = 24; // px – khe giữa mép màn và thanh
+export const inBarHold = (side: BarSide, p: { x: number; y: number }, vp: { w: number; h: number }) =>
+  atBarEdge(side, p, vp, side === 'top' ? HOLD_TOP : HOLD);

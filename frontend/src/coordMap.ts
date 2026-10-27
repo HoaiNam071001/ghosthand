@@ -1,51 +1,52 @@
-import { Point } from './types';
+import { Point, Rect } from './types';
 
 // Ánh xạ toạ độ trong cửa sổ overlay (CSS px) ↔ toạ độ robotgo (toạ độ dùng để click), mỗi trục:
 //   màn hình = k · cửa sổ + b
-// k ≠ 1 khi màn hình scale khác 100% trên Windows (robotgo tính theo DPI), b là vị trí cửa sổ
-// (macOS: cửa sổ nằm dưới menu bar; màn phụ: cộng gốc màn đó). Ước lượng từ các mẫu
-// (vị trí trong cửa sổ, MousePos) lấy khi chuột đứng yên – không cần biết hệ điều hành / scale.
+// Overlay phủ đúng một màn hình nên lấy thẳng từ khung màn đó (setDisplay): b = góc màn, k = số px thật / 1 px CSS
+// (Windows scale ≠ 100 %: robotgo tính pixel thật; macOS: robotgo tính point = CSS px). Không ước lượng lại khi rê
+// chuột – trước đây hồi quy k, b từ mẫu chuột làm mọi hình (vùng, marker, nền xem trước) nhích theo từng lần dừng chuột.
+// Mẫu (vị trí trong cửa sổ, MousePos) chỉ để sửa b khi cửa sổ không nằm đúng góc màn (Windows: taskbar trên / trái,
+// macOS: hệ điều hành không cho phủ thanh menu) – chỉ đổi khi hai mẫu liền nhau cùng lệch hẳn khỏi b hiện tại.
 export type Mapping = { kx: number; bx: number; ky: number; by: number };
 
-const MIN_SPREAD = 100; // px – các mẫu phải cách nhau đủ xa mới ước lượng k, không thì giữ k cũ
-const MAX_SAMPLES = 20;
+const KEEP = 5; // số mẫu giữ lại để lấy trung vị
 
-let samples: { c: Point; s: Point }[] = [];
 let mapping: Mapping = { kx: 1, bx: 0, ky: 1, by: 0 };
-let measured = false;
+let display: Rect | null = null;
+let offsets: Point[] = []; // b đo từ từng mẫu
+const fixes = new Map<string, Point>(); // độ lệch cửa sổ so với góc màn đã đo – mở lại overlay ở màn đó không phải đo lại
+
+const keyOf = (d: Rect) => `${d.x},${d.y},${d.w},${d.h}`;
 
 export const currentMapping = () => mapping;
-export const isMeasured = () => measured;
 
-// Gọi mỗi lần mở overlay: có thể đang ở màn khác nên bỏ mẫu cũ, nhưng giữ k (thường giống nhau)
-// để mẫu đầu tiên đã cho kết quả đúng.
-export const resetSamples = () => {
-  samples = [];
-};
-
-function fitAxis(cs: number[], ss: number[], k0: number) {
-  const n = cs.length;
-  const mc = cs.reduce((a, v) => a + v, 0) / n;
-  const ms = ss.reduce((a, v) => a + v, 0) / n;
-  let k = k0;
-  if (n >= 2 && Math.max(...cs) - Math.min(...cs) >= MIN_SPREAD) {
-    let cov = 0;
-    let varC = 0;
-    cs.forEach((c, i) => {
-      cov += (c - mc) * (ss[i] - ms);
-      varC += (c - mc) ** 2;
-    });
-    k = cov / varC;
-  }
-  return { k, b: ms - k * mc };
+// Gọi khi biết overlay đang phủ màn d (mở overlay / đổi màn). scale: px thật / CSS px.
+export function setDisplay(d: Rect, scale: number): Mapping {
+  const fix = fixes.get(keyOf(d)) ?? { x: 0, y: 0 };
+  display = d;
+  offsets = [];
+  mapping = { kx: scale, bx: d.x + fix.x, ky: scale, by: d.y + fix.y };
+  return mapping;
 }
 
+const median = (vs: number[]) => {
+  const s = [...vs].sort((a, b) => a - b);
+  const m = s.length >> 1;
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+};
+
+// c: vị trí trong cửa sổ, s: MousePos lúc chuột đứng yên. Trả mapping (cùng object nếu không đổi – không vẽ lại).
 export function addSample(c: Point, s: Point): Mapping {
-  samples = [...samples.slice(-(MAX_SAMPLES - 1)), { c, s }];
-  const x = fitAxis(samples.map((p) => p.c.x), samples.map((p) => p.s.x), mapping.kx);
-  const y = fitAxis(samples.map((p) => p.c.y), samples.map((p) => p.s.y), mapping.ky);
-  mapping = { kx: x.k, bx: x.b, ky: y.k, by: y.b };
-  measured = true;
+  offsets = [...offsets.slice(-(KEEP - 1)), { x: s.x - mapping.kx * c.x, y: s.y - mapping.ky * c.y }];
+  if (offsets.length < 2) return mapping;
+  const [a, b] = offsets.slice(-2);
+  const noise = Math.max(mapping.kx, mapping.ky) + 0.5; // làm tròn clientX / MousePos lệch tối đa ~k px
+  if (Math.abs(a.x - b.x) > noise || Math.abs(a.y - b.y) > noise) return mapping; // một mẫu lấy lúc chuột còn trôi
+  const bx = Math.round(median(offsets.map((o) => o.x)));
+  const by = Math.round(median(offsets.map((o) => o.y)));
+  if (Math.abs(bx - mapping.bx) <= noise && Math.abs(by - mapping.by) <= noise) return mapping;
+  mapping = { ...mapping, bx, by };
+  if (display) fixes.set(keyOf(display), { x: bx - display.x, y: by - display.y });
   return mapping;
 }
 

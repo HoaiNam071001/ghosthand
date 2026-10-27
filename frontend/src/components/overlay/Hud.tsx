@@ -33,10 +33,10 @@ export function Crosshair({ at, screen, hidden }: { at: Point; screen: Point; hi
   );
 }
 
-// Thông tin toạ độ góc trên trái: vùng, màn hình, điểm của node đang xem riêng, độ lệch đã đo (measure = null: ngoài Wails).
-export function CoordInfo({ region, displays, current, focusStep, focusEnds, measure }: {
+// Thông tin toạ độ góc trên trái: vùng, màn hình, điểm của node đang xem riêng, ánh xạ toạ độ (map = null: ngoài Wails).
+export function CoordInfo({ region, displays, current, focusStep, focusEnds, map }: {
   region: Rect | null; displays: main.DisplayInfo[]; current?: main.DisplayInfo; focusStep: Step | null;
-  focusEnds?: { start: Point | null; end: Point | null }; measure: { map: Mapping; measured: boolean } | null;
+  focusEnds?: { start: Point | null; end: Point | null }; map: Mapping | null;
 }) {
   const pts = !focusStep ? [] : focusStep.type === 'drag' ? [['A', focusEnds?.start], ['B', focusEnds?.end]] as const : [['Điểm', focusEnds?.start]] as const;
   return (
@@ -44,11 +44,9 @@ export function CoordInfo({ region, displays, current, focusStep, focusEnds, mea
       <span>{region ? `Vùng X ${region.x} Y ${region.y} · ${region.w} × ${region.h}` : 'Vùng: toàn màn hình'}</span>
       {displays.length > 1 && current && <span>Màn {current.index + 1}{current.main ? ' (chính)' : ''} / {displays.length}</span>}
       {pts.map(([k, p]) => <span key={k}>{k}: {p ? `X ${p.x} Y ${p.y}` : '—'}</span>)}
-      {measure && (
+      {map && (
         <span className="text-hud-text/60">
-          {measure.measured
-            ? `Đo toạ độ: tỷ lệ ${measure.map.kx.toFixed(2)}${Math.abs(measure.map.kx - measure.map.ky) > 0.01 ? `/${measure.map.ky.toFixed(2)}` : ''} · lệch X ${Math.round(measure.map.bx)} Y ${Math.round(measure.map.by)}`
-            : 'Đang đo toạ độ – rê chuột rồi dừng lại'}
+          Toạ độ: tỷ lệ {map.kx.toFixed(2)}{Math.abs(map.kx - map.ky) > 0.01 ? `/${map.ky.toFixed(2)}` : ''} · gốc X {Math.round(map.bx)} Y {Math.round(map.by)}
         </span>
       )}
     </div>

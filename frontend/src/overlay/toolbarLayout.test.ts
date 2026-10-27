@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { atBarEdge, barLayout, barPlacement, toBarSide } from './toolbarLayout';
+import { atBarEdge, barLayout, barPlacement, inBarHold, toBarSide } from './toolbarLayout';
 
 describe('barLayout', () => {
   it('màn lớn: ngang, đủ nhãn', () => {
@@ -32,4 +32,16 @@ describe('barPlacement / atBarEdge', () => {
     expect(atBarEdge('right', { x: 5, y: 400 }, vp, 12)).toBe(false);
   });
   it('giá trị lạ → top', () => { expect(toBarSide('x')).toBe('top'); expect(toBarSide(undefined)).toBe('top'); });
+});
+
+describe('inBarHold', () => {
+  const vp = { w: 1000, h: 800 };
+  it('cạnh trên giữ mở cả chỗ gợi ý dời xuống', () => {
+    expect(inBarHold('top', { x: 500, y: 100 }, vp)).toBe(true);
+    expect(inBarHold('top', { x: 500, y: 200 }, vp)).toBe(false);
+  });
+  it('cạnh khác chỉ khe sát mép', () => {
+    expect(inBarHold('left', { x: 20, y: 400 }, vp)).toBe(true);
+    expect(inBarHold('left', { x: 100, y: 400 }, vp)).toBe(false);
+  });
 });
