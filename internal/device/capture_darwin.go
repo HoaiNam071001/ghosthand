@@ -14,9 +14,9 @@ package device
 static int preflight() { return CGPreflightScreenCaptureAccess() ? 1 : 0; }
 static int request()   { return CGRequestScreenCaptureAccess() ? 1 : 0; }
 
-// Chụp vùng (x, y, w, h – point, toạ độ toàn cục, nằm trong một màn) bằng ScreenCaptureKit, bỏ mọi cửa sổ của chính app (thanh mini,
-// overlay) và không vẽ con trỏ chuột. Trả 0 nếu được; *out: RGBA (malloc, Go giải phóng).
-static int capture_without_self(double x, double y, double w, double h, unsigned char **out, int *ow, int *oh) {
+// Chụp vùng (x, y, w, h – point, toạ độ toàn cục, nằm trong một màn) bằng ScreenCaptureKit, có cả cửa sổ của app như
+// mọi cửa sổ khác, không vẽ con trỏ chuột. Trả 0 nếu được; *out: RGBA (malloc, Go giải phóng).
+static int capture_clean(double x, double y, double w, double h, unsigned char **out, int *ow, int *oh) {
 	if (@available(macOS 14.0, *)) {
 		__block int rc = 1;
 		__block CGImageRef img = NULL;
@@ -30,9 +30,7 @@ static int capture_without_self(double x, double y, double w, double h, unsigned
 				for (SCDisplay *d in content.displays) if (CGRectContainsPoint(CGDisplayBounds(d.displayID), mid)) disp = d;
 				if (!disp) { rc = 3; dispatch_semaphore_signal(sem); return; }
 				CGRect db = CGDisplayBounds(disp.displayID);
-				NSMutableArray *mine = [NSMutableArray array];
-				for (SCRunningApplication *a in content.applications) if (a.processID == getpid()) [mine addObject:a];
-				SCContentFilter *f = [[SCContentFilter alloc] initWithDisplay:disp excludingApplications:mine exceptingWindows:@[]];
+				SCContentFilter *f = [[SCContentFilter alloc] initWithDisplay:disp excludingWindows:@[]];
 				SCStreamConfiguration *c = [[SCStreamConfiguration alloc] init];
 				CGFloat k = f.pointPixelScale;
 				c.sourceRect = CGRectMake(x - db.origin.x, y - db.origin.y, w, h);
@@ -89,12 +87,12 @@ func screenCaptureCheck() error {
 	return nil
 }
 
-// captureNoSelf chụp vùng r không có cửa sổ của app và con trỏ chuột. ok = false: hệ không hỗ trợ (macOS < 14) –
-// dùng robotgo (có cả cửa sổ app nên phải ẩn app trước khi chụp).
-func captureNoSelf(r model.Rect) (img image.Image, ok bool, err error) {
+// captureClean chụp vùng r không có con trỏ chuột (cửa sổ app vẫn nằm trong ảnh như mọi cửa sổ). ok = false: hệ không
+// hỗ trợ (macOS < 14) – dùng robotgo.
+func captureClean(r model.Rect) (img image.Image, ok bool, err error) {
 	var buf *C.uchar
 	var w, h C.int
-	rc := C.capture_without_self(C.double(r.X), C.double(r.Y), C.double(r.W), C.double(r.H), &buf, &w, &h)
+	rc := C.capture_clean(C.double(r.X), C.double(r.Y), C.double(r.W), C.double(r.H), &buf, &w, &h)
 	if rc == 10 {
 		return nil, false, nil
 	}
@@ -107,8 +105,3 @@ func captureNoSelf(r model.Rect) (img image.Image, ok bool, err error) {
 	return out, true, nil
 }
 
-// ExcludeSelfFromCapture: macOS chụp bằng captureNoSelf nên không cần làm gì thêm.
-func ExcludeSelfFromCapture() {}
-
-// CanCaptureWithoutSelf: chụp được mà không dính cửa sổ app (khỏi ẩn app khi khoanh ảnh / thử tìm).
-func CanCaptureWithoutSelf() bool { return C.has_sck() == 1 }

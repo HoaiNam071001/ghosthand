@@ -6,7 +6,6 @@ import (
 	"sync"
 
 	"ghosthand/internal/api"
-	"ghosthand/internal/device"
 	"ghosthand/internal/mcpsrv"
 	"ghosthand/internal/model"
 	"ghosthand/internal/session"
@@ -67,7 +66,6 @@ func (a *App) startup(ctx context.Context) {
 	a.stopBg = stop
 	a.startScheduler(bg)
 	a.checkUpdateAtStart(bg)
-	device.ExcludeSelfFromCapture() // Windows: thanh mini / overlay không lọt vào ảnh chụp khi tìm ảnh
 	winfloat.FollowActiveSpace()    // macOS: màn chính hiện ở Space đang đứng
 }
 

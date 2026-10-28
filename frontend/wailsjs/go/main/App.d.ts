@@ -61,6 +61,8 @@ export function FinishRecording(arg1:model.Script):Promise<script.EmbedResult>;
 
 export function FlowGuide():Promise<model.FlowGuideDoc>;
 
+export function FocusWindow(arg1:number):Promise<void>;
+
 export function ForgetRecent(arg1:string):Promise<Array<string>>;
 
 export function GetInputMemory(arg1:string):Promise<store.InputMemory>;

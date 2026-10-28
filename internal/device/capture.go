@@ -32,13 +32,13 @@ func TemplateScale(img image.Image, r model.Rect) float64 {
 	return vision.ImageScale(img, r) * DPIScale(r)
 }
 
-// Capture chụp vùng r (nằm gọn trong một màn hình, xem captureArea). Ưu tiên cách chụp không dính cửa sổ app (thanh mini
-// đang chạy, overlay) và con trỏ chuột – không thì thanh mini che mất chỗ cần tìm.
+// Capture chụp vùng r (nằm gọn trong một màn hình, xem captureArea). Ưu tiên cách chụp không dính con trỏ chuột; cửa sổ app
+// nằm trong ảnh như mọi cửa sổ khác.
 func (RobotgoScreen) Capture(r model.Rect) (image.Image, error) {
 	if err := screenCaptureCheck(); err != nil {
 		return nil, err
 	}
-	if img, ok, err := captureNoSelf(r); ok {
+	if img, ok, err := captureClean(r); ok {
 		return img, err
 	}
 	if m := MainScreen(); goruntime.GOOS == "darwin" && !inside(r, m) {
@@ -52,12 +52,12 @@ func (RobotgoScreen) Capture(r model.Rect) (image.Image, error) {
 	return img, nil
 }
 
-// Pixel đọc màu tại (x, y) – chụp 1×1 cùng cách như Capture (không dính thanh mini / con trỏ chuột).
+// Pixel đọc màu tại (x, y) – chụp 1×1 cùng cách như Capture (không dính con trỏ chuột).
 func (s RobotgoScreen) Pixel(x, y int) (color.RGBA, error) {
 	if err := screenCaptureCheck(); err != nil {
 		return color.RGBA{}, err
 	}
-	if img, ok, err := captureNoSelf(model.Rect{X: x, Y: y, W: 1, H: 1}); ok {
+	if img, ok, err := captureClean(model.Rect{X: x, Y: y, W: 1, H: 1}); ok {
 		if err != nil {
 			return color.RGBA{}, err
 		}

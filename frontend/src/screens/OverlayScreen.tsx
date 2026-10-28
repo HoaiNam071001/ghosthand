@@ -24,7 +24,7 @@ import { overlayHint } from '../overlay/hint';
 import { windowBoxes } from '../overlay/windowBoxes';
 import { WindowBoxes } from '../components/overlay/WindowBoxes';
 import { atBarEdge, inBarHold } from '../overlay/toolbarLayout';
-import { useAutoHideBar, useBarSide, useCapture, useCoordMap, useDisplays, useFlash, useRefState, useStroke, useViewport } from '../components/overlay/hooks';
+import { useAppChoices, useAutoHideBar, useBarSide, useCapture, useCoordMap, useDisplays, useFlash, useRefState, useStroke, useViewport } from '../components/overlay/hooks';
 import { StrokeLayer } from '../components/overlay/StrokeLayer';
 import { CaptureBox, FindBoxes, RegionBox } from '../components/overlay/Shapes';
 import { JitterBoxes, MarkerDots, OverlayLines } from '../components/overlay/MarkerLayer';
@@ -66,6 +66,7 @@ export default function OverlayScreen() {
   const toolRef = useRef(tool);
   toolRef.current = tool;
   const { displays, current: curDisp, pick: pickDisplay } = useDisplays();
+  const apps = useAppChoices();
   const { map, sample, cancel: cancelSample } = useCoordMap(curDisp?.rect);
   // "Toàn màn hình" (vùng = nil) là màn chính; ở màn phụ thì nút đặt vùng = cả màn đó.
   const fullRegion: Rect | null = curDisp && !curDisp.main ? curDisp.rect : null;
@@ -289,7 +290,7 @@ export default function OverlayScreen() {
         onEditPoints={() => { stopSim(); setTool('select'); }}
         branches={preview ? branchNodes(script) : []} choices={choices} onChooseBranch={chooseBranch} onResetBranches={resetBranches}
         tool={tool} setTool={setTool} fullRegion={isFull ? null : { label: fullRegion ? 'Toàn màn này' : 'Toàn màn hình', onClick: () => requestRegion(fullRegion) }}
-        displays={displays} onPickDisplay={pickDisplay} />
+        displays={displays} onPickDisplay={pickDisplay} apps={apps.choices} onOpenApps={apps.load} onPickApp={apps.focus} />
 
       {tool === 'select' && !pending && selScreen.size > 0 && <TransformBar points={selScreen} tf={tf} setTf={setTf}
         frame={frameRect(bbox([...selScreen.values()]), toClient)} />}

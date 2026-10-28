@@ -104,7 +104,7 @@
       { "kind": "h", "text": "Overlay – chọn vùng và điểm" },
       { "kind": "p", "text": "Overlay phủ lên màn hình để khoanh **vùng** kịch bản, chọn điểm click, khoanh ảnh mẫu. Đang ở overlay, rê chuột tới chỗ cần bấm rồi nhấn **F6** để thêm điểm. Điểm lưu theo vùng + **neo** (bám cạnh trái / phải / giữa / theo tỉ lệ), nên cửa sổ đổi cỡ thì điểm vẫn bám đúng nút." },
       { "kind": "h", "text": "Thanh mini lúc chạy" },
-      { "kind": "p", "text": "Khi chạy, cửa sổ thu thành thanh mini luôn nổi trên cùng: vòng tiến độ, node đang chạy, Tạm dừng / Dừng. Kịch bản chạy từ ngoài app (CLI, API, hẹn giờ, AI) cũng hiện thanh này." },
+      { "kind": "p", "text": "Khi chạy, cửa sổ thu thành thanh mini (cửa sổ thường, không đè lên app khác): vòng tiến độ, node đang chạy, Tạm dừng / Dừng. Kịch bản chạy từ ngoài app (CLI, API, hẹn giờ, AI) cũng hiện thanh này." },
       { "kind": "tip", "text": "Đổi giao diện sáng / tối bằng nút mặt trời / mặt trăng trên thanh tiêu đề." }
     ]
   },

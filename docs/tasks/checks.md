@@ -3,6 +3,10 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## Thêm – thanh mini thường, overlay chọn app
+- [ ] macOS: chạy kịch bản → thanh mini không đè lên app đang điều khiển / app toàn màn hình; ảnh chụp có cả cửa sổ app
+- [ ] macOS: mở overlay → nút *Ứng dụng* → chọn app đang toàn màn hình → overlay phủ lên app đó, chọn vùng được
+
 ## Thêm – kéo node thả lên node khác để nối nhanh
 - [ ] Giữ Ctrl / Cmd, kéo node A thả lên node B → nối cổng thành công A → B, A về chỗ cũ; Option thay Ctrl → cổng thất bại; node switch giữ Ctrl + F2 → nối case thứ 2; kéo không giữ phím → chỉ dời node như cũ
 

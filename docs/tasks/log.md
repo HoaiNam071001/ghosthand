@@ -286,3 +286,4 @@
 - **2026-10-27** – kéo node thả lên node khác kèm Ctrl / Cmd (cổng đầu), Option (cổng hai), + F<n> (cổng / case thứ n) để nối nhanh – flow/dragConnect.ts + FlowCanvas. npm run build + vitest 476 xanh; chờ thử tay
 - 2026-10-27 fix: click vào cửa sổ chưa focus (trình duyệt vừa mở, AI chụp rồi click) không ăn – engine không focus cửa sổ dưới chuột; thêm `focusUnderCursor` (engine/focusclick.go, Options.FocusClick bật ở session/exec.go), test windowToFocus xanh
 - **2026-10-27** – Kế hoạch (người dùng yêu cầu): thêm bước 53 – MCP học từ repo openclaw-direct-tools-for-chatgpt: annotations tool + test, nhật ký lệnh AI giàu hơn (thời lượng, client, tham số đã che), dòng chống prompt injection trong primer; D (timeout Đi tới URL / Mở) đã điều tra, chờ chốt. Chỉ sửa tài liệu.
+2026-10-28 fix: thanh mini thành cửa sổ thường, ảnh chụp có cả cửa sổ app, overlay thêm nút Ứng dụng (nhảy sang app/Space toàn màn hình) – chờ thử tay macOS

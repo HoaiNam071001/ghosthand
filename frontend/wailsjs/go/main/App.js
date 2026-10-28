@@ -98,6 +98,10 @@ export function FlowGuide() {
   return window['go']['main']['App']['FlowGuide']();
 }
 
+export function FocusWindow(arg1) {
+  return window['go']['main']['App']['FocusWindow'](arg1);
+}
+
 export function ForgetRecent(arg1) {
   return window['go']['main']['App']['ForgetRecent'](arg1);
 }

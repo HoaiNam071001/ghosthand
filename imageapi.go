@@ -27,9 +27,9 @@ type TemplateShot struct {
 	H     int     `json:"h"`
 }
 
-// withHidden ẩn cửa sổ app, chạy f, rồi hiện lại – chỉ khi không chụp được mà bỏ qua cửa sổ app (macOS < 14, Linux…).
+// withHidden ẩn cửa sổ app, chạy f, rồi hiện lại – ảnh chụp có cả cửa sổ app nên overlay phải ẩn đi mới thấy màn thật.
 func (a *App) withHidden(f func() error) error {
-	if a.ctx != nil && !device.CanCaptureWithoutSelf() {
+	if a.ctx != nil {
 		runtime.WindowHide(a.ctx)
 		defer runtime.WindowShow(a.ctx)
 		time.Sleep(hideDelay)

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
@@ -61,9 +62,15 @@ func (a *App) SetWindowMode(mode string) error {
 		if err != nil {
 			return err
 		}
-		runtime.WindowSetAlwaysOnTop(a.ctx, true)
-		// macOS: nổi cả trên app toàn màn hình (Space riêng); overlay nhận bàn phím, thanh mini không giành focus
-		winfloat.Set(true, mode == ModeOverlay)
+		// Chỉ overlay (chọn vùng / xem trước) phủ trên mọi app, kể cả app toàn màn hình (Space riêng ở macOS);
+		// thanh mini là cửa sổ thường như app khác – không đè lên app nào.
+		if mode == ModeOverlay {
+			runtime.WindowSetAlwaysOnTop(a.ctx, true)
+			winfloat.Set(true, true)
+		} else {
+			runtime.WindowSetAlwaysOnTop(a.ctx, false)
+			winfloat.Minibar()
+		}
 		if mode == ModeOverlay && a.ovDisp >= 0 && a.moveToDisplay(a.ovDisp) {
 			if sw, sh, err = a.currentScreenSize(); err != nil {
 				return err
@@ -88,6 +95,20 @@ func (a *App) SetWindowMode(mode string) error {
 		a.background = false // người dùng mở màn chính – thôi chế độ nền
 	}
 	runtime.WindowShow(a.ctx) // app mở nền (StartHidden) hiện lần đầu ở đây – thường là thanh mini khi AI chạy
+	return nil
+}
+
+// FocusWindow đưa cửa sổ id (list_windows) lên trước cho overlay – macOS: app toàn màn hình nằm ở Space riêng, kích
+// hoạt nó thì hệ thống chuyển sang Space đó và overlay (nổi trên mọi Space) phủ lên đúng app cần chọn vùng.
+func (a *App) FocusWindow(id uint64) error {
+	if err := (device.SystemWindows{}).Focus(id); err != nil {
+		return err
+	}
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	if a.mode == ModeOverlay {
+		time.AfterFunc(600*time.Millisecond, func() { winfloat.Set(true, true) }) // chờ hiệu ứng đổi Space rồi giành lại bàn phím
+	}
 	return nil
 }
 

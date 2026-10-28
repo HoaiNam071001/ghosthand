@@ -9,6 +9,8 @@ func FollowActiveSpace() {}
 
 func Set(on, focus bool) {}
 
+func Minibar() {}
+
 // CoverScreen – Windows: Wails đặt cửa sổ từ góc vùng làm việc, cỡ = cả màn → đã phủ màn (taskbar dưới);
 // lệch khi taskbar trên / trái thì overlay tự sửa gốc toạ độ (coordMap.ts).
 func CoverScreen() {}

@@ -11,6 +11,8 @@ import type { BranchChoices, BranchNode } from '../../flow/preview';
 import { BranchMenu } from './BranchMenu';
 import { barLayout, barPlacement, BarMode, BarSide } from '../../overlay/toolbarLayout';
 import { useViewport } from './hooks';
+import { AppPicker } from './AppPicker';
+import type { WindowChoice } from '../../overlay/windowChoices';
 
 export const TOOLS: { id: OverlayTool; label: string; soon?: string; icon: ReactNode }[] = [
   { id: 'point', label: 'Đặt điểm', icon: <StepIcon type="click" /> },
@@ -38,6 +40,7 @@ export type ToolbarProps = {
   // công cụ; fullRegion: nút đặt vùng = cả màn (null = đang là cả màn)
   tool: OverlayTool; setTool: (t: OverlayTool) => void; fullRegion: { label: string; onClick: () => void } | null;
   displays: main.DisplayInfo[]; onPickDisplay: (i: number) => void;
+  apps: WindowChoice[]; onOpenApps: () => void; onPickApp: (id: number) => void;
 };
 
 export function OverlayToolbar(p: ToolbarProps) {
@@ -50,6 +53,7 @@ export function OverlayToolbar(p: ToolbarProps) {
       className={`group/bar absolute flex items-center gap-1 rounded-xl border border-hud-line bg-hud p-1.5 text-hud-text shadow-[0_12px_32px_rgb(0_0_0/.4)] transition-[transform,opacity] duration-150 ${vertical ? 'flex-col items-stretch overflow-y-auto' : 'flex-wrap justify-center'} ${p.open ? '' : 'pointer-events-none opacity-0'}`}>
       {p.focusStep ? <FocusTools {...p} focusStep={p.focusStep} /> : p.preview ? <PreviewTools {...p} /> : <MainTools {...p} />}
       {p.displays.length > 1 && <><Sep /><DisplayPicker displays={p.displays} onPick={p.onPickDisplay} /></>}
+      <Sep /><AppPicker choices={p.apps} onOpen={p.onOpenApps} onPick={p.onPickApp} />
       <button onClick={p.onDone} title="Xong (Esc)" className={`${toolBtn} btn-primary font-bold`}>Xong <span className="font-mono text-[11px] font-normal opacity-70 group-data-[compact]/bar:hidden">Esc</span></button>
     </div>
   );

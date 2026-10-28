@@ -1,6 +1,7 @@
 // Hook nhỏ của overlay.
+import { appChoices, WindowChoice } from '../../overlay/windowChoices';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Displays, GetSettings, MousePos, SetOverlayDisplay } from '../../../wailsjs/go/main/App';
+import { Displays, FocusWindow, GetSettings, ListWindows, MousePos, SetOverlayDisplay } from '../../../wailsjs/go/main/App';
 import { main } from '../../../wailsjs/go/models';
 import { inWails } from '../../windowMode';
 import { applyCapture } from '../../imageSteps';
@@ -95,6 +96,14 @@ export function useDisplays() {
     load();
   };
   return { displays, current, pick };
+}
+
+// App đang mở để nhảy tới (macOS: app toàn màn hình ở Space riêng – overlay chỉ chọn được vùng trên Space đang hiện).
+export function useAppChoices() {
+  const [choices, setChoices] = useState<WindowChoice[]>([]);
+  const load = () => { if (inWails) ListWindows().then((ws) => setChoices(appChoices(ws))).catch(() => {}); };
+  const focus = (id: number) => { FocusWindow(id).catch(() => {}); };
+  return { choices, load, focus };
 }
 
 // px thật / CSS px theo cách robotgo tính toạ độ: Windows pixel thật, macOS point (= CSS px dù màn Retina).

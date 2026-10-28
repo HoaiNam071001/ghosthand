@@ -1,6 +1,6 @@
 //go:build darwin
 
-// Package winfloat: cho thanh mini / overlay nổi lên cả trên app đang toàn màn hình (macOS: mỗi app toàn màn hình là
+// Package winfloat: cho overlay (chọn vùng / xem trước) nổi lên cả trên app đang toàn màn hình (macOS: mỗi app toàn màn hình là
 // một Space riêng – cửa sổ always-on-top thường chỉ ở Space nơi nó mở).
 //
 // Đo bằng cửa sổ thử (2026-10-18, bước 33 – lỗi người dùng báo): cần cả cờ CanJoinAllSpaces + FullScreenAuxiliary
@@ -58,6 +58,17 @@ static void set_floating(int on, int focus) {
 		}
 	});
 }
+// Thanh mini: cửa sổ thường như app khác – không nổi trên mọi Space / app toàn màn hình, không giành focus của app
+// đang được điều khiển. Về Regular (overlay đã chuyển sang Accessory) để thanh mini có icon Dock tìm lại được.
+static void set_minibar(void) {
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+		for (NSWindow *w in [NSApp windows]) {
+			set_normal_behavior(w);
+			[w setLevel:NSNormalWindowLevel];
+		}
+	});
+}
 // Phủ trọn khung màn đang chứa cửa sổ, kể cả thanh menu + Dock (Wails chỉ đặt vị trí từ dưới thanh menu). Cửa sổ
 // frameless không bị AppKit ép vào vùng hiển thị; mức NSStatusWindowLevel (set_floating) cao hơn thanh menu.
 // Chạy sau SetSize / SetPosition của Wails (cùng hàng đợi luồng chính) nên lấy màn theo tâm cửa sổ Wails vừa đặt.
@@ -96,6 +107,9 @@ func Set(on, focus bool) {
 	}
 	C.set_floating(b(on), b(focus))
 }
+
+// Minibar đặt cửa sổ về dạng thường cho thanh mini (không nổi, không giành focus) – gọi sau WindowSetAlwaysOnTop(false).
+func Minibar() { C.set_minibar() }
 
 // CoverScreen cho cửa sổ (overlay) phủ trọn màn đang chứa nó – gọi sau khi Wails đã dời / đổi cỡ cửa sổ.
 func CoverScreen() { C.cover_screen() }
