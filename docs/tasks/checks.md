@@ -484,3 +484,4 @@ Người dùng chốt 2026-10-18: việc qua Chrome của app làm sau cùng –
 - [ ] AI chạy `run_script shots: each`: node mở popup có `changes.added`; node lỗi sau đó có `error.detail.changes`
 - [ ] (fix focus click, macOS) Mở Chrome thường, để cửa sổ khác (terminal) ở trước, AI chụp màn hình rồi `run_step` click vào nút trên trang → cú click đầu ăn ngay (không phải click hai lần); chạy trong app (F8) cũng vậy
 - [ ] (53) Cài đặt → AI (MCP): cho AI chạy vài lệnh (đọc, chạy kịch bản có `{{secret.x}}`) → mục *Lệnh AI gần đây* hiện giờ, tool, client, thời lượng; bấm một dòng thấy tham số, mật khẩu / token hiện `••••`; Claude Desktop / ChatGPT thấy tool đọc không hỏi quyền, tool chạy thì hỏi (tuỳ client)
+- [ ] (53 D) Đi tới URL một trang tải rất chậm với *Thử lại* bật: lần thử lại không tải lại trang từ đầu (trang đang tải tiếp tục)

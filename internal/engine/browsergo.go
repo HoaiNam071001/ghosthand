@@ -27,10 +27,13 @@ func (e *Engine) browserGo(ctx context.Context, s model.Step) (map[string]any, e
 	if err != nil {
 		return nil, err
 	}
-	if err := e.tabs.Go(ctx, t, url); err != nil {
+	old, saw := t.URL, false
+	if t.Loading && sameURL(t.URL, url) {
+		// Thử lại sau timeout: trang đích đang tải dở thì chỉ chờ tiếp – điều hướng lại làm trang chậm tải lại từ đầu
+		saw = true
+	} else if err := e.tabs.Go(ctx, t, url); err != nil {
 		return nil, err
 	}
-	old, saw := t.URL, false
 	err = e.pollUntil(ctx, s, "tab", func() (bool, error) {
 		tabs, err := e.tabs.Tabs(ctx, t.Browser)
 		if err != nil {
@@ -53,4 +56,9 @@ func (e *Engine) browserGo(ctx context.Context, s model.Step) (map[string]any, e
 	out := tabOutput(t)
 	out["ms"] = int(time.Since(start).Milliseconds())
 	return out, nil
+}
+
+// sameURL – trình duyệt hay thêm / bớt "/" cuối khi chuẩn hoá URL.
+func sameURL(a, b string) bool {
+	return strings.TrimRight(a, "/") == strings.TrimRight(b, "/")
 }

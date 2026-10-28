@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	"ghosthand/internal/browser/browsertest"
 	"ghosthand/internal/model"
 	"ghosthand/internal/model/modeltest"
 )
@@ -50,5 +51,25 @@ func TestBrowserGoErrors(t *testing.T) {
 	res, _ = e.execNode(t.Context(), goStep("Notepad", nil), 1)
 	if res.Error == nil || res.Error.Code != model.ErrInvalidInput {
 		t.Errorf("không phải URL: %+v", res.Error)
+	}
+}
+
+// Thử lại khi tab đã ở URL đích và đang tải dở: chỉ chờ tiếp, không Go lại (trang chậm không bị tải từ đầu).
+func TestBrowserGoRetryKeepsLoadingPage(t *testing.T) {
+	e, f := tabEngine()
+	f.LoadPolls = 1 << 20
+	e.execNode(t.Context(), goStep("example.com", func(s *model.Step) { s.TimeoutMs = 300 }), 1)
+	polls := 0
+	f.OnList = func(f *browsertest.Fake) {
+		if polls++; polls == 3 {
+			f.SetLoading(false)
+		}
+	}
+	res, _ := e.execNode(t.Context(), goStep("example.com", nil), 1)
+	if res.Status != model.StatusSuccess {
+		t.Fatalf("%s %+v", res.Status, res.Error)
+	}
+	if !reflect.DeepEqual(f.Calls, []string{"go https://example.com 2"}) {
+		t.Errorf("gọi %q – lần thử lại không được Go lại", f.Calls)
 	}
 }

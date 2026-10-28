@@ -166,3 +166,11 @@ func normLog(o model.NormalizeOpts) string {
 	}
 	return " [" + strings.Join(p, " ") + "]"
 }
+
+// SetLoading đặt cờ Loading của mọi tab (test mô phỏng trang tải xong giữa chừng); gọi được từ OnList.
+func (f *Fake) SetLoading(v bool) {
+	for i := range f.List {
+		f.List[i].Loading = v
+	}
+	f.loadLeft = 0
+}
