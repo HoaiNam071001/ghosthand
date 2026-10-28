@@ -25,8 +25,10 @@ type Deps struct {
 	// Corners – dừng khẩn khi chuột chạm góc màn hình (chạy tới khi ctx huỷ).
 	Corners func(ctx context.Context, in *device.TrackingInput, onHit func())
 	// Touch – lượt AI: người dùng đụng chuột (chuột tới chỗ engine không đưa tới) → onTouch (chạy tới khi ctx huỷ).
-	Touch   func(ctx context.Context, in *device.TrackingInput, paused func() bool, onTouch func())
-	SaveRun func(rec model.RunRecord, path string, shots map[string]image.Image) error
+	Touch func(ctx context.Context, in *device.TrackingInput, paused func() bool, onTouch func())
+	// SelfGuard – lượt AI: bọc Input để không bấm / gõ vào cửa sổ của chính app (hộp hỏi quyền, Cài đặt).
+	SelfGuard func(in device.Input) device.Input
+	SaveRun   func(rec model.RunRecord, path string, shots map[string]image.Image) error
 	// ShotsDir – thư mục ảnh trong Cài đặt (node Chụp màn hình để trống saveDir), đọc lúc bắt đầu mỗi phiên.
 	ShotsDir func() string
 	// KeepAwake – giữ máy thức trong lúc chạy (Script.KeepAwake); nil = thật (macOS caffeinate, Windows SetThreadExecutionState).
@@ -69,6 +71,11 @@ func (d Deps) withDefaults() Deps {
 	if d.Touch == nil {
 		d.Touch = func(ctx context.Context, in *device.TrackingInput, paused func() bool, onTouch func()) {
 			device.WatchTouch(ctx, device.Location, in, paused, onTouch)
+		}
+	}
+	if d.SelfGuard == nil {
+		d.SelfGuard = func(in device.Input) device.Input {
+			return &device.SelfGuardInput{Input: in, Own: device.OwnWindowAt, OwnFront: device.OwnFront}
 		}
 	}
 	if d.KeepAwake == nil {

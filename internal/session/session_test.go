@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"image"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -49,6 +50,7 @@ func testManager(t *testing.T) (*Manager, *events, *[]model.RunRecord) {
 		Browser:     func(func(x, y int) error) (web.Browser, func(), error) { return nil, func() {}, nil },
 		Corners:     func(context.Context, *device.TrackingInput, func()) {},
 		Touch:       func(context.Context, *device.TrackingInput, func() bool, func()) {},
+		SelfGuard:   func(in device.Input) device.Input { return in },
 		SaveRun: func(rec model.RunRecord, _ string, _ map[string]image.Image) error {
 			mu.Lock()
 			saved = append(saved, rec)
@@ -186,4 +188,39 @@ func mustStart(t *testing.T, m *Manager, sc model.Script, o Options) string {
 		t.Fatal(err)
 	}
 	return id
+}
+
+// Lượt AI không bấm được vào cửa sổ app (hộp hỏi quyền, Cài đặt) – lỗi permission, chưa bấm; lượt người dùng vẫn bấm.
+func TestAIRunCannotClickOwnWindow(t *testing.T) {
+	m, _, saved := testManager(t)
+	fake := &devicetest.FakeInput{}
+	m.deps.Input = func() device.Input { return fake }
+	m.deps.SelfGuard = func(in device.Input) device.Input {
+		return &device.SelfGuardInput{Input: in, Own: func(int, int) (bool, error) { return true, nil },
+			OwnFront: func() (bool, error) { return true, nil }}
+	}
+	sc := model.NewScript()
+	s, err := model.NewStep(model.StepClick)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s.ID, s.Ref, s.Points = "s1", "n1", []model.Point{{X: 10, Y: 10}}
+	sc.Steps, sc.Start, sc.Loops = []model.Step{s}, "s1", 1
+
+	if st, _ := m.Wait(context.Background(), mustStart(t, m, sc, Options{Source: SourceAI})); st.State != StateFail {
+		t.Fatalf("lượt AI phải lỗi: %+v", st)
+	}
+	res := (*saved)[0].Results
+	if len(res) == 0 || res[0].Error == nil || res[0].Error.Code != model.ErrPermission {
+		t.Fatalf("muốn lỗi permission: %+v", res)
+	}
+	for _, l := range fake.Lines() {
+		if strings.HasPrefix(l, "click") {
+			t.Fatalf("lượt AI đã bấm: %q", fake.Lines())
+		}
+	}
+
+	if st, _ := m.Wait(context.Background(), mustStart(t, m, sc, Options{Source: SourceUser})); st.State != StateSuccess {
+		t.Fatalf("lượt người dùng không bị chặn: %+v", st)
+	}
 }

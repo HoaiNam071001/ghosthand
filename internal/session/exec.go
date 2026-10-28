@@ -31,7 +31,11 @@ type FailedStep struct {
 // exec chạy phiên r: đếm ngược, chạy engine, ghi lịch sử, emit event; luôn đóng r.done.
 func (m *Manager) exec(ctx context.Context, r *run, canDanger bool) {
 	st := r.status
-	in := &device.TrackingInput{Input: m.deps.Input()}
+	base := m.deps.Input()
+	if st.Source == SourceAI {
+		base = m.deps.SelfGuard(base)
+	}
+	in := &device.TrackingInput{Input: base}
 	rec := model.RunRecord{RunSummary: model.RunSummary{ID: st.RunID, Script: r.sc.Name, Source: st.Source}, Inputs: r.values, Results: []model.StepResult{}}
 	types := map[string]string{}
 	for _, s := range r.sc.Steps {

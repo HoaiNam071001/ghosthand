@@ -20,3 +20,6 @@ func (SystemWindows) WorkArea(model.Rect) model.Rect     { return MainScreen() }
 func (SystemApps) List() ([]model.AppInfo, error)        { return nil, errNoWindows }
 func (SystemApps) Quit(int) error                        { return errNoWindows }
 func (SystemApps) ForceQuit(int) error                   { return errNoWindows }
+
+func OwnWindowAt(int, int) (bool, error) { return false, errNoWindows }
+func OwnFront() (bool, error)            { return false, errNoWindows }

@@ -23,6 +23,11 @@ Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi t
 ## Thêm – nút Xoá nhóm trên khung nhóm node
 - [ ] Khung nhóm (mở và thu gọn) có nút thùng rác cạnh nút Bỏ nhóm → bấm: khung + mọi node trong đó + cạnh nối biến mất; Ctrl+Z một lần khôi phục đủ
 
+## Sửa – lượt AI không bấm / gõ được vào cửa sổ Ghosthand · [31](phase3/31-mcp-ai.md)
+- [ ] macOS: mức AI *Hỏi trước khi chạy*; AI chạy kịch bản click vào giữa cửa sổ app (hoặc vào thanh mini) → node lỗi `permission` "lượt chạy của AI không được bấm / gõ vào cửa sổ Ghosthand", không có cú bấm; cùng kịch bản người dùng bấm Chạy → bấm bình thường
+- [ ] macOS: kịch bản AI gõ chữ khi Ghosthand đang ở trước → lỗi, không gõ; focus app khác (node Mở / Cửa sổ) rồi gõ → được
+- [ ] Windows: lặp lại 2 mục trên (`WindowFromPoint` / `GetForegroundWindow` – px thật, màn phụ có DPI khác)
+
 ## Sửa – đặt nhiều điểm trên overlay không tự nối thành chuỗi
 - [ ] Flow có sẵn vài node → nút Chọn vùng (hoặc Ctrl+K khi không chọn node) → công cụ Điểm, click 3 chỗ → về flow: 3 node click mới nối tiếp nhau theo thứ tự click, nối sau node cuối của flow; flow rỗng thì node đầu thành bắt đầu
 
