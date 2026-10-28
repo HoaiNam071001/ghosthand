@@ -13,10 +13,11 @@ import (
 const (
 	KindOpenAI    = "openai"    // tương thích OpenAI (/chat/completions): OpenAI, Ollama, LM Studio, OpenRouter… – "" cũng là loại này
 	KindAnthropic = "anthropic" // Messages API của Anthropic
+	KindGemini    = "gemini"    // generateContent của Google Gemini
 )
 
 // Kinds – giá trị hợp lệ của node ("" = openai).
-var Kinds = []string{"", KindOpenAI, KindAnthropic}
+var Kinds = []string{"", KindOpenAI, KindAnthropic, KindGemini}
 
 // Mặc định khi node để trống.
 const (
@@ -24,6 +25,8 @@ const (
 	DefaultOpenAIModel  = "gpt-4o-mini"
 	DefaultAnthropicURL = "https://api.anthropic.com"
 	DefaultAnthropicMdl = "claude-sonnet-5-5"
+	DefaultGeminiURL    = "https://generativelanguage.googleapis.com"
+	DefaultGeminiModel  = "gemini-2.0-flash"
 	maxTokens           = 1024
 	readMax             = 4 << 20
 )
@@ -84,8 +87,18 @@ func (c Config) Resolve() (Config, error) {
 		if c.Key == "" {
 			return c, &Error{Msg: "chưa có key Anthropic – ghi {{secret.<tên>}} vào ô Key (Cài đặt → Bí mật)"}
 		}
+	case KindGemini:
+		if c.BaseURL == "" {
+			c.BaseURL = DefaultGeminiURL
+		}
+		if c.Model == "" {
+			c.Model = DefaultGeminiModel
+		}
+		if c.Key == "" {
+			return c, &Error{Msg: "chưa có key Gemini – ghi {{secret.<tên>}} vào ô Key (Cài đặt → Bí mật)"}
+		}
 	default:
-		return c, &Error{Msg: fmt.Sprintf("nhà cung cấp AI không hợp lệ: %q (openai | anthropic)", c.Kind)}
+		return c, &Error{Msg: fmt.Sprintf("nhà cung cấp AI không hợp lệ: %q (openai | anthropic | gemini)", c.Kind)}
 	}
 	if !strings.HasPrefix(c.BaseURL, "http://") && !strings.HasPrefix(c.BaseURL, "https://") {
 		return c, &Error{Msg: fmt.Sprintf("địa chỉ AI “%s” sai dạng – cần http:// hoặc https://", c.BaseURL)}
@@ -102,8 +115,11 @@ func New(c Config, hc *http.Client) (Provider, error) {
 	if hc == nil {
 		hc = http.DefaultClient
 	}
-	if c.Kind == KindAnthropic {
+	switch c.Kind {
+	case KindAnthropic:
 		return &anthropic{c: c, hc: hc}, nil
+	case KindGemini:
+		return &gemini{c: c, hc: hc}, nil
 	}
 	return &openai{c: c, hc: hc}, nil
 }

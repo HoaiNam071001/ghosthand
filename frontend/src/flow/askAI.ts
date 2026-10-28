@@ -1,13 +1,14 @@
 // Node Hỏi AI (bước 31d) – lựa chọn và dòng chi tiết thẻ. Chạy ở internal/engine/askai.go.
 import type { Step } from '../types';
 
-export type AIKind = '' | 'openai' | 'anthropic';
+export type AIKind = '' | 'openai' | 'anthropic' | 'gemini';
 export type AIImage = '' | 'screen' | 'file';
 export type AIFormat = '' | 'json';
 
 export const AI_KINDS: { id: AIKind; label: string }[] = [
   { id: '', label: 'OpenAI / tương thích OpenAI' },
   { id: 'anthropic', label: 'Anthropic' },
+  { id: 'gemini', label: 'Google Gemini' },
 ];
 export const AI_IMAGES: { id: AIImage; label: string }[] = [
   { id: '', label: 'Chỉ chữ' },
@@ -31,7 +32,7 @@ export function isLocalAI(url?: string): boolean {
 export function fmtAskAI(s: Partial<Pick<Step, 'aiKind' | 'aiBaseUrl' | 'aiModel' | 'aiImage' | 'aiFormat' | 'prompt'>>): string {
   const prompt = s.prompt?.trim();
   if (!prompt) return '(chưa nhập câu hỏi)';
-  const who = isLocalAI(s.aiBaseUrl) ? 'AI trên máy' : s.aiKind === 'anthropic' ? 'Anthropic' : 'OpenAI';
+  const who = isLocalAI(s.aiBaseUrl) ? 'AI trên máy' : s.aiKind === 'anthropic' ? 'Anthropic' : s.aiKind === 'gemini' ? 'Gemini' : 'OpenAI';
   const parts = [s.aiModel?.trim() || who, s.aiFormat === 'json' ? 'JSON' : '', s.aiImage === 'screen' ? 'kèm ảnh màn hình' : s.aiImage === 'file' ? 'kèm file ảnh' : '', prompt];
   return parts.filter(Boolean).join(' · ');
 }

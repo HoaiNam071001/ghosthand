@@ -200,7 +200,7 @@ func checkStep(s *model.Step) error {
 	case model.StepNotify:
 	case model.StepAskAI:
 		if !slices.Contains(ai.Kinds, s.AIKind) {
-			return fmt.Errorf("nhà cung cấp AI không hợp lệ: %q (trống = openai | anthropic)", s.AIKind)
+			return fmt.Errorf("nhà cung cấp AI không hợp lệ: %q (trống = openai | anthropic | gemini)", s.AIKind)
 		}
 		if !slices.Contains(model.AIImages, s.AIImage) {
 			return fmt.Errorf("ảnh gửi AI không hợp lệ: %q (trống | screen | file)", s.AIImage)

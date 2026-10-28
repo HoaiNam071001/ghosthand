@@ -70,34 +70,34 @@ type Engine struct {
 	in          device.Input
 	sc          model.Script
 	gate        pauseGate
-	screen      model.Rect                     // khung màn hình khi Region = nil (runner đặt = mainScreen); zero = gốc (0, 0)
-	displays    []model.Rect                   // khung các màn (tìm ảnh "cả màn", kiểm tra vùng chụp); nil = không kiểm tra
-	onProgress  func(Progress)                 // có thể nil
-	intN        func(n int) int                // số ngẫu nhiên [0, n) – test thay bằng hàm cố định
-	open        func(target, app string) error // bước Mở – test thay bằng hàm ghi lại
-	scr         device.Screen                  // chụp màn hình / đọc màu (imagestep.go) – test thay bằng màn hình giả
-	ocr         device.TextReader              // đọc chữ (tìm theo chữ, ocr.go) – test thay bằng bộ đọc giả
-	prevTree    []element.Node                 // cây phần tử sau node trước (changes.go, chỉ khi ShotEach)
-	elems       device.ElementReader           // phần tử màn hình qua Accessibility (elementstep.go) – test thay bằng cây giả
-	clip        device.Clipboard               // clipboard (chụp màn hình chép ảnh – shot.go) – test thay bằng bản giả
-	httpc       *http.Client                   // node HTTP (http.go) – thời gian chờ theo TimeoutMs của node
-	trash       device.Trash                   // node Tệp / thư mục xoá vào Thùng rác (file.go) – test thay bằng bản giả
-	audio       device.Audio                   // node Hệ thống – âm lượng (system.go) – test thay bằng bản giả
-	wins        device.Windows                 // node Cửa sổ (window.go) – test thay bằng bản giả
-	apps        device.Apps                    // node Ứng dụng (app.go) – test thay bằng bản giả
-	mask        *masker                        // che bí mật ở kết quả rời engine (mask.go)
-	powers      power.Backend                  // node Nguồn (power.go) – test thay bản giả
-	disp        display.Backend                // node Màn hình / âm thanh (display.go) – test thay bản giả
+	screen      model.Rect                           // khung màn hình khi Region = nil (runner đặt = mainScreen); zero = gốc (0, 0)
+	displays    []model.Rect                         // khung các màn (tìm ảnh "cả màn", kiểm tra vùng chụp); nil = không kiểm tra
+	onProgress  func(Progress)                       // có thể nil
+	intN        func(n int) int                      // số ngẫu nhiên [0, n) – test thay bằng hàm cố định
+	open        func(target, app string) error       // bước Mở – test thay bằng hàm ghi lại
+	scr         device.Screen                        // chụp màn hình / đọc màu (imagestep.go) – test thay bằng màn hình giả
+	ocr         device.TextReader                    // đọc chữ (tìm theo chữ, ocr.go) – test thay bằng bộ đọc giả
+	prevTree    []element.Node                       // cây phần tử sau node trước (changes.go, chỉ khi ShotEach)
+	elems       device.ElementReader                 // phần tử màn hình qua Accessibility (elementstep.go) – test thay bằng cây giả
+	clip        device.Clipboard                     // clipboard (chụp màn hình chép ảnh – shot.go) – test thay bằng bản giả
+	httpc       *http.Client                         // node HTTP (http.go) – thời gian chờ theo TimeoutMs của node
+	trash       device.Trash                         // node Tệp / thư mục xoá vào Thùng rác (file.go) – test thay bằng bản giả
+	audio       device.Audio                         // node Hệ thống – âm lượng (system.go) – test thay bằng bản giả
+	wins        device.Windows                       // node Cửa sổ (window.go) – test thay bằng bản giả
+	apps        device.Apps                          // node Ứng dụng (app.go) – test thay bằng bản giả
+	mask        *masker                              // che bí mật ở kết quả rời engine (mask.go)
+	powers      power.Backend                        // node Nguồn (power.go) – test thay bản giả
+	disp        display.Backend                      // node Màn hình / âm thanh (display.go) – test thay bản giả
 	aiNew       func(ai.Config) (ai.Provider, error) // node Hỏi AI (askai.go) – test thay bản giả
-	toasts      toast.Backend                  // node Thông báo hệ thống (toast.go) – test thay bản giả
-	shortcuts   shortcuts.Backend              // node Shortcuts của hệ điều hành (osshortcut.go) – test thay bản giả
-	inputs      inputsource.Backend            // node Bộ gõ (inputsource.go) – test thay bản giả
-	procs       procinfo.Backend               // node Tiến trình (process.go) – test thay bản giả
-	sysinfo     sysinfo.Backend                // node Thông tin máy (sysinfo.go) – test thay bản giả
-	sh          shell.Runner                   // node Chạy lệnh (shell.go) – test thay bằng bản giả
-	tabs        browser.Backend                // node Tab trình duyệt (browsertab.go) – test thay bằng bản giả
-	allowDanger bool                           // người dùng đã xác nhận thao tác nguy hiểm của kịch bản (Options.AllowDanger)
-	browser     web.Browser                    // node web (webstep.go) – nil = không điều khiển trình duyệt
+	toasts      toast.Backend                        // node Thông báo hệ thống (toast.go) – test thay bản giả
+	shortcuts   shortcuts.Backend                    // node Shortcuts của hệ điều hành (osshortcut.go) – test thay bản giả
+	inputs      inputsource.Backend                  // node Bộ gõ (inputsource.go) – test thay bản giả
+	procs       procinfo.Backend                     // node Tiến trình (process.go) – test thay bản giả
+	sysinfo     sysinfo.Backend                      // node Thông tin máy (sysinfo.go) – test thay bản giả
+	sh          shell.Runner                         // node Chạy lệnh (shell.go) – test thay bằng bản giả
+	tabs        browser.Backend                      // node Tab trình duyệt (browsertab.go) – test thay bằng bản giả
+	allowDanger bool                                 // người dùng đã xác nhận thao tác nguy hiểm của kịch bản (Options.AllowDanger)
+	browser     web.Browser                          // node web (webstep.go) – nil = không điều khiển trình duyệt
 
 	onNode   func(model.StepResult)       // mỗi node chạy xong (event engine:node) – có thể nil
 	shots    map[string]image.Image       // ảnh màn hình lúc node thất bại theo tên file (nil = không chụp – runlog.go)

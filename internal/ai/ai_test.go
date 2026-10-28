@@ -25,7 +25,7 @@ func TestResolveDefaultsAndKeyRules(t *testing.T) {
 	if err != nil || c.Model != DefaultAnthropicMdl {
 		t.Fatalf("mặc định Anthropic: %+v %v", c, err)
 	}
-	if _, err := (Config{Kind: "gemini", Key: "k"}).Resolve(); err == nil {
+	if _, err := (Config{Kind: "foo", Key: "k"}).Resolve(); err == nil {
 		t.Fatal("loại lạ phải lỗi")
 	}
 	if _, err := (Config{BaseURL: "ftp://x", Key: "k"}).Resolve(); err == nil {
@@ -76,6 +76,25 @@ func TestAnthropicAsk(t *testing.T) {
 	}
 	if hdr.Get("x-api-key") != "sk-ant" || hdr.Get("anthropic-version") == "" || !strings.Contains(body, "JSON hợp lệ") {
 		t.Fatalf("request sai: %v %s", hdr, body)
+	}
+}
+
+func TestGeminiAsk(t *testing.T) {
+	var path, key, body string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		path, key = r.URL.String(), r.Header.Get("x-goog-api-key")
+		b, _ := io.ReadAll(r.Body)
+		body = string(b)
+		_, _ = w.Write([]byte(`{"candidates":[{"content":{"parts":[{"text":"ok"}]}}]}`))
+	}))
+	defer srv.Close()
+	p, _ := New(Config{Kind: KindGemini, BaseURL: srv.URL, Model: "gemini-x", Key: "gk"}, srv.Client())
+	out, err := p.Ask(context.Background(), Request{Prompt: "q", Images: [][]byte{{1}}, JSON: true})
+	if err != nil || out != "ok" {
+		t.Fatalf("out=%q err=%v", out, err)
+	}
+	if path != "/v1beta/models/gemini-x:generateContent" || key != "gk" || !strings.Contains(body, "inline_data") || !strings.Contains(body, "application/json") {
+		t.Fatalf("request sai: %s key=%s %s", path, key, body)
 	}
 }
 

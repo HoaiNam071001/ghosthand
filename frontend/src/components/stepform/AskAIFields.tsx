@@ -29,7 +29,7 @@ export default function AskAIFields({ step: s }: { step: Step }) {
         <VarTextInput {...varProps} rows={1} compact value={s.aiBaseUrl ?? ''} onChange={(v) => set({ aiBaseUrl: v || undefined })} placeholder={LOCAL_AI_URL} />
       </Field>
       <Field label="Model" wide group help="Trống = model mặc định của hãng">
-        <VarTextInput {...varProps} rows={1} compact value={s.aiModel ?? ''} onChange={(v) => set({ aiModel: v || undefined })} placeholder={s.aiKind === 'anthropic' ? 'claude-sonnet-5-5' : 'gpt-4o-mini'} />
+        <VarTextInput {...varProps} rows={1} compact value={s.aiModel ?? ''} onChange={(v) => set({ aiModel: v || undefined })} placeholder={s.aiKind === 'anthropic' ? 'claude-sonnet-5-5' : s.aiKind === 'gemini' ? 'gemini-2.0-flash' : 'gpt-4o-mini'} />
       </Field>
       <Field label="Key" wide group help={local ? 'AI chạy trên máy: không cần key' : 'Lưu key ở Cài đặt → Bí mật rồi ghi {{secret.<tên>}}'}>
         <VarTextInput {...varProps} rows={1} compact value={s.aiKey ?? ''} onChange={(v) => set({ aiKey: v || undefined })} placeholder="{{secret.openai_key}}" />
