@@ -483,3 +483,4 @@ Người dùng chốt 2026-10-18: việc qua Chrome của app làm sau cùng –
 - [ ] Inspector node Click/Chờ theo phần tử: *Chọn trên màn* một nút → hiện danh sách gợi ý (duy nhất / N chỗ, bền / dễ hỏng); bấm một dòng đổi ô *Cách tìm* + *Chỗ thứ*
 - [ ] AI chạy `run_script shots: each`: node mở popup có `changes.added`; node lỗi sau đó có `error.detail.changes`
 - [ ] (fix focus click, macOS) Mở Chrome thường, để cửa sổ khác (terminal) ở trước, AI chụp màn hình rồi `run_step` click vào nút trên trang → cú click đầu ăn ngay (không phải click hai lần); chạy trong app (F8) cũng vậy
+- [ ] (53) Cài đặt → AI (MCP): cho AI chạy vài lệnh (đọc, chạy kịch bản có `{{secret.x}}`) → mục *Lệnh AI gần đây* hiện giờ, tool, client, thời lượng; bấm một dòng thấy tham số, mật khẩu / token hiện `••••`; Claude Desktop / ChatGPT thấy tool đọc không hỏi quyền, tool chạy thì hỏi (tuỳ client)

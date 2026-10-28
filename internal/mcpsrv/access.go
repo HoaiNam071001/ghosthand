@@ -43,6 +43,9 @@ type access struct {
 
 // addTool đăng ký tool vào server và vào bảng tool của Cài đặt (một nơi duy nhất – tool mới tự có dòng).
 func addTool[In, Out any](s *Server, kind string, t *mcp.Tool, h mcp.ToolHandlerFor[In, Out]) {
+	if t.Annotations == nil {
+		t.Annotations = annotationsFor(kind, t.Name)
+	}
 	mcp.AddTool(s.mcp, t, h)
 	s.acc.tools = append(s.acc.tools, ToolInfo{Name: t.Name, Kind: kind, Desc: t.Description})
 }

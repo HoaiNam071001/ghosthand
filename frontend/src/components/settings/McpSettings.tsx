@@ -9,11 +9,9 @@ import { selectBox } from '../stepform/shared';
 import { Switch } from '../Switch';
 import AiRunSettings from './AiRunSettings';
 import NodePrefSettings from './NodePrefSettings';
+import McpCallLog from './McpCallLog';
 import McpTools from './McpTools';
 import { CopyButton, SettingCode } from './parts';
-
-const LOG_SHOWN = 5;
-const timeText = (at: string) => new Date(at).toLocaleTimeString('vi-VN', { hour12: false });
 
 export default function McpSettings({ mcp, onChange }: { mcp: store.MCPSettings; onChange: (patch: Partial<store.MCPSettings>) => void }) {
   const enabled = mcp.enabled;
@@ -76,17 +74,7 @@ export default function McpSettings({ mcp, onChange }: { mcp: store.MCPSettings;
               <SettingCode>{cfg.text}</SettingCode>
             </div>
           )}
-          {log.length > 0 && (
-            <div className="flex flex-col gap-0.5 text-xs text-muted">Lệnh AI gần đây
-              {log.slice(0, LOG_SHOWN).map((c, i) => (
-                <span key={i} title={c.error} className="flex gap-2 font-mono">
-                  <span>{timeText(c.at)}</span>
-                  <span className={c.ok ? 'text-ok' : 'text-danger-text'}>{c.ok ? '✓' : '✗'}</span>
-                  <span className="truncate text-ink">{c.tool}</span>
-                </span>
-              ))}
-            </div>
-          )}
+          <McpCallLog calls={log} />
         </>
       )}
       {msg && <span className="text-xs text-muted">{msg}</span>}

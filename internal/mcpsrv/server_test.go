@@ -88,6 +88,12 @@ func (f *fakeBackend) WriteScript(p string, sc model.Script, rev int) (int, erro
 
 func connect(t *testing.T) (*mcp.ClientSession, *fakeBackend) {
 	t.Helper()
+	cs, back, _ := connectServer(t)
+	return cs, back
+}
+
+func connectServer(t *testing.T) (*mcp.ClientSession, *fakeBackend, *Server) {
+	t.Helper()
 	back := &fakeBackend{dir: t.TempDir(), revs: store.NewRevisions()}
 	back.sess, back.in = fakeSession()
 	srv := New(back)
@@ -101,7 +107,7 @@ func connect(t *testing.T) (*mcp.ClientSession, *fakeBackend) {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { cs.Close() })
-	return cs, back
+	return cs, back, srv
 }
 
 // call gọi tool, trả JSON kết quả + cờ lỗi.

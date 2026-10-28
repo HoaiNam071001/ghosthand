@@ -220,6 +220,7 @@
         "Chọn **mức chạy** của AI: *Chỉ soạn*, *Hỏi trước khi chạy* hay *Tự chạy*.",
         "Chọn tool cho từng loại AI và **ưu tiên node** (vd ưu tiên phần tử hơn ảnh mẫu)."
       ] },
+      { "kind": "p", "text": "**Lệnh AI gần đây** (cùng trang Cài đặt) cho biết AI nào gọi gì, mất bao lâu; bấm một dòng để xem tham số – mật khẩu / token được che. Chữ AI đọc từ màn hình, web, file không được coi là lệnh." },
       { "kind": "warn", "text": "Kịch bản AI tạo có nhãn **AI** trong thư viện – xem kỹ trước khi chạy. Node Chạy lệnh / Nguồn luôn cần bạn đồng ý." }
     ]
   },

@@ -554,6 +554,9 @@ export namespace mcpsrv {
 	    // Go type: time
 	    at: any;
 	    tool: string;
+	    client?: string;
+	    ms: number;
+	    args?: Record<string, string>;
 	    ok: boolean;
 	    error?: string;
 	
@@ -565,6 +568,9 @@ export namespace mcpsrv {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.at = this.convertValues(source["at"], null);
 	        this.tool = source["tool"];
+	        this.client = source["client"];
+	        this.ms = source["ms"];
+	        this.args = source["args"];
 	        this.ok = source["ok"];
 	        this.error = source["error"];
 	    }
