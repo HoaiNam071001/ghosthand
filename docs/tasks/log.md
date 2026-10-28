@@ -289,3 +289,4 @@
 2026-10-28 fix: thanh mini thành cửa sổ thường, ảnh chụp có cả cửa sổ app, overlay thêm nút Ứng dụng (nhảy sang app/Space toàn màn hình) – chờ thử tay macOS
 2026-10-28 31d: node Hỏi AI `askAI` + `internal/ai` (OpenAI-tương thích + Anthropic), key qua `{{secret.*}}`, dự phòng `aiFallback`, ảnh màn hình / file, JSON; mẫu `hoi-ai` – chờ thử tay; chưa làm: tìm phần tử bằng AI, node Gọi tool MCP, mặc định nhà cung cấp trong Cài đặt
 - **2026-10-28** – Kế hoạch (người dùng yêu cầu): thêm bước 54 – đồng bộ kịch bản + ảnh mẫu + cài đặt + bí mật lên cloud (Google Drive, đăng nhập OAuth, backend MCP sau); xung đột luôn hỏi; chưa xếp thứ tự.
+- **2026-10-28** – Kế hoạch (người dùng yêu cầu): thêm bước 55 – MCP client (stdio / từ xa / thư viện gợi ý), node `mcpTool` + node tuỳ chỉnh dạng mẫu sinh form từ inputSchema, hỏi quyền theo server + tool; thay mục Gọi tool MCP của 31d.
