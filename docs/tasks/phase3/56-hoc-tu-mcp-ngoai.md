@@ -1,0 +1,27 @@
+# 56. Làm tốt app từ ý học được ở MCP / công cụ ngoài
+
+- [ ] **56. Học từ MCP ngoài** *(người dùng yêu cầu 2026-10-28: đưa các gợi ý trong [hoc-tu-mcp-ngoai.md](../../hoc-tu-mcp-ngoai.md) vào plan)* – mỗi mục ghi số ý trong note (*n.*) để đọc cách họ làm trước khi code. Ý về tầm nhìn / tìm phần tử bằng AI ở [31d](31-mcp-ai.md); ý 15 (lượt AI bấm vào chính app) đã sửa ở 31.
+  - **Thứ tự đề xuất:** đợt A (an toàn) trước, rồi B (web) → C (MCP gọn) → D (luồng). Mỗi mục làm được và kiểm tra được riêng.
+  - **Cần chốt khi làm A1:** quyền theo nội dung làm vòng *thử – sửa* của AI hỏi lại sau mỗi lần sửa ở mức *Hỏi trước khi chạy* (muốn khỏi hỏi thì chọn mức *Tự chạy*) – đề xuất chấp nhận, vì người dùng đã cho phép bản họ thấy chứ không phải mọi bản AI sửa sau.
+  - **Đợt A – an toàn**
+    - [ ] A1. Quyền *cho phép kịch bản này đến khi đóng app* (`mcprun.go` `aiGate.allowed`) gắn theo **hash nội dung** kịch bản thay vì đường dẫn – AI `update_script` rồi chạy thì hỏi lại (*18.*: duyệt gắn đúng thứ đã duyệt). Hộp hỏi ghi "kịch bản đã đổi từ lần cho phép trước"
+    - [ ] A2. Node `shell` gọi một file script (`sh x.sh`, `python y.py`, `node z.js`): dấu vân tay đồng ý gắn thêm hash nội dung file – file đổi sau khi đồng ý thì hỏi lại; không xác định được đúng một file thì giữ cách cũ (theo nội dung lệnh) (*18.*)
+    - [ ] A3. MCP chặn thử mãi: lần thứ 3 liên tiếp `run_script` / `run_step` lỗi giống hệt (node + mã lỗi + tham số) → kết quả kèm gợi ý đổi cách (`topic=debug`); engine băm ảnh trước / sau thao tác chuột → `error.detail.screenUnchanged` khi click không làm màn hình đổi (*17.*, *11.*)
+  - **Đợt B – web (Chrome của app)**
+    - [ ] B1. Hộp thoại JS (`alert` / `confirm` / `prompt` / `beforeunload`): nghe `Page.javascriptDialogOpening` – node web gặp hộp thì lỗi mã riêng kèm chữ trong hộp ngay (không chờ hết giờ); trường tuỳ chọn *Hộp thoại JS: báo lỗi | chấp nhận | bỏ* trên node web; output `dialogText` (*2.*)
+    - [ ] B2. Sau click / gõ / phím web: output `navigated` / `url` / `popup` (tab mới mở); chờ trang yên bằng `MutationObserver` (100 ms không đổi, trần 3 s) thay cho hỏi số phần tử mỗi 300 ms – dùng chung cho `pageload.go` (*1.*)
+    - [ ] B3. `read_web_outline` + `describe_screen elements=true` nhận `find` (chữ / regex) → chỉ các dòng khớp kèm đường vùng bao ngoài, rẻ hơn đọc cả cây (*4.*)
+    - [ ] B4. Chương *Hướng dẫn* trang web + `topic=debug`: trang cần đăng nhập → người dùng tự đăng nhập một lần trong Chrome của app, không cho node tự điền mật khẩu (dễ bị chặn bot / khoá tài khoản) (*21.*)
+    - Để sau (ghi lại): điền nhiều ô một lần (*5.*), lưu / nạp phiên đăng nhập (*6.* – nhạy cảm như bí mật, xem cùng [54](54-dong-bo-cloud.md))
+  - **Đợt C – MCP gọn (giữ `budget_test.go`)**
+    - [ ] C1. Phân trang `pageSize` / `pageIdx` (+ `totalPages`, `hasNextPage`) cho `list_scripts`, lịch sử chạy, output `findAll` nhiều kết quả (*8.*)
+    - [ ] C2. Output dài (`shell`, `http`, `pageText`, `readDocument`) trả qua `wait_run` / `run_step` cắt đầu + cuối kèm số dòng / ký tự bỏ; bản đủ vẫn trong lịch sử chạy (*19.*)
+    - [ ] C3. Cài đặt MCP *Gửi ảnh cho AI: có | không* (client không xem ảnh thì bỏ ảnh ở `screenshot` / ảnh lỗi) (*9.*); `screenshot` tuỳ chọn vẽ dấu vị trí chuột lên ảnh (*12.*)
+    - Để sau: nhóm tool bật theo nhu cầu khi danh sách tool phình (*7.*)
+  - **Đợt D – luồng**
+    - [ ] D1. Node **Hỏi người dùng** (`askUser`, skill `add-node-type`): câu hỏi + lựa chọn / ô nhập (nhận biến, kèm danh sách mục), hiện trên thanh mini + thông báo hệ thống; cổng `approve` / `deny` / `timeout`, câu trả lời vào output; MCP `wait_run` trả `status: needs_input` + câu hỏi để AI báo người dùng; hẹn giờ / CLI không có người → `timeout` (*16.*). Cần chốt khi làm: trả lời từ điện thoại (Telegram) để sau hay làm cùng
+    - [ ] D2. *Xuất gói lỗi* ở Lịch sử chạy: kịch bản + kết quả từng node + ảnh lúc lỗi + phiên bản app / hệ điều hành, che `{{secret.*}}` và giá trị bí mật → một file .zip để gửi báo lỗi (*22.*)
+    - [ ] D3. Mẫu kịch bản gửi tin qua node HTTP: Telegram Bot API và **Zalo Bot API** chính thức (token qua `{{secret.*}}`) – không làm tài khoản Zalo cá nhân (*20.*)
+  - Chuẩn bị cho MCP: A3, B1–B3, C1–C3, D1 đổi kết quả tool / primer → sửa `get_step_types` / `topic=debug` / primer cho khớp, giữ `budget_test.go`; trường mới của node → `script.Compact` + `Shrink`.
+  - Kiểm tra tay: A1 AI sửa kịch bản đã cho phép rồi chạy → hỏi lại; B1 trang có `alert` → node web lỗi ngay kèm chữ; D1 kịch bản có node Hỏi người dùng chạy từ AI → hộp hỏi trên thanh mini, chọn Từ chối → đi cổng `deny`.
+  - Xong khi: đợt A + B1 + D1 xong code; còn lại làm theo nhu cầu.
