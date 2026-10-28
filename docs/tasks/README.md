@@ -30,6 +30,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | ✅ | Lưu / mở kịch bản | File `.json`, mở gần đây, nháp tự lưu, hỏi lưu khi đóng | [21](phase3/21-luu-tai.md) |
 | ✅ | Nơi lưu + xoá lịch sử | Cài đặt chọn thư mục kịch bản (tay / AI) + ảnh chụp, Documents / Pictures đúng cả khi Windows dùng OneDrive; xoá từng mục / tất cả lịch sử chạy và Mở gần đây | [41](phase3/41-noi-luu-lich-su.md) |
 | ⬜ | Ghi macro | Ghi click / kéo / gõ phím thành node, F9 dừng | [24](phase3/24-ghi-macro.md) |
+| ⬜ | Đồng bộ cloud | Đăng nhập Google, đồng bộ kịch bản + ảnh mẫu + cài đặt + bí mật (mã hoá phía máy) lên Drive; xung đột thì hỏi; backend MCP | [54](phase3/54-dong-bo-cloud.md) |
 
 ### Node hành động
 
@@ -112,7 +113,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 > Bảng tự sinh – sau khi tick chạy `python3 scripts/tasks-index.py`. Bấm tên bước để mở file chi tiết.
 
 <!-- index:start -->
-**48 / 63 bước xong code** · 🧪 **[278 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
+**48 / 64 bước xong code** · 🧪 **[278 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
 
 ### Phase 3 – Design v2 & tự động hoá (theo thứ tự làm)
 
@@ -152,6 +153,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 chờ kiểm tra tay | [51. Hướng dẫn sử dụng](phase3/51-huong-dan.md) | 16 / 16 | [6 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [52. MCP ít token](phase3/52-mcp-it-token.md) | 6 / 6 | [2 việc](checks.md) |
 | ✅ xong | [53. MCP: annotations, nhật ký lệnh AI, chống prompt injection](phase3/53-mcp-hoc-tu-openclaw.md) | 6 / 6 |  |
+| ⬜ chưa làm | [54. Đồng bộ cloud](phase3/54-dong-bo-cloud.md) | 0 / 11 |  |
 | 🧪 chờ kiểm tra tay | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | 12 / 12 | [16 việc](checks.md) |
 | 🟡 đang làm | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | 38 / 42 | [29 việc](checks.md) |
 | 🟡 đang làm | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | 11 / 12 |  |
@@ -241,6 +243,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 16a1h | [51. Hướng dẫn sử dụng](phase3/51-huong-dan.md) | Người dùng yêu cầu (2026-10-25): modal hướng dẫn cho người + AI, 3 đợt H1 → H3, giữ đồng bộ bằng test + check-docs |
 | 16a1i | [52. MCP ít token](phase3/52-mcp-it-token.md) | Người dùng yêu cầu (2026-10-27): AI nối MCP hiểu nhanh, tạo flow chuẩn, ít token; làm ngay (chỉ Go + tài liệu, không đổi định dạng file) |
 | 16a1j | [53. MCP: annotations, nhật ký lệnh AI, chống injection](phase3/53-mcp-hoc-tu-openclaw.md) | Người dùng yêu cầu (2026-10-27, sau khi đọc repo openclaw-direct-tools-for-chatgpt): việc nhỏ chỉ đụng `mcpsrv` + Cài đặt MCP, làm ngay sau 52; mục D (timeout node Đi tới URL) chờ người dùng chốt |
+| 16a1k | [54. Đồng bộ cloud](phase3/54-dong-bo-cloud.md) | Người dùng yêu cầu (2026-10-28): đăng nhập Google rồi đồng bộ kịch bản + ảnh mẫu + cài đặt + bí mật lên Drive (có đường MCP); chưa xếp thứ tự – chờ người dùng chọn lúc làm |
 | 16a2 | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | Người dùng yêu cầu (2026-10-20): ngay sau 41 – chờ màn hình đứng yên thay Chờ cố định, lặp qua danh sách + tìm tất cả, tính toán / xử lý chữ; làm trên Mac được |
 | 16a3 | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | Người dùng yêu cầu (2026-10-20): sau 42, xen kẽ 40 O0–O3 (máy Windows) – trình duyệt Chromium thường không CDP, phần tử app không cần chuột, hệ điều hành, ảnh đánh số / cây giao diện cho AI trước 31c; mỗi việc một node |
 | 16b | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | Người dùng yêu cầu (2026-10-20): làm sau 31b, trước 31c – Windows chưa đọc được tiếng Việt (`Windows.Media.Ocr`); 31c (AI soạn bằng cách thử, ảnh mẫu) cần đọc chữ / tìm ảnh đáng tin |

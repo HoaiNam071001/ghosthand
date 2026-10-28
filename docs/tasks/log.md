@@ -288,3 +288,4 @@
 - **2026-10-27** – Kế hoạch (người dùng yêu cầu): thêm bước 53 – MCP học từ repo openclaw-direct-tools-for-chatgpt: annotations tool + test, nhật ký lệnh AI giàu hơn (thời lượng, client, tham số đã che), dòng chống prompt injection trong primer; D (timeout Đi tới URL / Mở) đã điều tra, chờ chốt. Chỉ sửa tài liệu.
 2026-10-28 fix: thanh mini thành cửa sổ thường, ảnh chụp có cả cửa sổ app, overlay thêm nút Ứng dụng (nhảy sang app/Space toàn màn hình) – chờ thử tay macOS
 2026-10-28 31d: node Hỏi AI `askAI` + `internal/ai` (OpenAI-tương thích + Anthropic), key qua `{{secret.*}}`, dự phòng `aiFallback`, ảnh màn hình / file, JSON; mẫu `hoi-ai` – chờ thử tay; chưa làm: tìm phần tử bằng AI, node Gọi tool MCP, mặc định nhà cung cấp trong Cài đặt
+- **2026-10-28** – Kế hoạch (người dùng yêu cầu): thêm bước 54 – đồng bộ kịch bản + ảnh mẫu + cài đặt + bí mật lên cloud (Google Drive, đăng nhập OAuth, backend MCP sau); xung đột luôn hỏi; chưa xếp thứ tự.
