@@ -157,6 +157,13 @@ func VarFields(s *model.Step) []VarField {
 	case model.StepNotify:
 		add("notifyTitle", &s.NotifyTitle, false)
 		add("text", &s.Text, false)
+	case model.StepAskAI:
+		add("aiBaseUrl", &s.AIBaseURL, true)
+		add("aiModel", &s.AIModel, false)
+		add("aiKey", &s.AIKey, false)
+		add("prompt", &s.Prompt, false)
+		add("aiFallback", &s.AIFallback, false)
+		add("filePath", &s.FilePath, false)
 	case model.StepZip:
 		add("filePath", &s.FilePath, false)
 		add("filePattern", &s.FilePattern, false)

@@ -6,6 +6,7 @@ import (
 	"slices"
 	"strings"
 
+	"ghosthand/internal/ai"
 	"ghosthand/internal/inputsource"
 	"ghosthand/internal/model"
 )
@@ -197,6 +198,24 @@ func checkStep(s *model.Step) error {
 			return err
 		}
 	case model.StepNotify:
+	case model.StepAskAI:
+		if !slices.Contains(ai.Kinds, s.AIKind) {
+			return fmt.Errorf("nhà cung cấp AI không hợp lệ: %q (trống = openai | anthropic)", s.AIKind)
+		}
+		if !slices.Contains(model.AIImages, s.AIImage) {
+			return fmt.Errorf("ảnh gửi AI không hợp lệ: %q (trống | screen | file)", s.AIImage)
+		}
+		if !slices.Contains(model.AIFormats, s.AIFormat) {
+			return fmt.Errorf("dạng trả lời AI không hợp lệ: %q (trống = chữ | json)", s.AIFormat)
+		}
+		if s.TimeoutMs < 0 {
+			return fmt.Errorf("thời gian chờ không được âm")
+		}
+		if s.AIImage == model.AIImageScreen {
+			if err := checkShot(s); err != nil {
+				return err
+			}
+		}
 	case model.StepOSShortcut:
 		if s.TimeoutMs < 0 {
 			return fmt.Errorf("thời gian chờ không được âm")

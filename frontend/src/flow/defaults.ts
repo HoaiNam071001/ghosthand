@@ -38,6 +38,7 @@ export const STEP_DEFAULTS: Partial<Record<StepType, Partial<Step>>> = {
   power: { clicks: 0, delayAfter: 0 },
   display: { clicks: 0, delayAfter: 0 },
   notify: { clicks: 0, delayAfter: 0 },
+  askAI: { clicks: 0, timeoutMs: 60000, delayAfter: 0 },
   zip: { clicks: 0, delayAfter: 0 },
   inputSource: { clicks: 0, delayAfter: 200 },
   process: { clicks: 0, timeoutMs: 60000, intervalMs: 500, stableMs: 3000, cpuBelow: 5, delayAfter: 0 },

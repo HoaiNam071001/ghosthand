@@ -103,6 +103,8 @@ func (e *Engine) runStep(ctx context.Context, s model.Step, wait int) (map[strin
 		return e.displayStep(ctx, s)
 	case model.StepNotify:
 		return e.notifyStep(ctx, s)
+	case model.StepAskAI:
+		return e.askAI(ctx, s)
 	case model.StepZip:
 		return e.zipStep(ctx, s)
 	case model.StepProcess:

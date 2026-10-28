@@ -158,6 +158,10 @@ func ValidateScript(sc model.Script, screen model.Rect) error {
 			if strings.TrimSpace(s.NotifyTitle) == "" && strings.TrimSpace(s.Text) == "" {
 				return stepErr(i, s, "text", "chưa nhập nội dung thông báo")
 			}
+		case model.StepAskAI:
+			if err := validateAskAI(i, s); err != nil {
+				return err
+			}
 		case model.StepOSShortcut:
 			if strings.TrimSpace(s.ShortcutName) == "" {
 				return stepErr(i, s, "shortcutName", "chưa nhập tên Shortcut")

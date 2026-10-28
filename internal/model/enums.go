@@ -200,3 +200,18 @@ const (
 )
 
 var NumStyles = []string{NumStyleVN, NumStyleEN, NumStylePlain}
+
+// Hỏi AI (bước 31d): ảnh gửi kèm (Step.AIImage) và dạng trả lời (Step.AIFormat).
+const (
+	AIImageNone   = ""
+	AIImageScreen = "screen" // chụp màn hình theo ShotArea / Display / ShotRect như node Chụp màn hình
+	AIImageFile   = "file"   // file ảnh ở FilePath
+
+	AIFormatText = ""
+	AIFormatJSON = "json" // bắt AI trả JSON; output.json là giá trị đã giải mã
+)
+
+var (
+	AIImages  = []string{AIImageNone, AIImageScreen, AIImageFile}
+	AIFormats = []string{AIFormatText, AIFormatJSON}
+)

@@ -47,6 +47,7 @@ import WaitUIEventFields from './stepform/WaitUIEventFields';
 import InputSourceFields from './stepform/InputSourceFields';
 import ProcessFields from './stepform/ProcessFields';
 import ZipFields from './stepform/ZipFields';
+import AskAIFields from './stepform/AskAIFields';
 import NotifyFields from './stepform/NotifyFields';
 import PowerFields from './stepform/PowerFields';
 import DisplayFields from './stepform/DisplayFields';
@@ -185,6 +186,7 @@ function TypeBody({ step: s, setPoint }: { step: Step; setPoint: (i: number, p: 
       {s.type === 'power' && <PowerFields step={s} />}
       {s.type === 'display' && <DisplayFields step={s} />}
       {s.type === 'notify' && <NotifyFields step={s} />}
+      {s.type === 'askAI' && <AskAIFields step={s} />}
       {s.type === 'zip' && <ZipFields step={s} />}
       {s.type === 'process' && <ProcessFields step={s} />}
       {s.type === 'sysInfo' && <SysInfoFields step={s} />}

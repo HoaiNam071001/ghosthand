@@ -234,6 +234,8 @@ Dừng / tạm dừng: `StopScript` (huỷ ctx), `PauseScript` / `ResumeScript` 
 
 `internal/secrets` – `secrets.go` (`Backend`, `Store`: chỉ mục tên + `Resolve`), `keychain_darwin.go` (cgo Security), `keychain_windows.go` (Credential Manager), `keychain_other.go`; `store.Secrets()` là bản dùng chung; engine che giá trị ở `engine/mask.go`, session lấy bí mật kịch bản dùng ở `secretsFor`.
 
+`internal/ai` – nhà cung cấp AI cho node Hỏi AI (31d): `ai.go` (`Provider`, `Config.Resolve`, `New`), `http.go` (`post`, lời lỗi), `openai.go` (tương thích OpenAI: OpenAI / Ollama / LM Studio), `anthropic.go` (Messages API), `aitest/fake.go` (bản giả). Engine `askai.go` gọi qua `Engine.aiNew`; key chỉ `{{secret.<tên>}}` (`script/aicheck.go`).
+
 `internal/toast` – `toast.go` (`Backend`, `System`: `osascript` macOS / PowerShell toast Windows, chữ qua argv / biến môi trường).
 
 `internal/procinfo` – `procinfo.go` (`Backend`, `System`: gopsutil process, CPU đo hai lần cách 300 ms).

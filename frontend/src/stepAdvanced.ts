@@ -12,6 +12,7 @@ import type { WinMatch, WinOp, WinPreset } from './flow/window';
 import type { AppOp } from './flow/app';
 import type { ProcOp } from './flow/process';
 import type { InputOp } from './flow/inputSource';
+import type { AIFormat, AIImage, AIKind } from './flow/askAI';
 import type { ZipOp } from './flow/zip';
 import type { PowerOp } from './flow/power';
 import type { DisplayOp } from './flow/display';
@@ -83,6 +84,15 @@ export interface AdvancedFields {
   soundWait?: boolean; // sound: chờ phát xong
   // thông báo hệ thống (bước 43 S9, internal/engine/toast.go) – nội dung = text
   notifyTitle?: string; // tiêu đề (trống = Ghosthand); nhận {{biến}}
+  // hỏi AI (bước 31d, internal/engine/askai.go) – mọi ô nhận {{biến}}; aiKey chỉ {{secret.<tên>}}; ảnh màn hình theo shotArea
+  aiKind?: AIKind; // bỏ trống = openai (tương thích OpenAI) | anthropic
+  aiBaseUrl?: string; // bỏ trống = địa chỉ chính thức; AI trên máy: http://localhost:11434/v1
+  aiModel?: string;
+  aiKey?: string;
+  prompt?: string; // câu hỏi
+  aiImage?: AIImage; // bỏ trống = chỉ chữ | screen | file (filePath)
+  aiFormat?: AIFormat; // bỏ trống = chữ | json
+  aiFallback?: string; // AI không dùng được → cổng success với giá trị này (skipped)
   // nén / giải nén (bước 43 S8, internal/engine/zip.go) – nguồn = filePath, lọc tên file khi nén thư mục = filePattern
   zipOp?: ZipOp; // bỏ trống = nén
   zipTo?: string; // đích: nén = file .zip, giải nén = thư mục; nhận {{biến}}

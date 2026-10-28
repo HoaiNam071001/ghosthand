@@ -172,6 +172,15 @@ type Step struct {
 	SoundWait    bool   `json:"soundWait,omitempty"`    // sound: chờ phát xong rồi mới đi tiếp
 	// Thông báo hệ thống (bước 43 S9, engine/toast.go) – nội dung = Text
 	NotifyTitle string `json:"notifyTitle,omitempty"` // tiêu đề ("" = Ghosthand); nhận {{biến}}
+	// Hỏi AI (bước 31d, engine/askai.go) – mọi ô chữ nhận {{biến}}; AIKey chỉ được là {{secret.<tên>}}
+	AIKind     string `json:"aiKind,omitempty"`     // ai.Kinds: "" = openai (tương thích OpenAI) | anthropic
+	AIBaseURL  string `json:"aiBaseUrl,omitempty"`  // "" = địa chỉ chính thức của hãng; AI chạy trên máy: http://localhost:11434/v1
+	AIModel    string `json:"aiModel,omitempty"`    // "" = model mặc định của hãng
+	AIKey      string `json:"aiKey,omitempty"`      // {{secret.<tên>}} (trống được khi AI chạy trên máy)
+	Prompt     string `json:"prompt,omitempty"`     // câu hỏi
+	AIImage    string `json:"aiImage,omitempty"`    // AIImages: "" = không gửi ảnh | screen (chụp theo ShotArea) | file (FilePath)
+	AIFormat   string `json:"aiFormat,omitempty"`   // AIFormats: "" = chữ | json (output.json)
+	AIFallback string `json:"aiFallback,omitempty"` // có giá trị: AI không dùng được (thiếu key, mất mạng) → cổng success với text này + skipped, thay vì fail
 	// Nén / giải nén (bước 43 S8, engine/zip.go) – nguồn = FilePath, lọc tên file khi nén thư mục = FilePattern
 	ZipOp string `json:"zipOp,omitempty"` // ZipOps: "" = nén | extract
 	ZipTo string `json:"zipTo,omitempty"` // đích: nén = file .zip ("" = <nguồn>.zip) | giải nén = thư mục ("" = thư mục tên như file zip, cạnh nó); nhận {{biến}}

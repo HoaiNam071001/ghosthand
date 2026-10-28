@@ -91,6 +91,8 @@ func NewStep(stepType string) (Step, error) {
 	case StepElementAction:
 		s.ElementAct, s.Selectors, s.TimeoutMs, s.IntervalMs = ElActPress, []string{"text="}, 10000, 250
 	case StepSysInfo, StepZip, StepNotify, StepDisplay:
+	case StepAskAI:
+		s.TimeoutMs, s.DelayAfter = 60000, 0
 	case StepInputSource:
 		s.DelayAfter = 200 // bộ gõ mới cần một nhịp để phím sau gõ đúng
 	case StepPower:

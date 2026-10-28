@@ -79,6 +79,7 @@ function mapFieldText(step: Step, f: (t: string) => string): Step {
     case 'elementAction': return { ...s, selectors: s.selectors?.map(f), elementApp: s.elementApp && f(s.elementApp), text: f(s.text) };
     case 'waitUIEvent': return { ...s, winApp: s.winApp && f(s.winApp), winTitle: s.winTitle && f(s.winTitle), selectors: s.selectors?.map(f), elementApp: s.elementApp && f(s.elementApp) };
     case 'display': return { ...s, displayValue: s.displayValue && f(s.displayValue) };
+    case 'askAI': return { ...s, aiBaseUrl: s.aiBaseUrl && f(s.aiBaseUrl), aiModel: s.aiModel && f(s.aiModel), aiKey: s.aiKey && f(s.aiKey), prompt: s.prompt && f(s.prompt), aiFallback: s.aiFallback && f(s.aiFallback), filePath: s.filePath && f(s.filePath) };
     case 'notify': return { ...s, notifyTitle: s.notifyTitle && f(s.notifyTitle), text: f(s.text) };
     case 'zip': return { ...s, filePath: s.filePath && f(s.filePath), filePattern: s.filePattern && f(s.filePattern), zipTo: s.zipTo && f(s.zipTo) };
     case 'inputSource': return { ...s, inputLayout: s.inputLayout && f(s.inputLayout), inputHotkey: s.inputHotkey && f(s.inputHotkey) };

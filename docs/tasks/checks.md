@@ -3,6 +3,12 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## 31d – Hỏi AI · [31](phase3/31-mcp-ai.md)
+- [ ] Mẫu *Hỏi AI*: chưa có key → chạy xong, lời kết ghi “dự phòng: true”
+- [ ] Lưu key ở Cài đặt → Bí mật, ghi `{{secret.<tên>}}` vào ô Key → chạy: AI trả JSON, lời kết ghi câu trả lời; key không lộ ở kết quả / lịch sử
+- [ ] Dán key thẳng vào ô Key → ô báo đỏ, Chạy bị chặn
+- [ ] Ollama: địa chỉ `http://localhost:11434/v1`, model đã tải, để trống Key → chạy được; kèm *Ảnh màn hình* với model có vision
+
 ## Thêm – thanh mini thường, overlay chọn app
 - [ ] macOS: chạy kịch bản → thanh mini không đè lên app đang điều khiển / app toàn màn hình; ảnh chụp có cả cửa sổ app
 - [ ] macOS: mở overlay → nút *Ứng dụng* → chọn app đang toàn màn hình → overlay phủ lên app đó, chọn vùng được

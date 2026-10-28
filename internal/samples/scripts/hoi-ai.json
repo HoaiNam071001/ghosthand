@@ -1,0 +1,20 @@
+{
+ "meta": {
+  "name": "Hỏi AI – phân loại tin nhắn (có dự phòng khi không có AI)",
+  "description": "Hỏi AI xem tin nhắn có cần trả lời không, nhận JSON. Chưa có key: node đi cổng success với giá trị dự phòng (skipped) – flow vẫn chạy. Có key: sửa node, ghi Key = {{secret.<tên>}} (Cài đặt → Bí mật) hoặc đặt Địa chỉ AI chạy trên máy, rồi chạy lại. Đúng: lời kết ghi kết luận; chưa có key thì ghi “dự phòng”.",
+  "app": "Hệ thống",
+  "level": 2,
+  "page": "index.html",
+  "real": false,
+  "prep": "Muốn thử AI thật: lưu key ở Cài đặt → Bí mật rồi điền {{secret.<tên>}} vào ô Key của node Hỏi AI. AI chạy trên máy (Ollama): Địa chỉ http://localhost:11434/v1, Model tên model đã tải, để trống Key."
+ },
+ "script": {
+  "steps": [
+   { "type": "askAI", "prompt": "Tin nhắn: “{{tin}}”. Có cần trả lời không? Trả JSON {\"can\": true hoặc false, \"reply\": \"câu trả lời ngắn\"}.", "aiFormat": "json", "aiFallback": "{\"can\": false, \"reply\": \"(dự phòng)\"}" },
+   { "type": "end", "endStatus": "success", "message": "AI nói cần trả lời = {{n1.output.json.can}}, nháp: {{n1.output.json.reply}} (dự phòng: {{n1.output.skipped}})" }
+  ],
+  "inputs": [
+   { "key": "tin", "label": "Tin nhắn", "type": "text", "default": "Mai bạn rảnh họp lúc 9h không?" }
+  ]
+ }
+}

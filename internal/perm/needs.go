@@ -99,6 +99,10 @@ func addStep(n Need, s model.Step) {
 		}
 	case model.StepNotify:
 		n.add(Notifications)
+	case model.StepAskAI:
+		if s.AIImage == model.AIImageScreen {
+			n.add(ScreenRecording)
+		}
 	}
 }
 

@@ -48,6 +48,7 @@ function addStep(n: Set<PermId>, s: Step) {
       break;
     case 'inputSource': if (s.inputOp === 'toggleIME') n.add('accessibility'); break;
     case 'notify': n.add('notifications'); break;
+    case 'askAI': if (s.aiImage === 'screen') n.add('screenRecording'); break;
   }
 }
 

@@ -112,7 +112,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 > Bảng tự sinh – sau khi tick chạy `python3 scripts/tasks-index.py`. Bấm tên bước để mở file chi tiết.
 
 <!-- index:start -->
-**48 / 63 bước xong code** · 🧪 **[274 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
+**48 / 63 bước xong code** · 🧪 **[278 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
 
 ### Phase 3 – Design v2 & tự động hoá (theo thứ tự làm)
 
@@ -140,7 +140,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 chờ kiểm tra tay | [22. Hẹn giờ + thông báo + CLI / API local](phase3/22-hen-gio-cli-api.md) | 17 / 17 | [7 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [31b. MCP – vòng thử – sửa: AI tự chạy, xem lỗi, sửa, chạy tiếp](phase3/31-mcp-ai.md) | 19 / 19 | [15 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [31c. MCP – AI soạn bằng cách thử + ảnh mẫu](phase3/31-mcp-ai.md) | 5 / 5 | [7 việc](checks.md) |
-| 🟡 đang làm | [31d. AI bên trong flow](phase3/31-mcp-ai.md) | 7 / 11 |  |
+| 🟡 đang làm | [31d. AI bên trong flow](phase3/31-mcp-ai.md) | 9 / 11 | [4 việc](checks.md) |
 | ✅ xong | [41. Nơi lưu kịch bản / ảnh chụp + xoá lịch sử](phase3/41-noi-luu-lich-su.md) | 4 / 4 |  |
 | 🟡 đang làm | [44. Thử trang trên Chrome của app + ưu tiên node cho AI](phase3/44-thu-trang-uu-tien-node.md) | 8 / 8 | [8 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [45. Đổi tên app thành Ghosthand](phase3/45-doi-ten-ghosthand.md) | 5 / 5 | [6 việc](checks.md) |

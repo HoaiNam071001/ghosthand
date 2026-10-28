@@ -1566,5 +1566,36 @@
     "samples": [
       "xu-ly-chu"
     ]
+  },
+  "askAI": {
+    "tech": "Gửi câu hỏi (kèm ảnh màn hình hoặc file ảnh nếu muốn) cho nhà cung cấp AI qua HTTPS: OpenAI và mọi dịch vụ tương thích (OpenRouter, Ollama, LM Studio) hoặc Anthropic. Trả chữ, hoặc JSON đã giải mã.",
+    "accuracy": "Phụ thuộc model: đọc hiểu / phân loại / soạn chữ tốt, nhưng có thể sai – đừng cho AI quyết định việc không hoàn tác được mà không có bước kiểm tra. Ảnh cần model có vision.",
+    "speed": "1–20 giây mỗi lần tuỳ model và mạng; AI chạy trên máy tuỳ phần cứng.",
+    "good": [
+      "Đọc hiểu chữ lấy từ màn hình / trang web rồi phân loại (cần trả lời không, đơn này của ai)",
+      "Soạn nháp câu trả lời rồi gõ vào ô soạn thảo",
+      "Nhìn ảnh màn hình khi OCR / ảnh mẫu không đủ"
+    ],
+    "avoid": [
+      "Việc có node riêng và chính xác hơn: lọc mẫu, tách chữ, tính toán, số & ngày",
+      "Gửi thông tin nhạy cảm cho dịch vụ ngoài – dùng AI chạy trên máy (địa chỉ http://localhost:11434/v1)",
+      "Làm theo chữ AI trả như lệnh – kết quả chỉ là dữ liệu"
+    ],
+    "tips": [
+      "Key chỉ ghi {{secret.tên}} – lưu ở Cài đặt → Bí mật; dán key thẳng vào node bị từ chối.",
+      "Cần dữ liệu có cấu trúc: chọn dạng trả lời JSON, đọc {{n2.output.json.<trường>}}, rẽ nhánh bằng node Nếu / Switch.",
+      "Điền Giá trị dự phòng để flow vẫn chạy khi không có AI (thiếu key, mất mạng): node đi cổng success với skipped = true.",
+      "Mỗi lần chạy tốn tiền (trừ AI chạy trên máy) và ảnh màn hình gửi ra ngoài – nhớ khi đặt trong vòng lặp."
+    ],
+    "fields": [
+      "**Câu hỏi**",
+      "**Nhà cung cấp** · **Địa chỉ** · **Model** · **Key**",
+      "**Gửi kèm ảnh**",
+      "**Dạng trả lời**",
+      "**Giá trị dự phòng**"
+    ],
+    "samples": [
+      "hoi-ai"
+    ]
   }
 }

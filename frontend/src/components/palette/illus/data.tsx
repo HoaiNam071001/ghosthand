@@ -62,6 +62,13 @@ export const data: Scenes = {
       <Show from={0.5}><Tick x={214} y={36} from={0.5} /></Show>
     </Stage>
   ),
+  askAI: () => (
+    <Stage>
+      {box(14, 34, 96, 66)}
+      <Arr x1={114} y1={67} x2={140} y2={67} />
+      <Show from={0.4}><rect x={144} y={36} width="96" height="62" rx="8" className="fill-surface stroke-line-strong" /><T x={156} y={54} s={9} cls="fill-ink">AI</T><T x={156} y={70} s={8} cls="fill-muted">Cần trả lời: có</T><Tick x={240} y={36} from={0.4} /></Show>
+    </Stage>
+  ),
   notify: () => (
     <Stage>
       {box(14, 34, 96, 66)}

@@ -240,6 +240,23 @@
       ]
     },
     {
+      "name": "hỏi AI chỉ chữ",
+      "step": {
+        "type": "askAI"
+      },
+      "want": []
+    },
+    {
+      "name": "hỏi AI kèm ảnh màn hình",
+      "step": {
+        "type": "askAI",
+        "aiImage": "screen"
+      },
+      "want": [
+        "screenRecording"
+      ]
+    },
+    {
       "name": "HTTP",
       "step": {
         "type": "http"

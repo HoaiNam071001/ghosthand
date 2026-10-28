@@ -291,6 +291,7 @@ func errCode(err error) string {
 	var badQuery *web.QueryError
 	var status *httpStatusErr
 	var network *networkErr
+	var aiFail *aiErr
 	var late *timeoutErr
 	var exit *exitErr
 	var mismatch *windowMismatchErr
@@ -307,6 +308,8 @@ func errCode(err error) string {
 		return model.ErrHTTPStatus
 	case errors.As(err, &network):
 		return model.ErrNetwork
+	case errors.As(err, &aiFail):
+		return model.ErrAI
 	case errors.As(err, &mismatch):
 		return model.ErrWindowMismatch
 	case errors.As(err, &exit):
