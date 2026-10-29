@@ -302,3 +302,4 @@
 - 2026-10-29: 55 M7 – tool MCP list_mcp_servers (chỉ đọc, không lộ lệnh / mô tả tool), mẹo tips cho node mcpTool. go vet/test OK
 - 2026-10-29: 55 M6 – thư viện MCP server gợi ý (internal/mcplib, App.MCPLibrary, McpLibrary.tsx). go test + npm build/test OK; chưa thử tay
 - 2026-10-29: 55 M5 (bản gọn) – node của tôi: store/customnodes.go, App.*CustomNode, mục Của tôi trong bảng thêm node, Lưu thành node của tôi ở inspector mcpTool. go test + npm build/test OK; chưa thử tay
+- 2026-10-29: 55 M8 – màn mẫu #demo-mcp (DemoMcp, McpServerList tách riêng). npm build/test OK; xong code cả bước 55

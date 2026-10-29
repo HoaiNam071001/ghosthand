@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { DeleteMCPServer, ListMCPServers, MCPLibrary, RefreshMCPServer, SaveMCPServer, SetMCPServerEnabled } from '../../../wailsjs/go/main/App';
 import { main, mcplib, store } from '../../../wailsjs/go/models';
 import { errorText } from '../../engineStore';
-import { formatPairs, joinArgs, parsePairs, splitArgs, statusText } from '../../flow/mcpServer';
-import { SettingCode } from './parts';
+import { formatPairs, joinArgs, parsePairs, splitArgs } from '../../flow/mcpServer';
+import McpServerList from './McpServerList';
 import { openSettings } from '../../settingsNav';
 import McpLibrary from './McpLibrary';
 import McpServerForm, { EMPTY_DRAFT, ServerDraft } from './McpServerForm';
@@ -49,23 +49,7 @@ export default function McpServersSettings({ onError }: { onError: (msg: string)
         Server MCP ngoài (đọc file, GitHub, Sheets…) để node <b>Gọi tool MCP</b> dùng. Kết nối kiểu “Chạy lệnh” sẽ chạy lệnh đó trên máy bạn – chỉ thêm server bạn tin.
       </span>
       {list.length === 0 && !draft && <span className="text-muted">Chưa có server nào.</span>}
-      <ul className="flex flex-col gap-2">
-        {list.map((s) => (
-          <li key={s.id} className="flex flex-col gap-1 rounded-control border border-line p-2">
-            <div className="flex items-center gap-1.5">
-              <span className={`flex-1 truncate font-medium ${s.enabled ? '' : 'text-muted line-through'}`}>{s.name}</span>
-              <SettingCode>{s.id}</SettingCode>
-            </div>
-            <span className={`text-xs ${s.status?.state === 'error' ? 'text-danger-text' : 'text-muted'}`}>{s.enabled ? statusText(s.status) : 'Đang tắt'}</span>
-            <div className="flex flex-wrap gap-1.5 text-xs">
-              <button onClick={() => reload(s)} disabled={!s.enabled || busy === s.id} className="rounded-control px-2 py-1 hover:bg-hover disabled:opacity-40">{busy === s.id ? 'Đang tải…' : 'Tải lại'}</button>
-              <button onClick={() => setDraft(toDraft(s))} className="rounded-control px-2 py-1 hover:bg-hover">Sửa</button>
-              <button onClick={() => toggle(s)} className="rounded-control px-2 py-1 hover:bg-hover">{s.enabled ? 'Tắt' : 'Bật'}</button>
-              <button onClick={() => remove(s)} aria-label={`Xoá server ${s.name}`} className="btn-danger-soft rounded-control px-2 py-1">Xoá</button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <McpServerList list={list} busy={busy} onReload={reload} onEdit={(s) => setDraft(toDraft(s))} onToggle={toggle} onRemove={remove} />
       {draft
         ? <McpServerForm draft={draft} onChange={(p) => setDraft({ ...draft, ...p })} onSave={save} onCancel={() => setDraft(null)} />
         : (

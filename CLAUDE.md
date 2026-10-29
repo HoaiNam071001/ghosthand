@@ -26,7 +26,7 @@ python3 scripts/check-docs.py  # trước commit: tài liệu khớp code (phả
 python3 scripts/tasks-index.py # sau khi tick / thêm bước / sửa checks.md
 ```
 
-Xem riêng từng màn (wails dev / trình duyệt): hash `#preview`, `#overlay`, `#minibar`; màn mẫu dữ liệu giả `#demo`, `#demo-overlay`, `#demo-minibar`, `#demo-flow`, `#demo-illus` (lưới hoạt hoạ minh hoạ node), `#demo-guide` (modal Hướng dẫn, `?page=c:<chương>|n:<node>`) (`?mode=running|failed`, `?sel=<id>`); `?theme=dark`. Trình duyệt không có Go → nút Chạy tắt.
+Xem riêng từng màn (wails dev / trình duyệt): hash `#preview`, `#overlay`, `#minibar`; màn mẫu dữ liệu giả `#demo`, `#demo-overlay`, `#demo-minibar`, `#demo-flow`, `#demo-illus` (lưới hoạt hoạ minh hoạ node), `#demo-guide` (modal Hướng dẫn, `?page=c:<chương>|n:<node>`), `#demo-mcp` (tab MCP server + form đối số tool, dữ liệu giả) (`?mode=running|failed`, `?sel=<id>`); `?theme=dark`. Trình duyệt không có Go → nút Chạy tắt.
 
 ## Quy tắc code
 
