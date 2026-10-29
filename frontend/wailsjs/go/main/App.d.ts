@@ -19,6 +19,8 @@ export function AddToClaudeDesktop():Promise<string>;
 
 export function AnswerAIRun(arg1:string,arg2:string):Promise<void>;
 
+export function AnswerMCP(arg1:string,arg2:string):Promise<void>;
+
 export function AppVersion():Promise<string>;
 
 export function BrowserStatus():Promise<web.Status>;

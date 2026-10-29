@@ -143,3 +143,23 @@ func TestRefreshErrorRedacted(t *testing.T) {
 		t.Fatalf("st=%+v", st)
 	}
 }
+
+func TestDecide(t *testing.T) {
+	ro := mcpclient.Tool{ReadOnly: true}
+	rw := mcpclient.Tool{}
+	for _, c := range []struct {
+		trusted, always bool
+		tool            mcpclient.Tool
+		want            string
+	}{
+		{false, false, ro, mcpclient.AskServer},
+		{false, true, ro, mcpclient.AskServer},
+		{true, false, ro, mcpclient.Allow},
+		{true, false, rw, mcpclient.AskTool},
+		{true, true, rw, mcpclient.Allow},
+	} {
+		if got := mcpclient.Decide(c.trusted, c.always, c.tool); got != c.want {
+			t.Errorf("%+v: %s, muốn %s", c, got, c.want)
+		}
+	}
+}

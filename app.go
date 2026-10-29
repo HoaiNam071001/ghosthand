@@ -37,6 +37,7 @@ type App struct {
 	dirty     bool                      // kịch bản đang soạn có thay đổi chưa lưu (storage.go)
 	editPath  string                    // file của kịch bản đang soạn ("" = chưa lưu)
 	mcp       *mcpsrv.Server            // MCP cho AI (mcpapi.go)
+	mcpg      mcpGate                   // hỏi quyền dùng server ngoài (mcpgate.go)
 	mcpc      *mcpclient.Manager        // app làm MCP client tới server ngoài (mcpserversapi.go)
 	quitting  bool                      // đã hỏi xong, đóng thật
 	ai        aiGate                    // hỏi quyền AI chạy (mcprun.go)

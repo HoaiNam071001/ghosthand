@@ -45,6 +45,7 @@ func (a *App) SaveMCPServer(s store.MCPServer) (MCPServerView, error) {
 // DeleteMCPServer xoá server và đóng kết nối của nó.
 func (a *App) DeleteMCPServer(id string) error {
 	a.mcpc.Forget(id)
+	_ = store.ForgetMCPConsent(id)
 	return store.DeleteMCPServer(id)
 }
 
@@ -74,6 +75,11 @@ func (a *App) RefreshMCPServer(id string) (MCPServerView, error) {
 	cfg, vals, err := mcpConfig(s)
 	if err != nil {
 		return MCPServerView{}, err
+	}
+	if !store.MCPServerTrusted(s) { // nối = chạy lệnh trên máy: lần đầu (hoặc khi cấu hình đổi) phải được duyệt
+		if err := a.askServer(s, cfg); err != nil {
+			return MCPServerView{}, err
+		}
 	}
 	ctx := context.Background()
 	if a.ctx != nil {

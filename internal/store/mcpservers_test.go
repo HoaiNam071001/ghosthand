@@ -41,3 +41,45 @@ func TestUpsertMCPServer(t *testing.T) {
 		t.Fatalf("list=%+v", list)
 	}
 }
+
+func TestMCPFingerprint(t *testing.T) {
+	a := MCPServer{ID: "s1", Kind: "stdio", Command: "npx", Args: []string{"-y", "x"}, Env: map[string]string{"A": "{{secret.a}}", "B": "{{secret.b}}"}}
+	b := a
+	if a.Fingerprint() != b.Fingerprint() {
+		t.Fatal("cùng cấu hình phải cùng dấu vân tay")
+	}
+	b.Name, b.Enabled = "đổi tên", true
+	if a.Fingerprint() != b.Fingerprint() {
+		t.Error("tên / bật tắt không được đổi dấu vân tay")
+	}
+	b.Args = []string{"-y", "y"}
+	if a.Fingerprint() == b.Fingerprint() {
+		t.Error("đổi tham số phải đổi dấu vân tay")
+	}
+}
+
+func TestMCPConsent(t *testing.T) {
+	dir := t.TempDir()
+	t.Setenv("HOME", dir)
+	t.Setenv("XDG_CONFIG_HOME", dir)
+	t.Setenv("AppData", dir)
+	s := MCPServer{ID: "s1", Kind: "stdio", Command: "npx", Args: []string{"a"}}
+	if MCPServerTrusted(s) {
+		t.Fatal("chưa duyệt mà đã tin")
+	}
+	if err := TrustMCPServer(s); err != nil || !MCPServerTrusted(s) {
+		t.Fatalf("duyệt xong phải tin: %v", err)
+	}
+	if err := AlwaysAllowMCPTool(s, "write"); err != nil || !MCPToolAlways(s, "write") || MCPToolAlways(s, "del") {
+		t.Fatal("luôn cho tool phải đúng từng tool")
+	}
+	s.Args = []string{"b"}
+	if MCPServerTrusted(s) || MCPToolAlways(s, "write") {
+		t.Fatal("đổi lệnh phải hỏi lại, kể cả tool đã luôn cho")
+	}
+	s.Args = []string{"a"}
+	ForgetMCPConsent("s1")
+	if MCPServerTrusted(s) {
+		t.Fatal("xoá đồng ý xong phải hỏi lại")
+	}
+}
