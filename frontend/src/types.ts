@@ -143,7 +143,7 @@ export interface Step extends AdvancedFields, TextFields {
   imageFrom?: string; // clickImage imageSource node / screenshot shotArea node: id node lấy chỗ thấy
   dx?: number; // clickImage / webClick: lệch so với tâm ảnh / phần tử
   dy?: number;
-  findBy?: 'text' | 'element'; // waitImage / clickImage tự tìm: bỏ trống = ảnh mẫu, text = tìm chữ (ocr.go), element = phần tử (bước 37, dùng selectors)
+  findBy?: 'text' | 'element' | 'ai'; // ai = mô tả bằng lời trong findText, AI vision tìm (bước 31d, chỉ Chờ ảnh / Click theo ảnh); waitImage / clickImage tự tìm: bỏ trống = ảnh mẫu, text = tìm chữ (ocr.go), element = phần tử (bước 37, dùng selectors)
   elementApp?: string; // findBy element: tên app / bundle id, trống = app có cửa sổ trên cùng; nhận {{biến}}
   findText?: string; // chữ cần tìm, nhận {{biến}}
   textExact?: boolean; // cả dòng đúng chuỗi (mặc định: chứa chuỗi)
@@ -257,7 +257,7 @@ export const makeStep = (p: Partial<Step> & Pick<Step, 'id' | 'type'>): Step => 
 // Tên hiện cho một bước cụ thể: Chờ ảnh / Click theo ảnh đang tìm theo chữ / phần tử thì là "Chờ chữ" / "Click theo chữ"…
 export function stepLabel(s: Step): string {
   if (s.findBy && (s.type === 'waitImage' || (s.type === 'clickImage' && s.imageSource === 'search'))) {
-    const what = s.findBy === 'text' ? 'chữ' : 'phần tử';
+    const what = s.findBy === 'text' ? 'chữ' : s.findBy === 'ai' ? 'AI tìm' : 'phần tử';
     return s.type === 'waitImage' ? `Chờ ${what}` : `Click theo ${what}`;
   }
   return STEP_LABEL[s.type];

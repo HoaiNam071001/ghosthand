@@ -256,8 +256,11 @@ func checkStep(s *model.Step) error {
 	if r := s.Retry; r != nil && (r.Count < 0 || r.Count > model.MaxRetries || r.DelayMs < 0) {
 		return fmt.Errorf("số lần thử lại phải trong 0–%d, thời gian nghỉ không âm", model.MaxRetries)
 	}
-	if s.FindBy != "" && s.FindBy != model.FindByText && s.FindBy != model.FindByElement {
+	if s.FindBy != "" && s.FindBy != model.FindByText && s.FindBy != model.FindByElement && s.FindBy != model.FindByAI {
 		return fmt.Errorf("cách tìm không hợp lệ: %q", s.FindBy)
+	}
+	if s.FindBy == model.FindByAI && s.Type != model.StepWaitImage && s.Type != model.StepClickImage {
+		return fmt.Errorf("tìm bằng AI chỉ dùng cho Chờ ảnh / Click theo ảnh")
 	}
 	if s.SearchArea != "" && s.SearchArea != "screen" {
 		return fmt.Errorf("vùng tìm không hợp lệ: %q", s.SearchArea)

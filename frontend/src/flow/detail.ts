@@ -77,7 +77,9 @@ export const fmtPos = (s: Step, refOf: (id: string) => string = () => '?') =>
     : s.type === 'waitDownload' ? fmtWaitDownload(s)
     : s.type === 'readTable' ? fmtReadTable(s)
     : s.type === 'waitImage' || s.type === 'findAll' || (s.type === 'clickImage' && s.imageSource === 'search')
-      ? `${s.type === 'clickImage' ? 'tự tìm · ' : s.type === 'findAll' ? `${countRange(s)} chỗ · ` : ''}${s.findBy === 'element' ? fmtElement(s) : s.findBy === 'text'
+      ? `${s.type === 'clickImage' ? 'tự tìm · ' : s.type === 'findAll' ? `${countRange(s)} chỗ · ` : ''}${s.findBy === 'element' ? fmtElement(s) : s.findBy === 'ai'
+        ? (s.findText?.trim() ? `AI tìm “${s.findText}” · tối đa ${fmtMs(s.timeoutMs ?? 0)}` : 'chưa mô tả phần tử cho AI')
+        : s.findBy === 'text'
         ? (s.findText?.trim() ? `chữ “${s.findText}”${(s.occurrence ?? 0) > 1 ? ` (chỗ thứ ${s.occurrence})` : ''} · tối đa ${fmtMs(s.timeoutMs ?? 0)}` : 'chưa nhập chữ cần tìm')
         : s.template ? `khớp ≥ ${s.threshold}%${matchTags(s)} · tối đa ${fmtMs(s.timeoutMs ?? 0)}` : 'chưa có ảnh mẫu'}`
     : s.type === 'clickImage' ? `chỗ ${s.imageFrom ? refOf(s.imageFrom) : '(chưa chọn node)'} thấy${s.dx || s.dy ? ` ${fmtSigned(s.dx ?? 0)},${fmtSigned(s.dy ?? 0)}` : ''}`

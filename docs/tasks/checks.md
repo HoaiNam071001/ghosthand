@@ -12,6 +12,7 @@ Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi t
 - [ ] Node Gọi tool MCP: chọn server `fs` → chọn tool `read_text_file` → form hiện ô `path` (có dấu *) → điền → *Chạy thử* hiện nội dung file; tool ghi (vd `write_file`) hỏi quyền; bỏ trống `path` báo “Còn thiếu”; *Sửa JSON* ⇄ *Dùng form* giữ nguyên giá trị
 
 ## 31d – Hỏi AI · [31](phase3/31-mcp-ai.md)
+- [ ] Click theo ảnh / Chờ ảnh → Tìm theo *AI*: mô tả “nút Gửi” trên một trang → *Thử tìm* báo tọa độ đúng (cần nhà cung cấp có vision ở Cài đặt → Hỏi AI); chạy node thật click đúng chỗ; không có key → báo lỗi rõ
 - [ ] Cài đặt → Hỏi AI: chọn nhà cung cấp + key từ Bí mật → Lưu; node Hỏi AI để Nhà cung cấp *Mặc định* chạy bằng cấu hình đó; chọn rõ Anthropic / OpenAI ở node thì không lấy model / địa chỉ của mặc định
 - [ ] Mẫu *Hỏi AI*: chưa có key → chạy xong, lời kết ghi “dự phòng: true”
 - [ ] Lưu key ở Cài đặt → Bí mật, ghi `{{secret.<tên>}}` vào ô Key → chạy: AI trả JSON, lời kết ghi câu trả lời; key không lộ ở kết quả / lịch sử

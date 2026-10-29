@@ -83,6 +83,7 @@ func (e *Engine) aiConfig(s model.Step) ai.Config {
 		c.Kind = d.Kind
 	}
 	if kindOf(c.Kind) != kindOf(d.Kind) {
+		c.Key = secrets.Expand(c.Key, e.rv.secrets)
 		return c
 	}
 	if c.BaseURL == "" {
@@ -92,8 +93,9 @@ func (e *Engine) aiConfig(s model.Step) ai.Config {
 		c.Model = d.Model
 	}
 	if c.Key == "" {
-		c.Key = secrets.Expand(d.Key, e.rv.secrets)
+		c.Key = d.Key
 	}
+	c.Key = secrets.Expand(c.Key, e.rv.secrets) // chạy thật đã thay ở resolveNodeVars; Thử tìm chưa
 	return c
 }
 

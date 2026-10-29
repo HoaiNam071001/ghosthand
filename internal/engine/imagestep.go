@@ -109,6 +109,9 @@ func (e *Engine) findImage(ctx context.Context, s model.Step) (hit, error) {
 	if s.FindBy == model.FindByText {
 		return e.findTextStep(ctx, s, area)
 	}
+	if s.FindBy == model.FindByAI {
+		return e.findAIStep(ctx, s, area)
+	}
 	tpl, err := e.template(s)
 	if err != nil {
 		return hit{}, err

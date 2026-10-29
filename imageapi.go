@@ -71,7 +71,8 @@ func (a *App) FindImage(sc model.Script, stepID string) (engine.FindResult, erro
 	if s.FindBy == "" && s.Template == "" && s.Type != model.StepElementRead { // tìm theo ảnh mà chưa có ảnh mẫu: báo ngay, khỏi ẩn cửa sổ
 		return engine.FindResult{}, errors.New("bước chưa có ảnh mẫu")
 	}
-	e := engine.New(nil, sc, engine.Options{Screen: device.MainScreen(), Displays: device.Displays()})
+	aiDef, aiSecrets := aiOptions(s)
+	e := engine.New(nil, sc, engine.Options{Screen: device.MainScreen(), Displays: device.Displays(), AIDefault: aiDef, Secrets: aiSecrets})
 	var res engine.FindResult
 	err = a.withHidden(func() (err error) {
 		res, err = e.FindOnce(s)

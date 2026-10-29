@@ -18,6 +18,7 @@ import { ElementSearchFields } from './ElementFields';
 import PointSource from './PointSource';
 import { FindAllResult } from './FindAllResult';
 import MatchFields from './MatchFields';
+import AISearchFields from './AISearchFields';
 import { usesVar } from '../../anchor';
 
 export const isImageStep = (s: Step) => s.type === 'waitImage' || s.type === 'clickImage' || s.type === 'waitPixel' || s.type === 'findAll';
@@ -39,10 +40,12 @@ function CapturePermission() {
 }
 
 
-const FIND_NAME: Record<string, string> = { image: 'ảnh mẫu', text: 'chữ', element: 'phần tử' };
+const FIND_OPTIONS: { id: 'image' | 'text' | 'element' | 'ai'; label: string }[] = [{ id: 'image', label: 'Ảnh mẫu' }, { id: 'text', label: 'Chữ' }, { id: 'element', label: 'Phần tử' }];
+const FIND_NAME: Record<string, string> = { image: 'ảnh mẫu', text: 'chữ', element: 'phần tử', ai: 'phần tử (AI)' };
 const FIND_BY_HELP: Record<string, string> = {
   image: 'So từng điểm ảnh – dùng cho icon, nút không có chữ. Nút có chữ nên chọn “Chữ” hoặc “Phần tử”.',
   text: 'Đọc chữ trên màn hình (OCR) – không bị ảnh hưởng bởi theme sáng / tối, zoom, đổi màu khi rê chuột. Dùng khi nút / nhãn có chữ.',
+  ai: 'Mô tả bằng lời, AI nhìn ảnh vùng tìm và chỉ ra chỗ – chậm, tốn tiền, dự phòng khi ảnh mẫu / chữ / phần tử không tìm được.',
   element: 'Tìm qua Accessibility (macOS) / UI Automation (Windows) – chữ / nhãn / vai trò phần tử, chính xác hơn đọc chữ, có cả nút chỉ có icon. Dùng được với Chrome thường đã đăng nhập và app khác; cửa sổ phải đang hiện trên màn.',
 };
 
@@ -54,14 +57,15 @@ function ImageSearchFields({ step: s }: { step: Step }) {
   const k = s.templateScale || 1;
   const byText = s.findBy === 'text';
   const byElem = s.findBy === 'element';
+  const byAI = s.findBy === 'ai';
   return (
     <>
       <Field label="Tìm theo" wide group help={FIND_BY_HELP[s.findBy || 'image']}>
         <Segmented value={s.findBy || 'image'} full label="Tìm theo"
           onChange={(v) => updateStep(s.id, { findBy: v === 'image' ? undefined : v, ...(v === 'element' && !s.selectors?.length ? { selectors: ['text='] } : {}) })}
-          options={[{ id: 'image', label: 'Ảnh mẫu' }, { id: 'text', label: 'Chữ' }, { id: 'element', label: 'Phần tử' }]} />
+          options={s.type === 'findAll' ? FIND_OPTIONS : [...FIND_OPTIONS, { id: 'ai', label: 'AI' }]} />
       </Field>
-      {byElem ? <ElementSearchFields step={s} /> : byText ? <TextSearchFields step={s} /> : <Field label="Ảnh mẫu" wide group>
+      {byAI ? <AISearchFields step={s} /> : byElem ? <ElementSearchFields step={s} /> : byText ? <TextSearchFields step={s} /> : <Field label="Ảnh mẫu" wide group>
         <div className="relative grid min-h-[92px] place-items-center overflow-hidden rounded-card border border-line bg-soft p-2 text-[13px]">
           {s.template ? (
             <>
@@ -100,13 +104,13 @@ function ImageSearchFields({ step: s }: { step: Step }) {
         )}
         {error && busy === '' && <span className={errText}>{error}</span>}
       </Field>}
-      {!byText && !byElem && <NumField label="Độ khớp tối thiểu" info="Ảnh khoanh đúng thường khớp 95–100%; nên để 80–90% và bấm Thử tìm để xem độ khớp thật" step={s} field="threshold" unit="%" min={1} />}
-      {!byText && !byElem && <MatchFields value={s} onChange={(p) => updateStep(s.id, p)} />}
+      {!byText && !byElem && !byAI && <NumField label="Độ khớp tối thiểu" info="Ảnh khoanh đúng thường khớp 95–100%; nên để 80–90% và bấm Thử tìm để xem độ khớp thật" step={s} field="threshold" unit="%" min={1} />}
+      {!byText && !byElem && !byAI && <MatchFields value={s} onChange={(p) => updateStep(s.id, p)} />}
       <NumField label="Chờ tối đa" info={`Không thấy sau ${fmtSec(s.timeoutMs)} → cổng Thất bại`} step={s} field="timeoutMs" unit="ms" min={1} />
       <Field label="Kiểm tra mỗi">
         <NumInput value={s.intervalMs ?? 250} min={20} unit="ms" onChange={(intervalMs) => updateStep(s.id, { intervalMs })} />
       </Field>
-      {!byText && !byElem && (s.threshold ?? 0) < 70 && (
+      {!byText && !byElem && !byAI && (s.threshold ?? 0) < 70 && (
         <span className="col-span-2 -mt-1 text-xs text-warn">
           Độ khớp {s.threshold}% rất thấp – gần như chỗ nào cũng “khớp”, dễ click nhầm. Ảnh khoanh đúng thường khớp 95–100%;
           nên để 80–90% và bấm Thử tìm để xem độ khớp thật.

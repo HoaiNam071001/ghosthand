@@ -316,6 +316,7 @@
       "Web đăng nhập sẵn hoặc app có cây giao diện → [[node:waitElement]]"
     ],
     "tips": [
+      "Tìm bằng AI (nút AI ở ô Tìm theo): mô tả bằng lời, AI nhìn ảnh vùng tìm. Chậm, tốn tiền và ảnh vùng tìm gửi ra ngoài máy (trừ AI trên máy) – chỉ dùng khi ảnh mẫu / chữ / phần tử không tìm được. Cần nhà cung cấp ở Cài đặt → Hỏi AI.",
       "Khoanh ảnh mẫu thật gọn, tránh nền đổi và số / chữ thay đổi (xoá phần đó thành trong suốt).",
       "Không thấy: lỗi báo điểm khớp cao nhất để chỉnh ngưỡng.",
       "Cần click vào chỗ thấy: dùng [[node:clickImage]] với “theo node” trỏ về node này."

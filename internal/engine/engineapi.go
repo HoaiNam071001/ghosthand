@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"context"
 	"errors"
 	"image"
 	goruntime "runtime"
@@ -116,6 +117,9 @@ func (e *Engine) FindOnce(s model.Step) (FindResult, error) {
 		return FindResult{}, err
 	}
 	start := time.Now()
+	if s.FindBy == model.FindByAI {
+		return e.findAIOnce(context.Background(), s, area)
+	}
 	if s.FindBy == model.FindByText {
 		if strings.TrimSpace(s.FindText) == "" {
 			return FindResult{}, errors.New("chưa nhập chữ cần tìm")

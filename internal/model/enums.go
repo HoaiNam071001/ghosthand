@@ -158,6 +158,7 @@ var ReadNears = []string{"", ReadNearRight, ReadNearBelow}
 // Step.FindBy
 const (
 	FindByText    = "text"
+	FindByAI      = "ai"      // mô tả bằng lời (FindText) → AI vision tìm trong ảnh vùng tìm (bước 31d, engine/aifind.go)
 	FindByElement = "element" // phần tử màn hình qua Accessibility (bước 37)
 )
 

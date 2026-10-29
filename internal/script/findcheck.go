@@ -31,6 +31,14 @@ func checkImageStep(i int, s model.Step) error {
 			return stepErr(i, s, "findText", "chưa nhập chữ cần tìm")
 		}
 		return checkFindWait(i, s)
+	case model.FindByAI:
+		if s.Type == model.StepFindAll {
+			return stepErr(i, s, "findBy", "Tìm tất cả chưa tìm bằng AI được – dùng ảnh / chữ / phần tử")
+		}
+		if strings.TrimSpace(s.FindText) == "" {
+			return stepErr(i, s, "findText", "chưa mô tả phần tử cho AI tìm")
+		}
+		return checkFindWait(i, s)
 	}
 	if s.Template == "" {
 		return stepErr(i, s, "template", "chưa có ảnh mẫu – bấm “Khoanh ảnh mẫu”")

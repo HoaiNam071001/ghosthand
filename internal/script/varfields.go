@@ -46,7 +46,7 @@ func VarFields(s *model.Step) []VarField {
 		add("text", &s.Text, false)
 	case model.StepWaitImage, model.StepClickImage, model.StepFindAll:
 		switch s.FindBy {
-		case model.FindByText:
+		case model.FindByText, model.FindByAI:
 			add("findText", &s.FindText, false)
 		case model.FindByElement:
 			for i := range s.Selectors {

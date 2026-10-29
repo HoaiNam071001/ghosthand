@@ -172,7 +172,8 @@ func (b mcpBackend) Elements(app string) ([]element.Node, error) {
 }
 func (b mcpBackend) FindImage(s model.Step, area model.Rect) (engine.FindResult, error) {
 	sc := model.Script{Region: &area}
-	return engine.New(nil, sc, engine.Options{Screen: device.MainScreen(), Displays: device.Displays()}).FindOnce(s)
+	aiDef, aiSecrets := aiOptions(s)
+	return engine.New(nil, sc, engine.Options{Screen: device.MainScreen(), Displays: device.Displays(), AIDefault: aiDef, Secrets: aiSecrets}).FindOnce(s)
 }
 func (b mcpBackend) TemplateScale(img image.Image, r model.Rect) float64 {
 	return device.TemplateScale(img, r)

@@ -304,3 +304,4 @@
 - 2026-10-29: 55 M5 (bản gọn) – node của tôi: store/customnodes.go, App.*CustomNode, mục Của tôi trong bảng thêm node, Lưu thành node của tôi ở inspector mcpTool. go test + npm build/test OK; chưa thử tay
 - 2026-10-29: 55 M8 – màn mẫu #demo-mcp (DemoMcp, McpServerList tách riêng). npm build/test OK; xong code cả bước 55
 - 2026-10-29: 31d – nhà cung cấp AI mặc định (store.AISettings, tab Cài đặt → Hỏi AI, engine aiConfig, session nạp bí mật). go vet/test + npm build/test OK; chưa thử tay
+- 2026-10-29: 31d – tìm bằng AI (findBy ai cho Chờ ảnh / Click theo ảnh, engine/aifind.go, AISearchFields). go vet/test + npm build/test OK; chưa thử với AI thật
