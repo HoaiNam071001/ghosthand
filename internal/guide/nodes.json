@@ -1583,6 +1583,7 @@
     ],
     "tips": [
       "Key chỉ ghi {{secret.tên}} – lưu ở Cài đặt → Bí mật; dán key thẳng vào node bị từ chối.",
+      "Đặt nhà cung cấp mặc định ở Cài đặt → Hỏi AI: ô nào node để trống (nhà cung cấp, địa chỉ, model, key) thì lấy ở đó, khỏi lặp lại ở từng node. Node chọn loại khác mặc định thì dùng riêng.",
       "Cần dữ liệu có cấu trúc: chọn dạng trả lời JSON, đọc {{n2.output.json.<trường>}}, rẽ nhánh bằng node Nếu / Switch.",
       "Điền Giá trị dự phòng để flow vẫn chạy khi không có AI (thiếu key, mất mạng): node đi cổng success với skipped = true.",
       "Mỗi lần chạy tốn tiền (trừ AI chạy trên máy) và ảnh màn hình gửi ra ngoài – nhớ khi đặt trong vòng lặp."

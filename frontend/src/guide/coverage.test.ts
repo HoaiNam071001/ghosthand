@@ -4,7 +4,7 @@ import { CHAPTERS, NODE_GUIDES } from './content';
 import type { SettingsTab } from '../settingsNav';
 
 // Khai báo đủ khoá bằng Record để thêm tab mới mà quên là tsc báo.
-const SETTINGS_TABS: Record<SettingsTab, true> = { storage: true, overlay: true, secrets: true, perms: true, api: true, mcp: true, servers: true, about: true };
+const SETTINGS_TABS: Record<SettingsTab, true> = { storage: true, overlay: true, secrets: true, perms: true, api: true, mcp: true, askai: true, servers: true, about: true };
 
 describe('Hướng dẫn phủ đủ', () => {
   it('mọi InfoKey có trang trong nodes.json', () => {

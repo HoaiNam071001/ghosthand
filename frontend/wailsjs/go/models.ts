@@ -2185,6 +2185,24 @@ export namespace session {
 
 export namespace store {
 	
+	export class AISettings {
+	    kind?: string;
+	    baseUrl?: string;
+	    model?: string;
+	    key?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new AISettings(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.kind = source["kind"];
+	        this.baseUrl = source["baseUrl"];
+	        this.model = source["model"];
+	        this.key = source["key"];
+	    }
+	}
 	export class APISettings {
 	    enabled: boolean;
 	    port: number;
@@ -2397,6 +2415,7 @@ export namespace store {
 	    mcp: MCPSettings;
 	    storage: StorageSettings;
 	    overlay: OverlaySettings;
+	    ai: AISettings;
 	    mcpServers?: MCPServer[];
 	
 	    static createFrom(source: any = {}) {
@@ -2411,6 +2430,7 @@ export namespace store {
 	        this.mcp = this.convertValues(source["mcp"], MCPSettings);
 	        this.storage = this.convertValues(source["storage"], StorageSettings);
 	        this.overlay = this.convertValues(source["overlay"], OverlaySettings);
+	        this.ai = this.convertValues(source["ai"], AISettings);
 	        this.mcpServers = this.convertValues(source["mcpServers"], MCPServer);
 	    }
 	

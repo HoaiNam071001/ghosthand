@@ -194,6 +194,8 @@ export function ScreenBounds():Promise<model.Rect>;
 
 export function ScreenCaptureAllowed():Promise<boolean>;
 
+export function SetAISettings(arg1:store.AISettings):Promise<store.AISettings>;
+
 export function SetAPISettings(arg1:store.APISettings):Promise<store.APISettings>;
 
 export function SetEditorState(arg1:string,arg2:boolean):Promise<void>;

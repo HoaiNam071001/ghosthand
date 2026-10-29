@@ -26,6 +26,7 @@ type Settings struct {
 	MCP     MCPSettings     `json:"mcp"`
 	Storage StorageSettings `json:"storage"`
 	Overlay OverlaySettings `json:"overlay"`
+	AI      AISettings      `json:"ai"`
 	// MCPServers – MCP server ngoài app nối tới (bước 55, mcpservers.go)
 	MCPServers []MCPServer `json:"mcpServers,omitempty"`
 }

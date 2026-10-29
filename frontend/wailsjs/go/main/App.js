@@ -362,6 +362,10 @@ export function ScreenCaptureAllowed() {
   return window['go']['main']['App']['ScreenCaptureAllowed']();
 }
 
+export function SetAISettings(arg1) {
+  return window['go']['main']['App']['SetAISettings'](arg1);
+}
+
 export function SetAPISettings(arg1) {
   return window['go']['main']['App']['SetAPISettings'](arg1);
 }

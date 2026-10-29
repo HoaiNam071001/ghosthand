@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"image"
+	"slices"
 	"strings"
 	"sync"
 	"time"
@@ -16,6 +17,7 @@ import (
 	"ghosthand/internal/engine"
 	"ghosthand/internal/model"
 	"ghosthand/internal/script"
+	"ghosthand/internal/secrets"
 	"ghosthand/internal/store"
 )
 
@@ -159,6 +161,9 @@ func (m *Manager) Validate(sc model.Script, values map[string]any) error {
 // secretsFor lấy giá trị các bí mật kịch bản dùng; thiếu → lỗi nêu đủ tên (không bao giờ nêu giá trị).
 func (m *Manager) secretsFor(sc model.Script) (map[string]string, error) {
 	names := script.SecretRefs(sc)
+	if k := aiDefaultSecret(sc, m.deps.AIDefault()); k != "" && !slices.Contains(names, k) {
+		names = append(names, k)
+	}
 	if len(names) == 0 {
 		return nil, nil
 	}
@@ -324,4 +329,18 @@ func (m *Manager) withEngine(f func(*engine.Engine) bool) bool {
 		return false
 	}
 	return f(r.eng)
+}
+
+// aiDefaultSecret – tên bí mật key AI mặc định, chỉ khi có node Hỏi AI để trống Key (sẽ dùng key mặc định).
+func aiDefaultSecret(sc model.Script, d store.AISettings) string {
+	refs := secrets.Refs(d.Key)
+	if len(refs) != 1 {
+		return ""
+	}
+	for _, s := range sc.Steps {
+		if s.Type == model.StepAskAI && s.Enabled && strings.TrimSpace(s.AIKey) == "" {
+			return refs[0]
+		}
+	}
+	return ""
 }

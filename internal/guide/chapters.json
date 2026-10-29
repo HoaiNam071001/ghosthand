@@ -289,6 +289,15 @@
     ]
   },
   {
+    "id": "settings-askai",
+    "group": "Cài đặt",
+    "title": "Hỏi AI",
+    "summary": "Nhà cung cấp AI mặc định cho node Hỏi AI.",
+    "blocks": [
+      { "kind": "p", "text": "Chọn nhà cung cấp (OpenAI và dịch vụ tương thích, Anthropic, Gemini, hoặc AI chạy trên máy như Ollama), địa chỉ, model và key (chọn từ tab Bí mật). Node Hỏi AI để trống ô nào thì lấy ở đây; node chọn loại nhà cung cấp khác thì dùng riêng, không thừa hưởng. Mỗi lần chạy có thể tốn tiền và ảnh màn hình gửi ra ngoài (trừ AI trên máy)." }
+    ]
+  },
+  {
     "id": "settings-servers",
     "group": "Cài đặt",
     "title": "MCP server",

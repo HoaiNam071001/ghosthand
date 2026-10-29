@@ -38,6 +38,8 @@ type Deps struct {
 	Secrets *secrets.Store
 	// MCP – gọi tool MCP server ngoài qua cổng quyền của app (node Gọi tool MCP, bước 55); nil = node báo chỉ chạy trong app.
 	MCP engine.MCPCaller
+	// AIDefault – nhà cung cấp AI mặc định của node Hỏi AI (Cài đặt → Hỏi AI), đọc lúc bắt đầu mỗi phiên; nil = settings.
+	AIDefault func() store.AISettings
 }
 
 func (d Deps) withDefaults() Deps {
@@ -65,6 +67,9 @@ func (d Deps) withDefaults() Deps {
 			br := web.NewChrome(profile, move) // nối lười – kịch bản không có node web thì không đụng trình duyệt
 			return br, br.Close, nil
 		}
+	}
+	if d.AIDefault == nil {
+		d.AIDefault = func() store.AISettings { return store.CurrentSettings().AI }
 	}
 	if d.Corners == nil {
 		d.Corners = func(ctx context.Context, in *device.TrackingInput, onHit func()) {

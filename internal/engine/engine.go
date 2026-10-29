@@ -88,6 +88,7 @@ type Engine struct {
 	mask        *masker                              // che bí mật ở kết quả rời engine (mask.go)
 	powers      power.Backend                        // node Nguồn (power.go) – test thay bản giả
 	disp        display.Backend                      // node Màn hình / âm thanh (display.go) – test thay bản giả
+	aiDef       ai.Config                            // Options.AIDefault (askai.go)
 	mcp         MCPCaller                            // node Gọi tool MCP (mcptool.go)
 	aiNew       func(ai.Config) (ai.Provider, error) // node Hỏi AI (askai.go) – test thay bản giả
 	toasts      toast.Backend                        // node Thông báo hệ thống (toast.go) – test thay bản giả

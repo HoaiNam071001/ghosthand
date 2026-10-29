@@ -15,6 +15,7 @@ import { useScript } from '../store/editor';
 import { checkUpdate, installUpdate, loadVersion, openReleasePage, useUpdate } from '../store/updateStore';
 import AboutSettings from './settings/AboutSettings';
 import ApiSettings from './settings/ApiSettings';
+import AskAISettings from './settings/AskAISettings';
 import McpServersSettings from './settings/McpServersSettings';
 import McpSettings from './settings/McpSettings';
 import OverlaySettings from './settings/OverlaySettings';
@@ -24,7 +25,7 @@ import StorageSettings, { StorageKey } from './settings/StorageSettings';
 import Segmented from './Segmented';
 
 type Tab = SettingsTab;
-const TABS: { id: Tab; label: string }[] = [{ id: 'storage', label: 'Lưu trữ' }, { id: 'overlay', label: 'Chọn vùng' }, { id: 'secrets', label: 'Bí mật' }, { id: 'perms', label: 'Quyền' }, { id: 'api', label: 'API' }, { id: 'mcp', label: 'AI (MCP)' }, { id: 'servers', label: 'MCP server' }, { id: 'about', label: 'Giới thiệu' }];
+const TABS: { id: Tab; label: string }[] = [{ id: 'storage', label: 'Lưu trữ' }, { id: 'overlay', label: 'Chọn vùng' }, { id: 'secrets', label: 'Bí mật' }, { id: 'perms', label: 'Quyền' }, { id: 'api', label: 'API' }, { id: 'mcp', label: 'AI (MCP)' }, { id: 'askai', label: 'Hỏi AI' }, { id: 'servers', label: 'MCP server' }, { id: 'about', label: 'Giới thiệu' }];
 
 export default function AppSettings() {
   const [open, setOpen] = useState(false);
@@ -113,6 +114,7 @@ export default function AppSettings() {
             )}
             {tab === 'api' && <ApiSettings api={settings.api} onChange={saveApi} />}
             {tab === 'mcp' && <McpSettings mcp={settings.mcp} onChange={saveMcp} />}
+            {tab === 'askai' && <AskAISettings onError={setError} />}
             {tab === 'servers' && <McpServersSettings onError={setError} />}
             {tab === 'about' && <AboutSettings version={upd.version} info={upd.info} busy={upd.busy} error={upd.error} progress={upd.progress} onCheck={checkUpdate} onOpen={openReleasePage} onInstall={installUpdate} />}
             {error && <span className="text-danger-text">{error}</span>}

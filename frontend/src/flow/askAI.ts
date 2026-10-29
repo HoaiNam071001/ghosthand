@@ -10,6 +10,13 @@ export const AI_KINDS: { id: AIKind; label: string }[] = [
   { id: 'anthropic', label: 'Anthropic' },
   { id: 'gemini', label: 'Google Gemini' },
 ];
+// Ô Nhà cung cấp của node: trống = dùng mặc định ở Cài đặt → Hỏi AI (chưa đặt thì OpenAI); chọn rõ loại để không thừa hưởng.
+export const NODE_AI_KINDS: { id: AIKind; label: string }[] = [
+  { id: '', label: 'Mặc định (Cài đặt → Hỏi AI)' },
+  { id: 'openai', label: 'OpenAI / tương thích OpenAI' },
+  { id: 'anthropic', label: 'Anthropic' },
+  { id: 'gemini', label: 'Google Gemini' },
+];
 export const AI_IMAGES: { id: AIImage; label: string }[] = [
   { id: '', label: 'Chỉ chữ' },
   { id: 'screen', label: 'Ảnh màn hình' },
@@ -32,7 +39,7 @@ export function isLocalAI(url?: string): boolean {
 export function fmtAskAI(s: Partial<Pick<Step, 'aiKind' | 'aiBaseUrl' | 'aiModel' | 'aiImage' | 'aiFormat' | 'prompt'>>): string {
   const prompt = s.prompt?.trim();
   if (!prompt) return '(chưa nhập câu hỏi)';
-  const who = isLocalAI(s.aiBaseUrl) ? 'AI trên máy' : s.aiKind === 'anthropic' ? 'Anthropic' : s.aiKind === 'gemini' ? 'Gemini' : 'OpenAI';
+  const who = isLocalAI(s.aiBaseUrl) ? 'AI trên máy' : s.aiKind === 'anthropic' ? 'Anthropic' : s.aiKind === 'gemini' ? 'Gemini' : s.aiKind === 'openai' ? 'OpenAI' : 'AI mặc định';
   const parts = [s.aiModel?.trim() || who, s.aiFormat === 'json' ? 'JSON' : '', s.aiImage === 'screen' ? 'kèm ảnh màn hình' : s.aiImage === 'file' ? 'kèm file ảnh' : '', prompt];
   return parts.filter(Boolean).join(' · ');
 }

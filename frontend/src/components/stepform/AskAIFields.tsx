@@ -6,7 +6,7 @@ import PathInput from './PathInput';
 import { ShotAreaField } from './ShotFields';
 import { updateStep, useScript } from '../../store';
 import { addInput } from '../../scriptInputs';
-import { AI_FORMATS, AI_IMAGES, AI_KINDS, isLocalAI, isSecretKey, LOCAL_AI_URL, type AIFormat, type AIImage, type AIKind } from '../../flow/askAI';
+import { AI_FORMATS, AI_IMAGES, NODE_AI_KINDS, isLocalAI, isSecretKey, LOCAL_AI_URL, type AIFormat, type AIImage, type AIKind } from '../../flow/askAI';
 import { Step } from '../../types';
 import { Field, hint, selectBox, useNodeVars } from './shared';
 
@@ -21,9 +21,9 @@ export default function AskAIFields({ step: s }: { step: Step }) {
       <Field label="Câu hỏi" wide group help="Dán chữ của node trước vào bằng {{n1.output.text}}">
         <VarTextInput {...varProps} rows={4} value={s.prompt ?? ''} onChange={(v) => set({ prompt: v || undefined })} placeholder="Tin nhắn này có cần trả lời không? {{n1.output.text}}" />
       </Field>
-      <Field label="Nhà cung cấp" wide group>
+      <Field label="Nhà cung cấp" wide group help="Trống ô nào thì lấy ở Cài đặt → Hỏi AI (chỉ khi cùng loại nhà cung cấp)">
         <Select value={s.aiKind ?? ''} className={selectBox} aria-label="Nhà cung cấp AI" onChange={(v) => set({ aiKind: (v || undefined) as AIKind | undefined })}
-          options={AI_KINDS.map((k) => ({ value: k.id, label: k.label }))} />
+          options={NODE_AI_KINDS.map((k) => ({ value: k.id, label: k.label }))} />
       </Field>
       <Field label="Địa chỉ" wide group help="Trống = địa chỉ chính thức của hãng">
         <VarTextInput {...varProps} rows={1} compact value={s.aiBaseUrl ?? ''} onChange={(v) => set({ aiBaseUrl: v || undefined })} placeholder={LOCAL_AI_URL} />

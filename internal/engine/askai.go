@@ -14,6 +14,7 @@ import (
 	"ghosthand/internal/ai"
 	"ghosthand/internal/device"
 	"ghosthand/internal/model"
+	"ghosthand/internal/secrets"
 )
 
 // Node Hỏi AI (bước 31d): gửi câu hỏi (+ ảnh màn hình / file) cho nhà cung cấp AI, trả chữ hoặc JSON. Thêm vào flow là
@@ -46,7 +47,7 @@ func (e *Engine) askAI(ctx context.Context, s model.Step) (map[string]any, error
 	if err != nil {
 		return nil, err
 	}
-	p, err := e.provider(ai.Config{Kind: s.AIKind, BaseURL: s.AIBaseURL, Model: s.AIModel, Key: s.AIKey})
+	p, err := e.provider(e.aiConfig(s))
 	if err != nil {
 		return e.askAIFallback(s, err)
 	}
@@ -71,6 +72,36 @@ func (e *Engine) askAI(ctx context.Context, s model.Step) (map[string]any, error
 		return e.askAIFallback(s, err)
 	}
 	return askAIOutput(text, wantJSON)
+}
+
+// aiConfig – ô trống của node lấy ở nhà cung cấp mặc định (Cài đặt). Chỉ khi cùng loại: node chọn Anthropic mà mặc định
+// là Ollama thì không thừa hưởng địa chỉ / model của Ollama.
+func (e *Engine) aiConfig(s model.Step) ai.Config {
+	c := ai.Config{Kind: s.AIKind, BaseURL: s.AIBaseURL, Model: s.AIModel, Key: s.AIKey}
+	d := e.aiDef
+	if c.Kind == "" {
+		c.Kind = d.Kind
+	}
+	if kindOf(c.Kind) != kindOf(d.Kind) {
+		return c
+	}
+	if c.BaseURL == "" {
+		c.BaseURL = d.BaseURL
+	}
+	if c.Model == "" {
+		c.Model = d.Model
+	}
+	if c.Key == "" {
+		c.Key = secrets.Expand(d.Key, e.rv.secrets)
+	}
+	return c
+}
+
+func kindOf(k string) string {
+	if k == "" {
+		return ai.KindOpenAI
+	}
+	return k
 }
 
 // askAIFallback – AI không dùng được (thiếu key, mất mạng, hết giờ) và node có aiFallback → đi tiếp với giá trị đó.

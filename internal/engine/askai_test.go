@@ -119,3 +119,30 @@ func TestAskAIFileImageMissing(t *testing.T) {
 		t.Fatalf("code=%s", c)
 	}
 }
+
+func TestAskAIUsesDefaultProvider(t *testing.T) {
+	run := func(def ai.Config, patch func(*model.Step)) ai.Config {
+		f := &aitest.Fake{Reply: "ok"}
+		s := modeltest.Step(model.StepAskAI, func(s *model.Step) { s.Prompt = "q"; patch(s) })
+		e := newEngine(nil, scripttest.Linear(model.Script{Loops: 1, Steps: []model.Step{s}}), nil)
+		e.aiNew, e.aiDef = f.Factory, def
+		e.rv.secrets = map[string]string{"mk": "giatri-mk"}
+		if err := e.Run(t.Context()); err != nil {
+			t.Fatal(err)
+		}
+		return f.Cfgs[0]
+	}
+	def := ai.Config{Kind: "anthropic", Model: "m-def", Key: "{{secret.mk}}"}
+	// node trống → thừa hưởng cả bốn
+	if c := run(def, func(*model.Step) {}); c.Kind != "anthropic" || c.Model != "m-def" || c.Key != "giatri-mk" {
+		t.Errorf("thừa hưởng sai: %+v", c)
+	}
+	// node đặt riêng → giữ của node
+	if c := run(def, func(s *model.Step) { s.AIModel = "m-node" }); c.Model != "m-node" || c.Key != "giatri-mk" {
+		t.Errorf("ghi đè sai: %+v", c)
+	}
+	// node chọn loại khác mặc định → không lấy model / key của mặc định
+	if c := run(def, func(s *model.Step) { s.AIKind, s.AIKey = "gemini", "{{secret.mk}}" }); c.Kind != "gemini" || c.Model != "" {
+		t.Errorf("khác loại vẫn thừa hưởng: %+v", c)
+	}
+}
