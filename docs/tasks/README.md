@@ -156,7 +156,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 chờ kiểm tra tay | [52. MCP ít token](phase3/52-mcp-it-token.md) | 6 / 6 | [2 việc](checks.md) |
 | ✅ xong | [53. MCP: annotations, nhật ký lệnh AI, chống prompt injection](phase3/53-mcp-hoc-tu-openclaw.md) | 6 / 6 |  |
 | ⬜ chưa làm | [54. Đồng bộ cloud](phase3/54-dong-bo-cloud.md) | 0 / 11 |  |
-| 🟡 đang làm | [55. MCP client + node tuỳ chỉnh](phase3/55-mcp-client-node-tuy-chinh.md) | 1 / 9 |  |
+| 🟡 đang làm | [55. MCP client + node tuỳ chỉnh](phase3/55-mcp-client-node-tuy-chinh.md) | 2 / 9 |  |
 | ⬜ chưa làm | [56. Học từ MCP ngoài](phase3/56-hoc-tu-mcp-ngoai.md) | 0 / 13 |  |
 | 🧪 chờ kiểm tra tay | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | 12 / 12 | [16 việc](checks.md) |
 | 🟡 đang làm | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | 38 / 42 | [29 việc](checks.md) |

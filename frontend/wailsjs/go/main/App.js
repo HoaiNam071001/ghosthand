@@ -62,6 +62,10 @@ export function DangerCheck(arg1, arg2, arg3) {
   return window['go']['main']['App']['DangerCheck'](arg1, arg2, arg3);
 }
 
+export function DeleteMCPServer(arg1) {
+  return window['go']['main']['App']['DeleteMCPServer'](arg1);
+}
+
 export function DeleteRun(arg1, arg2, arg3) {
   return window['go']['main']['App']['DeleteRun'](arg1, arg2, arg3);
 }
@@ -132,6 +136,10 @@ export function InstallUpdate() {
 
 export function ListApps() {
   return window['go']['main']['App']['ListApps']();
+}
+
+export function ListMCPServers() {
+  return window['go']['main']['App']['ListMCPServers']();
 }
 
 export function ListProcesses() {
@@ -270,6 +278,10 @@ export function RecentScripts() {
   return window['go']['main']['App']['RecentScripts']();
 }
 
+export function RefreshMCPServer(arg1) {
+  return window['go']['main']['App']['RefreshMCPServer'](arg1);
+}
+
 export function RemoveSchedule(arg1) {
   return window['go']['main']['App']['RemoveSchedule'](arg1);
 }
@@ -310,6 +322,10 @@ export function SaveInputMemory(arg1, arg2) {
   return window['go']['main']['App']['SaveInputMemory'](arg1, arg2);
 }
 
+export function SaveMCPServer(arg1) {
+  return window['go']['main']['App']['SaveMCPServer'](arg1);
+}
+
 export function SaveScript(arg1, arg2) {
   return window['go']['main']['App']['SaveScript'](arg1, arg2);
 }
@@ -332,6 +348,10 @@ export function SetAPISettings(arg1) {
 
 export function SetEditorState(arg1, arg2) {
   return window['go']['main']['App']['SetEditorState'](arg1, arg2);
+}
+
+export function SetMCPServerEnabled(arg1, arg2) {
+  return window['go']['main']['App']['SetMCPServerEnabled'](arg1, arg2);
 }
 
 export function SetMCPSettings(arg1) {

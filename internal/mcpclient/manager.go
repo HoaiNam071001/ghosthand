@@ -11,8 +11,9 @@ import (
 type Manager struct {
 	Dial func(ctx context.Context, c Config) (Client, error) // nil = Dial thật; test thay bản giả
 
-	mu    sync.Mutex
-	conns map[string]*conn
+	mu     sync.Mutex
+	conns  map[string]*conn
+	status map[string]Status // lần Tải lại gần nhất (status.go)
 }
 
 type conn struct {

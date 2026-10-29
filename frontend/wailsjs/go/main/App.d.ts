@@ -43,6 +43,8 @@ export function ConfirmQuit():Promise<void>;
 
 export function DangerCheck(arg1:model.Script,arg2:Record<string, any>,arg3:string):Promise<main.DangerCheck>;
 
+export function DeleteMCPServer(arg1:string):Promise<void>;
+
 export function DeleteRun(arg1:string,arg2:string,arg3:string):Promise<void>;
 
 export function DeleteSecret(arg1:string):Promise<void>;
@@ -78,6 +80,8 @@ export function InBackground():Promise<boolean>;
 export function InstallUpdate():Promise<void>;
 
 export function ListApps():Promise<Array<model.AppInfo>>;
+
+export function ListMCPServers():Promise<Array<main.MCPServerView>>;
 
 export function ListProcesses():Promise<Array<procinfo.Group>>;
 
@@ -147,6 +151,8 @@ export function PreviewText(arg1:model.Step):Promise<main.TextPreview>;
 
 export function RecentScripts():Promise<Array<string>>;
 
+export function RefreshMCPServer(arg1:string):Promise<main.MCPServerView>;
+
 export function RemoveSchedule(arg1:string):Promise<void>;
 
 export function RequestPermission(arg1:string):Promise<perm.Item>;
@@ -167,6 +173,8 @@ export function SaveDraft(arg1:store.Draft):Promise<void>;
 
 export function SaveInputMemory(arg1:string,arg2:store.InputMemory):Promise<void>;
 
+export function SaveMCPServer(arg1:store.MCPServer):Promise<main.MCPServerView>;
+
 export function SaveScript(arg1:model.Script,arg2:string):Promise<main.ScriptFile>;
 
 export function SaveScriptAs(arg1:model.Script,arg2:string):Promise<main.ScriptFile>;
@@ -178,6 +186,8 @@ export function ScreenCaptureAllowed():Promise<boolean>;
 export function SetAPISettings(arg1:store.APISettings):Promise<store.APISettings>;
 
 export function SetEditorState(arg1:string,arg2:boolean):Promise<void>;
+
+export function SetMCPServerEnabled(arg1:string,arg2:boolean):Promise<main.MCPServerView>;
 
 export function SetMCPSettings(arg1:store.MCPSettings):Promise<void>;
 

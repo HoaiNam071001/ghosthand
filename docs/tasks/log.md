@@ -294,3 +294,4 @@
 2026-10-28 Sửa: lượt AI (nguồn ai) bấm được vào chính cửa sổ Ghosthand – tự cho phép hộp hỏi / thao tác nguy hiểm / đổi mức AI; thêm device.SelfGuardInput (OwnWindowAt / OwnFront theo hệ điều hành) bọc Input lượt AI, lỗi permission; test đỏ trước sửa, go test ./... xanh; Windows chưa build thử tại máy (chờ CI)
 - **2026-10-28** – Kế hoạch (người dùng yêu cầu): thêm bước 56 – đưa gợi ý học từ MCP ngoài vào plan (A an toàn: quyền AI theo nội dung, hash file của shell, chặn thử mãi; B web: hộp thoại JS, báo điều hướng, find trong outline; C MCP gọn; D node Hỏi người dùng, xuất gói lỗi, mẫu Zalo / Telegram).
 - 2026-10-28 bước 55 M0: internal/mcpclient (Client, Manager, bản giả)
+- 2026-10-29: 55 M1 – cấu hình MCP server ngoài (store.MCPServer, Manager.Refresh/Status, App.*MCPServer, CloseAll khi thoát)

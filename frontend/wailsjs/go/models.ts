@@ -479,6 +479,54 @@ export namespace main {
 		    return a;
 		}
 	}
+	export class MCPServerView {
+	    id: string;
+	    name: string;
+	    kind: string;
+	    command?: string;
+	    args?: string[];
+	    env?: Record<string, string>;
+	    url?: string;
+	    headers?: Record<string, string>;
+	    enabled: boolean;
+	    status: mcpclient.Status;
+	
+	    static createFrom(source: any = {}) {
+	        return new MCPServerView(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.name = source["name"];
+	        this.kind = source["kind"];
+	        this.command = source["command"];
+	        this.args = source["args"];
+	        this.env = source["env"];
+	        this.url = source["url"];
+	        this.headers = source["headers"];
+	        this.enabled = source["enabled"];
+	        this.status = this.convertValues(source["status"], mcpclient.Status);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class ScriptFile {
 	    script: model.Script;
 	    path: string;
@@ -544,6 +592,73 @@ export namespace main {
 	        this.port = source["port"];
 	        this.output = source["output"];
 	    }
+	}
+
+}
+
+export namespace mcpclient {
+	
+	export class Tool {
+	    name: string;
+	    title?: string;
+	    description?: string;
+	    inputSchema?: number[];
+	    readOnly?: boolean;
+	    destructive?: boolean;
+	    openWorld?: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Tool(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.name = source["name"];
+	        this.title = source["title"];
+	        this.description = source["description"];
+	        this.inputSchema = source["inputSchema"];
+	        this.readOnly = source["readOnly"];
+	        this.destructive = source["destructive"];
+	        this.openWorld = source["openWorld"];
+	    }
+	}
+	export class Status {
+	    state: string;
+	    tools?: Tool[];
+	    code?: string;
+	    err?: string;
+	    at?: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Status(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.state = source["state"];
+	        this.tools = this.convertValues(source["tools"], Tool);
+	        this.code = source["code"];
+	        this.err = source["err"];
+	        this.at = source["at"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 
 }
@@ -2088,6 +2203,34 @@ export namespace store {
 		}
 	}
 	
+	export class MCPServer {
+	    id: string;
+	    name: string;
+	    kind: string;
+	    command?: string;
+	    args?: string[];
+	    env?: Record<string, string>;
+	    url?: string;
+	    headers?: Record<string, string>;
+	    enabled: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new MCPServer(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.name = source["name"];
+	        this.kind = source["kind"];
+	        this.command = source["command"];
+	        this.args = source["args"];
+	        this.env = source["env"];
+	        this.url = source["url"];
+	        this.headers = source["headers"];
+	        this.enabled = source["enabled"];
+	    }
+	}
 	export class MCPSettings {
 	    enabled: boolean;
 	    run?: string;
@@ -2147,6 +2290,7 @@ export namespace store {
 	    mcp: MCPSettings;
 	    storage: StorageSettings;
 	    overlay: OverlaySettings;
+	    mcpServers?: MCPServer[];
 	
 	    static createFrom(source: any = {}) {
 	        return new Settings(source);
@@ -2160,6 +2304,7 @@ export namespace store {
 	        this.mcp = this.convertValues(source["mcp"], MCPSettings);
 	        this.storage = this.convertValues(source["storage"], StorageSettings);
 	        this.overlay = this.convertValues(source["overlay"], OverlaySettings);
+	        this.mcpServers = this.convertValues(source["mcpServers"], MCPServer);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

@@ -111,3 +111,35 @@ func TestStdioMissingCommand(t *testing.T) {
 		t.Fatalf("err=%v", err)
 	}
 }
+
+func TestRefreshStatus(t *testing.T) {
+	s := &mcpclienttest.Server{}
+	m := newMgr(s)
+	defer m.CloseAll()
+	cfg := mcpclient.Config{ID: "a", Kind: mcpclient.KindStdio, Command: "x"}
+	if st := m.StatusOf("a"); st.State != mcpclient.StateIdle {
+		t.Fatalf("chưa nối: %+v", st)
+	}
+	st := m.Refresh(context.Background(), cfg, nil)
+	if st.State != mcpclient.StateOK || len(st.Tools) != 2 || m.StatusOf("a").State != mcpclient.StateOK {
+		t.Fatalf("st=%+v", st)
+	}
+	m.Refresh(context.Background(), cfg, nil)
+	if s.Dials.Load() != 2 {
+		t.Errorf("Tải lại phải nối mới, nối %d lần", s.Dials.Load())
+	}
+	m.Forget("a")
+	if m.StatusOf("a").State != mcpclient.StateIdle {
+		t.Errorf("Forget phải xoá trạng thái")
+	}
+}
+
+func TestRefreshErrorRedacted(t *testing.T) {
+	m := &mcpclient.Manager{}
+	defer m.CloseAll()
+	bad := mcpclient.Config{ID: "b", Kind: mcpclient.KindStdio} // thiếu lệnh
+	st := m.Refresh(context.Background(), bad, strings.ToUpper)
+	if st.State != mcpclient.StateError || st.Code != mcpclient.CodeConfig || st.Err != strings.ToUpper(st.Err) || st.Err == "" {
+		t.Fatalf("st=%+v", st)
+	}
+}

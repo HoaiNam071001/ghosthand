@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"ghosthand/internal/api"
+	"ghosthand/internal/mcpclient"
 	"ghosthand/internal/mcpsrv"
 	"ghosthand/internal/model"
 	"ghosthand/internal/session"
@@ -36,6 +37,7 @@ type App struct {
 	dirty     bool                      // kịch bản đang soạn có thay đổi chưa lưu (storage.go)
 	editPath  string                    // file của kịch bản đang soạn ("" = chưa lưu)
 	mcp       *mcpsrv.Server            // MCP cho AI (mcpapi.go)
+	mcpc      *mcpclient.Manager        // app làm MCP client tới server ngoài (mcpserversapi.go)
 	quitting  bool                      // đã hỏi xong, đóng thật
 	ai        aiGate                    // hỏi quyền AI chạy (mcprun.go)
 	// app do AI mở nền (`--background`, bước 31b): khởi động ẩn, AI chạy thì chỉ hiện thanh mini; người dùng mở màn chính thì thôi
@@ -49,7 +51,7 @@ type App struct {
 
 // NewApp creates a new App application struct
 func NewApp() *App {
-	a := &App{mode: ModeMain, winDisp: -1, ovDisp: -1, hub: api.NewHub(), revs: store.NewRevisions(), schedRuns: map[string]model.Schedule{},
+	a := &App{mode: ModeMain, winDisp: -1, ovDisp: -1, hub: api.NewHub(), mcpc: &mcpclient.Manager{}, revs: store.NewRevisions(), schedRuns: map[string]model.Schedule{},
 		ai: aiGate{pending: map[string]chan string{}, allowed: map[string]bool{}}}
 	a.sess = session.New(a.emit, session.Deps{})
 	a.sess.OnEnd = a.onRunEnd
@@ -66,7 +68,7 @@ func (a *App) startup(ctx context.Context) {
 	a.stopBg = stop
 	a.startScheduler(bg)
 	a.checkUpdateAtStart(bg)
-	winfloat.FollowActiveSpace()    // macOS: màn chính hiện ở Space đang đứng
+	winfloat.FollowActiveSpace() // macOS: màn chính hiện ở Space đang đứng
 }
 
 // shutdown is called when the app is closing.
@@ -75,6 +77,7 @@ func (a *App) shutdown(ctx context.Context) {
 	a.CancelPick()
 	a.stopHotkeys()
 	a.stopAPI()
+	a.mcpc.CloseAll()
 	if a.stopBg != nil {
 		a.stopBg()
 	}

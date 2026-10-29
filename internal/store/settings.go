@@ -26,6 +26,8 @@ type Settings struct {
 	MCP     MCPSettings     `json:"mcp"`
 	Storage StorageSettings `json:"storage"`
 	Overlay OverlaySettings `json:"overlay"`
+	// MCPServers – MCP server ngoài app nối tới (bước 55, mcpservers.go)
+	MCPServers []MCPServer `json:"mcpServers,omitempty"`
 }
 
 // MCPSettings – cho AI kết nối qua MCP (bước 31): bật mặc định; route /mcp chạy trên cùng cổng API local.
