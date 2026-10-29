@@ -296,3 +296,9 @@
 - 2026-10-28 bước 55 M0: internal/mcpclient (Client, Manager, bản giả)
 - 2026-10-29: 55 M1 – cấu hình MCP server ngoài (store.MCPServer, Manager.Refresh/Status, App.*MCPServer, CloseAll khi thoát)
 - 2026-10-29: 55 M2 – quyền dùng MCP server ngoài (dấu vân tay cấu hình, Decide, mcpCall, hộp hỏi MCPAskDialog)
+- 2026-10-29: 55 M3 – node mcpTool (engine/mcptool.go, Options.MCP ← App.mcpCall, mẫu goi-tool-mcp, mục Hướng dẫn, inspector tạm). go vet/test + npm build/test OK; chưa thử tay với server thật
+- 2026-10-29: 55 M8 (một phần) – tab Cài đặt → MCP server (thêm / sửa / bật tắt / xoá / tải lại), chương Hướng dẫn settings-servers. npm build/test + go test OK; chưa thử tay
+- 2026-10-29: 55 M4 – inspector mcpTool (chọn server / tool, form từ inputSchema, Chạy thử – App.TestMCPTool). go vet/test + npm build/test OK; chưa thử tay
+- 2026-10-29: 55 M7 – tool MCP list_mcp_servers (chỉ đọc, không lộ lệnh / mô tả tool), mẹo tips cho node mcpTool. go vet/test OK
+- 2026-10-29: 55 M6 – thư viện MCP server gợi ý (internal/mcplib, App.MCPLibrary, McpLibrary.tsx). go test + npm build/test OK; chưa thử tay
+- 2026-10-29: 55 M5 (bản gọn) – node của tôi: store/customnodes.go, App.*CustomNode, mục Của tôi trong bảng thêm node, Lưu thành node của tôi ở inspector mcpTool. go test + npm build/test OK; chưa thử tay

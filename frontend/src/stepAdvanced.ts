@@ -93,6 +93,10 @@ export interface AdvancedFields {
   aiImage?: AIImage; // bỏ trống = chỉ chữ | screen | file (filePath)
   aiFormat?: AIFormat; // bỏ trống = chữ | json
   aiFallback?: string; // AI không dùng được → cổng success với giá trị này (skipped)
+  // gọi tool MCP (bước 55 M3, internal/engine/mcptool.go)
+  mcpServer?: string; // id server (Cài đặt → MCP server)
+  mcpTool?: string; // tên tool của server
+  mcpArgs?: string; // đối số JSON object, nhận {{biến}}
   // nén / giải nén (bước 43 S8, internal/engine/zip.go) – nguồn = filePath, lọc tên file khi nén thư mục = filePattern
   zipOp?: ZipOp; // bỏ trống = nén
   zipTo?: string; // đích: nén = file .zip, giải nén = thư mục; nhận {{biến}}

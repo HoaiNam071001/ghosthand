@@ -45,8 +45,6 @@ type mcpGate struct {
 	pending map[string]chan string
 }
 
-var errMCPDenied = errors.New("người dùng không cho dùng server / tool MCP này")
-
 // mcpAsk hiện hộp hỏi và chờ trả lời; nil = được phép. always: người dùng chọn ghi nhớ.
 func (a *App) mcpAsk(ask MCPAsk) (always bool, err error) {
 	g := &a.mcpg
@@ -72,7 +70,7 @@ func (a *App) mcpAsk(ask MCPAsk) (always bool, err error) {
 		if ans == mcpOnce || ans == mcpAlways {
 			return ans == mcpAlways, nil
 		}
-		return false, errMCPDenied
+		return false, mcpclient.ErrDenied
 	case <-time.After(mcpAskTimeout):
 		a.emit("mcp:ask-timeout", ask.ID)
 		return false, errors.New("người dùng chưa trả lời câu hỏi cho phép dùng MCP (hết 90 giây)")

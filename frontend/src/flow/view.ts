@@ -208,6 +208,7 @@ function ownOutputs(s: Step): OutputField[] {
       { key: 'items', desc: 'mỗi dòng “loa|micro: tên” máy có' }, { key: 'sound', desc: 'âm đã phát' }, { key: 'waited', desc: 'đã chờ phát xong' },
     ];
     case 'askAI': return [{ key: 'text', desc: 'câu trả lời của AI' }, { key: 'json', desc: 'JSON đã giải mã (khi chọn trả lời JSON) – đọc sâu {{n2.output.json.<trường>}}' }, { key: 'skipped', desc: 'true khi AI không dùng được và node lấy giá trị dự phòng' }];
+    case 'mcpTool': return [{ key: 'text', desc: 'phần chữ tool trả về' }, { key: 'json', desc: 'JSON tool trả (structuredContent, hoặc chữ nếu là JSON) – đọc sâu {{n2.output.json.<trường>}}' }, { key: 'isError', desc: 'tool báo lỗi (node đi cổng thất bại)' }, { key: 'content', desc: 'từng phần kết quả; ảnh / âm thanh có path file tạm' }];
     case 'notify': return [{ key: 'title', desc: 'tiêu đề đã hiện' }, { key: 'text', desc: 'nội dung đã hiện' }];
     case 'zip': return [
       { key: 'path', desc: 'file .zip vừa tạo / thư mục đã giải nén vào' }, { key: 'count', desc: 'số file' }, { key: 'size', desc: 'tổng dung lượng dữ liệu gốc (byte)' },

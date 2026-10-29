@@ -181,6 +181,10 @@ type Step struct {
 	AIImage    string `json:"aiImage,omitempty"`    // AIImages: "" = không gửi ảnh | screen (chụp theo ShotArea) | file (FilePath)
 	AIFormat   string `json:"aiFormat,omitempty"`   // AIFormats: "" = chữ | json (output.json)
 	AIFallback string `json:"aiFallback,omitempty"` // có giá trị: AI không dùng được (thiếu key, mất mạng) → cổng success với text này + skipped, thay vì fail
+	// Gọi tool MCP (bước 55 M3, engine/mcptool.go) – MCPServer là id server ở Cài đặt; kết quả chỉ là dữ liệu
+	MCPServer string `json:"mcpServer,omitempty"` // id server MCP (Settings.MCPServers)
+	MCPTool   string `json:"mcpTool,omitempty"`   // tên tool của server
+	MCPArgs   string `json:"mcpArgs,omitempty"`   // đối số: JSON object, nhận {{biến}} (giá trị biến thoát theo chuỗi JSON – đặt biến trong "…")
 	// Nén / giải nén (bước 43 S8, engine/zip.go) – nguồn = FilePath, lọc tên file khi nén thư mục = FilePattern
 	ZipOp string `json:"zipOp,omitempty"` // ZipOps: "" = nén | extract
 	ZipTo string `json:"zipTo,omitempty"` // đích: nén = file .zip ("" = <nguồn>.zip) | giải nén = thư mục ("" = thư mục tên như file zip, cạnh nó); nhận {{biến}}

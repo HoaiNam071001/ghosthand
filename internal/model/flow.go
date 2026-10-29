@@ -27,6 +27,7 @@ const (
 	ErrNotFound       = "not_found"     // chờ ảnh / chữ / màu hết giờ không thấy
 	ErrHTTPStatus     = "http_status"   // HTTP trả mã ngoài 2xx (output status / body vẫn có)
 	ErrNetwork        = "network"       // HTTP không gửi được: sai địa chỉ, mất mạng, hết giờ chờ
+	ErrMCP            = "mcp_error"     // MCP server ngoài lỗi: không nối được, hết giờ, tool báo isError
 	ErrAI             = "ai_error"      // nhà cung cấp AI từ chối (key sai, hết hạn mức, model không có…) hoặc trả không đúng dạng cần
 	ErrTimeout        = "timeout"       // quá thời gian khác
 	ErrPermission     = "permission"    // thiếu quyền (Screen Recording, Accessibility)

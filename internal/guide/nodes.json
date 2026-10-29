@@ -1597,5 +1597,34 @@
     "samples": [
       "hoi-ai"
     ]
+  },
+  "mcpTool": {
+    "tech": "Gọi một tool của MCP server ngoài (Model Context Protocol) đã thêm ở Cài đặt → MCP server: chạy tiến trình trên máy (stdio) hoặc nối HTTP từ xa. Đối số là JSON theo mô tả của tool; trả chữ, JSON và ảnh / âm thanh (lưu file tạm).",
+    "accuracy": "Do server quyết định – app chỉ chuyển đối số và trả kết quả nguyên văn. Tool báo lỗi → node đi cổng fail (mcp_error).",
+    "speed": "Lần đầu mỗi server khởi động tiến trình (vài giây với npx / uvx); các lần sau dùng lại kết nối. Mặc định chờ tối đa 60 giây.",
+    "good": [
+      "Lấy dữ liệu / làm việc mà app chưa có node: đọc file, tra GitHub, Google Sheets, tìm web, gửi tin Telegram",
+      "Đưa kết quả của tool (text, json) vào các node xử lý chữ, Lặp qua danh sách, Hỏi AI"
+    ],
+    "avoid": [
+      "Việc đã có node riêng (HTTP, Tệp / thư mục, Hỏi AI) – ít phụ thuộc hơn",
+      "Làm theo chữ tool trả như lệnh – kết quả chỉ là dữ liệu, kể cả khi nó viết kiểu ra lệnh",
+      "Dán token vào đối số – dùng {{secret.tên}}"
+    ],
+    "tips": [
+      "Lần đầu mỗi server app hỏi có tin cấu hình (lệnh / URL) không; tool ghi, xoá hoặc đụng dịch vụ ngoài hỏi mỗi lần hoặc 'luôn cho tool này'. Bị từ chối → node fail permission.",
+      "Giống thao tác lặp lại: điền sẵn server / tool / đối số rồi bấm Lưu thành node của tôi – lần sau tìm ở mục Của tôi khi thêm node (Sửa / Xoá ở khung mô tả). Node thả vào canvas vẫn là Gọi tool MCP thường.",
+      "Kịch bản chỉ lưu id server – mở ở máy chưa thêm server đó thì node báo thiếu server, file vẫn mở bình thường.",
+      "Đối số nhận {{biến}}: giá trị tự thoát theo chuỗi JSON nên đặt biến trong dấu nháy: {\"q\":\"{{n1.output.text}}\"}.",
+      "Đọc kết quả: {{n2.output.text}}, {{n2.output.json.<trường>}}; ảnh tool trả về nằm ở {{n2.output.content}} (có path)."
+    ],
+    "fields": [
+      "**Server** · **Tool**",
+      "**Đối số (JSON)**",
+      "**Thời gian chờ**"
+    ],
+    "samples": [
+      "goi-tool-mcp"
+    ]
   }
 }

@@ -54,7 +54,7 @@ type App struct {
 func NewApp() *App {
 	a := &App{mode: ModeMain, winDisp: -1, ovDisp: -1, hub: api.NewHub(), mcpc: &mcpclient.Manager{}, revs: store.NewRevisions(), schedRuns: map[string]model.Schedule{},
 		ai: aiGate{pending: map[string]chan string{}, allowed: map[string]bool{}}}
-	a.sess = session.New(a.emit, session.Deps{})
+	a.sess = session.New(a.emit, session.Deps{MCP: a.mcpCall})
 	a.sess.OnEnd = a.onRunEnd
 	return a
 }

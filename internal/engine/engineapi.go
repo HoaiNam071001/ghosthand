@@ -33,6 +33,7 @@ type Options struct {
 	Pins        map[string]model.StepResult // node ghim (31c): không chạy, trả luôn Output + cổng đã ghim (theo id node)
 	Secrets     map[string]string           // giá trị {{secret.<tên>}} (kho bí mật, bước 43 S10) – chỉ các tên kịch bản dùng; giá trị bị che ở mọi kết quả rời engine
 	FocusClick  bool                        // click thì focus cửa sổ dưới chuột trước (phiên chạy thật; test để false – không đụng cửa sổ thật)
+	MCP         MCPCaller                   // node Gọi tool MCP (mcptool.go): app đặt hàm đi qua cổng quyền; nil = không gọi được
 	ShotsDir    string                      // thư mục ảnh trong Cài đặt cho node Chụp màn hình để trống saveDir ("" = Pictures/Ghosthand)
 }
 
@@ -66,7 +67,7 @@ func New(in device.Input, sc model.Script, o Options) *Engine {
 	e.screen, e.displays, e.onNode, e.debug, e.browser, e.allowDanger = o.Screen, o.Displays, o.OnNode, o.Debug, o.Browser, o.AllowDanger
 	e.stopAt, e.seed, e.shotsDir, e.pins, e.sim = o.StopAt, o.Seed, o.ShotsDir, o.Pins, o.Simulate
 	e.rv.secrets, e.mask = o.Secrets, newMasker(o.Secrets)
-	e.focusClick = o.FocusClick
+	e.focusClick, e.mcp = o.FocusClick, o.MCP
 	e.pasteAuto, e.imeCheck = goruntime.GOOS == "windows", true
 	e.step.Store(o.StepMode)
 	if o.KeepShots {

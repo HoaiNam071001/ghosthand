@@ -47,7 +47,7 @@ func TestNeedsSkipsDisabled(t *testing.T) {
 // noPermTypes (node không cần quyền nào dù chọn thao tác gì). Danh sách này giữ cùng frontend/src/flow/perms.test.ts.
 var noPermTypes = []string{"wait", "open", "clipboard", "http", "system", "waitUntil", "window", "app", "webWait", "webRead", "webKey",
 	"waitDownload", "shell", "osShortcut", "sysInfo", "process", "zip", "switch", "counter", "forEach", "end", "setVar", "calc",
-	"textMatch", "textSplit", "textClean", "textNumber"}
+	"textMatch", "textSplit", "textClean", "textNumber", "mcpTool"}
 
 func TestEveryStepTypeDeclared(t *testing.T) {
 	var data struct {

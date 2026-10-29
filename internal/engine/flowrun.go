@@ -10,6 +10,7 @@ import (
 
 	"ghosthand/internal/browser"
 	"ghosthand/internal/device"
+	"ghosthand/internal/mcpclient"
 	"ghosthand/internal/model"
 	"ghosthand/internal/script"
 	"ghosthand/internal/web"
@@ -292,6 +293,7 @@ func errCode(err error) string {
 	var status *httpStatusErr
 	var network *networkErr
 	var aiFail *aiErr
+	var mcpFail *mcpErr
 	var late *timeoutErr
 	var exit *exitErr
 	var mismatch *windowMismatchErr
@@ -310,13 +312,15 @@ func errCode(err error) string {
 		return model.ErrNetwork
 	case errors.As(err, &aiFail):
 		return model.ErrAI
+	case errors.As(err, &mcpFail):
+		return model.ErrMCP
 	case errors.As(err, &mismatch):
 		return model.ErrWindowMismatch
 	case errors.As(err, &exit):
 		return model.ErrExitCode
 	case errors.As(err, &late):
 		return model.ErrTimeout
-	case errors.Is(err, device.ErrNoPermission), errors.Is(err, device.ErrNoAccessibility), errors.Is(err, errDangerNotAllowed),
+	case errors.Is(err, device.ErrNoPermission), errors.Is(err, device.ErrNoAccessibility), errors.Is(err, errDangerNotAllowed), errors.Is(err, mcpclient.ErrDenied),
 		errors.Is(err, browser.ErrNoAutomation), errors.Is(err, device.ErrNoFinder), errors.Is(err, device.ErrSelfInput):
 		return model.ErrPermission
 	}

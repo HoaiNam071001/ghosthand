@@ -66,6 +66,10 @@ export function DangerCheck(arg1, arg2, arg3) {
   return window['go']['main']['App']['DangerCheck'](arg1, arg2, arg3);
 }
 
+export function DeleteCustomNode(arg1) {
+  return window['go']['main']['App']['DeleteCustomNode'](arg1);
+}
+
 export function DeleteMCPServer(arg1) {
   return window['go']['main']['App']['DeleteMCPServer'](arg1);
 }
@@ -142,6 +146,10 @@ export function ListApps() {
   return window['go']['main']['App']['ListApps']();
 }
 
+export function ListCustomNodes() {
+  return window['go']['main']['App']['ListCustomNodes']();
+}
+
 export function ListMCPServers() {
   return window['go']['main']['App']['ListMCPServers']();
 }
@@ -176,6 +184,10 @@ export function LoadDraft() {
 
 export function MCPClients() {
   return window['go']['main']['App']['MCPClients']();
+}
+
+export function MCPLibrary() {
+  return window['go']['main']['App']['MCPLibrary']();
 }
 
 export function MCPLog() {
@@ -318,6 +330,10 @@ export function Samples() {
   return window['go']['main']['App']['Samples']();
 }
 
+export function SaveCustomNode(arg1) {
+  return window['go']['main']['App']['SaveCustomNode'](arg1);
+}
+
 export function SaveDraft(arg1) {
   return window['go']['main']['App']['SaveDraft'](arg1);
 }
@@ -420,6 +436,10 @@ export function StopScript() {
 
 export function StorageDefaults() {
   return window['go']['main']['App']['StorageDefaults']();
+}
+
+export function TestMCPTool(arg1, arg2, arg3) {
+  return window['go']['main']['App']['TestMCPTool'](arg1, arg2, arg3);
 }
 
 export function TestNode(arg1, arg2) {

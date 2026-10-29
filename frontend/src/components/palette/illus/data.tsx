@@ -69,6 +69,15 @@ export const data: Scenes = {
       <Show from={0.4}><rect x={144} y={36} width="96" height="62" rx="8" className="fill-surface stroke-line-strong" /><T x={156} y={54} s={9} cls="fill-ink">AI</T><T x={156} y={70} s={8} cls="fill-muted">Cần trả lời: có</T><Tick x={240} y={36} from={0.4} /></Show>
     </Stage>
   ),
+  mcpTool: () => (
+    <Stage>
+      {box(14, 34, 80, 66)}
+      <Arr x1={98} y1={67} x2={120} y2={67} />
+      <Show from={0.3}><rect x={124} y={36} width="76" height="62" rx="8" className="fill-surface stroke-line-strong" /><T x={134} y={54} s={9} cls="fill-ink">MCP</T><T x={134} y={70} s={8} cls="fill-muted">read_file</T></Show>
+      <Arr x1={204} y1={67} x2={226} y2={67} />
+      <Show from={0.6}><T x={230} y={71} s={8} cls="fill-muted">dữ liệu</T><Tick x={256} y={36} from={0.6} /></Show>
+    </Stage>
+  ),
   notify: () => (
     <Stage>
       {box(14, 34, 96, 66)}

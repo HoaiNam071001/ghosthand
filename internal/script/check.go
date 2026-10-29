@@ -197,7 +197,7 @@ func checkStep(s *model.Step) error {
 		if err := checkDisplay(*s); err != nil {
 			return err
 		}
-	case model.StepNotify:
+	case model.StepNotify, model.StepMCPTool:
 	case model.StepAskAI:
 		if !slices.Contains(ai.Kinds, s.AIKind) {
 			return fmt.Errorf("nhà cung cấp AI không hợp lệ: %q (trống = openai | anthropic | gemini)", s.AIKind)

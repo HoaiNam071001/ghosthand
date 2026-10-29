@@ -28,6 +28,7 @@ type fakeBackend struct {
 	dir           string
 	revs          *store.Revisions
 	recent        []string
+	mcpServers    []MCPServerEntry
 	editor        Editor
 	opened        []string
 	sess          *session.Manager // phiên chạy thật, thiết bị giả (runBackend trong run_test.go)
@@ -75,6 +76,7 @@ func (f *fakeBackend) ScriptsDir() (string, error)  { return f.dir, nil }
 func (f *fakeBackend) OpenInApp(path string) error  { f.opened = append(f.opened, path); return nil }
 func (f *fakeBackend) Permissions() []perm.Item     { return f.perms }
 func (f *fakeBackend) SecretNames() []string        { return []string{"mat_khau_email"} }
+func (f *fakeBackend) MCPServers() []MCPServerEntry { return f.mcpServers }
 func (f *fakeBackend) Displays() []Display {
 	return []Display{{Rect: model.Rect{W: 1920, H: 1080}, Scale: 1, Main: true}}
 }

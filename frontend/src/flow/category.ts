@@ -19,7 +19,7 @@ const BY_TYPE: Record<StepType, NodeCategory> = {
   click: 'mouse', double: 'mouse', hold: 'mouse', drag: 'mouse', scroll: 'mouse', path: 'mouse', clickImage: 'mouse',
   type: 'kb', key: 'kb',
   wait: 'wait', waitImage: 'wait', waitPixel: 'wait', waitScreen: 'wait', waitDownload: 'wait', waitUIEvent: 'wait', findAll: 'wait', waitUntil: 'wait', screenshot: 'wait',
-  clipboard: 'data', http: 'data', file: 'data', system: 'data', shell: 'data', osShortcut: 'data', sysInfo: 'data', process: 'data', inputSource: 'data', zip: 'data', notify: 'data', askAI: 'data', power: 'data', display: 'data', setVar: 'data', calc: 'data',
+  clipboard: 'data', http: 'data', file: 'data', system: 'data', shell: 'data', osShortcut: 'data', sysInfo: 'data', process: 'data', inputSource: 'data', zip: 'data', notify: 'data', askAI: 'data', mcpTool: 'data', power: 'data', display: 'data', setVar: 'data', calc: 'data',
   textMatch: 'data', textSplit: 'data', textClean: 'data', textNumber: 'data',
   open: 'app', window: 'app', app: 'app', browserTab: 'app', browserGo: 'app', browserNorm: 'app', savePdf: 'app', elementRead: 'app', pageText: 'app', readDocument: 'app', readTable: 'app', elementAction: 'app',
   if: 'flow', switch: 'flow', switchScreen: 'flow', counter: 'flow', forEach: 'flow', end: 'flow',

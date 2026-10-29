@@ -33,6 +33,7 @@ export const NODE_INFO: Record<InfoKey, NodeInfo> = {
   file: { desc: 'Ghi chữ vào file, thêm dòng vào bảng .csv / .xlsx, tạo thư mục, xoá file vào Thùng rác hoặc dọn Thùng rác.', use: 'Lưu nhật ký / kết quả từng vòng vào Excel, dọn ảnh chụp cũ trong thư mục.' },
   power: { desc: 'Khoá màn, tắt màn hình, ngủ, đăng xuất, tắt hoặc khởi động lại máy – hành động mất phiên cần bạn đồng ý và đếm ngược để huỷ.', use: 'Tắt máy khi chạy xong việc dài qua đêm; khoá màn sau khi làm xong.' },
   display: { desc: 'Đổi chế độ sáng / tối, độ sáng màn hình, loa / micro mặc định, phát âm báo; hoặc đọc trạng thái hiện tại.', use: 'Chuyển sang tai nghe trước cuộc gọi, phát tiếng báo khi xong, tối màn hình khi chạy ban đêm.' },
+  mcpTool: { desc: 'Gọi một tool của MCP server ngoài (đọc file, GitHub, Sheets…); nhận chữ hoặc JSON.', use: 'Làm việc app chưa có node. Server thêm ở Cài đặt; tool ghi luôn hỏi người dùng.' },
   askAI: { desc: 'Hỏi AI bằng chữ, kèm ảnh màn hình nếu cần; nhận chữ hoặc JSON.', use: 'Đọc hiểu, phân loại, soạn trả lời. Câu hỏi và ảnh gửi nhà cung cấp, tốn tiền.' },
   notify: { desc: 'Hiện thông báo của hệ điều hành (Notification Center / toast Windows) với tiêu đề và nội dung.', use: 'Báo cho người ngồi máy khi kịch bản xong hoặc cần chú ý, kể cả khi app đang thu nhỏ.' },
   zip: { desc: 'Nén file / thư mục ra .zip hoặc giải nén .zip vào thư mục.', use: 'Gói kết quả trước khi gửi / tải lên; mở gói vừa tải về để lấy file bên trong.' },

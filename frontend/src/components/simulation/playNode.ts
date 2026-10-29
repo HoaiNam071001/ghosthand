@@ -25,6 +25,7 @@ import { Point, Rect, Step, stepLabel } from '../../types';
 import { fmtInputSource } from '../../flow/inputSource';
 import { fmtZip } from '../../flow/zip';
 import { fmtAskAI } from '../../flow/askAI';
+import { fmtMCPTool } from '../../flow/mcpTool';
 import { fmtNotify } from '../../flow/notify';
 import { fmtPower } from '../../flow/power';
 import { fmtDisplay } from '../../flow/display';
@@ -61,6 +62,7 @@ function bubbleOf(s: Step): string | null {
     case 'power': return `⏻ Nguồn: ${fmtPower(s)} – xem trước không tác động máy`;
     case 'display': return `🖥 Màn hình / âm thanh: ${fmtDisplay(s)} – xem trước không đổi thật`;
     case 'askAI': return `✨ Hỏi AI: ${fmtAskAI(s)} – xem trước không gọi AI`;
+    case 'mcpTool': return `🔌 MCP: ${fmtMCPTool(s)} – xem trước không gọi tool`;
     case 'notify': return `🔔 Thông báo: ${fmtNotify(s)} – xem trước không hiện thật`;
     case 'zip': return `🗜 ${fmtZip(s)} – xem trước không nén / giải nén thật`;
     case 'inputSource': return `⌨ Bộ gõ: ${fmtInputSource(s)} – xem trước không đổi thật`;

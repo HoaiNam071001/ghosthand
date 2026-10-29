@@ -55,6 +55,9 @@ func (s *Server) addReadTools() {
 	addTool(s, KindRead, &mcp.Tool{Name: "list_secrets", Description: "Tên các bí mật người dùng đã lưu trong Cài đặt → Bí mật (mật khẩu, token…). " +
 		"CHỈ có tên, không bao giờ có giá trị. Dùng trong ô chữ của node bằng {{secret.<tên>}}; app điền giá trị thật lúc chạy và che trong kết quả. " +
 		"Cần bí mật chưa có thì bảo người dùng thêm ở Cài đặt → Bí mật, đừng xin giá trị."}, s.listSecrets)
+	addTool(s, KindRead, &mcp.Tool{Name: "list_mcp_servers", Description: "MCP server ngoài người dùng đã thêm (Cài đặt → MCP server): id, state (ok | error | idle | off), " +
+		"tool (tên, readOnly, args – bắt buộc có *). Dùng cho node mcpTool: mcpServer = id, mcpTool = tên tool, mcpArgs = JSON theo args. " +
+		"Chưa có server cần dùng thì bảo người dùng thêm ở Cài đặt – AI không thêm / sửa server."}, s.listMCPServers)
 	addTool(s, KindRead, &mcp.Tool{Name: "get_screen_info", Description: "Các màn hình: khung theo toạ độ chuột (x, y, w, h), tỷ lệ DPI / Retina, màn chính. " +
 		"Toạ độ trong kịch bản dùng cùng hệ này."}, s.screenInfo)
 }

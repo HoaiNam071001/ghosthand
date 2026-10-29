@@ -164,6 +164,8 @@ func VarFields(s *model.Step) []VarField {
 		add("prompt", &s.Prompt, false)
 		add("aiFallback", &s.AIFallback, false)
 		add("filePath", &s.FilePath, false)
+	case model.StepMCPTool:
+		out = append(out, VarField{Name: "mcpArgs", Ptr: &s.MCPArgs, JSON: true})
 	case model.StepZip:
 		add("filePath", &s.FilePath, false)
 		add("filePattern", &s.FilePattern, false)

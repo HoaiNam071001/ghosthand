@@ -125,6 +125,14 @@ func (b mcpBackend) Permissions() []perm.Item { return perm.Check(perm.System{})
 
 func (b mcpBackend) SecretNames() []string { return store.Secrets().Names() }
 
+func (b mcpBackend) MCPServers() []mcpsrv.MCPServerEntry {
+	var out []mcpsrv.MCPServerEntry
+	for _, s := range b.a.ListMCPServers() {
+		out = append(out, mcpsrv.MCPServerEntry{ID: s.ID, Name: s.Name, Enabled: s.Enabled, Status: s.Status})
+	}
+	return out
+}
+
 func (b mcpBackend) Displays() []mcpsrv.Display {
 	main := device.MainScreen()
 	out := []mcpsrv.Display{}

@@ -162,6 +162,10 @@ func ValidateScript(sc model.Script, screen model.Rect) error {
 			if err := validateAskAI(i, s); err != nil {
 				return err
 			}
+		case model.StepMCPTool:
+			if err := validateMCPTool(i, s); err != nil {
+				return err
+			}
 		case model.StepOSShortcut:
 			if strings.TrimSpace(s.ShortcutName) == "" {
 				return stepErr(i, s, "shortcutName", "chưa nhập tên Shortcut")

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"ghosthand/internal/device"
+	"ghosthand/internal/engine"
 	"ghosthand/internal/model"
 	"ghosthand/internal/power"
 	"ghosthand/internal/secrets"
@@ -35,6 +36,8 @@ type Deps struct {
 	KeepAwake func(ctx context.Context) (stop func(), err error)
 	// Secrets – kho bí mật (bước 43 S10); nil = Keychain / Credential Manager thật.
 	Secrets *secrets.Store
+	// MCP – gọi tool MCP server ngoài qua cổng quyền của app (node Gọi tool MCP, bước 55); nil = node báo chỉ chạy trong app.
+	MCP engine.MCPCaller
 }
 
 func (d Deps) withDefaults() Deps {

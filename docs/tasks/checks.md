@@ -3,6 +3,14 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## 55 M3 – Node Gọi tool MCP · [55](phase3/55-mcp-client-node-tuy-chinh.md)
+- [ ] Cài đặt → MCP server: thêm server `fs` (lệnh npx, tham số -y @modelcontextprotocol/server-filesystem <thư mục>) → Tải lại → hộp hỏi duyệt lệnh → hiện “Đã kết nối · N tool”; Sửa / Tắt / Xoá chạy đúng; env / header dán token thẳng → bị từ chối
+- [ ] Mẫu *Gọi tool MCP*: thêm server `fs` (Filesystem) → chạy → hộp hỏi server → lời kết có nội dung file; chưa có server → node báo “không có server MCP”
+
+- [ ] Cài đặt → MCP server → Thư viện: Filesystem hỏi thư mục → Thêm điền sẵn form → Lưu → Tải lại ra tool; máy không có npx / uvx thì thẻ báo cách cài và nút Thêm tắt; GitHub: thêm bí mật `github_token` rồi Thêm → Tải lại
+- [ ] Node Gọi tool MCP → *Lưu thành node của tôi* (tên + icon) → Ctrl/Cmd+K: mục *Của tôi* có node, thả vào canvas ra node đã điền sẵn server / tool / đối số; Sửa tên / icon, Xoá chạy đúng; mở kịch bản đó ở máy không có server → node báo thiếu server, file vẫn mở
+- [ ] Node Gọi tool MCP: chọn server `fs` → chọn tool `read_text_file` → form hiện ô `path` (có dấu *) → điền → *Chạy thử* hiện nội dung file; tool ghi (vd `write_file`) hỏi quyền; bỏ trống `path` báo “Còn thiếu”; *Sửa JSON* ⇄ *Dùng form* giữ nguyên giá trị
+
 ## 31d – Hỏi AI · [31](phase3/31-mcp-ai.md)
 - [ ] Mẫu *Hỏi AI*: chưa có key → chạy xong, lời kết ghi “dự phòng: true”
 - [ ] Lưu key ở Cài đặt → Bí mật, ghi `{{secret.<tên>}}` vào ô Key → chạy: AI trả JSON, lời kết ghi câu trả lời; key không lộ ở kết quả / lịch sử

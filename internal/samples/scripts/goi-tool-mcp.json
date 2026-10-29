@@ -1,0 +1,20 @@
+{
+ "meta": {
+  "name": "Gọi tool MCP – đọc file bằng server Filesystem",
+  "description": "Gọi tool read_text_file của MCP server Filesystem để đọc một file chữ, rồi hiện nội dung ở lời kết. Cần thêm server trước (Cài đặt → MCP server, id fs); chưa có thì node báo thiếu server. Đúng: lời kết có nội dung file.",
+  "app": "Hệ thống",
+  "level": 2,
+  "page": "index.html",
+  "real": false,
+  "prep": "Cài đặt → MCP server → thêm server id fs: lệnh npx, tham số -y @modelcontextprotocol/server-filesystem <thư mục chứa file> (cần Node.js). Lần chạy đầu app hỏi có tin lệnh này không. Đặt file ghi chú.txt trong thư mục đó và sửa ô Đường dẫn file thành đường dẫn đầy đủ (server không hiểu dấu ~)."
+ },
+ "script": {
+  "steps": [
+   { "type": "mcpTool", "mcpServer": "fs", "mcpTool": "read_text_file", "mcpArgs": "{\"path\":\"{{duongdan}}\"}" },
+   { "type": "end", "endStatus": "success", "message": "Nội dung file: {{n1.output.text}}" }
+  ],
+  "inputs": [
+   { "key": "duongdan", "label": "Đường dẫn file", "type": "text", "default": "/Users/ban/Documents/ghi-chu.txt" }
+  ]
+ }
+}

@@ -8,7 +8,7 @@ import { missingOf, needs, needsOf } from './perms';
 // Giữ cùng noPermTypes trong internal/perm/needs_test.go
 const NO_PERM = ['wait', 'open', 'clipboard', 'http', 'system', 'waitUntil', 'window', 'app', 'webWait', 'webRead', 'webKey',
   'waitDownload', 'shell', 'osShortcut', 'sysInfo', 'process', 'zip', 'switch', 'counter', 'forEach', 'end', 'setVar', 'calc',
-  'textMatch', 'textSplit', 'textClean', 'textNumber'];
+  'textMatch', 'textSplit', 'textClean', 'textNumber', 'mcpTool'];
 
 describe('needsOf', () => {
   it.each(data.cases)('$name', (c) => {

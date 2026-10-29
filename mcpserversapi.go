@@ -3,8 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
 
+	"ghosthand/internal/engine"
 	"ghosthand/internal/mcpclient"
+	"ghosthand/internal/mcplib"
 	"ghosthand/internal/secrets"
 	"ghosthand/internal/store"
 )
@@ -117,3 +120,23 @@ func expandMap(m, vals map[string]string) map[string]string {
 	}
 	return out
 }
+
+// TestMCPTool – nút "Chạy thử" của node Gọi tool MCP: gọi tool một lần (qua cổng quyền như khi chạy thật) với đối số
+// args đã thay sẵn, trả output giống node. Tool báo isError vẫn trả output (isError true) để xem lời báo; lỗi nối /
+// từ chối trả error.
+func (a *App) TestMCPTool(serverID, tool, args string) (map[string]any, error) {
+	m, err := engine.ParseMCPArgs(args)
+	if err != nil {
+		return nil, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+	res, err := a.mcpCall(ctx, serverID, tool, m)
+	if err != nil {
+		return nil, err
+	}
+	return engine.MCPOutput(res), nil
+}
+
+// MCPLibrary – thư viện server gợi ý (Cài đặt → MCP server → Thư viện), kèm máy có npx / uvx chưa.
+func (a *App) MCPLibrary() []mcplib.Entry { return mcplib.Entries(nil) }

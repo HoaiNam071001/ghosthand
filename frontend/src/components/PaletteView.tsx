@@ -12,9 +12,10 @@ import { onlyLabel, unsupportedHere } from '../flow/platform';
 import { usePlatform } from './palette/usePlatform';
 
 // key: tên mô tả / hoạt hoạ (flow/nodeInfo); type: loại node thuần – chỉ mục có type mới hiện khi Đổi loại node.
-export type PaletteItem = { icon: StepIconName; label: string; keywords: string; info?: NodeInfo; key?: InfoKey; type?: StepType; run?: () => unknown; soon?: string };
-// cat: nhóm node (tên + chấm màu nhóm – flow/category); note: dòng ghi chú dưới tên nhóm
-export type PaletteGroup = { cat: NodeCategory; note?: string; items: PaletteItem[] };
+// extra: phần thêm ở khung mô tả (vd Sửa / Xoá của node của tôi).
+export type PaletteItem = { icon: StepIconName; label: string; keywords: string; info?: NodeInfo; key?: InfoKey; type?: StepType; run?: () => unknown; soon?: string; extra?: ReactNode };
+// cat: nhóm node (tên + chấm màu nhóm – flow/category); title: tên riêng thay tên nhóm (Của tôi); note: dòng ghi chú dưới tên nhóm
+export type PaletteGroup = { cat: NodeCategory; title?: string; note?: string; items: PaletteItem[] };
 type Item = PaletteItem;
 
 const COLS = 3;
@@ -33,7 +34,7 @@ export function PaletteView({ groups: all, onClose, onCancel, onGuide, footer, c
   const groups = useMemo(() => {
     const words = fold(q).split(/\s+/).filter(Boolean);
     return all
-      .map((g) => ({ ...g, items: g.items.filter((it) => words.every((w) => fold(`${it.label} ${it.keywords} ${categoryName(g.cat)}`).includes(w))) }))
+      .map((g) => ({ ...g, items: g.items.filter((it) => words.every((w) => fold(`${it.label} ${it.keywords} ${g.title ?? categoryName(g.cat)}`).includes(w))) }))
       .filter((g) => g.items.length > 0);
   }, [q, all]);
   const flat = groups.flatMap((g) => g.items);
@@ -81,9 +82,9 @@ export function PaletteView({ groups: all, onClose, onCancel, onGuide, footer, c
         <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-3.5 py-2">
           {groups.length === 0 && <p className="py-6 text-center text-muted">Không có loại bước nào khớp “{q}”</p>}
           {groups.map((g) => (
-            <section key={g.cat} className={`cat-${g.cat} flex flex-col gap-1.5`}>
+            <section key={g.title ?? g.cat} className={`cat-${g.cat} flex flex-col gap-1.5`}>
               <span className="flex items-center gap-1.5 px-1 text-xs font-semibold text-muted">
-                <span className="h-2 w-2 rounded-full bg-cat" aria-hidden />{categoryName(g.cat)}
+                <span className="h-2 w-2 rounded-full bg-cat" aria-hidden />{g.title ?? categoryName(g.cat)}
               </span>
               {g.note && <span className="-mt-1 px-1 text-xs text-muted">{g.note}</span>}
               <div className="grid grid-cols-3 gap-1.5">
@@ -142,6 +143,7 @@ function PaletteDetail({ item, warn, onGuide }: { item?: Item; warn: string; onG
             {onGuide && item.key && <button onClick={() => onGuide(item.key!)} className="self-start text-xs font-medium text-accent-text hover:underline">Xem hướng dẫn →</button>}
           </>}
           {warn && <span className="text-xs font-medium text-warn">{warn}</span>}
+          {item.extra}
         </div>
       </>}
     </div>

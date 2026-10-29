@@ -6,6 +6,19 @@
   "appForce",
   "timeoutMs"
  ],
+ "askAI": [
+  "prompt",
+  "aiKind",
+  "aiBaseUrl",
+  "aiModel",
+  "aiKey",
+  "aiImage",
+  "filePath",
+  "shotArea",
+  "aiFormat",
+  "aiFallback",
+  "timeoutMs"
+ ],
  "browserGo": [
   "url",
   "browser",
@@ -188,6 +201,12 @@
   "keys",
   "modifiers",
   "keyMode"
+ ],
+ "mcpTool": [
+  "mcpServer",
+  "mcpTool",
+  "mcpArgs",
+  "timeoutMs"
  ],
  "notify": [
   "notifyTitle",

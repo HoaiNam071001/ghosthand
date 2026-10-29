@@ -9,6 +9,7 @@ import {engine} from '../models';
 import {store} from '../models';
 import {procinfo} from '../models';
 import {mcpsrv} from '../models';
+import {mcplib} from '../models';
 import {perm} from '../models';
 import {session} from '../models';
 import {samples} from '../models';
@@ -44,6 +45,8 @@ export function ClearRuns(arg1:string,arg2:string):Promise<void>;
 export function ConfirmQuit():Promise<void>;
 
 export function DangerCheck(arg1:model.Script,arg2:Record<string, any>,arg3:string):Promise<main.DangerCheck>;
+
+export function DeleteCustomNode(arg1:string):Promise<void>;
 
 export function DeleteMCPServer(arg1:string):Promise<void>;
 
@@ -83,6 +86,8 @@ export function InstallUpdate():Promise<void>;
 
 export function ListApps():Promise<Array<model.AppInfo>>;
 
+export function ListCustomNodes():Promise<Array<store.CustomNode>>;
+
 export function ListMCPServers():Promise<Array<main.MCPServerView>>;
 
 export function ListProcesses():Promise<Array<procinfo.Group>>;
@@ -100,6 +105,8 @@ export function ListWindows():Promise<Array<model.WindowInfo>>;
 export function LoadDraft():Promise<store.Draft>;
 
 export function MCPClients():Promise<Array<mcpsrv.ClientConfig>>;
+
+export function MCPLibrary():Promise<Array<mcplib.Entry>>;
 
 export function MCPLog():Promise<Array<mcpsrv.Call>>;
 
@@ -171,6 +178,8 @@ export function RunStatus(arg1:string):Promise<session.Status>;
 
 export function Samples():Promise<Array<samples.Info>>;
 
+export function SaveCustomNode(arg1:store.CustomNode):Promise<store.CustomNode>;
+
 export function SaveDraft(arg1:store.Draft):Promise<void>;
 
 export function SaveInputMemory(arg1:string,arg2:store.InputMemory):Promise<void>;
@@ -222,6 +231,8 @@ export function StopRecording():Promise<void>;
 export function StopScript():Promise<void>;
 
 export function StorageDefaults():Promise<store.StorageDefaults>;
+
+export function TestMCPTool(arg1:string,arg2:string,arg3:string):Promise<Record<string, any>>;
 
 export function TestNode(arg1:model.Script,arg2:string):Promise<engine.NodeTest>;
 

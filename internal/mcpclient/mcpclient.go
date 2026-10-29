@@ -61,6 +61,9 @@ type Content struct {
 	URI  string `json:"uri,omitempty"`
 }
 
+// ErrDenied – người dùng không cho dùng server / tool (hộp hỏi quyền) – engine báo lỗi permission.
+var ErrDenied = errors.New("người dùng không cho dùng server / tool MCP này")
+
 // Result – kết quả một lần gọi. IsError = tool báo lỗi (khác lỗi kết nối).
 type Result struct {
 	Content    []Content `json:"content"`

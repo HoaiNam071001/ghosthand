@@ -21,6 +21,7 @@ import { fmtWebStep, isWebStep } from './web';
 import { fmtInputSource } from './inputSource';
 import { fmtZip } from './zip';
 import { fmtAskAI } from './askAI';
+import { fmtMCPTool } from './mcpTool';
 import { fmtNotify } from './notify';
 import { fmtPower } from './power';
 import { fmtDisplay } from './display';
@@ -55,6 +56,7 @@ export const fmtPos = (s: Step, refOf: (id: string) => string = () => '?') =>
     : s.type === 'display' ? fmtDisplay(s)
     : s.type === 'notify' ? fmtNotify(s)
     : s.type === 'askAI' ? fmtAskAI(s)
+    : s.type === 'mcpTool' ? fmtMCPTool(s)
     : s.type === 'zip' ? fmtZip(s)
     : s.type === 'inputSource' ? fmtInputSource(s)
     : s.type === 'process' ? fmtProcess(s)

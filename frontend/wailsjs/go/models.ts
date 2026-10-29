@@ -663,6 +663,85 @@ export namespace mcpclient {
 
 }
 
+export namespace mcplib {
+	
+	export class Param {
+	    key: string;
+	    label: string;
+	    placeholder?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Param(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.key = source["key"];
+	        this.label = source["label"];
+	        this.placeholder = source["placeholder"];
+	    }
+	}
+	export class Entry {
+	    id: string;
+	    name: string;
+	    desc: string;
+	    kind: string;
+	    command?: string;
+	    args?: string[];
+	    url?: string;
+	    headers?: Record<string, string>;
+	    params?: Param[];
+	    secrets?: string[];
+	    needs?: string;
+	    warn?: string;
+	    thirdParty?: boolean;
+	    available: boolean;
+	    installHint?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Entry(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.name = source["name"];
+	        this.desc = source["desc"];
+	        this.kind = source["kind"];
+	        this.command = source["command"];
+	        this.args = source["args"];
+	        this.url = source["url"];
+	        this.headers = source["headers"];
+	        this.params = this.convertValues(source["params"], Param);
+	        this.secrets = source["secrets"];
+	        this.needs = source["needs"];
+	        this.warn = source["warn"];
+	        this.thirdParty = source["thirdParty"];
+	        this.available = source["available"];
+	        this.installHint = source["installHint"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+
+}
+
 export namespace mcpsrv {
 	
 	export class Call {
@@ -1466,6 +1545,9 @@ export namespace model {
 	    aiImage?: string;
 	    aiFormat?: string;
 	    aiFallback?: string;
+	    mcpServer?: string;
+	    mcpTool?: string;
+	    mcpArgs?: string;
 	    zipOp?: string;
 	    zipTo?: string;
 	    inputOp?: string;
@@ -1649,6 +1731,9 @@ export namespace model {
 	        this.aiImage = source["aiImage"];
 	        this.aiFormat = source["aiFormat"];
 	        this.aiFallback = source["aiFallback"];
+	        this.mcpServer = source["mcpServer"];
+	        this.mcpTool = source["mcpTool"];
+	        this.mcpArgs = source["mcpArgs"];
 	        this.zipOp = source["zipOp"];
 	        this.zipTo = source["zipTo"];
 	        this.inputOp = source["inputOp"];
@@ -2114,6 +2199,28 @@ export namespace store {
 	        this.enabled = source["enabled"];
 	        this.port = source["port"];
 	        this.token = source["token"];
+	    }
+	}
+	export class CustomNode {
+	    id: string;
+	    name: string;
+	    icon?: string;
+	    server: string;
+	    tool: string;
+	    args?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new CustomNode(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.name = source["name"];
+	        this.icon = source["icon"];
+	        this.server = source["server"];
+	        this.tool = source["tool"];
+	        this.args = source["args"];
 	    }
 	}
 	export class Draft {
