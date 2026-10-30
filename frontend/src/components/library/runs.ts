@@ -21,3 +21,17 @@ export const libraryRun = (h: RunSummary, active = false): LibraryRun => ({
 });
 
 export const runDot = (h: LibraryRun) => (h.muted ? 'bg-muted' : h.ok ? 'bg-ok' : 'bg-danger');
+
+// Thống kê lần chạy (bước 28 R2) – khớp RunStats trong internal/model/runstats.go.
+export type RunStats = { runs: number; success: number; fail: number; stopped: number; successPct: number; avgMs: number; topFails: { node: string; count: number }[] };
+
+// Các mẩu dải thống kê: "12 lần chạy" · "83 % thành công" · "trung bình 4,2 s" · "hay lỗi: n3 Click (2)". nodeName: id → tên
+// node hiện tại (undefined = node đã xoá).
+export function runStatsParts(st: RunStats, nodeName: (id: string) => string | undefined): string[] {
+  if (!st.runs) return [];
+  const out = [`${st.runs} lần chạy`];
+  if (st.success + st.fail) out.push(`${st.successPct} % thành công`);
+  if (st.avgMs) out.push(`trung bình ${(st.avgMs / 1000).toLocaleString('vi-VN', { maximumFractionDigits: 1 })} s`);
+  if (st.topFails.length) out.push(`hay lỗi: ${st.topFails.map((f) => `${nodeName(f.node) ?? 'node đã xoá'} (${f.count})`).join(', ')}`);
+  return out;
+}

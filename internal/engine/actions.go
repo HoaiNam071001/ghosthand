@@ -125,6 +125,8 @@ func (e *Engine) runStep(ctx context.Context, s model.Step, wait int) (map[strin
 		return e.screenshot(ctx, s)
 	case model.StepWaitScreen:
 		return e.waitScreen(ctx, s)
+	case model.StepOcrRead:
+		return e.ocrRead(ctx, s)
 	case model.StepFindAll:
 		return e.findAll(ctx, s)
 	case model.StepClipboard:

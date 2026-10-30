@@ -90,22 +90,8 @@ func (e *Engine) nodeBox(id string) (model.Point, model.Rect, error) {
 	return model.Point{X: x, Y: y}, model.Rect{X: x - w/2, Y: y - h/2, W: w, H: h}, nil
 }
 
-// userPath – đường dẫn người dùng gõ: ~ / đường dẫn tương đối tính từ thư mục người dùng (app không có thư mục làm việc
-// rõ ràng – chạy từ Finder / Start). Node Chụp màn hình, Clipboard (ảnh), sau này Tệp / thư mục.
-func userPath(p string) (string, error) {
-	p = strings.TrimSpace(p)
-	if filepath.IsAbs(p) {
-		return p, nil
-	}
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return "", fmt.Errorf("không tìm thấy thư mục người dùng: %w", err)
-	}
-	if p == "~" || strings.HasPrefix(p, "~/") || strings.HasPrefix(p, `~\`) {
-		p = p[1:]
-	}
-	return filepath.Join(home, p), nil
-}
+// userPath – script.UserPath (~ / tương đối tính từ thư mục người dùng).
+func userPath(p string) (string, error) { return script.UserPath(p) }
 
 // shotPath – đường dẫn file sẽ ghi: dir trống = def (thư mục ảnh trong Cài đặt; trống nữa = Pictures/Ghosthand), còn lại
 // theo userPath; name trống = ghosthand-<ngày>-<giờ>; ký tự không hợp lệ trong tên → "-"; trùng file có sẵn thì thêm " (2)"…

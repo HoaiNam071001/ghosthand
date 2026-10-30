@@ -94,6 +94,10 @@ export function EmbedScriptFile(arg1) {
   return window['go']['main']['App']['EmbedScriptFile'](arg1);
 }
 
+export function ExportPack(arg1) {
+  return window['go']['main']['App']['ExportPack'](arg1);
+}
+
 export function FindElement(arg1, arg2) {
   return window['go']['main']['App']['FindElement'](arg1, arg2);
 }
@@ -132,6 +136,10 @@ export function GetRun(arg1, arg2, arg3) {
 
 export function GetSettings() {
   return window['go']['main']['App']['GetSettings']();
+}
+
+export function ImportPack() {
+  return window['go']['main']['App']['ImportPack']();
 }
 
 export function InBackground() {
@@ -320,6 +328,10 @@ export function RunScript(arg1, arg2, arg3) {
 
 export function RunShot(arg1, arg2, arg3, arg4) {
   return window['go']['main']['App']['RunShot'](arg1, arg2, arg3, arg4);
+}
+
+export function RunStats(arg1, arg2) {
+  return window['go']['main']['App']['RunStats'](arg1, arg2);
 }
 
 export function RunStatus(arg1) {

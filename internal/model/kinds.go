@@ -17,6 +17,7 @@ const (
 	StepWaitPixel  = "waitPixel"  // chờ tới khi điểm Points[0] có màu Color (± Tolerance)
 	StepWaitScreen = "waitScreen" // chờ vùng ShotArea đứng yên / thay đổi theo WaitMode (engine/waitscreen.go, bước 42 G1)
 	StepFindAll    = "findAll"    // như waitImage nhưng trả mọi chỗ khớp (items), số chỗ trong MinCount..MaxCount (engine/findall.go, bước 42 G3)
+	StepOcrRead    = "ocrRead"    // OCR mọi chữ trong vùng ShotArea → text / lines theo thứ tự đọc (engine/ocrread.go, bước 28 R1)
 
 	// Node nâng cao (bước 35)
 	StepScreenshot  = "screenshot"  // chụp vùng ShotArea, lưu PNG vào SaveDir / FileName, tuỳ chọn chép vào clipboard (engine/shot.go)
@@ -80,9 +81,14 @@ const (
 
 // StepTypes – mọi loại node app hỗ trợ (steptypes.go có mô tả cho từng loại – test kiểm tra).
 var StepTypes = []string{StepClick, StepDouble, StepHold, StepDrag, StepWait, StepText, StepKey, StepScroll, StepOpen,
-	StepWaitImage, StepClickImage, StepWaitPixel, StepWaitScreen, StepFindAll, StepScreenshot, StepClipboard, StepHTTP, StepFile, StepSystem, StepWaitUntil, StepPath, StepWindow, StepApp, StepBrowserTab, StepBrowserGo, StepBrowserNorm, StepSavePdf, StepWebWait, StepWebClick,
+	StepWaitImage, StepClickImage, StepWaitPixel, StepWaitScreen, StepFindAll, StepOcrRead, StepScreenshot, StepClipboard, StepHTTP, StepFile, StepSystem, StepWaitUntil, StepPath, StepWindow, StepApp, StepBrowserTab, StepBrowserGo, StepBrowserNorm, StepSavePdf, StepWebWait, StepWebClick,
 	StepWebType, StepWebRead, StepWebScroll, StepWebKey, StepElementRead, StepPageText, StepReadTable, StepWaitDownload, StepElementAction, StepReadDocument, StepWaitUIEvent, StepShell, StepOSShortcut, StepSysInfo, StepProcess, StepZip, StepNotify, StepAskAI, StepMCPTool, StepPower, StepDisplay, StepInputSource, StepIf, StepSwitch, StepSwitchScreen, StepCounter, StepForEach, StepEnd, StepSetVar, StepCalc,
 	StepTextMatch, StepTextSplit, StepTextClean, StepTextNumber}
+
+// HasShotArea – node có vùng chụp ShotArea / Display / ShotRect (ImageFrom khi ShotArea = node) như Chụp màn hình.
+func HasShotArea(t string) bool {
+	return t == StepScreenshot || t == StepWaitScreen || t == StepOcrRead
+}
 
 // IsControl – node điều khiển: không thử lại, không chờ sau khi xong, inspector riêng.
 func IsControl(t string) bool {

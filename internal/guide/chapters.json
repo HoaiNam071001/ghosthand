@@ -95,7 +95,7 @@
     "summary": "Thư viện, canvas, inspector, thanh công cụ, overlay chọn vùng, thanh mini lúc chạy.",
     "blocks": [
       { "kind": "list", "items": [
-        "**Thư viện** (trái): kịch bản mới / mở / lưu, Mẫu thử, Mở gần đây, Lịch sử chạy, hẹn giờ của từng kịch bản.",
+        "**Thư viện** (trái): kịch bản mới / mở / lưu, Mẫu thử, Mở gần đây, Lịch sử chạy, hẹn giờ của từng kịch bản. Nút **Gói** (hình hộp): *Xuất gói .zip* – kịch bản kèm file CSV / xlsx của Lặp qua danh sách, ảnh của Clipboard / Hỏi AI để gửi máy khác (ảnh mẫu đã nằm sẵn trong kịch bản); *Nhập gói .zip* – giải nén vào thư mục kịch bản, đổi đường dẫn file sang chỗ mới rồi mở.",
         "**Canvas** (giữa): các node và cạnh nối. Kéo node để xếp, kéo từ cổng ra của node này sang node khác để nối. Ctrl+K (macOS: Cmd+K) mở bảng **Thêm node** có ô tìm không dấu.",
         "**Inspector** (phải): trường của node đang chọn. Nút ⓘ cạnh tên node cho biết node làm gì; *Xem hướng dẫn* mở trang của node đó trong modal này.",
         "**Thanh công cụ**: tên kịch bản, *Soạn / Xem trước*, nút số vòng (lặp, đếm ngược), nút **Chạy** kèm menu ▾.",
@@ -194,7 +194,7 @@
     "title": "Lịch sử và đọc lỗi",
     "summary": "Xem lại lần chạy, output từng node, hiểu mã lỗi.",
     "blocks": [
-      { "kind": "p", "text": "Mỗi lần chạy lưu nhật ký: node nào chạy, ra cổng nào, output gì, mất bao lâu, ảnh màn hình lúc lỗi. Mở **Lịch sử chạy** ở thư viện; *Xem trên flow* tô đường đã đi lên canvas." },
+      { "kind": "p", "text": "Mỗi lần chạy lưu nhật ký: node nào chạy, ra cổng nào, output gì, mất bao lâu, ảnh màn hình lúc lỗi. Mở **Lịch sử chạy** ở thư viện; *Xem trên flow* tô đường đã đi lên canvas. Đầu hộp thoại có thống kê: số lần chạy, % thành công (không tính lần bạn dừng), thời gian trung bình lần thành công và node hay làm kịch bản thất bại nhất – sửa node đó trước." },
       { "kind": "table", "head": ["Mã lỗi", "Nghĩa", "Thường do / cách sửa"], "rows": [
         ["`not_found`", "Hết giờ chờ mà không thấy ảnh / chữ / màu / phần tử", "Giao diện đổi, sai vùng tìm, ngưỡng quá chặt – xem chi tiết lỗi: chỗ giống nhất, chữ đọc được"],
         ["`timeout`", "Node chạy quá thời gian cho phép", "Tăng thời gian chờ hoặc kiểm tra app có treo"],

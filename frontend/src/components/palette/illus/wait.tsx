@@ -65,6 +65,14 @@ export const wait: Scenes = {
       <Show from={0.55}><Lines x={34} y={34} ws={[120, 150, 90, 130]} /><rect x={34} y={74} width="60" height="32" rx="4" className="fill-field" /><Tick x={196} y={34} from={0} /><T x={150} y={104} anchor="middle" cls="fill-ok" s={8}>đứng yên → đi tiếp</T></Show>
     </Stage>
   ),
+  ocrRead: () => (
+    <Stage><Win />
+      <T x={70} y={58} cls="fill-ink" s={10}>Đơn #4821</T><T x={70} y={80} cls="fill-ok" s={12}>THÀNH CÔNG</T>
+      <rect x={60} y={42} width="140" height="48" rx="4" className="fill-none stroke-accent" strokeDasharray="4 3" />
+      {scan(0.1, 0.5)}
+      <Show from={0.55}><Chip x={80} y={98} w={110} label="text = THÀNH CÔNG" /></Show>
+    </Stage>
+  ),
   waitUIEvent: () => (
     <Stage><Win />
       <Btn x={30} y={36} w={64} h={22} label="Mở" />

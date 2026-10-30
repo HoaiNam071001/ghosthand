@@ -35,7 +35,7 @@ function addStep(n: Set<PermId>, s: Step) {
       n.add('accessibility');
       if (s.findBy === 'text' || s.readNear) n.add('screenRecording');
       break;
-    case 'waitPixel': case 'waitScreen': case 'screenshot': n.add('screenRecording'); break;
+    case 'waitPixel': case 'waitScreen': case 'screenshot': case 'ocrRead': n.add('screenRecording'); break;
     case 'if': case 'switchScreen': addCond(n, s.cond); s.cases?.forEach((c) => addCond(n, c.cond)); break;
     case 'browserTab': case 'browserGo': addChrome(n, s); break;
     case 'browserNorm': n.add('accessibility'); n.add('autoSystemEvents'); addChrome(n, s); break;

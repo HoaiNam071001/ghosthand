@@ -36,6 +36,7 @@ var stepTypeUses = map[string]TypeUse{
 	StepClickImage:    {grpWait, "Click vào chỗ thấy ảnh / chữ / phần tử: imageSource node (dùng chỗ node waitImage vừa tìm) hoặc search (tự tìm). Bền hơn click toạ độ."},
 	StepWaitPixel:     {grpWait, "Chờ một điểm ảnh đổi sang màu nhất định (đèn báo, nút chuyển trạng thái). Cần nhìn cả vùng → waitScreen."},
 	StepWaitScreen:    {grpWait, "Chờ vùng màn hình đứng yên (trang tải xong, spinner tắt) hoặc có thay đổi, thay cho wait cố định khi không có chữ rõ để chờ."},
+	StepOcrRead:       {grpWait, "OCR mọi chữ trong một vùng màn hình → text / lines để rẽ nhánh (switch / textMatch) – app không có cây phần tử (game, ảnh). App thường / Chrome → pageText."},
 	StepFindAll:       {grpWait, "Lấy mọi chỗ khớp ảnh / chữ / phần tử (mọi nút “Thêm”, mọi dòng giá) → items nối vào forEach. Chỉ cần một chỗ → waitImage."},
 	StepScreenshot:    {grpWait, "Chụp màn hình / vùng lưu PNG để báo cáo, hoặc đưa vào clipboard image. AI muốn nhìn màn hình khi soạn kịch bản → công cụ screenshot / describe_screen, không dùng node này."},
 	StepClipboard:     {grpData, "Đọc / ghi clipboard (lấy chữ vừa copy bằng key Cmd/Ctrl+C, đưa chữ dài vào app). Gõ chữ ngắn → type."},

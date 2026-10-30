@@ -113,7 +113,7 @@ func ValidateScript(sc model.Script, screen model.Rect) error {
 			if s.ClipOp == model.ClipImage && strings.TrimSpace(s.FilePath) == "" {
 				return stepErr(i, s, "filePath", "chưa nhập file ảnh cần chép")
 			}
-		case model.StepScreenshot, model.StepWaitScreen:
+		case model.StepScreenshot, model.StepWaitScreen, model.StepOcrRead:
 			if err := validateShot(i, s); err != nil {
 				return err
 			}

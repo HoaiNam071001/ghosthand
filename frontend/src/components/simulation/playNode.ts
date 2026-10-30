@@ -2,7 +2,7 @@
 // Simulation (useSimulation) giữ state + đi theo đồ thị, gọi hàm này cho từng node.
 import { boundsOf, refOf, type Ends } from '../../store';
 import { fmtSelectors } from '../../flow/web';
-import { fmtShot } from '../../flow/shot';
+import { fmtOcrRead, fmtShot } from '../../flow/shot';
 import { fmtWaitScreen } from '../../flow/waitScreen';
 import { fmtElementAction } from '../../flow/elementAction';
 import { fmtWaitUIEvent } from '../../flow/uiEvent';
@@ -87,6 +87,7 @@ function bubbleOf(s: Step): string | null {
     case 'http': return `🌐 ${fmtHTTP(s)} – kết quả biết khi chạy thật`;
     case 'clipboard': return `📋 Clipboard: ${fmtClip(s)}`;
     case 'waitScreen': return `⏳ Chờ màn hình ${fmtWaitScreen(s, refOf)} – xem trước không chờ thật`;
+    case 'ocrRead': return `🔤 Đọc chữ ${fmtOcrRead(s, refOf)} – xem trước không đọc thật`;
     case 'findAll': return `🔍 Tìm tất cả ${fmtPos(s, refOf)} – số chỗ biết khi chạy thật`;
     case 'screenshot': return `📷 Chụp ${fmtShot(s, refOf)}`;
   }

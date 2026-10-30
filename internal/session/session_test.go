@@ -214,6 +214,9 @@ func TestAIRunCannotClickOwnWindow(t *testing.T) {
 	if len(res) == 0 || res[0].Error == nil || res[0].Error.Code != model.ErrPermission {
 		t.Fatalf("muốn lỗi permission: %+v", res)
 	}
+	if f := (*saved)[0].FailNode; f != "s1" { // thống kê node hay lỗi (28 R2)
+		t.Errorf("lịch sử phải ghi node gây lỗi s1, được %q", f)
+	}
 	for _, l := range fake.Lines() {
 		if strings.HasPrefix(l, "click") {
 			t.Fatalf("lượt AI đã bấm: %q", fake.Lines())

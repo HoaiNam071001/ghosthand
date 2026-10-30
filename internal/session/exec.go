@@ -99,6 +99,9 @@ func (m *Manager) exec(ctx context.Context, r *run, canDanger bool) {
 	err = eng.Run(ctx)
 	rec.DurationMs = m.deps.Now().Sub(rec.StartedAt).Milliseconds()
 	rec.Status, rec.Error = outcome(err)
+	if id, _ := eng.Failed(); err != nil && id != "" {
+		rec.FailNode = id
+	}
 	carry := eng.Carry()
 	m.mu.Lock()
 	r.carry, r.shots, r.status.Reached, r.status.TimedOut = &carry, eng.Shots(), eng.Reached(), eng.TimedOut()

@@ -20,10 +20,11 @@ type RunSummary struct {
 	Source     string    `json:"source"`
 	StartedAt  time.Time `json:"startedAt"`
 	DurationMs int64     `json:"durationMs"`
-	Status     string    `json:"status"`            // success | fail | stopped
-	Error      string    `json:"error,omitempty"`   // lỗi làm dừng kịch bản
-	Message    string    `json:"message,omitempty"` // lời nhắn node Kết thúc thành công (cuối cùng)
-	Nodes      int       `json:"nodes"`             // số lần chạy node
+	Status     string    `json:"status"`             // success | fail | stopped
+	Error      string    `json:"error,omitempty"`    // lỗi làm dừng kịch bản
+	Message    string    `json:"message,omitempty"`  // lời nhắn node Kết thúc thành công (cuối cùng)
+	Nodes      int       `json:"nodes"`              // số lần chạy node
+	FailNode   string    `json:"failNode,omitempty"` // id node làm kịch bản thất bại (thống kê node hay lỗi – RunStats)
 }
 
 // RunRecord – toàn bộ một lần chạy.

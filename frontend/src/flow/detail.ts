@@ -1,7 +1,7 @@
 // Dòng chi tiết thẻ node hành động (vị trí / nội dung / cách tìm) – flow/view.ts ghép thêm thời gian chờ sau node.
 import { fmtAxis, fmtPoint, usesVar } from '../anchor';
 import { fmtKey } from '../keys';
-import { fmtShot } from './shot';
+import { fmtOcrRead, fmtShot } from './shot';
 import { fmtWaitScreen } from './waitScreen';
 import { countRange } from './findAll';
 import { fmtClip } from './clipboard';
@@ -46,6 +46,7 @@ export const fmtPos = (s: Step, refOf: (id: string) => string = () => '?') =>
     : isWebStep(s.type) ? fmtWebStep(s)
     : s.type === 'screenshot' ? fmtShot(s, refOf)
     : s.type === 'waitScreen' ? fmtWaitScreen(s, refOf)
+    : s.type === 'ocrRead' ? fmtOcrRead(s, refOf)
     : s.type === 'clipboard' ? fmtClip(s)
     : s.type === 'http' ? fmtHTTP(s)
     : s.type === 'file' ? fmtFile(s)

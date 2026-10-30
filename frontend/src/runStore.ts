@@ -1,16 +1,17 @@
 // Nhật ký lần chạy đang xem (bước 20 F5): kết quả từng node của lần đang chạy / vừa chạy (event engine:node) hoặc
 // một lần trong lịch sử (internal/store/runs.go). Canvas tô đường đã đi, bảng Nhật ký, mục "Lần chạy gần nhất" đều đọc từ đây.
 import { useSyncExternalStore } from 'react';
-import { ClearRuns, DeleteRun, GetRun, ListRuns, RunShot } from '../wailsjs/go/main/App';
+import { ClearRuns, DeleteRun, GetRun, ListRuns, RunShot, RunStats as LoadRunStats } from '../wailsjs/go/main/App';
 import { EventsOn } from '../wailsjs/runtime/runtime';
 import { getEditor, subscribe } from './store';
 import { inWails } from './windowMode';
 import type { StepResult } from './types';
+import type { RunStats } from './components/library/runs';
 
 // Khớp RunSummary trong internal/model/run.go.
 export type RunSummary = {
   id: string; script: string; source: string; startedAt: string; durationMs: number;
-  status: 'success' | 'fail' | 'stopped'; error?: string; message?: string; nodes: number;
+  status: 'success' | 'fail' | 'stopped'; error?: string; message?: string; nodes: number; failNode?: string;
 };
 
 const MAX_RESULTS = 2000; // khớp MaxRunResults (internal/model/run.go)
@@ -21,11 +22,12 @@ type RunLogState = {
   live: boolean; // true: lần chạy trong phiên này; false: mở từ lịch sử
   open: boolean; // bảng Nhật ký đang hiện
   history: RunSummary[]; // lịch sử của kịch bản đang mở, mới nhất trước
+  stats: RunStats | null; // thống kê lịch sử đó (bước 28 R2)
   // kịch bản (tên + file) của lần đang xem – để đọc ảnh lúc lỗi đúng thư mục lịch sử
   owner: { name: string; path: string };
 };
 
-let state: RunLogState = { results: [], summary: null, live: true, open: false, history: [], owner: { name: '', path: '' } };
+let state: RunLogState = { results: [], summary: null, live: true, open: false, history: [], stats: null, owner: { name: '', path: '' } };
 const listeners = new Set<() => void>();
 const set = (patch: Partial<RunLogState>) => {
   state = { ...state, ...patch };
@@ -45,8 +47,11 @@ const ownerNow = () => {
 export async function loadHistory() {
   if (!inWails) return;
   const { name, path } = ownerNow();
-  const history = ((await ListRuns(name, path).catch(() => [])) ?? []) as unknown as RunSummary[];
-  set({ history });
+  const [history, stats] = await Promise.all([
+    ListRuns(name, path).catch(() => []).then((h) => (h ?? []) as unknown as RunSummary[]),
+    LoadRunStats(name, path).catch(() => null) as Promise<RunStats | null>,
+  ]);
+  set({ history, stats });
 }
 
 // Đọc một lần chạy trong lịch sử của kịch bản đang mở (không mở bảng Nhật ký) – hộp thoại Lịch sử chạy xem trước.

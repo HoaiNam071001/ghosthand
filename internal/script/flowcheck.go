@@ -82,7 +82,7 @@ func validateFlow(sc model.Script) error {
 				return stepErr(i, s, "imageFrom", "node %s không tìm ảnh / chữ nên không có chỗ thấy", sc.Steps[j].Ref)
 			}
 		}
-		if (s.Type == model.StepScreenshot || s.Type == model.StepWaitScreen) && s.ShotArea == model.ShotNode {
+		if model.HasShotArea(s.Type) && s.ShotArea == model.ShotNode {
 			j, ok := idx[s.ImageFrom]
 			switch {
 			case s.ImageFrom == "":

@@ -18,7 +18,7 @@ export type MatchMode = '' | 'edge';
 // Node thất bại (không thấy ảnh / chữ / màu, lỗi): thử lại thêm count lần, nghỉ delayMs; hết lượt → cổng fail. Khớp Retry trong model.go.
 export type Retry = { count?: number; delayMs?: number };
 // Node hay "thất bại" theo nghĩa người dùng hiểu – mới hiện phần Khi thất bại (thử lại)
-export const CAN_FAIL: StepType[] = ['waitImage', 'clickImage', 'waitPixel', 'waitScreen', 'findAll', 'screenshot', 'clipboard', 'http', 'file', 'system', 'window', 'app', 'browserTab', 'browserGo', 'browserNorm', 'savePdf', 'waitUntil', 'webWait', 'webClick', 'webType', 'webRead', 'webScroll', 'webKey', 'elementRead', 'pageText', 'readTable', 'waitDownload', 'shell', 'osShortcut', 'elementAction', 'readDocument', 'waitUIEvent', 'open'];
+export const CAN_FAIL: StepType[] = ['waitImage', 'clickImage', 'waitPixel', 'waitScreen', 'ocrRead', 'findAll', 'screenshot', 'clipboard', 'http', 'file', 'system', 'window', 'app', 'browserTab', 'browserGo', 'browserNorm', 'savePdf', 'waitUntil', 'webWait', 'webClick', 'webType', 'webRead', 'webScroll', 'webKey', 'elementRead', 'pageText', 'readTable', 'waitDownload', 'shell', 'osShortcut', 'elementAction', 'readDocument', 'waitUIEvent', 'open'];
 
 // ---- Flow (bước 20, flow.go) ----
 // Cạnh: node from đi ra cổng port thì chạy node to. Mỗi cổng tối đa một cạnh. Khớp Edge trong model.go.
@@ -45,7 +45,7 @@ const edgeMatchesGo: Same<keyof Edge, keyof Fields<model.Edge>> = true;
 const resultMatchesGo: Same<keyof StepResult, keyof Fields<model.StepResult>> = true;
 void edgeMatchesGo, resultMatchesGo;
 
-export type ActionType = 'click' | 'double' | 'hold' | 'drag' | 'wait' | 'type' | 'key' | 'scroll' | 'open' | 'waitImage' | 'clickImage' | 'waitPixel' | 'waitScreen' | 'findAll' | 'screenshot' | 'clipboard' | 'http' | 'file' | 'system' | 'window' | 'app' | 'browserTab' | 'browserGo' | 'browserNorm' | 'savePdf' | 'waitUntil' | 'path'
+export type ActionType = 'click' | 'double' | 'hold' | 'drag' | 'wait' | 'type' | 'key' | 'scroll' | 'open' | 'waitImage' | 'clickImage' | 'waitPixel' | 'waitScreen' | 'ocrRead' | 'findAll' | 'screenshot' | 'clipboard' | 'http' | 'file' | 'system' | 'window' | 'app' | 'browserTab' | 'browserGo' | 'browserNorm' | 'savePdf' | 'waitUntil' | 'path'
   | 'webWait' | 'webClick' | 'webType' | 'webRead' | 'webScroll' | 'webKey' | 'elementRead' | 'pageText' | 'readTable' | 'waitDownload' | 'shell' | 'osShortcut' | 'sysInfo' | 'process' | 'inputSource' | 'zip' | 'notify' | 'askAI' | 'mcpTool' | 'power' | 'display' | 'elementAction' | 'readDocument' | 'waitUIEvent';
 // Node điều khiển (bước 20 F3, internal/engine/nodes.go): chỉ chọn cổng ra, inspector riêng (components/flow/nodes/ControlFields)
 export type ControlType = 'if' | 'switch' | 'switchScreen' | 'counter' | 'forEach' | 'end' | 'setVar' | 'calc' | TextType;
@@ -277,6 +277,7 @@ export const STEP_LABEL: Record<StepType, string> = {
   clickImage: 'Click theo ảnh',
   waitPixel: 'Chờ màu pixel',
   waitScreen: 'Chờ màn hình',
+  ocrRead: 'Đọc chữ vùng',
   waitDownload: 'Chờ tải xong',
   shell: 'Chạy lệnh',
   osShortcut: 'Shortcuts hệ điều hành',

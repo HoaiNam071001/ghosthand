@@ -56,6 +56,8 @@ func NewStep(stepType string) (Step, error) {
 		s.Color, s.Tolerance, s.TimeoutMs, s.IntervalMs, s.DelayAfter = "#000000", 10, 5000, 100, 300
 	case StepWaitScreen:
 		s.StableMs, s.DiffPct, s.TimeoutMs, s.IntervalMs, s.DelayAfter = 1000, 1, 15000, 200, 0
+	case StepOcrRead:
+		s.TimeoutMs, s.IntervalMs, s.DelayAfter = 5000, 300, 0
 	case StepScreenshot, StepClipboard, StepFile:
 		s.DelayAfter = 300
 	case StepSystem:

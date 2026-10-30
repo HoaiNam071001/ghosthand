@@ -3,7 +3,7 @@
 import { useSyncExternalStore } from 'react';
 import { EventsOn } from '../wailsjs/runtime/runtime';
 import {
-  AIScripts, ClearDraft, ConfirmQuit, ForgetRecent, LoadDraft, NewScript, OpenSample, OpenScript, OpenScriptPath, RecentScripts, SaveDraft, SaveScript, SaveScriptAs, SetEditorState,
+  AIScripts, ClearDraft, ConfirmQuit, ExportPack, ForgetRecent, ImportPack, LoadDraft, NewScript, OpenSample, OpenScript, OpenScriptPath, RecentScripts, SaveDraft, SaveScript, SaveScriptAs, SetEditorState,
 } from '../wailsjs/go/main/App';
 import { model, store } from '../wailsjs/go/models';
 import { getEditor, markSaved, reloadScript, replaceScript, setNotice, subscribe } from './store';
@@ -17,7 +17,7 @@ const DRAFT_DELAY_MS = 800;
 
 // Việc đang chờ người dùng trả lời "Lưu thay đổi?" – chạy sau khi Lưu / Không lưu.
 type Pending = { action: 'new' } | { action: 'open' } | { action: 'recent'; path: string } | { action: 'sample'; id: string; name: string }
-  | { action: 'quit' };
+  | { action: 'import' } | { action: 'quit' };
 
 type FileState = {
   recent: string[]; // mở gần đây, mới nhất trước
@@ -83,10 +83,10 @@ async function run(p: Pending, discard = false) {
     if (p.action === 'new') return replaceScript(fromGo(await NewScript()), null, false, 'Kịch bản mới');
     // mẫu thử (bước 33): bản sao chưa có file – Lưu sẽ hỏi chỗ lưu, mẫu gốc không đổi
     if (p.action === 'sample') return replaceScript(fromGo(await OpenSample(p.id)), null, false, `Đã mở mẫu “${p.name}”`);
-    const res = p.action === 'open' ? await OpenScript() : await OpenScriptPath(p.path);
+    const res = p.action === 'open' ? await OpenScript() : p.action === 'import' ? await ImportPack() : await OpenScriptPath(p.path);
     if (!res.path) return; // huỷ hộp thoại
     revision = res.revision;
-    replaceScript(fromGo(res.script), res.path, false, `Đã mở ${fileName(res.path)}`);
+    replaceScript(fromGo(res.script), res.path, false, p.action === 'import' ? `Đã nhập gói – lưu ở ${res.path}` : `Đã mở ${fileName(res.path)}`);
     setFs({ error: '' });
   } catch (e) {
     setFs({ error: errText(e) });
@@ -105,6 +105,21 @@ export const newScript = () => guard({ action: 'new' });
 export const openScript = () => guard({ action: 'open' });
 export const openRecent = (path: string) => guard({ action: 'recent', path });
 export const openSample = (id: string, name: string) => guard({ action: 'sample', id, name });
+// Gói kịch bản .zip (bước 28 R3): nhập = giải nén vào thư mục kịch bản rồi mở; xuất = kịch bản đang soạn + file node đọc.
+export const importPack = () => guard({ action: 'import' });
+export async function exportPack() {
+  if (!inWails) return;
+  try {
+    const res = await ExportPack(toGo(getEditor().script));
+    if (!res.path) return; // huỷ hộp thoại
+    const files = res.files?.length ? ` kèm ${res.files.length} file` : '';
+    const miss = res.missing?.length ? ` – không tìm thấy ${res.missing.join(', ')} (người nhận phải chọn lại file)` : '';
+    setNotice(`Đã xuất gói ${fileName(res.path)}${files}${miss}`);
+    setFs({ error: '' });
+  } catch (e) {
+    setFs({ error: errText(e) });
+  }
+}
 // Bỏ khỏi Mở gần đây (không xoá file); path trống = xoá cả danh sách.
 export const forgetRecent = (path = '') => ForgetRecent(path).then((recent) => setFs({ recent: recent ?? [] })).catch(() => {});
 

@@ -424,6 +424,15 @@
       ]
     },
     {
+      "name": "đọc chữ vùng",
+      "step": {
+        "type": "ocrRead"
+      },
+      "want": [
+        "screenRecording"
+      ]
+    },
+    {
       "name": "tìm tất cả",
       "step": {
         "type": "findAll"

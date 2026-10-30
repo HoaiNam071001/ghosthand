@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><link rel="stylesheet" href="sandbox.css">
+<style>
+  body { display: flex; flex-direction: column; }
+  main { flex: 1; display: grid; place-items: center; text-align: center; }
+  #order { font-size: 40px; font-weight: 700; }
+  #state { font-size: 72px; font-weight: 900; margin-top: 16px; }
+  .ok { color: #16a34a; } .wait { color: #d97706; } .bad { color: #dc2626; }
+</style></head>
+<body>
+<main><div><div id="order"></div><div id="state"></div></div></main>
+<script src="sandbox.js"></script>
+<script>
+  // Trạng thái đơn ngẫu nhiên (hoặc ?s=0|1|2) – vẽ bằng chữ to cho OCR; mẫu Đọc chữ vùng rẽ nhánh theo chữ này.
+  sb.header('Trạng thái đơn');
+  const states = [['THÀNH CÔNG', 'ok'], ['ĐANG CHỜ', 'wait'], ['THẤT BẠI', 'bad']];
+  const q = new URLSearchParams(location.search);
+  const i = q.has('s') ? Number(q.get('s')) % 3 : Math.floor(sb.rand(0, 3));
+  document.getElementById('order').textContent = `Đơn #${Math.round(sb.rand(1000, 9999))}`;
+  const el = document.getElementById('state');
+  el.textContent = states[i][0];
+  el.className = states[i][1];
+</script>
+</body></html>

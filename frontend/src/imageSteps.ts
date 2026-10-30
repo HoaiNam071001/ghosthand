@@ -52,10 +52,10 @@ export async function requestCapture() {
 let captureTarget: string | null = null; // bước nhận ảnh mẫu; null = tạo bước Chờ ảnh mới
 let captureCond: CondAt | null = null; // ảnh mẫu cho điều kiện của node Nếu / case; null = của chính node
 export const captureTargetStep = () => captureTarget;
-// Khoanh cho node Chụp màn hình (bước 35 N1) / Chờ màn hình (42 G1): lấy vùng (shotRect), không chụp ảnh mẫu.
+// Khoanh cho node Chụp màn hình (bước 35 N1) / Chờ màn hình (42 G1) / Đọc chữ vùng (28 R1): lấy vùng (shotRect), không chụp ảnh mẫu.
 export const capturesRect = () => {
   const t = getEditor().script.steps.find((s) => s.id === captureTarget)?.type;
-  return !captureCond && (t === 'screenshot' || t === 'waitScreen');
+  return !captureCond && (t === 'screenshot' || t === 'waitScreen' || t === 'ocrRead');
 };
 
 export function startCapture(stepId: string | null, at: CondAt | null = null) {

@@ -5,6 +5,7 @@ import {model} from '../models';
 import {main} from '../models';
 import {update} from '../models';
 import {script} from '../models';
+import {pack} from '../models';
 import {engine} from '../models';
 import {store} from '../models';
 import {procinfo} from '../models';
@@ -60,6 +61,8 @@ export function EmbedSample(arg1:model.Script,arg2:string):Promise<script.EmbedR
 
 export function EmbedScriptFile(arg1:model.Script):Promise<script.EmbedResult>;
 
+export function ExportPack(arg1:model.Script):Promise<pack.Result>;
+
 export function FindElement(arg1:model.Script,arg2:string):Promise<engine.WebFindResult>;
 
 export function FindImage(arg1:model.Script,arg2:string):Promise<engine.FindResult>;
@@ -79,6 +82,8 @@ export function GetPins(arg1:string,arg2:string):Promise<Record<string, model.St
 export function GetRun(arg1:string,arg2:string,arg3:string):Promise<model.RunRecord>;
 
 export function GetSettings():Promise<store.Settings>;
+
+export function ImportPack():Promise<main.ScriptFile>;
 
 export function InBackground():Promise<boolean>;
 
@@ -173,6 +178,8 @@ export function ResumeScript():Promise<boolean>;
 export function RunScript(arg1:model.Script,arg2:Record<string, any>,arg3:session.Options):Promise<void>;
 
 export function RunShot(arg1:string,arg2:string,arg3:string,arg4:string):Promise<string>;
+
+export function RunStats(arg1:string,arg2:string):Promise<model.RunStats>;
 
 export function RunStatus(arg1:string):Promise<session.Status>;
 

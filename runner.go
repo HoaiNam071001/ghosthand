@@ -62,6 +62,9 @@ func (a *App) RunStatus(runID string) (session.Status, error) { return a.sess.St
 // ListRuns – lịch sử chạy của kịch bản (tên + đường dẫn file như lúc chạy), mới nhất trước.
 func (a *App) ListRuns(name, path string) []model.RunSummary { return store.RunsOf(name, path) }
 
+// RunStats – thống kê các lần chạy đã lưu của kịch bản (bước 28 R2): tỷ lệ thành công, thời gian trung bình, node hay lỗi.
+func (a *App) RunStats(name, path string) model.RunStats { return model.StatsOf(store.RunsOf(name, path)) }
+
 // Ghim output node (31c): kết quả giữ trên máy theo kịch bản (tên + file như lịch sử chạy), không ghi vào file kịch bản.
 func (a *App) GetPins(name, path string) map[string]model.StepResult { return store.Pins(name, path) }
 func (a *App) SetPin(name, path string, r model.StepResult) error    { return store.SetPin(name, path, r) }

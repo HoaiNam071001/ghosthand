@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { answerPending, useFile } from '../scriptFile';
 import { useEditor } from '../store';
 
-const WHY = { new: 'tạo kịch bản mới', open: 'mở kịch bản khác', recent: 'mở kịch bản khác', sample: 'mở kịch bản mẫu', quit: 'đóng app' };
+const WHY = { new: 'tạo kịch bản mới', open: 'mở kịch bản khác', recent: 'mở kịch bản khác', sample: 'mở kịch bản mẫu', import: 'nhập gói kịch bản', quit: 'đóng app' };
 
 export default function SaveChangesDialog() {
   const { pending } = useFile();

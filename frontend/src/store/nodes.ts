@@ -49,7 +49,7 @@ export function insertNode(step: Step, notice: (ref: string) => string) {
 
 // Thêm node không cần chọn điểm (chờ, gõ chữ, phím tắt, cuộn tại chuột, mở, chờ ảnh…) – mặc định ở flow/defaults (giống NewStep).
 // patch: sửa thêm sau mặc định (vd node Mở bằng Chrome của app).
-export function addStep(type: Extract<StepType, 'wait' | 'type' | 'key' | 'scroll' | 'open' | 'waitImage' | 'clickImage' | 'waitPixel' | 'waitScreen' | 'findAll' | 'screenshot' | 'clipboard' | 'http' | 'file' | 'system' | 'window' | 'app' | 'browserTab' | 'browserGo' | 'browserNorm' | 'savePdf' | 'waitUntil' | 'path' | 'elementRead' | 'pageText' | 'readTable' | 'waitDownload' | 'shell' | 'osShortcut' | 'sysInfo' | 'process' | 'inputSource' | 'zip' | 'notify' | 'askAI' | 'mcpTool' | 'power' | 'display' | 'elementAction' | 'readDocument' | 'waitUIEvent' | 'webKey' | WebType>, patch: Partial<Step> = {}) {
+export function addStep(type: Extract<StepType, 'wait' | 'type' | 'key' | 'scroll' | 'open' | 'waitImage' | 'clickImage' | 'waitPixel' | 'waitScreen' | 'ocrRead' | 'findAll' | 'screenshot' | 'clipboard' | 'http' | 'file' | 'system' | 'window' | 'app' | 'browserTab' | 'browserGo' | 'browserNorm' | 'savePdf' | 'waitUntil' | 'path' | 'elementRead' | 'pageText' | 'readTable' | 'waitDownload' | 'shell' | 'osShortcut' | 'sysInfo' | 'process' | 'inputSource' | 'zip' | 'notify' | 'askAI' | 'mcpTool' | 'power' | 'display' | 'elementAction' | 'readDocument' | 'waitUIEvent' | 'webKey' | WebType>, patch: Partial<Step> = {}) {
   // phần phụ thuộc kịch bản ghép thêm vào bảng mặc định chung (flow/defaults)
   const dynamic: Partial<Step> = type === 'clickImage' ? { imageFrom: nearestFinder() }
     : type === 'waitPixel' ? { points: [centerPoint(script().region)] }

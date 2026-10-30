@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fmtShot, hasFoundBox } from './shot';
+import { fmtOcrRead, fmtShot, hasFoundBox } from './shot';
 import { makeStep } from '../types';
 
 const shot = (p: Parameters<typeof makeStep>[0] extends infer T ? Partial<T> : never) => makeStep({ id: 's9', type: 'screenshot', ...p });
@@ -22,5 +22,9 @@ describe('shot', () => {
     expect(fmtShot(shot({ shotArea: 'node', imageFrom: 's1', fileName: 'don-{{ma}}' }), ref)).toBe('chỗ n1 thấy → don-{{ma}}.png');
     expect(fmtShot(shot({ shotArea: 'rect', shotRect: { x: 10, y: 20, w: 300, h: 200 } }), ref)).toBe('vùng 300 × 200 tại 10, 20 → tên theo giờ');
     expect(fmtShot(shot({ shotArea: 'rect' }), ref)).toBe('chưa chọn vùng → tên theo giờ');
+  });
+  it('fmtOcrRead', () => {
+    const ref = (id: string) => (id === 's1' ? 'n1' : '?');
+    expect(fmtOcrRead(makeStep({ id: 's9', type: 'ocrRead', shotArea: 'node', imageFrom: 's1', timeoutMs: 5000 }), ref)).toBe('chỗ n1 thấy · tối đa 5 s');
   });
 });

@@ -1,7 +1,7 @@
 // Khối của thanh thư viện (design v3): nhóm thu gọn được có tóm tắt bên phải, chân "+ Mới" + nút icon.
 // Chỉ hiển thị – LibraryView (components/Library.tsx) ghép và nối việc.
 import { ReactNode, useEffect, useState } from 'react';
-import { Chevron, Folder, Grid, Save } from '../icons';
+import { Chevron, Folder, Grid, Package, Save } from '../icons';
 
 const loadOpen = (key: string, fallback: boolean) => {
   try {
@@ -31,9 +31,10 @@ export function Fold({ title, summary, storageKey, children }: { title: string; 
   );
 }
 
-// Chân thư viện: "+ Mới" + Mẫu thử / Mở / Lưu dạng nút icon (phím tắt trong tooltip).
-export function LibraryFooter({ ready, mod, shift, onNew, onOpen, onSave, onSamples }: {
+// Chân thư viện: "+ Mới" + Mẫu thử / Mở / Lưu / Gói dạng nút icon (phím tắt trong tooltip).
+export function LibraryFooter({ ready, mod, shift, onNew, onOpen, onSave, onSamples, onExportPack, onImportPack }: {
   ready: boolean; mod: string; shift: string; onNew?: () => void; onOpen?: () => void; onSave?: () => void; onSamples?: () => void;
+  onExportPack?: () => void; onImportPack?: () => void;
 }) {
   const off = ready ? undefined : 'Chỉ dùng được trong app';
   const icon = 'grid h-[34px] w-[34px] flex-none place-items-center rounded-control border border-line bg-surface text-muted enabled:hover:bg-hover enabled:hover:text-ink disabled:opacity-60';
@@ -44,6 +45,33 @@ export function LibraryFooter({ ready, mod, shift, onNew, onOpen, onSave, onSamp
       {onSamples && <button onClick={onSamples} aria-label="Mẫu thử" title="Mẫu thử – kịch bản mẫu để test từng loại node" className={icon}><Grid /></button>}
       <button disabled={!ready} onClick={onOpen} aria-label="Mở kịch bản" title={off ?? `Mở kịch bản (${mod}O)`} className={icon}><Folder /></button>
       <button disabled={!ready} onClick={onSave} aria-label="Lưu" title={off ?? `Lưu (${mod}S) · Lưu thành: ${mod}${shift}S`} className={icon}><Save /></button>
+      <PackMenu ready={ready} icon={icon} off={off} onExport={onExportPack} onImport={onImportPack} />
+    </div>
+  );
+}
+
+// Nút Gói (bước 28 R3): menu nhỏ Xuất / Nhập gói .zip – kịch bản kèm file CSV / ảnh mà node đọc, để gửi máy khác.
+function PackMenu({ ready, icon, off, onExport, onImport }: { ready: boolean; icon: string; off?: string; onExport?: () => void; onImport?: () => void }) {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    const close = () => setOpen(false);
+    window.addEventListener('mousedown', close);
+    return () => window.removeEventListener('mousedown', close);
+  }, [open]);
+  const item = 'block w-full rounded-md px-3 py-1.5 text-left text-[13px] hover:bg-hover';
+  const pick = (f?: () => void) => () => { setOpen(false); f?.(); };
+  return (
+    <div className="relative">
+      <button disabled={!ready} onClick={() => setOpen(!open)} aria-label="Gói kịch bản" aria-expanded={open} aria-haspopup="menu"
+        title={off ?? 'Gói kịch bản (.zip) – xuất kèm file CSV / ảnh để gửi máy khác, hoặc nhập gói nhận được'} className={icon}><Package /></button>
+      {open && (
+        <div role="menu" onMouseDown={(e) => e.stopPropagation()}
+          className="absolute right-0 bottom-[40px] z-30 w-[200px] rounded-panel border border-line bg-surface p-1 shadow-[0_8px_24px_rgb(0_0_0/.16)]">
+          <button role="menuitem" onClick={pick(onExport)} className={item}>Xuất gói .zip…</button>
+          <button role="menuitem" onClick={pick(onImport)} className={item}>Nhập gói .zip…</button>
+        </div>
+      )}
     </div>
   );
 }

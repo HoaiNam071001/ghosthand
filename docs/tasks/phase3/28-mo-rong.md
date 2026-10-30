@@ -1,10 +1,17 @@
 # 28. Mở rộng
 
-- [ ] **28. Mở rộng** – Làm sau cùng.
+- [x] **28. Mở rộng** – Làm sau cùng.
   - Chrome qua DOM: đã chuyển lên **25d** (2026-10-17)
   - ~~CSV: mỗi cột là một input key, chạy kịch bản cho từng dòng~~ → **bỏ khỏi plan** (2026-10-25, người dùng chọn): node Lặp qua danh sách ([42](42-du-lieu-luong.md) G2) đã đọc CSV / xlsx trong flow
-  - [ ] OCR: đọc chữ trong vùng vào biến, rẽ nhánh theo nội dung (Tesseract)
   - Tìm phần tử bằng AI: đã chuyển sang **31d** (2026-10-18)
   - Cụm node có tên + subflow: đã chuyển sang **39** (2026-10-19)
-  - [ ] Biến: OCR vào biến (đọc / ghi clipboard chuyển sang node Clipboard của **35**, 2026-10-18), đặt / cộng biến – điều kiện `if / else`, "lặp đến khi thấy" đã chuyển lên **20**
-  - [ ] Thư viện mẫu, chia sẻ gói kịch bản (kèm ảnh mẫu), thống kê lần chạy (SQLite)
+  - **Chốt 2026-10-30** (người dùng chọn): làm node *Đọc chữ vùng* (OCR), *Thống kê lần chạy*, *Xuất / nhập gói kịch bản*. Phần còn lại coi là đã có ở bước khác: biến (*Đặt biến*, *Tính toán* – 20 / 42), ảnh mẫu đã nhúng base64 trong file kịch bản, thư viện mẫu = *Mẫu thử* (33). **Không dùng SQLite** – thống kê tính từ lịch sử đã lưu (41)
+  - [x] Biến: OCR vào biến → R1; đặt / cộng biến đã có (*Đặt biến*, *Tính toán*); đọc / ghi clipboard ở node Clipboard (35)
+  - [x] R1. **Đọc chữ vùng** (`ocrRead`): OCR toàn bộ chữ trong một vùng màn hình (vùng như Chụp màn hình) vào output `text` / `lines` / `count`, theo thứ tự đọc; chờ tới khi có chữ (hết giờ → Thất bại); nối Switch / Lọc mẫu để rẽ nhánh. Mẫu thử
+    - Xong code (2026-10-30): `engine/ocrread.go` dùng lại vùng của Chụp màn hình (`ShotArea` / `Display` / `ShotRect` / `ImageFrom` – thêm `model.HasShotArea` thay các chỗ so loại) + `readArea` (nhớ kết quả OCR theo hash ảnh), không thêm trường model; hết giờ → `not_found`. Mẫu `doc-chu-vung` + trang `status.html`: khoanh vùng theo khung cửa sổ (node Cửa sổ) để không đọc lẫn chữ app khác, Switch `contains` rẽ 3 nhánh
+    - Sửa kèm OCR Windows (chạy thật lần đầu đọc không ra “ĐANG CHỜ” 72 px): `PrepOCR` ước lượng nền trong cửa sổ ±12 px nên lòng nét chữ đậm cỡ lớn bị coi là nền, chữ bị khoét rỗng. Thêm **lượt chữ to**: ảnh xám thường thu nhỏ ½ (`vision.ShrinkGray`, Tesseract tự nhị phân hoá) → `vision.MergeBigLines` chỉ nhận dòng có mọi từ cao ≥ 32 px và chỉ thay mảnh vụn (dòng chồng lên thấp hơn nửa + ít ký tự hơn) – chữ thường giữ kết quả lượt chính (test `TestTesseractVietnamese` vẫn qua). Đo trên ảnh chụp: đọc đúng “Đơn #8241” + “ĐANG CHỜ”. `parseTessTSV` nhận tỷ lệ thực
+    - Chưa chạy thật lại được sau khi sửa: máy không chụp được màn hình lúc đó (Windows báo *The handle is invalid* – màn hình tắt / phiên ngắt) → `checks.md`
+  - [x] R2. **Thống kê lần chạy**: ở Lịch sử của kịch bản – số lần chạy, tỷ lệ thành công, thời gian trung bình, node hay lỗi nhất; tính từ lịch sử đã lưu (hàm Go thuần + test)
+    - Xong code (2026-10-30): `RunSummary.failNode` (id node làm kịch bản thất bại – `session/exec.go` ghi từ `eng.Failed()`), `model.StatsOf` (hàm thuần + test), `App.RunStats`; `runStore` nạp cùng lịch sử; hộp thoại Lịch sử chạy hiện dải `runStatsParts` (n lần chạy · % thành công · trung bình · hay lỗi: tên node (số lần)). % thành công không tính lần bị dừng; lần chạy cũ chưa có `failNode` thì không vào mục hay lỗi
+  - [x] R3. **Xuất / nhập gói kịch bản**: Xuất ra .zip (kịch bản + file các node trỏ tới: ảnh mẫu dạng file, CSV / xlsx của Lặp qua danh sách…), đường dẫn trong gói đổi thành tương đối; Nhập: giải nén vào thư mục chọn, đổi đường dẫn về chỗ mới
+    - Xong code (2026-10-30): `internal/pack` (`Export` / `Import`, test xuất → nhập + chặn zip slip), `packapi.go` (`ExportPack` hỏi chỗ lưu, `ImportPack` giải nén vào thư mục kịch bản ở Cài đặt rồi mở). Đóng gói file node **đọc**: Lặp qua danh sách (file), Clipboard (ảnh), Hỏi AI (ảnh file); file ghi ra giữ đường dẫn; đường dẫn có `{{biến}}` / file không còn → giữ nguyên, báo `missing`. Gói: `script.json` + `files/<tên>`; nhập: `<thư mục kịch bản>/<tên>.json` (trùng thêm -2) + `<tên>-files/`. `userPath` của engine chuyển thành `script.UserPath` dùng chung. UI: nút **Gói** (hình hộp) ở chân thư viện → Xuất / Nhập gói .zip

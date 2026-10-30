@@ -17,6 +17,7 @@ export const STEP_DEFAULTS: Partial<Record<StepType, Partial<Step>>> = {
   clickImage: { imageSource: 'node', threshold: 90, timeoutMs: 10000, intervalMs: 250, delayAfter: 500 },
   waitPixel: { clicks: 0, color: '#000000', tolerance: 10, timeoutMs: 5000, intervalMs: 100, delayAfter: 300 },
   waitScreen: { clicks: 0, stableMs: 1000, diffPct: 1, timeoutMs: 15000, intervalMs: 200, delayAfter: 0 },
+  ocrRead: { clicks: 0, timeoutMs: 5000, intervalMs: 300, delayAfter: 0 },
   findAll: { clicks: 0, findBy: 'text', threshold: 90, minCount: 1, timeoutMs: 5000, intervalMs: 250, delayAfter: 0 },
   screenshot: { clicks: 0, delayAfter: 300 },
   clipboard: { clicks: 0, delayAfter: 300 },

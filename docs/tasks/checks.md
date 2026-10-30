@@ -3,6 +3,12 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## 28 – Mở rộng (R1 Đọc chữ vùng, R2 Thống kê lần chạy, R3 Gói kịch bản) · [28](phase3/28-mo-rong.md)
+- [ ] Mẫu *Đọc chữ vùng – rẽ nhánh theo trạng thái* (Windows + macOS): chạy vài lần – lời kết đúng chữ trang đang hiện (THÀNH CÔNG / ĐANG CHỜ kết thúc thành công, THẤT BẠI rẽ nhánh Thất bại). Windows: đây là lần thử đầu sau khi thêm lượt OCR chữ to – xem thêm *Chờ chữ* (mẫu `cho-chu`, `chu-tieng-viet`) vẫn chạy đúng như trước
+- [ ] Node *Đọc chữ vùng* tự đặt: vùng cố định / theo node Chờ ảnh; chữ nhỏ trong game / ảnh; vùng không có chữ → Thất bại `not_found` sau thời gian chờ
+- [ ] Hộp thoại *Lịch sử chạy* (Xem tất cả): dòng thống kê dưới tiêu đề – số lần chạy, % thành công, trung bình, *hay lỗi: n3 …* đúng node làm hỏng (chạy cho lỗi 2–3 lần trước); xoá lịch sử thì thống kê về trống
+- [ ] Nút **Gói** ở chân thư viện → *Xuất gói .zip* một kịch bản có Lặp qua danh sách đọc CSV + Clipboard ảnh → mở .zip thấy `script.json` + `files/`; *Nhập gói .zip* (máy khác hoặc sau khi đổi tên file gốc) → kịch bản mở, node trỏ tới file trong thư mục `<tên>-files` và chạy được. Kịch bản đang có thay đổi chưa lưu → hỏi lưu trước khi nhập
+
 ## 43 – Node chuyên sâu trên Windows (B7w Lưu PDF, E1w Thao tác phần tử, E2w Chờ sự kiện, E3w Đọc tài liệu) · [43](phase3/43-node-chuyen-sau.md)
 - [ ] Mẫu *Lưu trang ra PDF* trên Windows: trong Chrome bấm Ctrl+P một lần, chọn đích *Lưu dưới dạng PDF* rồi đóng → chạy mẫu, không đụng chuột / bàn phím: hộp lưu file hiện, đường dẫn được gõ vào ô tên, file `Downloads\ghosthand-bang-gia.pdf` có bảng giá. Chạy lại lần hai: file cũ bị ghi đè, không hiện hộp hỏi ghi đè. Đích là máy in thật → node báo lỗi *chọn đích Lưu dưới dạng PDF* (đã thử: đúng)
 - [ ] Mẫu *Phần tử – thao tác không cần chuột* (đã chạy thật qua bằng test): mở trong app, chạy với cửa sổ Chrome bị che một nửa – trang vẫn hiện “Nguyễn Văn An · NHỚ”; thử thêm *Bỏ tick*, *Mở / Thu gọn* (ô chọn), *Chọn mục* trên một app Windows khác (File Explorer, Cài đặt)

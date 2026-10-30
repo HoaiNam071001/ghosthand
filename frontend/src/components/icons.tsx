@@ -69,6 +69,10 @@ export const Folder = ({ className = 'h-[15px] w-[15px]' }: P) => (
 export const Save = ({ className = 'h-[15px] w-[15px]' }: P) => (
   <svg viewBox="0 0 24 24" className={className} {...base} strokeWidth={1.8}><path d="M5 3h11l3 3v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM8 3v5h7V3M7 21v-7h10v7" /></svg>
 );
+// Gói kịch bản (.zip – bước 28 R3): hộp có nắp
+export const Package = ({ className = 'h-[15px] w-[15px]' }: P) => (
+  <svg viewBox="0 0 24 24" className={className} {...base} strokeWidth={1.8}><path d="M3 8l9-5 9 5v8l-9 5-9-5zM3 8l9 5 9-5M12 13v8M7.5 5.5l9 5" /></svg>
+);
 export const Chevron = ({ className = 'h-[11px] w-[11px]', open = false }: P & { open?: boolean }) => (
   <svg viewBox="0 0 24 24" className={`${className} transition-transform ${open ? 'rotate-90' : ''}`} {...base} strokeWidth={2.4}><path d="M9 6l6 6-6 6" /></svg>
 );
@@ -116,6 +120,7 @@ export const STEP_ICON = {
   waitPixel: 'M4 4h7v7H4zM13 13h7v7h-7zM13 4h7v7h-7z',
   path: 'M3 17c2.5-6 5-6 7-2s4.5 4 6-1 3.5-6 5-5', // nét vẽ
   waitScreen: 'M3 5h18v11H3zM8 20h8M12 16v4M9 10.5h.01M12 10.5h.01M15 10.5h.01', // màn hình + ba chấm đang tải
+  ocrRead: 'M3 7V4h3M18 4h3v3M21 17v3h-3M6 20H3v-3M7 9h10M7 12h7M7 15h9', // khung vùng + dòng chữ
   findAll: 'M4 8V5h3M17 5h3v3M20 16v3h-3M7 19H4v-3M8 8h3v3H8zM13 8h3v3h-3zM8 13h3v3H8zM13 13h3v3h-3z', // khung tìm + bốn ô – mọi chỗ thấy
   waitUntil: 'M12 21a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM12 9v4l2.5 1.5M5 3 2 6M19 3l3 3', // đồng hồ báo thức
   power: 'M12 3v8M7.5 6.5a7 7 0 1 0 9 0', // nút nguồn

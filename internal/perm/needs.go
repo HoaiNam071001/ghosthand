@@ -63,7 +63,7 @@ func addStep(n Need, s model.Step) {
 		if s.FindBy == model.FindByText || s.ReadNear != "" {
 			n.add(ScreenRecording)
 		}
-	case model.StepWaitPixel, model.StepWaitScreen, model.StepScreenshot:
+	case model.StepWaitPixel, model.StepWaitScreen, model.StepScreenshot, model.StepOcrRead:
 		n.add(ScreenRecording)
 	case model.StepIf, model.StepSwitchScreen:
 		addCond(n, s.Cond)

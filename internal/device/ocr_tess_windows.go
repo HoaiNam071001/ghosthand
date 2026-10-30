@@ -38,7 +38,15 @@ func tessRead(src image.Image) ([]vision.TextLine, error) {
 	if tess.err != nil {
 		return nil, tess.err
 	}
-	return tess.api.read(vision.PrepOCR(src, tessScale, tessPad))
+	lines, err := tess.api.read(vision.PrepOCR(src, tessScale, tessPad), tessScale)
+	if err != nil {
+		return nil, err
+	}
+	big, err := tess.api.read(vision.ShrinkGray(src, vision.BigTextScale, tessPad), vision.BigTextScale)
+	if err != nil {
+		return lines, nil // lượt chữ to chỉ là phần thêm
+	}
+	return vision.MergeBigLines(lines, big), nil
 }
 
 type tessAPI struct {
@@ -84,7 +92,8 @@ func (t *tessAPI) call(name string, args ...uintptr) uintptr {
 	return r
 }
 
-func (t *tessAPI) read(g *image.Gray) ([]vision.TextLine, error) {
+// read đọc ảnh g đã chuẩn bị ở tỷ lệ scale so với ảnh gốc (khung trả về theo px ảnh gốc).
+func (t *tessAPI) read(g *image.Gray, scale float64) ([]vision.TextLine, error) {
 	w, h := g.Rect.Dx(), g.Rect.Dy()
 	if w <= 2*tessPad || h <= 2*tessPad {
 		return nil, nil
@@ -101,7 +110,7 @@ func (t *tessAPI) read(g *image.Gray) ([]vision.TextLine, error) {
 		return nil, nil
 	}
 	defer t.call("TessDeleteText", p)
-	return parseTessTSV(cString(p), tessScale, tessPad), nil
+	return parseTessTSV(cString(p), scale, tessPad), nil
 }
 
 // loadLibraryAt nạp DLL theo đường dẫn tuyệt đối, DLL phụ thuộc tìm trong cùng thư mục (LOAD_WITH_ALTERED_SEARCH_PATH).

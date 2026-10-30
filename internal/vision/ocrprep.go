@@ -2,6 +2,9 @@ package vision
 
 import (
 	"image"
+	"unicode/utf8"
+
+	"ghosthand/internal/model"
 )
 
 // Chuẩn bị ảnh cho Tesseract (bước 40 O1). Chữ giao diện nhỏ (11–14 px) phải phóng ×2 mới đọc đúng dấu; chữ sáng trên
@@ -80,4 +83,70 @@ func backgroundMap(g *image.Gray) ([]uint8, int) {
 		}
 	}
 	return out, bw
+}
+
+// Lượt đọc chữ to (bước 28 R1): chữ đậm cỡ tiêu đề có nét dày hơn cửa sổ nền của PrepOCR nên lòng nét bị coi là nền
+// và khoét rỗng (trang thử: “ĐANG CHỜ” 72 px đọc ra rác). Ảnh xám thường thu nhỏ – Tesseract tự nhị phân hoá – đọc
+// đúng; ảnh nhỏ 1/16 lượt chính nên thêm ít thời gian. Gộp vào kết quả lượt chính bằng MergeBigLines.
+
+// BigTextScale – tỷ lệ thu nhỏ của lượt chữ to; BigTextMinPx – chiều cao từ (px ảnh gốc) mới coi là chữ to.
+const (
+	BigTextScale = 0.5
+	BigTextMinPx = 32
+)
+
+// ShrinkGray – ảnh xám thu nhỏ k lần (không chuẩn hoá nền), thêm lề trắng pad px mỗi bên.
+func ShrinkGray(src image.Image, k float64, pad int) *image.Gray {
+	b := src.Bounds()
+	gs := ToGray(src).resize(int(float64(b.Dx())*k), int(float64(b.Dy())*k))
+	out := image.NewGray(image.Rect(0, 0, gs.w+2*pad, gs.h+2*pad))
+	for i := range out.Pix {
+		out.Pix[i] = 255
+	}
+	for y := 0; y < gs.h; y++ {
+		for x := 0; x < gs.w; x++ {
+			out.Pix[(y+pad)*out.Stride+x+pad] = uint8(min(max(gs.p[y*gs.w+x]+0.5, 0), 255))
+		}
+	}
+	return out
+}
+
+// MergeBigLines thêm dòng của lượt chữ to vào base – chỉ dòng mà từ nào cũng cao ≥ BigTextMinPx. Dòng to thay các dòng
+// base chồng lên nó khi chúng là mảnh vụn: thấp hơn nửa dòng to và tổng số ký tự ít hơn nó (lượt chính đọc nét chữ to
+// ra “N”, “1”). Chồng lên chữ thường đã đọc được thì bỏ – ở chữ nhỏ lượt này gộp vài dòng thành khung cao giả, sai dấu.
+// Không chồng gì thì thêm.
+func MergeBigLines(base, big []TextLine) []TextLine {
+	out := base
+	for _, b := range big {
+		h := wordHeight(b)
+		if h < BigTextMinPx {
+			continue
+		}
+		keep, under, skip := out[:0:0], 0, false
+		for _, l := range out {
+			if !rectsOverlap(l.Box, b.Box) {
+				keep = append(keep, l)
+				continue
+			}
+			under += utf8.RuneCountInString(l.Text)
+			skip = skip || l.Box.H*2 >= h
+		}
+		if !skip && under < utf8.RuneCountInString(b.Text) {
+			out = append(keep, b)
+		}
+	}
+	return out
+}
+
+// wordHeight – chiều cao thấp nhất của các từ trong dòng (không có khung từ thì của cả dòng).
+func wordHeight(l TextLine) int {
+	h := l.Box.H
+	for _, w := range l.Words {
+		h = min(h, w.Box.H)
+	}
+	return h
+}
+
+func rectsOverlap(a, b model.Rect) bool {
+	return a.X < b.X+b.W && b.X < a.X+a.W && a.Y < b.Y+b.H && b.Y < a.Y+a.H
 }

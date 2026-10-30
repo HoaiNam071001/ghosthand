@@ -9,11 +9,11 @@ import { useEditor } from '../../store';
 import { nodeViews } from '../../flow/view';
 import { runHead, runRows } from '../../flow/run';
 import type { StepResult } from '../../types';
-import { libraryRun, runDot } from './runs';
+import { libraryRun, runDot, runStatsParts } from './runs';
 import RunsDelete from './RunsDelete';
 
 export default function RunsDialog({ onClose }: { onClose: () => void }) {
-  const { history } = useRunLog();
+  const { history, stats } = useRunLog();
   const { script } = useEditor();
   const [sel, setSel] = useState(history[0]?.id ?? '');
   const [run, setRun] = useState<{ summary: RunSummary; results: StepResult[] } | null>(null);
@@ -30,6 +30,10 @@ export default function RunsDialog({ onClose }: { onClose: () => void }) {
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
   const views = useMemo(() => nodeViews(script), [script]);
+  const statsLine = useMemo(() => {
+    const byId = new Map(views.map((v) => [v.id, `${v.ref} ${v.title}`]));
+    return stats ? runStatsParts(stats, (id) => byId.get(id)).join(' · ') : '';
+  }, [stats, views]);
   const rows = useMemo(() => (run ? runRows(run.results, script.steps, script.edges) : []), [run, script.steps, script.edges]);
   const head = run && runHead(run.results, run.summary, false, false);
   const remove = (id: string) => {
@@ -47,6 +51,7 @@ export default function RunsDialog({ onClose }: { onClose: () => void }) {
           <div className="flex-1">
             <div className="text-base font-semibold">Lịch sử chạy</div>
             <div className="text-[13px] text-muted">{script.name} · {history.length} lần đã lưu – chọn một lần để xem nhật ký</div>
+            {statsLine && <div className="text-xs text-muted" title="Tính từ các lần chạy đã lưu – lần bị dừng không tính vào tỷ lệ thành công">{statsLine}</div>}
             {error && <div className="text-[13px] text-danger-text">{error}</div>}
           </div>
           <RunsDelete count={history.length} canDelete={!!sel} onDelete={() => remove(sel)} onClear={() => remove('')} />

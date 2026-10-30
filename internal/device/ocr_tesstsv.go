@@ -1,6 +1,7 @@
 package device
 
 import (
+	"math"
 	"strconv"
 	"strings"
 	"unicode/utf16"
@@ -14,8 +15,8 @@ const tessMinConf = 60
 
 // parseTessTSV đổi kết quả TSV của Tesseract (TessBaseAPIGetTsvText) thành dòng chữ có khung từng từ. Cột:
 // level page block par line word left top width height conf text; chỉ dòng level 5 (từ) mang chữ. Khung chia scale
-// để về px ảnh gốc sau khi bỏ lề pad (ảnh đưa Tesseract đã phóng + thêm lề – vision.PrepOCR).
-func parseTessTSV(tsv string, scale, pad int) []vision.TextLine {
+// để về px ảnh gốc sau khi bỏ lề pad (scale < 1: ảnh đã thu nhỏ – lượt chữ to) (ảnh đưa Tesseract đã phóng + thêm lề – vision.PrepOCR).
+func parseTessTSV(tsv string, scale float64, pad int) []vision.TextLine {
 	type key struct{ block, par, line int }
 	var lines []vision.TextLine
 	idx := map[key]int{}
@@ -48,8 +49,9 @@ func parseTessTSV(tsv string, scale, pad int) []vision.TextLine {
 			l.Text += " "
 			pos++
 		}
-		x, y := n[6]/scale, n[7]/scale
-		box := model.Rect{X: x, Y: y, W: max((n[6]+n[8]+scale-1)/scale-x, 1), H: max((n[7]+n[9]+scale-1)/scale-y, 1)}
+		div := func(v int) float64 { return float64(v) / scale }
+		x, y := int(div(n[6])), int(div(n[7]))
+		box := model.Rect{X: x, Y: y, W: max(int(math.Ceil(div(n[6]+n[8])))-x, 1), H: max(int(math.Ceil(div(n[7]+n[9])))-y, 1)}
 		l.Words = append(l.Words, vision.TextWord{Start: pos, Len: len(utf16.Encode([]rune(text))), Box: box})
 		l.Box = vision.Union(l.Box, box)
 		l.Text += text

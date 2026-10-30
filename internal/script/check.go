@@ -133,7 +133,7 @@ func checkStep(s *model.Step) error {
 		}
 	case model.StepDrag:
 		need = 2
-	case model.StepScreenshot, model.StepWaitScreen:
+	case model.StepScreenshot, model.StepWaitScreen, model.StepOcrRead:
 		if err := checkShot(s); err != nil {
 			return err
 		}

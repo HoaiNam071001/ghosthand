@@ -27,6 +27,7 @@ export const NODE_INFO: Record<InfoKey, NodeInfo> = {
   waitPixel: { desc: 'Chờ tới khi một điểm trên màn hình có đúng màu cho trước.', use: 'Đèn trạng thái đổi màu, thanh tiến độ đầy, nút chuyển từ xám sang xanh.' },
   findAll: { desc: 'Tìm mọi chỗ có ảnh mẫu / chữ / phần tử trên màn hình, cho biết số chỗ và vị trí từng chỗ.', use: 'Bấm lần lượt mọi nút “Thêm”: nối vào Lặp qua danh sách rồi click theo item.x / item.y.' },
   waitScreen: { desc: 'Chờ tới khi một vùng màn hình đứng yên (trang tải xong, hiệu ứng dừng) hoặc đổi khác so với lúc bắt đầu.', use: 'Thay Chờ cố định sau khi mở trang / bấm nút: xong là đi tiếp, không chờ thừa.' },
+  ocrRead: { desc: 'Đọc mọi chữ trong một vùng màn hình bằng OCR vào biến – rẽ nhánh theo chữ đang hiện.', use: 'Game, ảnh, remote desktop, PDF dạng ảnh. App thường / Chrome dùng Đọc chữ trang.' },
   screenshot: { desc: 'Chụp vùng kịch bản, cả màn, vùng cố định hoặc đúng chỗ node trước thấy, lưu PNG; chép vào clipboard được.', use: 'Lưu bằng chứng sau khi đặt hàng / chuyển tiền, chụp kết quả để gửi đi.' },
   clipboard: { desc: 'Đọc chữ đang có trong clipboard vào biến, ghi chữ (nhận {{biến}}) hoặc ghi ảnh PNG từ file.', use: 'Copy / paste: ghép với Phím tắt Cmd/Ctrl+C, Cmd/Ctrl+V; chép ảnh vừa chụp để dán vào chat.' },
   http: { desc: 'Gọi API (GET / POST / PUT / PATCH / DELETE) kèm tham số, header, thân JSON / form; đọc kết quả JSON vào biến.', use: 'Lấy dữ liệu từ server, gửi đơn / tin nhắn qua API, báo kết quả chạy về Telegram / webhook.' },

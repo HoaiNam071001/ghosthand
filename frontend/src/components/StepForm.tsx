@@ -23,6 +23,7 @@ import { FindAllFields } from './stepform/FindAllFields';
 import { WebFields } from './stepform/WebFields';
 import { ShotFields } from './stepform/ShotFields';
 import { WaitScreenFields } from './stepform/WaitScreenFields';
+import { OcrReadFields } from './stepform/OcrReadFields';
 import { ClipFields } from './stepform/ClipFields';
 import { HttpFields } from './stepform/HttpFields';
 import { FileFields } from './stepform/FileFields';
@@ -159,13 +160,14 @@ function TypeBody({ step: s, setPoint }: { step: Step; setPoint: (i: number, p: 
       {isMouse(s) && <MouseFields step={s} setPoint={setPoint} />}
       {s.type === 'path' && <PathFields step={s} />}
       {s.type === 'scroll' && <ScrollFields step={s} setPoint={setPoint} />}
-      {(isImageStep(s) || s.type === 'screenshot' || s.type === 'waitScreen') && s.findBy !== 'element' && <CapturePermission />}
+      {(isImageStep(s) || s.type === 'screenshot' || s.type === 'waitScreen' || s.type === 'ocrRead') && s.findBy !== 'element' && <CapturePermission />}
       {s.type === 'waitImage' && <ImageSearchFields step={s} />}
       {s.type === 'findAll' && <FindAllFields step={s} />}
       {s.type === 'clickImage' && <ClickImageFields step={s} />}
       {s.type === 'waitPixel' && <WaitPixelFields step={s} setPoint={setPoint} />}
       {s.type === 'screenshot' && <ShotFields step={s} />}
       {s.type === 'waitScreen' && <WaitScreenFields step={s} />}
+      {s.type === 'ocrRead' && <OcrReadFields step={s} />}
       {s.type === 'clipboard' && <ClipFields step={s} />}
       {s.type === 'http' && <HttpFields step={s} />}
       {s.type === 'file' && <FileFields step={s} />}

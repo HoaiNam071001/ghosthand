@@ -274,6 +274,31 @@
       "cho-man-hinh"
     ]
   },
+  "ocrRead": {
+    "tech": "Chụp vùng rồi đọc mọi chữ bằng OCR (macOS: Vision; Windows: Tesseract kèm gói tiếng Việt), xếp dòng trên → dưới, trái → phải, bỏ dòng trống / trùng. Đọc lại tới khi vùng có chữ. Cần quyền Screen Recording trên macOS.",
+    "accuracy": "Chữ to, rõ, nền trơn đọc gần đúng hết; chữ nhỏ / nền ảnh có thể sai dấu hoặc sai ký tự. App thường và Chrome thường đọc nguyên văn hơn bằng [[node:pageText]].",
+    "speed": "Vài trăm ms tới vài giây tuỳ cỡ vùng – vùng càng nhỏ càng nhanh.",
+    "good": [
+      "Đọc trạng thái / số tiền trong game, ảnh, remote desktop, PDF dạng ảnh rồi rẽ nhánh bằng [[node:switch]]",
+      "Lấy cả danh sách dòng chữ để lọc bằng [[node:textMatch]] / lặp bằng [[node:forEach]]"
+    ],
+    "avoid": [
+      "Chỉ cần biết một chữ có hiện không → [[node:waitImage]] (tìm theo chữ)",
+      "Chữ cạnh một nhãn cố định → [[node:elementRead]] (cách tìm = chữ)",
+      "Vùng cả màn hình: lẫn chữ của app khác, đọc chậm"
+    ],
+    "tips": [
+      "Khoanh vùng theo node: chọn *Vùng = theo node* rồi trỏ tới node Cửa sổ / Chờ ảnh để vùng đi theo cửa sổ.",
+      "So chữ ở Switch có phân biệt dấu – lấy cụm chữ ít dấu nhất làm mốc."
+    ],
+    "fields": [
+      "**Vùng** – vùng kịch bản / cả màn / vùng chọn / theo node (như Chụp màn hình)",
+      "**Output** `text` / `lines` / `count`"
+    ],
+    "samples": [
+      "doc-chu-vung"
+    ]
+  },
   "waitUntil": {
     "tech": "Chờ tới giờ hẹn theo đồng hồ máy hoặc giờ chuẩn internet (NTP). Còn xa nghỉ từng đoạn ≤ 1 s, sát giờ chờ vòng rất ngắn.",
     "accuracy": "Lệch vài ms. Bật giờ chuẩn thì đồng hồ máy lệch vẫn đúng giờ; không lấy được giờ chuẩn thì dùng giờ máy (output ntpOffsetMs = 0).",

@@ -1,0 +1,70 @@
+{
+ "meta": {
+  "name": "Đọc chữ vùng – rẽ nhánh theo trạng thái",
+  "description": "Trang Trạng thái đơn hiện ngẫu nhiên THÀNH CÔNG / ĐANG CHỜ / THẤT BẠI. Node Đọc chữ vùng OCR mọi chữ trong khung cửa sổ trình duyệt (lấy từ node Cửa sổ – không đọc nhầm chữ của app khác), node Switch rẽ theo chữ đọc được. Đúng: lời kết ghi đúng trạng thái đang hiện trên trang (kết thúc Thất bại khi trang hiện THẤT BẠI là đúng ý). Cần quyền ghi màn hình (macOS).",
+  "app": "Chờ / tìm",
+  "level": 2,
+  "page": "status.html",
+  "real": false
+ },
+ "script": {
+  "steps": [
+   {
+    "type": "open",
+    "target": "{{sandbox}}/status.html",
+    "delayAfter": 500
+   },
+   {
+    "type": "window",
+    "winOp": "waitOpen",
+    "winTitle": "Trạng thái đơn – Sân thử",
+    "timeoutMs": 15000,
+    "delayAfter": 800
+   },
+   {
+    "type": "ocrRead",
+    "shotArea": "node",
+    "imageFrom": "s2",
+    "timeoutMs": 8000
+   },
+   {
+    "type": "switch",
+    "value": "{{n3.output.text}}",
+    "cases": [
+     { "key": "ok", "label": "Thành công", "op": "contains", "match": "THÀNH CÔNG" },
+     { "key": "wait", "label": "Đang chờ", "op": "contains", "match": "ĐANG CHỜ" },
+     { "key": "bad", "label": "Thất bại", "op": "contains", "match": "THẤT BẠI" }
+    ]
+   },
+   {
+    "type": "end",
+    "endStatus": "success",
+    "message": "Trang hiện THÀNH CÔNG ({{n3.output.count}} dòng đọc được)"
+   },
+   {
+    "type": "end",
+    "endStatus": "success",
+    "message": "Trang hiện ĐANG CHỜ ({{n3.output.count}} dòng đọc được)"
+   },
+   {
+    "type": "end",
+    "endStatus": "fail",
+    "message": "Trang hiện THẤT BẠI – rẽ đúng nhánh Thất bại"
+   },
+   {
+    "type": "end",
+    "endStatus": "fail",
+    "message": "Không nhận ra trạng thái trong: {{n3.output.text}}"
+   }
+  ],
+  "edges": [
+   { "from": "s1", "port": "success", "to": "s2" },
+   { "from": "s2", "port": "success", "to": "s3" },
+   { "from": "s3", "port": "success", "to": "s4" },
+   { "from": "s4", "port": "case:ok", "to": "s5" },
+   { "from": "s4", "port": "case:wait", "to": "s6" },
+   { "from": "s4", "port": "case:bad", "to": "s7" },
+   { "from": "s4", "port": "default", "to": "s8" }
+  ]
+ }
+}
