@@ -63,3 +63,21 @@ func TestReadDocumentNotFound(t *testing.T) {
 		t.Error("chưa chọn gì phải fail")
 	}
 }
+
+// Windows: Word / Notepad không có chữ trong cây – hỏi DocTexts (TextPattern) cho các ứng viên, lấy ô có chữ đầu tiên.
+func TestReadDocumentAsksOS(t *testing.T) {
+	nodes := []element.Node{
+		{Role: "window", Box: elemBox(0, 0, 800, 600)},
+		{Role: "document", Box: elemBox(0, 0, 800, 600), Depth: 1},
+		{Role: "textbox", Box: elemBox(0, 0, 100, 20), Depth: 2},
+	}
+	s := modeltest.Step(model.StepReadDocument, func(s *model.Step) { s.TimeoutMs, s.IntervalMs = 20, 1 })
+	e := newEngine(nil, scripttest.Linear(model.Script{Loops: 1, Steps: []model.Step{s}}), nil)
+	e.elems = &devicetest.FakeElements{Frames: [][]element.Node{nodes}, DocText: map[int]string{2: "ô nhỏ", 1: "thân\r\nbài"}}
+	if err := e.Run(t.Context()); err != nil {
+		t.Fatal(err)
+	}
+	if out := e.results[e.sc.Steps[0].ID].Output; out["text"] != "thân\nbài" || out["lines"] != 2 {
+		t.Errorf("phải lấy document lớn hơn: %v", out)
+	}
+}

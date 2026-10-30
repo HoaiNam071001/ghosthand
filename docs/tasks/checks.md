@@ -3,6 +3,12 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## 43 – Node chuyên sâu trên Windows (B7w Lưu PDF, E1w Thao tác phần tử, E2w Chờ sự kiện, E3w Đọc tài liệu) · [43](phase3/43-node-chuyen-sau.md)
+- [ ] Mẫu *Lưu trang ra PDF* trên Windows: trong Chrome bấm Ctrl+P một lần, chọn đích *Lưu dưới dạng PDF* rồi đóng → chạy mẫu, không đụng chuột / bàn phím: hộp lưu file hiện, đường dẫn được gõ vào ô tên, file `Downloads\ghosthand-bang-gia.pdf` có bảng giá. Chạy lại lần hai: file cũ bị ghi đè, không hiện hộp hỏi ghi đè. Đích là máy in thật → node báo lỗi *chọn đích Lưu dưới dạng PDF* (đã thử: đúng)
+- [ ] Mẫu *Phần tử – thao tác không cần chuột* (đã chạy thật qua bằng test): mở trong app, chạy với cửa sổ Chrome bị che một nửa – trang vẫn hiện “Nguyễn Văn An · NHỚ”; thử thêm *Bỏ tick*, *Mở / Thu gọn* (ô chọn), *Chọn mục* trên một app Windows khác (File Explorer, Cài đặt)
+- [ ] Node *Chờ sự kiện giao diện* `valueChange` trên Windows: chờ chữ của một phần tử đổi (vd ô đếm trên trang) → bắt được trong ~200 ms
+- [ ] Node *Đọc tài liệu* trên Windows: Notepad (đã thử bằng test: đúng), **Word** (cả tài liệu + *chỉ phần đang chọn* sau khi bôi đen một đoạn), ô nhiều dòng trên trang web; trang web không có ô soạn thảo thì Windows đọc cả chữ trang (khác macOS báo không thấy)
+
 ## 55 M3 – Node Gọi tool MCP · [55](phase3/55-mcp-client-node-tuy-chinh.md)
 - [ ] Cài đặt → MCP server: thêm server `fs` (lệnh npx, tham số -y @modelcontextprotocol/server-filesystem <thư mục>) → Tải lại → hộp hỏi duyệt lệnh → hiện “Đã kết nối · N tool”; Sửa / Tắt / Xoá chạy đúng; env / header dán token thẳng → bị từ chối
 - [ ] Mẫu *Gọi tool MCP*: thêm server `fs` (Filesystem) → chạy → hộp hỏi server → lời kết có nội dung file; chưa có server → node báo “không có server MCP”

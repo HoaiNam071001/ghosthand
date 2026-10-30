@@ -18,6 +18,9 @@ type ElementReader interface {
 	ScrollTo(app string, index int) error
 	// Act làm thao tác act (model.ElAct*) với phần tử thứ index của lần Elements vừa đọc, không dùng chuột (bước 43 E1).
 	Act(app string, index int, act, value string) error
+	// DocTexts đọc chữ của các phần tử ở indices (thứ tự như lần Elements vừa đọc) qua API chữ của hệ điều hành – cả ô hoặc
+	// phần đang chọn – cho ô mà cây không có sẵn chữ (Windows TextPattern; macOS chữ đã có trong Node nên trả rỗng).
+	DocTexts(app string, indices []int, selection bool) ([]string, error)
 }
 
 type SystemElements struct{}
@@ -27,6 +30,10 @@ func (SystemElements) ScrollTo(app string, index int) error        { return scro
 
 func (SystemElements) Act(app string, index int, act, value string) error {
 	return actAt(app, index, act, value)
+}
+
+func (SystemElements) DocTexts(app string, indices []int, selection bool) ([]string, error) {
+	return docTexts(app, indices, selection)
 }
 
 var (

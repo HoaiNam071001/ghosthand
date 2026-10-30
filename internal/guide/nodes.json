@@ -859,18 +859,18 @@
     ]
   },
   "savePdf": {
-    "tech": "Gửi Cmd+P tới Chrome / Edge, chọn *Lưu dưới dạng PDF*, bấm nút Lưu, gõ đường dẫn vào hộp lưu file rồi chờ file xuất hiện.",
+    "tech": "Gửi Cmd+P (Windows: Ctrl+P) tới Chrome / Edge, bấm nút Lưu của hộp in (đọc qua Accessibility / UI Automation), gõ đường dẫn vào hộp lưu file rồi chờ file ghi xong.",
     "accuracy": "Phụ thuộc hộp in của trình duyệt: đích in phải là *Lưu dưới dạng PDF*.",
     "speed": "Vài giây.",
     "good": [
       "Lưu hoá đơn, báo cáo, trang đã đăng nhập thành PDF"
     ],
     "avoid": [
-      "Windows (chưa có) và trình duyệt không phải Chrome / Edge",
+      "Trình duyệt không phải họ Chromium (Firefox, Safari)",
       "Cần chữ trong trang → [[node:pageText]]"
     ],
     "tips": [
-      "Tên file nhận {{biến}}; file có sẵn thì không bị ghi đè.",
+      "Tên file nhận {{biến}}; file cùng tên có sẵn bị ghi đè.",
       "Kết quả ra output `path`."
     ],
     "fields": [
@@ -952,11 +952,11 @@
     ]
   },
   "readDocument": {
-    "tech": "Đọc nội dung ô soạn thảo / tài liệu qua Accessibility, giữ xuống dòng; hoặc chỉ phần đang chọn.",
+    "tech": "Đọc nội dung ô soạn thảo / tài liệu qua Accessibility (Windows: UI Automation – Word / Notepad qua TextPattern), giữ xuống dòng; hoặc chỉ phần đang chọn.",
     "accuracy": "Nguyên văn.",
     "speed": "Nhanh.",
     "good": [
-      "Lấy ghi chú trong TextEdit / Word rồi tách dòng"
+      "Lấy ghi chú trong TextEdit / Notepad / Word rồi tách dòng"
     ],
     "avoid": [
       "Trang web → [[node:pageText]]"

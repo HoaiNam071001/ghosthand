@@ -1,7 +1,7 @@
 {
  "meta": {
   "name": "Chờ sự kiện giao diện",
-  "description": "Bấm BẮT ĐẦU rồi chờ hộp thoại “Hoàn tất” bật lên sau 2 giây bằng node Chờ sự kiện giao diện (đọc cây Accessibility, không chụp màn hình). Đúng: kịch bản kết thúc thành công sau ~2 giây. Cần quyền Accessibility và cửa sổ trình duyệt đang hiện. Phần phần tử chỉ macOS; chờ cửa sổ mới / đổi cửa sổ chạy cả Windows.",
+  "description": "Bấm BẮT ĐẦU rồi chờ hộp thoại “Hoàn tất” bật lên sau 2 giây bằng node Chờ sự kiện giao diện (đọc cây Accessibility, không chụp màn hình). Đúng: kịch bản kết thúc thành công sau ~2 giây. Cần quyền Accessibility và cửa sổ trình duyệt đang hiện. Chạy cả macOS và Windows.",
   "level": 1,
   "app": "Phần tử",
   "page": "ui-events.html",

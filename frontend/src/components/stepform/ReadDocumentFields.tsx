@@ -17,7 +17,7 @@ export default function ReadDocumentFields({ step: s }: { step: Step }) {
       </Field>
       <span className={`col-span-2 -mt-1 ${hint}`}>
         Không chỉ ô nào thì tự chọn ô soạn thảo có chữ lớn nhất trong cửa sổ. Giữ nguyên xuống dòng; node sau dùng {`{{${s.ref}.output.text}}`}.
-        Chưa có chữ nào sau {fmtSec(s.timeoutMs)} → cổng Thất bại. Cần quyền Accessibility; hiện chỉ chạy trên macOS.
+        Chưa có chữ nào sau {fmtSec(s.timeoutMs)} → cổng Thất bại. macOS cần quyền Accessibility; Windows đọc qua UI Automation.
       </span>
     </>
   );

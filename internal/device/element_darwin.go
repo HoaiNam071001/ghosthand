@@ -232,6 +232,9 @@ func readElements(app string) ([]element.Node, error) {
 // nơi gọi phải đọc lại để đo.
 func scrollTo(app string, index int) error { return actAt(app, index, model.ElActScroll, "") }
 
+// docTexts – AXValue / AXSelectedText đã đọc sẵn vào Node (Value / Selected) nên không có gì thêm.
+func docTexts(string, []int, bool) ([]string, error) { return nil, nil }
+
 var axActs = map[string]C.int{
 	model.ElActScroll: C.AX_ACT_SCROLL, model.ElActPress: C.AX_ACT_PRESS, model.ElActSetValue: C.AX_ACT_SET,
 	model.ElActExpand: C.AX_ACT_EXPAND, model.ElActCollapse: C.AX_ACT_COLLAPSE, model.ElActSelect: C.AX_ACT_SELECT,

@@ -1,12 +1,12 @@
 {
  "meta": {
   "name": "Lưu trang ra PDF",
-  "description": "Mở trang Bảng giá bằng Chrome thường → node Lưu trang ra PDF bấm Cmd+P, Lưu, gõ đường dẫn vào hộp lưu file → file ghosthand-bang-gia.pdf trong thư mục Downloads (ghi đè nếu đã có). Đúng: lời kết ghi tên file và cỡ vài chục nghìn byte; mở file PDF thấy bảng giá.",
+  "description": "Mở trang Bảng giá bằng Chrome thường → node Lưu trang ra PDF bấm Cmd+P (Windows Ctrl+P), Lưu, gõ đường dẫn vào hộp lưu file → file ghosthand-bang-gia.pdf trong thư mục Downloads (ghi đè nếu đã có). Đúng: lời kết ghi tên file và cỡ vài chục nghìn byte; mở file PDF thấy bảng giá.",
   "app": "Trình duyệt",
   "level": 1,
   "page": "price-list.html",
   "real": false,
-  "prep": "Hiện chỉ chạy trên macOS. Cần Google Chrome; lần đầu macOS hỏi quyền Automation + Accessibility. Hộp in của Chrome phải đang chọn đích *Lưu dưới dạng PDF* (chọn tay một lần, Chrome nhớ). Nếu node kẹt, error.detail.stage cho biết kẹt ở hộp in (print), hộp lưu (save) hay lúc ghi file (file)."
+  "prep": "Cần Google Chrome; lần đầu macOS hỏi quyền Automation + Accessibility (Windows không hỏi). Hộp in của Chrome phải đang chọn đích *Lưu dưới dạng PDF* (chọn tay một lần, Chrome nhớ). Nếu node kẹt, error.detail.stage cho biết kẹt ở hộp in (print), hộp lưu (save) hay lúc ghi file (file)."
  },
  "script": {
   "steps": [

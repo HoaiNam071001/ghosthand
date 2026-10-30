@@ -4,9 +4,8 @@ import "slices"
 
 // Hệ điều hành chạy được của từng loại node (bước 50 D1) – chỉ liệt kê loại KHÔNG chạy ở cả hai; vắng = macOS + Windows.
 // UI hiện nhãn "Chỉ macOS / Chỉ Windows" ở bảng thêm node, UI đọc qua App.StepOnlyOS. Khoá = GOOS.
-// Khi làm xong bản Windows của một loại (vd savePdf – 43 B7w) thì xoá dòng ở đây.
+// Khi làm xong bản của hệ còn lại cho một loại thì xoá dòng ở đây.
 var onlyOS = map[string][]string{
-	StepSavePdf:    {"darwin"},
 	StepOSShortcut: {"darwin"},
 }
 

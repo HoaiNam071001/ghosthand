@@ -40,7 +40,7 @@ export default function WaitUIEventFields({ step: s }: { step: Step }) {
       <NumField label="Chờ tối đa" step={s} field="timeoutMs" unit="ms" min={1} />
       <span className={`col-span-2 -mt-1 ${hint}`}>
         Chưa thấy sự kiện sau {fmtSec(s.timeoutMs)} → cổng Thất bại. Đọc lại mỗi 0,2 giây, không chụp màn hình.
-        {ev.target === 'element' && ' Sự kiện phần tử chỉ macOS (cần quyền Accessibility) – Windows chờ bước 43 E2w.'}
+        {ev.target === 'element' && ' Sự kiện phần tử: macOS cần quyền Accessibility.'}
       </span>
     </>
   );

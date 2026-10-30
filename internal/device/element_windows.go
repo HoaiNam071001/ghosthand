@@ -1,7 +1,6 @@
 package device
 
 import (
-	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -19,7 +18,6 @@ import (
 var (
 	clsidCUIAutomation   = parseGUID("ff48dba4-60ef-4201-aa87-54103eef594e")
 	iidUIAutomation      = parseGUID("30cbe57d-d9d0-452a-ab13-7ac5ac4825ee")
-	iidUIAScrollItem     = parseGUID("b488300f-d015-4f19-9c29-bb595e3645ef")
 	uiaAuto, uiaCacheReq *comObj  // chỉ đụng trên luồng COM
 	uiaSeen              sync.Map // pid đã đọc lần đầu (chờ Chrome dựng cây)
 )
@@ -36,7 +34,6 @@ const (
 	propIsSelected  = 30079
 	propToggle      = 30086
 	propAriaRole    = 30101
-	patternScroll   = 10017
 )
 
 // Giới hạn như macOS (element_darwin.go): trang nặng vài nghìn nút; quá giới hạn thì dùng phần đã đọc.
@@ -67,32 +64,6 @@ func readElements(app string) ([]element.Node, error) {
 	}
 }
 
-// scrollTo cuộn nút thứ index (thứ tự như readElements) vào khung nhìn – cây đổi giữa hai lần thì có thể cuộn nhầm,
-// nơi gọi phải đọc lại để đo.
-func scrollTo(app string, index int) error {
-	hwnds, name, err := appWindows(app)
-	if err != nil {
-		return appErr(err, name)
-	}
-	var w *uiaWalk
-	onCOM(func() { w, err = uiaWalkWindows(hwnds, index) })
-	if err != nil {
-		return err
-	}
-	if !w.acted {
-		return errors.New("không cuộn được tới phần tử (trang vừa đổi hoặc phần tử không cuộn được)")
-	}
-	return nil
-}
-
-// actAt – thao tác phần tử qua UIA (Invoke / Value / Toggle / ExpandCollapse / SelectionItem): làm ở bước 43 E1w.
-func actAt(app string, index int, act, value string) error {
-	if act == model.ElActScroll {
-		return scrollTo(app, index)
-	}
-	return errors.New("thao tác phần tử không cần chuột chưa có trên Windows (bước 43 E1w)")
-}
-
 func appErr(err error, name string) error {
 	if name != "" {
 		return fmt.Errorf("%w (%s)", err, name)
@@ -109,7 +80,7 @@ func hwndPID(h uintptr) uint32 {
 func uiaReadAll(hwnds []uintptr) (nodes []element.Node, err error) {
 	onCOM(func() {
 		var w *uiaWalk
-		if w, err = uiaWalkWindows(hwnds, -1); err == nil {
+		if w, err = uiaWalkWindows(hwnds, nil); err == nil {
 			nodes = w.nodes
 		}
 	})
@@ -143,19 +114,19 @@ func uiaInit() error {
 	return nil
 }
 
-// uiaWalk – duyệt cây đã cache (cha trước con). target ≥ 0: tới nút thứ target thì cuộn nó vào khung nhìn rồi dừng.
+// uiaWalk – duyệt cây đã cache (cha trước con). each ≠ nil: gọi với chỉ số (thứ tự như readElements) + phần tử trước
+// khi thêm nút; trả true thì dừng duyệt.
 type uiaWalk struct {
-	nodes  []element.Node
-	target int
-	acted  bool
-	stop   bool
+	nodes []element.Node
+	each  func(i int, el *comObj) bool
+	stop  bool
 }
 
-func uiaWalkWindows(hwnds []uintptr, target int) (*uiaWalk, error) {
+func uiaWalkWindows(hwnds []uintptr, each func(int, *comObj) bool) (*uiaWalk, error) {
 	if err := uiaInit(); err != nil {
 		return nil, err
 	}
-	w := &uiaWalk{target: target}
+	w := &uiaWalk{each: each}
 	var firstErr error
 	for _, h := range hwnds {
 		var root *comObj
@@ -168,7 +139,7 @@ func uiaWalkWindows(hwnds []uintptr, target int) (*uiaWalk, error) {
 		w.visit(root, 0)
 		root.release()
 	}
-	if len(w.nodes) == 0 && !w.acted && firstErr != nil {
+	if len(w.nodes) == 0 && !w.stop && firstErr != nil {
 		return nil, firstErr
 	}
 	return w, nil
@@ -178,8 +149,8 @@ func (w *uiaWalk) visit(el *comObj, depth int) {
 	if w.stop || len(w.nodes) >= maxElementNodes || depth > 200 {
 		return
 	}
-	if len(w.nodes) == w.target {
-		w.acted, w.stop = uiaScrollIntoView(el) == nil, true
+	if w.each != nil && w.each(len(w.nodes), el) {
+		w.stop = true
 		return
 	}
 	w.nodes = append(w.nodes, uiaNode(el, depth))
@@ -213,7 +184,10 @@ func uiaNode(el *comObj, depth int) element.Node {
 		n.Value = name
 	default:
 		// aria-label của web nằm ở Name – Desc cũng là tên để aria= tìm như macOS (Chrome đặt tên vào cả AXTitle và AXDescription)
-		n.Title, n.Desc, n.Value = name, name, cachedStr(el, propValue)
+		n.Title, n.Desc = name, name
+		if role != "document" { // Document của trang web có ValuePattern = URL, không phải nội dung (chữ: DocTexts)
+			n.Value = cachedStr(el, propValue)
+		}
 		// phần tử không hỗ trợ thì UIA trả giá trị mặc định (ToggleState 2, IsSelected false) – chỉ đọc theo vai trò
 		switch role {
 		case "checkbox", "switch", "menuitemcheckbox": // 0 tắt, 1 bật, 2 lửng
@@ -234,18 +208,6 @@ func uiaNode(el *comObj, depth int) element.Node {
 		n.Box.W, n.Box.H = 0, 0
 	}
 	return n
-}
-
-func uiaScrollIntoView(el *comObj) error {
-	var p *comObj
-	if err := vcall(el, "GetCurrentPatternAs", 14, patternScroll, uintptr(unsafe.Pointer(iidUIAScrollItem)), uintptr(unsafe.Pointer(&p))); err != nil {
-		return err
-	}
-	if p == nil {
-		return errors.New("phần tử không cuộn được")
-	}
-	defer p.release()
-	return vcall(p, "ScrollItem.ScrollIntoView", 3)
 }
 
 func cachedVariant(el *comObj, prop uintptr) (v variant) {

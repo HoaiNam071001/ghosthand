@@ -1,7 +1,7 @@
 {
  "meta": {
   "name": "Phần tử – thao tác không cần chuột",
-  "description": "Điền ô Họ tên, tick Nhớ tôi rồi bấm GỬI hoàn toàn qua Accessibility – chuột không nhúc nhích. Đúng: trang hiện “Nguyễn Văn An · NHỚ”. Cần quyền Accessibility, cửa sổ trình duyệt đang hiện (che một phần vẫn chạy). Chỉ macOS (Windows chờ bước 43 E1w).",
+  "description": "Điền ô Họ tên, tick Nhớ tôi rồi bấm GỬI hoàn toàn qua Accessibility – chuột không nhúc nhích. Đúng: trang hiện “Nguyễn Văn An · NHỚ”. Cần quyền Accessibility, cửa sổ trình duyệt đang hiện (che một phần vẫn chạy).",
   "level": 1,
   "app": "Phần tử",
   "page": "form-controls.html",

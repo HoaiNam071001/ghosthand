@@ -32,7 +32,7 @@ export default function ElementActionFields({ step: s }: { step: Step }) {
       </Field>
       <span className={`col-span-2 -mt-1 ${hint}`}>
         Sau thao tác node đọc lại phần tử để kiểm (giá trị đã đổi, đã tick); app không nhận thì thử lại tới hết {fmtSec(s.timeoutMs)} → cổng Thất bại.
-        Chỉ macOS (cần quyền Accessibility) – Windows chờ bước 43 E1w. Node sau dùng {`{{${s.ref}.output.value}}`}.
+        macOS cần quyền Accessibility; Windows qua UI Automation. Node sau dùng {`{{${s.ref}.output.value}}`}.
       </span>
     </>
   );

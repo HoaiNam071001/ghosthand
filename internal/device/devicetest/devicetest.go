@@ -165,6 +165,7 @@ type FakeElements struct {
 	Scrolled []int
 	Acts     []string // "index:act:value" theo thứ tự gọi Act
 	ActErr   error
+	DocText  map[int]string // chữ DocTexts trả theo index
 	n        int
 }
 
@@ -184,6 +185,15 @@ func (f *FakeElements) Elements(app string) ([]element.Node, error) {
 func (f *FakeElements) Act(app string, index int, act, value string) error {
 	f.Acts = append(f.Acts, fmt.Sprintf("%d:%s:%s", index, act, value))
 	return f.ActErr
+}
+
+// DocTexts trả DocText[index] (trống = cây đã có chữ).
+func (f *FakeElements) DocTexts(app string, indices []int, selection bool) ([]string, error) {
+	out := make([]string, len(indices))
+	for i, idx := range indices {
+		out[i] = f.DocText[idx]
+	}
+	return out, nil
 }
 
 func (f *FakeElements) ScrollTo(app string, index int) error {

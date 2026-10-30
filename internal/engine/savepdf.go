@@ -34,7 +34,7 @@ func (e *Engine) savePdf(ctx context.Context, s model.Step) (map[string]any, err
 	if err != nil {
 		return nil, err
 	}
-	app := browser.BundleID(t.Browser)
+	app := browser.ElementApp(t.Browser)
 	if err := e.tabs.Activate(ctx, t); err != nil {
 		return nil, err
 	}

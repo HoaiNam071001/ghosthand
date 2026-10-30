@@ -31,29 +31,23 @@ func (e *Engine) readDocument(ctx context.Context, s model.Step) (map[string]any
 		if err != nil {
 			return false, 0, err
 		}
-		idx := -1
+		var cands []int
 		if scoped {
 			r := element.Find(nodes, q)
 			if !r.Found {
 				why, miss = missWhy(r, nodes, max(s.Occurrence, 1)), func() map[string]any { return elementMiss(s.Selectors, nodes, r, q) }
 				return false, 0, nil
 			}
-			idx = r.Hit.Index
-		} else if idx = element.DocumentIndex(nodes, s.SelectionOnly); idx < 0 {
-			why = "không thấy ô soạn thảo nào có chữ trong cửa sổ (chỉ selectors để chỉ đúng ô)"
-			if s.SelectionOnly {
-				why = "chưa có đoạn chữ nào đang được chọn"
-			}
+			cands = []int{r.Hit.Index}
+		} else if cands = element.DocumentCandidates(nodes, s.SelectionOnly); len(cands) == 0 {
+			why = "không thấy ô soạn thảo nào trong cửa sổ (chỉ selectors để chỉ đúng ô)"
 			return false, 0, nil
 		}
-		if text = nodes[idx].Value; s.SelectionOnly {
-			text = nodes[idx].Selected
+		if text, err = e.docText(s.ElementApp, nodes, cands, s.SelectionOnly); err != nil && !waitable(err) {
+			return false, 0, err
 		}
 		if text == "" {
-			why = "ô tìm được nhưng chưa có chữ"
-			if s.SelectionOnly {
-				why = "ô tìm được nhưng chưa chọn đoạn chữ nào"
-			}
+			why = map[bool]string{false: "ô tìm được nhưng chưa có chữ", true: "chưa có đoạn chữ nào đang được chọn"}[s.SelectionOnly]
 			return false, 0, nil
 		}
 		return true, 100, nil
@@ -66,4 +60,19 @@ func (e *Engine) readDocument(ctx context.Context, s model.Step) (map[string]any
 	}
 	text = strings.ReplaceAll(strings.ReplaceAll(text, "\r\n", "\n"), "\r", "\n")
 	return map[string]any{"text": text, "length": utf8.RuneCountInString(text), "lines": strings.Count(text, "\n") + 1}, nil
+}
+
+// docText – chữ của ứng viên đầu tiên có chữ. Ô có sẵn chữ trong cây đứng đầu cands (DocumentCandidates); không ô nào
+// có thì hỏi hệ điều hành một lần cho cả danh sách (Windows TextPattern).
+func (e *Engine) docText(app string, nodes []element.Node, cands []int, selection bool) (string, error) {
+	if t := nodes[cands[0]].DocText(selection); t != "" {
+		return t, nil
+	}
+	texts, err := e.elems.DocTexts(app, cands, selection)
+	for _, t := range texts {
+		if t != "" {
+			return t, nil
+		}
+	}
+	return "", err
 }

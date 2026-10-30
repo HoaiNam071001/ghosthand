@@ -12,7 +12,7 @@ func TestOnlyOSLoaiHopLe(t *testing.T) {
 			t.Errorf("onlyOS có loại không tồn tại: %q", typ)
 		}
 	}
-	if SupportedOn(StepSavePdf, "windows") || !SupportedOn(StepSavePdf, "darwin") || !SupportedOn(StepClick, "windows") {
+	if SupportedOn(StepOSShortcut, "windows") || !SupportedOn(StepOSShortcut, "darwin") || !SupportedOn(StepClick, "windows") {
 		t.Error("SupportedOn sai")
 	}
 }

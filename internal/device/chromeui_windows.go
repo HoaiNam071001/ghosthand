@@ -4,7 +4,6 @@ import (
 	"errors"
 	"hash/fnv"
 	"strings"
-	"unicode/utf16"
 	"unsafe"
 
 	"ghosthand/internal/model"
@@ -261,16 +260,7 @@ func SetChromeAddress(hwnd uint64, url string) error {
 		if err := vcall(ui.omni, "SetFocus", 3); err != nil {
 			return err
 		}
-		u := utf16.Encode([]rune(url))
-		u = append(u, 0)
-		b, _, _ := oleSysAllocStringLen.Call(uintptr(unsafe.Pointer(&u[0])), uintptr(len(u)-1))
-		defer procSysFreeString.Call(b)
-		var p *comObj
-		if err := vcall(ui.omni, "GetCurrentPatternAs", 14, patternValue, uintptr(unsafe.Pointer(iidUIAValue)), uintptr(unsafe.Pointer(&p))); err != nil || p == nil {
-			return errors.New("ô địa chỉ không cho đặt giá trị")
-		}
-		defer p.release()
-		return vcall(p, "Value.SetValue", 3, b)
+		return uiaSetValue(ui.omni, url)
 	})
 }
 

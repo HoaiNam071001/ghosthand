@@ -24,6 +24,8 @@ func TestOmniboxURL(t *testing.T) {
 		"8.8.8.8":                     "https://8.8.8.8",
 		"chrome://settings":           "chrome://settings",
 		"file:///C:/a.html":           "file:///C:/a.html",
+		"C:/Users/an/price-list.html": "file:///C:/Users/an/price-list.html",
+		`D:\Tài liệu\a b.html`:        "file:///D:/Tài%20liệu/a%20b.html",
 		"http://x.com":                "http://x.com",
 		"about:blank":                 "about:blank",
 		"":                            "",

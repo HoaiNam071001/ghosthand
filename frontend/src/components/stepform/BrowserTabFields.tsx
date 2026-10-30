@@ -7,8 +7,6 @@ import { Step } from '../../types';
 import { Field, fmtSec, hint, NumField, selectBox } from './shared';
 import { BrowserField, TabTargetFields, useTabVarProps } from './TabTargetFields';
 
-// Hết cầu nối tạm khi có bản Windows (43 B1w).
-export const MAC_ONLY = 'Hiện chỉ chạy trên macOS – lần đầu macOS hỏi cho phép điều khiển trình duyệt.';
 /** Ghi chú nền tảng chung cho node tab / đi tới URL / chuẩn hoá. */
 export const TAB_PLATFORM = 'macOS: lần đầu hỏi cho phép điều khiển trình duyệt. Windows: đọc qua UI Automation – chỉ tab đang hiện có URL, tab khác tìm theo tiêu đề; thao tác tải lại / đi tới URL đổi sang tab đó và cần cửa sổ ở trước.';
 

@@ -1,11 +1,12 @@
 // Package browser – điều khiển trình duyệt thường họ Chromium (Chrome / Edge / Brave / Cốc Cốc đã đăng nhập của người
 // dùng) ở mức tab: đọc, chuyển, mở, đóng, tải lại (bước 43 B). Không CDP, không extension: macOS qua AppleScript (JXA,
-// tabs_darwin.go), Windows qua UI Automation (chưa làm – 43 B1w). Khác internal/web: web điều khiển Chrome của app qua CDP.
+// tabs_darwin.go), Windows qua UI Automation (tabs_windows.go). Khác internal/web: web điều khiển Chrome của app qua CDP.
 package browser
 
 import (
 	"context"
 	"errors"
+	"runtime"
 
 	"ghosthand/internal/model"
 )
@@ -37,8 +38,13 @@ var (
 // System – trình duyệt thật của máy.
 type System struct{}
 
-// BundleID – id app trên macOS của trình duyệt (Browsers khác ""), để đọc cây accessibility của đúng trình duyệt.
-func BundleID(b string) string {
+// ElementApp – tên app của trình duyệt b để đọc cây accessibility của đúng trình duyệt (device.ElementReader): macOS
+// bundle id, Windows tên tệp chạy (như winBrowser). b "" → "".
+func ElementApp(b string) string {
+	if runtime.GOOS == "windows" {
+		return map[string]string{model.BrowserChrome: "chrome", model.BrowserEdge: "msedge", model.BrowserBrave: "brave",
+			model.BrowserCocCoc: "browser"}[b]
+	}
 	return map[string]string{model.BrowserChrome: "com.google.Chrome", model.BrowserEdge: "com.microsoft.edgemac",
 		model.BrowserBrave: "com.brave.Browser", model.BrowserCocCoc: "com.coccoc.Coccoc"}[b]
 }

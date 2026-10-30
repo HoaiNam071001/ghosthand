@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"ghosthand/internal/browser"
 	"ghosthand/internal/device/devicetest"
 	"ghosthand/internal/element"
 	"ghosthand/internal/model"
@@ -41,7 +42,7 @@ func TestSavePdf(t *testing.T) {
 	if want := []string{"activate 2"}; len(f.Calls) != 1 || f.Calls[0] != want[0] {
 		t.Errorf("tab gọi %q", f.Calls)
 	}
-	if fe := e.elems.(*devicetest.FakeElements); len(fe.Acts) != 1 || fe.Acts[0] != "1:press:" || fe.Apps[0] != "com.google.Chrome" {
+	if fe := e.elems.(*devicetest.FakeElements); len(fe.Acts) != 1 || fe.Acts[0] != "1:press:" || fe.Apps[0] != browser.ElementApp(model.BrowserChrome) {
 		t.Errorf("acts %v apps %v", fe.Acts, fe.Apps)
 	}
 	if !strings.Contains(strings.Join(in.Lines(), "\n"), path) {
