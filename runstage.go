@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"slices"
 	"time"
 
 	"ghosthand/internal/device"
@@ -10,6 +11,7 @@ import (
 	"ghosthand/internal/runborder"
 	"ghosthand/internal/session"
 	"ghosthand/internal/store"
+	"ghosthand/internal/winfloat"
 )
 
 // Chuẩn bị màn hình cho lần chạy: thu thanh mini + đưa cửa sổ đích lên (57 B1–B2), viền lúc đang chạy (58 D2).
@@ -73,8 +75,23 @@ func stageTarget(wins []model.WindowInfo, focus *model.WindowInfo, self int) (mo
 	return model.WindowInfo{}, nil
 }
 
-// showBorder – viền quanh màn hình theo việc lần chạy đang làm (58 D2, session.OnActivity): hiện trên màn đang có
-// chuột (chỗ engine vừa / sắp thao tác), xong / lỗi / dừng hoặc Cài đặt tắt thì ẩn.
+// onActivity – việc lần chạy đang làm đổi (session.OnActivity): thanh mini nổi trong lúc chạy (58 D6 – app đích được
+// đưa lên trước không che chữ trạng thái), viền quanh màn hình (D2).
+func (a *App) onActivity(act session.Activity) {
+	running := !slices.Contains([]string{session.DoingDone, session.DoingFailed, session.DoingStopped}, act.Doing)
+	a.mu.Lock()
+	changed := a.running != running
+	a.running = running
+	mini := a.mode == ModeMinibar
+	a.mu.Unlock()
+	if changed && mini {
+		winfloat.Minibar(running)
+	}
+	a.showBorder(act)
+}
+
+// showBorder – viền theo việc đang làm: hiện trên màn đang có chuột (chỗ engine vừa / sắp thao tác), xong / lỗi /
+// dừng hoặc Cài đặt tắt thì ẩn.
 func (a *App) showBorder(act session.Activity) {
 	px := runborder.Px(store.CurrentSettings().Overlay.Border)
 	look, ok := runborder.LookFor(act.Doing)

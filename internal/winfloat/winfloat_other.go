@@ -9,7 +9,8 @@ func FollowActiveSpace() {}
 
 func Set(on, focus bool) {}
 
-func Minibar() {}
+// Minibar – Windows: chưa nổi lúc chạy (WindowSetAlwaysOnTop của Wails có thể giành focus – 58 D6, thử trên máy Windows).
+func Minibar(float bool) {}
 
 // CoverScreen – Windows: Wails đặt cửa sổ từ góc vùng làm việc, cỡ = cả màn → đã phủ màn (taskbar dưới);
 // lệch khi taskbar trên / trái thì overlay tự sửa gốc toạ độ (coordMap.ts).

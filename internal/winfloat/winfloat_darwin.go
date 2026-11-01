@@ -64,13 +64,15 @@ static void set_floating(int on, int focus) {
 }
 // Thanh mini: cửa sổ thường như app khác – không nổi trên mọi Space / app toàn màn hình, không giành focus của app
 // đang được điều khiển. Về Regular (overlay đã chuyển sang Accessory) để thanh mini có icon Dock tìm lại được.
-static void set_minibar(void) {
+// float (đang chạy – 58 D6): nổi trên cửa sổ thường để app đích vừa được đưa lên trước không che chữ trạng thái; chỉ
+// đổi mức nên vẫn không lấy focus.
+static void set_minibar(int float_) {
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
 		for (NSWindow *w in [NSApp windows]) {
 			if (is_border(w)) continue;
 			set_normal_behavior(w);
-			[w setLevel:NSNormalWindowLevel];
+			[w setLevel:float_ ? NSFloatingWindowLevel : NSNormalWindowLevel];
 		}
 	});
 }
@@ -114,8 +116,15 @@ func Set(on, focus bool) {
 	C.set_floating(b(on), b(focus))
 }
 
-// Minibar đặt cửa sổ về dạng thường cho thanh mini (không nổi, không giành focus) – gọi sau WindowSetAlwaysOnTop(false).
-func Minibar() { C.set_minibar() }
+// Minibar đặt cửa sổ về dạng thường cho thanh mini (không giành focus) – gọi sau WindowSetAlwaysOnTop(false); float =
+// đang chạy: nổi trên cửa sổ thường (58 D6).
+func Minibar(float bool) {
+	f := C.int(0)
+	if float {
+		f = 1
+	}
+	C.set_minibar(f)
+}
 
 // CoverScreen cho cửa sổ (overlay) phủ trọn màn đang chứa nó – gọi sau khi Wails đã dời / đổi cỡ cửa sổ.
 func CoverScreen() { C.cover_screen() }

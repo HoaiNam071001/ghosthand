@@ -63,13 +63,13 @@ func (a *App) SetWindowMode(mode string) error {
 			return err
 		}
 		// Chỉ overlay (chọn vùng / xem trước) phủ trên mọi app, kể cả app toàn màn hình (Space riêng ở macOS);
-		// thanh mini là cửa sổ thường như app khác – không đè lên app nào.
+		// thanh mini là cửa sổ thường như app khác – chỉ nổi (không lấy focus) trong lúc đang chạy (58 D6).
 		if mode == ModeOverlay {
 			runtime.WindowSetAlwaysOnTop(a.ctx, true)
 			winfloat.Set(true, true)
 		} else {
 			runtime.WindowSetAlwaysOnTop(a.ctx, false)
-			winfloat.Minibar()
+			winfloat.Minibar(a.running)
 		}
 		if mode == ModeOverlay && a.ovDisp >= 0 && a.moveToDisplay(a.ovDisp) {
 			if sw, sh, err = a.currentScreenSize(); err != nil {

@@ -43,6 +43,7 @@ type App struct {
 	ai        aiGate                    // hỏi quyền AI chạy (mcprun.go)
 	// app do AI mở nền (`--background`, bước 31b): khởi động ẩn, AI chạy thì chỉ hiện thanh mini
 	background bool
+	running    bool // đang có lần chạy (theo session.Activity) – thanh mini nổi (58 D6); đọc / ghi dưới mu
 
 	web        *web.Chrome        // Chrome của app cho giao diện (webapi.go) – tạo lười
 	pickCancel context.CancelFunc // huỷ lần Chọn phần tử đang chờ
@@ -56,7 +57,7 @@ func NewApp() *App {
 		ai: aiGate{pending: map[string]chan string{}, allowed: map[string]bool{}}}
 	a.sess = session.New(a.emit, session.Deps{MCP: a.mcpCall, Stage: a.stageRun})
 	a.sess.OnEnd = a.onRunEnd
-	a.sess.OnActivity = a.showBorder
+	a.sess.OnActivity = a.onActivity
 	return a
 }
 

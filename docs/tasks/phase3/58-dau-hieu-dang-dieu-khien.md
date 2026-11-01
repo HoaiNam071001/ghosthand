@@ -14,7 +14,7 @@
     - D4: `flow/runState.ts` `runTitle` (test) – tiêu đề thanh mini; dòng dưới: node đang chạy, lượt / thử lại / khớp nhất, vòng. Chip AI có sẵn – không thêm dòng "AI đang chạy …"
     - D5: `OverlaySettings.border` "" / thin | medium | off, tab Cài đặt đổi tên *Màn hình*
   - [ ] D2w. Viền trên Windows: layered window `WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE`, `WDA_EXCLUDEFROMCAPTURE` (làm trên máy Windows)
-  - [ ] D6. Thanh mini bị app đích che khi AI chạy (thanh mini là cửa sổ thường – fix 2026-10-28; Stage đưa app đích lên trước) – chờ người dùng chọn: nổi thanh mini (không lấy focus) trong lúc chạy hay chỉ dựa vào viền
+  - [x] D6. Thanh mini bị app đích che khi AI chạy (thanh mini là cửa sổ thường – fix 2026-10-28; Stage đưa app đích lên trước). **Người dùng chọn (2026-11-01): nổi lúc đang chạy.** *Làm:* `App.onActivity` – đang chạy thì `winfloat.Minibar(true)` (mức NSFloatingWindowLevel, chỉ đổi mức – không lấy focus), xong / lỗi / dừng về cửa sổ thường; `SetWindowMode` thu thanh mini giữa lúc chạy cũng nổi. Thử qua MCP: ảnh lúc lỗi có thanh mini nổi trên VS Code, VS Code vẫn ở trước. Windows chưa (WindowSetAlwaysOnTop có thể giành focus – thử trên máy Windows)
   - Màn mẫu: `#demo-minibar?mode=acting|waiting|paused` (xong); `#demo-overlay` khung viền – bỏ (viền là cửa sổ native, không vẽ trong webview)
   - Chuẩn bị cho MCP: D1 → `wait_run` / `run_script` trả `state` chi tiết (`waiting: {what, leftS}`), giữ `budget_test.go`.
   - Kiểm tra tay: AI chạy kịch bản có Chờ chữ 10 s → viền mờ + thanh mini ghi đang chờ gì, đếm giây; tới node click → viền sáng; đụng chuột → viền vàng + đếm ngược; xong → viền tắt; chụp màn / tìm ảnh lúc có viền vẫn đúng; toàn màn hình (Space riêng) vẫn thấy viền.
