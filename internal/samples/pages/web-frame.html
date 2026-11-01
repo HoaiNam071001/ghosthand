@@ -31,8 +31,14 @@
   sb.header('Web (iframe)');
   const setReal = sb.stat('Click thật'), setFake = sb.stat('Click giả (script)');
   let real = 0, fake = 0;
-  document.getElementById('pay').addEventListener('load', (ev) => {
-    const d = ev.target.contentDocument, agree = d.querySelector('.agree'), btn = d.getElementById('payBtn');
+  // iframe srcdoc có thể tải xong trước khi script này chạy (Chrome vừa mở, file trong cache) – đã xong thì gắn ngay,
+  // không thì chờ load; chỉ gắn một lần.
+  const pay = document.getElementById('pay');
+  let ready = false;
+  const init = () => {
+    const d = pay.contentDocument, agree = d && d.querySelector('.agree'), btn = d && d.getElementById('payBtn');
+    if (ready || !agree || !btn) return;
+    ready = true;
     d.addEventListener('click', (e) => { if (e.isTrusted) setReal(++real); else setFake(++fake); }, true);
     agree.onclick = () => {
       const on = agree.getAttribute('aria-checked') !== 'true';
@@ -45,6 +51,8 @@
       d.getElementById('done').classList.add('open');
       sb.log(`đã thanh toán (${e.isTrusted ? 'click thật' : 'click giả'})`);
     };
-  });
+  };
+  pay.addEventListener('load', init);
+  if (pay.contentDocument && pay.contentDocument.readyState === 'complete') init();
 </script>
 </body></html>

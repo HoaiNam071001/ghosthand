@@ -152,7 +152,7 @@ func TestWebClickRetriesUntilHoverOK(t *testing.T) {
 	}
 }
 
-// Phần tử ngoài khung nhìn: lăn chuột thật giữa khung cuộn (nấc theo quãng, tối đa 5) rồi tìm lại; lăn mà phần tử không
+// Phần tử ngoài khung nhìn: lăn chuột thật giữa khung cuộn (nấc theo quãng, tối đa 20) rồi tìm lại; lăn mà phần tử không
 // nhích → tắt Wheel (find.js nhảy bằng scrollIntoView).
 func TestWebClickWheelsIntoView(t *testing.T) {
 	off := func(y, px int) web.Found {
@@ -166,7 +166,7 @@ func TestWebClickWheelsIntoView(t *testing.T) {
 		t.Fatal(err)
 	}
 	want := []string{"move 500,400"}
-	for range 5 {
+	for range 15 {
 		want = append(want, "scroll down")
 	}
 	want = append(want, "move 500,400", "scroll down", "scroll down", "move 120,310", "click left false")
@@ -182,6 +182,12 @@ func TestWebClickWheelsIntoView(t *testing.T) {
 	}
 	if !b.queries[1].Wheel || b.queries[2].Wheel {
 		t.Errorf("lăn không nhích phải tắt Wheel: %v %v", b.queries[1].Wheel, b.queries[2].Wheel)
+	}
+	// quá nửa thời gian chờ mà chưa tới → nhảy (lăn chậm không làm node hết giờ)
+	b = &fakeBrowser{finds: []web.Found{off(1900, 1500), off(1400, 1500), off(900, 1500), found(0, model.Rect{X: 100, Y: 300, W: 40, H: 20})}}
+	// đợt đầu 15 nấc × 30 ms ≈ 450 ms > nửa của 800 ms
+	if _, _, err := runWeb(t, b, webNode(model.StepWebClick, func(s *model.Step) { s.TimeoutMs = 800 })); err != nil || !b.queries[1].Wheel || b.queries[2].Wheel {
+		t.Errorf("hết nửa thời gian phải tắt Wheel: %v, %d query", err, len(b.queries))
 	}
 	b = &fakeBrowser{finds: []web.Found{found(0, model.Rect{W: 10, H: 10})}}
 	if _, _, err := runWeb(t, b, webNode(model.StepWebClick, func(s *model.Step) { s.WebBackground = true })); err != nil || b.queries[0].Wheel {

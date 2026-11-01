@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"ghosthand/internal/model"
 	"ghosthand/internal/web"
@@ -61,15 +62,17 @@ func (e *Engine) webFindQ(ctx context.Context, s model.Step, q web.Query, lines 
 		return webTry{}, nil, errNoBrowserOpt
 	}
 	var last webTry
-	wheels := 0
+	wheels, start := 0, time.Now()
 	_, err := e.waitLoop(ctx, s, "web", func() (bool, int, error) {
 		prev := last
 		var err error
 		if last, err = e.webTryOnce(ctx, s, q, aim); err != nil || last.Wheel == nil {
 			return last.ok, 0, err
 		}
-		// lăn mà phần tử không nhích (khung không nhận bánh xe) hoặc lăn quá lâu → nhảy bằng scrollIntoView như cũ
-		if wheels++; wheels > maxWheels || prev.Wheel != nil && prev.Rect == last.Rect {
+		// lăn mà phần tử không nhích (khung không nhận bánh xe), lăn quá nhiều lần hoặc đã quá nửa thời gian chờ → nhảy
+		// bằng scrollIntoView như cũ (lăn chậm không được làm node hết giờ)
+		late := time.Since(start) > time.Duration(s.TimeoutMs)*time.Millisecond/2
+		if wheels++; wheels > maxWheels || late || prev.Wheel != nil && prev.Rect == last.Rect {
 			q.Wheel = false
 			return false, 0, nil
 		}
@@ -88,11 +91,11 @@ func (e *Engine) webFindQ(ctx context.Context, s model.Step, q web.Query, lines 
 	return last, lines, err
 }
 
-// maxWheels – số lần lăn tối đa (mỗi lần ≤ maxNotches nấc) trước khi nhảy thẳng tới phần tử.
-const maxWheels = 15
+// maxWheels – số đợt lăn tối đa (mỗi đợt ≤ maxNotches nấc) trước khi nhảy thẳng tới phần tử.
+const maxWheels = 10
 
-// wheelTo đưa chuột thật vào giữa khung cuộn rồi lăn về phía phần tử – mỗi nấc ~100 px (device.scrollNotchPx), tối đa
-// maxNotches nấc rồi tìm lại (trang lười tải / dàn lại khi cuộn).
+// wheelTo đưa chuột thật vào giữa khung cuộn rồi lăn về phía phần tử – mỗi nấc ~100 px (device.scrollNotchPx), đủ quãng
+// còn lại nhưng tối đa maxNotches nấc rồi tìm lại (trang lười tải / dàn lại khi cuộn).
 func (e *Engine) wheelTo(ctx context.Context, w web.Wheel) error {
 	if err := e.move(ctx, w.At.X, w.At.Y, 0); err != nil {
 		return err
@@ -100,7 +103,7 @@ func (e *Engine) wheelTo(ctx context.Context, w web.Wheel) error {
 	return e.wheel(ctx, w.Dir, min(max(w.Px/100, 1), maxNotches))
 }
 
-const maxNotches = 5
+const maxNotches = 20
 
 // webTryOnce – một lần tìm (+ thử hover khi aim); ok = đủ điều kiện dừng chờ.
 func (e *Engine) webTryOnce(ctx context.Context, s model.Step, q web.Query, aim bool) (webTry, error) {

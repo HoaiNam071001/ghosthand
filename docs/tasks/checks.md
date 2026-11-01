@@ -6,7 +6,7 @@ Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi t
 ## 36 – Web qua Chrome của app (Đăng nhập, dấu vết, lăn chuột thật, mẫu FB / Shopee) · [36](phase3/36-chrome-app-sau.md)
 - [ ] Node web bất kỳ → dòng *Chrome của app* → **Đăng nhập**: Chrome của app đóng rồi mở lại (không thanh cảnh báo) ở trang đang dùng → đăng nhập Gmail / Facebook → **Xong** → Chrome mở lại chế độ điều khiển (có thanh *unsupported command-line flag*, đóng được), vẫn đã đăng nhập; trong lúc đăng nhập bấm Chạy kịch bản có node web → báo “đang mở để đăng nhập”
 - [ ] Facebook / Gmail sau khi đăng nhập qua nút trên: chạy vài node web (Chờ / Click) – có bị hỏi captcha / cảnh báo đăng nhập lạ không (trước đây Facebook hỏi captcha)
-- [ ] Node Click phần tử web tới nút nằm dưới màn hình (mẫu `phan-tu-cuoi-trang` / `web-cuon-trong-khung` / `web-thanh-toan-iframe`): chuột vào giữa trang / khung rồi lăn từng đợt tới nút, không nhảy; thanh cảnh báo của Chrome không làm click lệch
+- [x] Node Click phần tử web tới nút nằm dưới màn hình (mẫu `phan-tu-cuoi-trang` / `web-cuon-trong-khung` / `web-thanh-toan-iframe`): chuột vào giữa trang / khung rồi lăn từng đợt tới nút, không nhảy; thanh cảnh báo của Chrome không làm click lệch – *AI chạy thật macOS 2026-11-01: 9 mẫu web sân thử qua (sau khi sửa nhịp lăn + trang iframe)*
 - [ ] Mẫu *Facebook – vào trang cá nhân* (sau khi Đăng nhập): nhập đúng tên → tới trang cá nhân; tên sai → kết thúc thất bại kèm lời nhắc
 - [ ] Mẫu *Shopee – săn sale*: phần sau `shopee.vn/` của một sản phẩm + giờ 1 phút sau → đúng giờ bấm Mua ngay, dừng ở trang thanh toán (không tự đặt)
 

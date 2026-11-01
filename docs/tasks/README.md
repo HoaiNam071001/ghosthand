@@ -116,7 +116,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 > Bảng tự sinh – sau khi tick chạy `python3 scripts/tasks-index.py`. Bấm tên bước để mở file chi tiết.
 
 <!-- index:start -->
-**52 / 66 bước xong code** · 🧪 **[301 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
+**52 / 66 bước xong code** · 🧪 **[300 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
 
 ### Phase 3 – Design v2 & tự động hoá (theo thứ tự làm)
 
@@ -165,7 +165,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 chờ kiểm tra tay | [39. Gom kịch bản: nhóm node, nhúng kịch bản khác](phase3/39-gom-kich-ban.md) | 2 / 2 | [6 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [24. Ghi macro](phase3/24-ghi-macro.md) | 1 / 1 | [3 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [28. Mở rộng](phase3/28-mo-rong.md) | 4 / 4 | [4 việc](checks.md) |
-| 🟡 đang làm | [36. Web qua Chrome của app – làm sau](phase3/36-chrome-app-sau.md) | 6 / 7 | [5 việc](checks.md) |
+| 🟡 đang làm | [36. Web qua Chrome của app – làm sau](phase3/36-chrome-app-sau.md) | 6 / 7 | [4 việc](checks.md) |
 
 ### Phase 0 – 2
 
