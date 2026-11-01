@@ -39,8 +39,14 @@ func (f *FakeWindows) with(id uint64, log string, fn func(w *model.WindowInfo)) 
 	return errGone
 }
 
+// Focus như máy thật: bỏ thu nhỏ + chỉ cửa sổ này mang cờ Front (đang nhận phím).
 func (f *FakeWindows) Focus(id uint64) error {
-	return f.with(id, fmt.Sprintf("focus %d", id), func(w *model.WindowInfo) { w.Minimized = false })
+	return f.with(id, fmt.Sprintf("focus %d", id), func(w *model.WindowInfo) {
+		for i := range f.Wins {
+			f.Wins[i].Front = false
+		}
+		w.Minimized, w.Front = false, true
+	})
 }
 
 func (f *FakeWindows) SetBounds(id uint64, r model.Rect) error {

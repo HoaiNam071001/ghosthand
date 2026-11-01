@@ -50,3 +50,35 @@ func TestGuardWindowNoInput(t *testing.T) {
 		t.Fatal("muốn lỗi window_mismatch")
 	}
 }
+
+// 57 A1: thứ tự chồng có lúc lệch (VS Code đứng đầu khi Chrome đang nhận phím) – cờ Front của device thắng thứ tự.
+func TestGuardWindowPrefersFront(t *testing.T) {
+	e, fw := winEngine()
+	code := model.WindowInfo{ID: 9, Title: "autoclicker", App: "Code", PID: 9, Box: model.Rect{W: 800, H: 600}}
+	fw.Wins = append([]model.WindowInfo{code}, fw.Wins...)
+	if err := e.guardWindow(guardStep(model.StepText, "chrome")); err == nil {
+		t.Fatal("không có cờ Front: Code đứng đầu phải bị coi là ở trước")
+	}
+	if err := fw.Focus(1); err != nil {
+		t.Fatal(err)
+	}
+	if err := e.guardWindow(guardStep(model.StepText, "chrome")); err != nil {
+		t.Errorf("Chrome mang cờ Front mà bị chặn: %v", err)
+	}
+	if w, _ := foreground(fw.Wins); w.App != "chrome" {
+		t.Errorf("foreground = %+v, muốn chrome", w)
+	}
+}
+
+// Hai cửa sổ cùng app: cửa sổ đang ở trước khớp là cho qua, dù không đứng đầu danh sách.
+func TestGuardWindowTwoSameApp(t *testing.T) {
+	e, fw := winEngine()
+	other := model.WindowInfo{ID: 5, Title: "Google Maps – Google Chrome", App: "chrome", PID: 10, Box: model.Rect{W: 800, H: 600}}
+	fw.Wins = append([]model.WindowInfo{fw.Wins[0], other}, fw.Wins[1:]...)
+	if err := fw.Focus(5); err != nil {
+		t.Fatal(err)
+	}
+	if err := e.guardWindow(guardStep(model.StepText, "chrome")); err != nil {
+		t.Errorf("cửa sổ Chrome thứ hai đang ở trước mà bị chặn: %v", err)
+	}
+}

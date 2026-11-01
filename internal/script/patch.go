@@ -89,6 +89,10 @@ func ApplyPatch(sc model.Script, p Patch) (model.Script, []model.Edge, error) {
 // upsertStep: id / ref trùng node đã có → đè từng trường có trong raw (trường gửi lên thay cả giá trị, kể cả mảng /
 // object lồng); không có → node mới. Gửi type khác loại cũ → dựng lại node theo loại mới (retypeStep), trả cạnh bị bỏ.
 func upsertStep(sc *model.Script, raw json.RawMessage) ([]model.Edge, error) {
+	raw, err := normalizeRaw(raw)
+	if err != nil {
+		return nil, err
+	}
 	var key struct{ ID, Ref, Type string }
 	if err := json.Unmarshal(raw, &key); err != nil {
 		return nil, err

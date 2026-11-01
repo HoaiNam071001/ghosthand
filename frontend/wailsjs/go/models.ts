@@ -1946,6 +1946,7 @@ export namespace model {
 	    pid: number;
 	    box: Rect;
 	    minimized: boolean;
+	    front?: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new WindowInfo(source);
@@ -1960,6 +1961,7 @@ export namespace model {
 	        this.pid = source["pid"];
 	        this.box = this.convertValues(source["box"], Rect);
 	        this.minimized = source["minimized"];
+	        this.front = source["front"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

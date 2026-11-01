@@ -3,6 +3,11 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## 57 – AI chạy ổn định, đợt 1 (2026-11-01) · [57](phase3/57-ai-chay-on-dinh.md)
+- [ ] Bản build mới: VS Code đang mở, bấm sang Chrome cho Chrome active → AI chạy kịch bản tạm có node Gõ chữ `onlyInWindow` + `winApp: Google Chrome` → gõ được (không còn `window_mismatch` "đang ở trước: Code"), output `windowApp` = Google Chrome
+- [ ] Hai cửa sổ Chrome, cửa sổ thứ hai đang active → node Gõ chữ `onlyInWindow` Chrome vẫn chạy
+- [ ] AI gửi `{"type":"window","winOp":"focus",…}` và `{"type":"key","keys":"cmd+a"}` qua `run_script` → chạy được, `read_script` của kịch bản lưu ghi `keys: ["a"]`, `modifiers: ["cmd"]`
+
 ## Selector bền với nhãn hay đổi (2026-11-01) · [37](phase3/37-phan-tu-man-hinh.md) · [25d](phase3/25d-web-dom.md)
 - [x] Facebook trên Chrome thường, có tin Messenger chưa đọc: node Tìm theo Phần tử, *Chọn trên màn* nút Messenger → ô tự điền `aria=Messenger` ở dòng đầu (không phải `aria="Messenger, 1 unread"`); đọc hết tin → *Thử tìm* vẫn thấy
 - [x] Gõ tay `aria="Messenger, 1 unread"` → dưới ô hiện cảnh báo + nút *Dùng aria=Messenger*, bấm là thay đúng dòng đó

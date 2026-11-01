@@ -14,7 +14,7 @@ package device
 // cầu nối từ phần tử AX sang CGWindowID (id cửa sổ trong CGWindowList).
 extern AXError _AXUIElementGetWindow(AXUIElementRef element, CGWindowID *identifier);
 
-typedef struct { unsigned int id; int pid; char *title, *app, *appId; double x, y, w, h; int minimized; } win_info;
+typedef struct { unsigned int id; int pid; char *title, *app, *appId; double x, y, w, h; int minimized, front; } win_info;
 typedef struct { int pid; char *name, *id; int windows; } win_app;
 
 enum { WIN_FOCUS, WIN_BOUNDS, WIN_MINIMIZE, WIN_RESTORE, WIN_CLOSE };
@@ -72,6 +72,11 @@ static int win_list(win_info **out, int *n) {
 	NSArray *list = (__bridge_transfer NSArray *)all;
 	win_info *res = calloc(list.count + 1, sizeof(win_info));
 	int k = 0;
+	// thứ tự CGWindowList có lúc lệch app đang active (VS Code đứng đầu khi Chrome đang nhận phím) – đánh dấu theo
+	// frontmostApplication: cửa sổ đang hiện đầu tiên của app đó
+	NSRunningApplication *frontApp = [[NSWorkspace sharedWorkspace] frontmostApplication];
+	pid_t frontPid = frontApp ? frontApp.processIdentifier : -1;
+	int frontDone = 0;
 	for (NSDictionary *d in list) {
 		if ([d[(id)kCGWindowLayer] intValue] != 0 || [d[(id)kCGWindowAlpha] doubleValue] < 0.01) continue;
 		CGRect b;
@@ -101,6 +106,7 @@ static int win_list(win_info **out, int *n) {
 		o->app = win_dup(app.localizedName ? app.localizedName : d[(id)kCGWindowOwnerName]);
 		o->appId = win_dup(app.bundleIdentifier);
 		o->minimized = !on;
+		if (on && !frontDone && pid == frontPid) { o->front = 1; frontDone = 1; }
 		if (on) { o->x = b.origin.x; o->y = b.origin.y; o->w = b.size.width; o->h = b.size.height; }
 	}
 	*out = res; *n = k;
@@ -251,7 +257,7 @@ func (SystemWindows) List() ([]model.WindowInfo, error) {
 		out = append(out, model.WindowInfo{
 			ID: uint64(w.id), Title: C.GoString(w.title), App: C.GoString(w.app), AppID: C.GoString(w.appId), PID: int(w.pid),
 			Box:       model.Rect{X: int(w.x), Y: int(w.y), W: int(w.w), H: int(w.h)},
-			Minimized: w.minimized != 0,
+			Minimized: w.minimized != 0, Front: w.front != 0,
 		})
 	}
 	return out, nil

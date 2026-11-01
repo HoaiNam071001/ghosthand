@@ -104,6 +104,10 @@ func RefsToIDs(sc *model.Script) {
 
 // ExpandStep: mặc định theo loại (NewStep) rồi đè trường có trong raw; thiếu id / ref thì dùng id / ref truyền vào.
 func ExpandStep(raw json.RawMessage, id, ref string) (model.Step, error) {
+	raw, err := normalizeRaw(raw)
+	if err != nil {
+		return model.Step{}, err
+	}
 	var head struct{ Type string }
 	if err := json.Unmarshal(raw, &head); err != nil {
 		return model.Step{}, err

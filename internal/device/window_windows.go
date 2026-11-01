@@ -43,13 +43,15 @@ func (r winRect) rect() model.Rect {
 
 func (SystemWindows) List() ([]model.WindowInfo, error) {
 	self := uint32(os.Getpid())
+	fg, _, _ := procGetForegroundWindow.Call()
 	var out []model.WindowInfo
 	for _, w := range topWindows() {
 		if w.pid == self {
 			continue
 		}
 		path := processPath(w.pid)
-		info := model.WindowInfo{ID: uint64(w.hwnd), Title: w.title, App: exeName(path), AppID: path, PID: int(w.pid), Minimized: w.minimized}
+		info := model.WindowInfo{ID: uint64(w.hwnd), Title: w.title, App: exeName(path), AppID: path, PID: int(w.pid), Minimized: w.minimized,
+			Front: w.hwnd == fg}
 		if !w.minimized { // cửa sổ thu nhỏ nằm ở (-32000, -32000) – khung vô nghĩa
 			info.Box = frameRect(w.hwnd).rect()
 		}

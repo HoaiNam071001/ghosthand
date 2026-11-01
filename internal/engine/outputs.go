@@ -43,8 +43,14 @@ func (e *Engine) actionOutput(s model.Step, wait int) map[string]any {
 // Windows đã bỏ sẵn ở device.List; macOS còn liệt kê (AI chụp được cửa sổ Ghosthand).
 var selfPID = os.Getpid()
 
-// foreground – cửa sổ đang ở trước: cửa sổ không thu nhỏ đầu tiên theo thứ tự chồng (device.Windows.List), bỏ cửa sổ của app.
+// foreground – cửa sổ đang ở trước: cửa sổ device đánh dấu Front (app đang nhận phím); không có (app này đang ở trước,
+// hệ không báo) thì cửa sổ không thu nhỏ đầu tiên theo thứ tự chồng. Luôn bỏ cửa sổ của app.
 func foreground(ws []model.WindowInfo) (model.WindowInfo, bool) {
+	for _, w := range ws {
+		if w.Front && !w.Minimized && w.PID != selfPID {
+			return w, true
+		}
+	}
 	for _, w := range ws {
 		if !w.Minimized && w.PID != selfPID {
 			return w, true

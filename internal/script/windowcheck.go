@@ -15,7 +15,7 @@ import (
 // checkWindow – miền giá trị khi mở file.
 func checkWindow(s model.Step) error {
 	if !slices.Contains(model.WinOps, s.WinOp) {
-		return fmt.Errorf("thao tác cửa sổ không hợp lệ: %q (trống = focus | waitOpen | waitClose | setBounds | minimize | maximize | restore | close | read)", s.WinOp)
+		return fmt.Errorf("thao tác cửa sổ không hợp lệ: %q (trống hoặc focus = đưa lên trước; waitOpen | waitClose | setBounds | minimize | maximize | restore | close | read)", s.WinOp)
 	}
 	if !slices.Contains(model.NameMatches, s.WinMatch) {
 		return fmt.Errorf("cách so tên không hợp lệ: %q (trống = chứa | exact | regex)", s.WinMatch)

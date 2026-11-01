@@ -31,6 +31,12 @@ func (e *Engine) guardWindow(s model.Step) error {
 	}
 	want := windowLabel(s)
 	front, hasFront := foreground(wins)
+	if hasFront {
+		// cửa sổ đang ở trước khớp là đủ – nhiều cửa sổ cùng app thì MatchWindow chọn theo thứ tự chồng, không đáng tin
+		if j, _ := model.MatchWindow([]model.WindowInfo{front}, s.WinApp, s.WinTitle, s.WinMatch); j == 0 {
+			return nil
+		}
+	}
 	if i < 0 {
 		return &windowMismatchErr{fmt.Sprintf("không thấy cửa sổ %s (đã đóng hoặc chưa mở)%s – chưa thao tác gì", want, frontNote(front, hasFront))}
 	}

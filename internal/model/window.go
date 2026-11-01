@@ -21,6 +21,7 @@ type WindowInfo struct {
 	PID       int    `json:"pid"`       // tiến trình
 	Box       Rect   `json:"box"`       // khung nhìn thấy, cùng hệ toạ độ với điểm click (Windows px thật, macOS point)
 	Minimized bool   `json:"minimized"` // đang thu nhỏ – Box rỗng
+	Front     bool   `json:"front,omitempty"` // cửa sổ đang nhận phím (app đang active) – thứ tự chồng không đủ tin (57 A1)
 }
 
 // AppInfo – một tiến trình / app đang chạy; Windows = số cửa sổ đang mở (0 = chạy nền / chưa có cửa sổ).
