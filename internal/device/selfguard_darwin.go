@@ -18,6 +18,8 @@ static int self_owner_at(double x, double y) {
 	CGPoint p = CGPointMake(x, y);
 	for (NSDictionary *d in list) {
 		if ([d[(id)kCGWindowAlpha] doubleValue] < 0.01) continue;
+		// viền quanh màn hình lúc chạy (runborder.Title) click xuyên qua – không phải cửa sổ của app tại điểm
+		if ([d[(id)kCGWindowOwnerPID] intValue] == getpid() && [d[(id)kCGWindowName] isEqualToString:@"ghosthand-border"]) continue;
 		CGRect b;
 		if (!CGRectMakeWithDictionaryRepresentation((__bridge CFDictionaryRef)d[(id)kCGWindowBounds], &b)) continue;
 		if (CGRectContainsPoint(b, p)) return [d[(id)kCGWindowOwnerPID] intValue];

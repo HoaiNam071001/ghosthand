@@ -9,8 +9,8 @@ import { elapsedNow, fmtElapsed, Progress, useEngine } from '../engineStore';
 import { RecordBarView } from '../components/minibar/RecordBar';
 import { stopRecording, useRecording, useScript } from '../store';
 import { inWails, setWindowMode } from '../windowMode';
-import { fmtCountdown } from '../flow/waitUntil';
-import { counterText, pauseText, progressNode, progressSteps } from '../flow/progress';
+import { counterText, progressNode, progressSteps } from '../flow/progress';
+import { runTitle } from '../flow/runState';
 
 // Số mẫu khi xem trên trình duyệt (#minibar)
 const sample: Progress = {
@@ -19,9 +19,6 @@ const sample: Progress = {
 };
 const R = 22;
 const CIRC = 2 * Math.PI * R;
-
-// Đang chờ gì (Progress.wait.kind – imagestep.go, nodes.go watch)
-const WAIT_LABEL: Record<string, string> = { image: 'đang tìm', text: 'đang tìm chữ', pixel: 'đang chờ màu', web: 'đang tìm phần tử', cond: 'đang xét điều kiện', window: 'đang chờ cửa sổ', app: 'đang chờ app', tab: 'đang chờ tab', screen: 'đang chờ màn hình', download: 'đang chờ file tải', power: 'đếm ngược nguồn máy – bấm Dừng để huỷ', print: 'đang chờ hộp in', save: 'đang chờ hộp lưu file' };
 
 export default function MiniBar() {
   const rec = useRecording();
@@ -74,11 +71,11 @@ function RunBar() {
       title={!running ? (engine.lastError ? `Lỗi – ${engine.lastError}` : engine.source === 'user' ? 'Chưa chạy' : 'Đã chạy xong')
         : counting ? `Bắt đầu sau ${engine.countdown} giây…`
         : !p ? 'Đang bắt đầu…'
-        : `${pauseText(p, Date.now())}${progressNode(p, engine.foreign ? progressSteps(p) : steps)}`}
+        : runTitle(p, waitNow, Date.now())}
       lines={[
-        ...(p?.counter || p?.retry ? [[p.counter && counterText(p.counter), p.retry && `thử lại ${p.retry} / ${p.retries}`].filter(Boolean).join('   ')] : []),
-        ...(w ? [w.kind === 'time' ? `chờ đến giờ – còn ${fmtCountdown(w.timeoutMs - waitNow)}`
-          : `${WAIT_LABEL[w.kind] ?? 'đang chờ'} ${(waitNow / 1000).toFixed(1)} / ${w.timeoutMs / 1000} s${w.kind === 'image' || w.kind === 'pixel' ? `   khớp nhất ${w.best}%` : ''}`] : []),
+        ...(p?.nodeId ? [progressNode(p, engine.foreign ? progressSteps(p) : steps)] : []),
+        ...(p?.counter || p?.retry || (w && (w.kind === 'image' || w.kind === 'pixel'))
+          ? [[p.counter && counterText(p.counter), p.retry && `thử lại ${p.retry} / ${p.retries}`, w && (w.kind === 'image' || w.kind === 'pixel') && `khớp nhất ${w.best}%`].filter(Boolean).join('   ')] : []),
         `vòng ${p?.loop ?? 0} / ${p && p.loops > 0 ? p.loops : '∞'}   ${p?.clicks ?? 0} click   ${fmtElapsed(elapsed)}`,
         ...(engine.preset ? [`bộ giá trị: ${engine.preset}`] : [])]}
       canPause={running && !counting} onPause={() => (paused ? ResumeScript() : PauseScript())} onStop={stop}
@@ -87,7 +84,7 @@ function RunBar() {
 }
 
 // Phần hiển thị (dùng chung với #demo-minibar). progress: 0..1 – vòng tiến độ (đang chờ ảnh: theo thời gian chờ);
-// lines: 1–2 dòng mono (vòng / click / thời gian; "đang tìm x / y s   thử lại a / b"…).
+// title: việc đang làm (flow/runState.ts); lines: 1–3 dòng mono (node đang chạy, lượt / thử lại / khớp nhất, vòng / click / thời gian).
 // onStep: đang dừng vì debug – hiện nút chạy node kế (F10); nút Tiếp tục chạy tới điểm dừng sau.
 // capturing: AI vừa chụp / đọc màn hình – chấm đỏ cạnh tiêu đề.
 // ai: lượt do AI chạy – chip mức AI cạnh tiêu đề, bấm thì hàng chọn mức thay cho các dòng chữ.

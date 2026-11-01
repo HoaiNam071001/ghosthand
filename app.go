@@ -56,6 +56,7 @@ func NewApp() *App {
 		ai: aiGate{pending: map[string]chan string{}, allowed: map[string]bool{}}}
 	a.sess = session.New(a.emit, session.Deps{MCP: a.mcpCall, Stage: a.stageRun})
 	a.sess.OnEnd = a.onRunEnd
+	a.sess.OnActivity = a.showBorder
 	return a
 }
 

@@ -240,10 +240,11 @@
   {
     "id": "settings-overlay",
     "group": "Cài đặt",
-    "title": "Chọn vùng",
-    "summary": "Đặt thanh công cụ overlay ở cạnh nào của màn hình.",
+    "title": "Màn hình",
+    "summary": "Đặt thanh công cụ overlay ở cạnh nào; viền quanh màn hình lúc đang chạy.",
     "blocks": [
-      { "kind": "p", "text": "Thanh công cụ của overlay (chọn vùng, thêm điểm) đặt được ở cạnh Trên / Dưới / Trái / Phải – chọn cạnh không che chỗ bạn hay thao tác. Thanh tự co giãn theo cỡ màn hình." }
+      { "kind": "p", "text": "Thanh công cụ của overlay (chọn vùng, thêm điểm) đặt được ở cạnh Trên / Dưới / Trái / Phải – chọn cạnh không che chỗ bạn hay thao tác. Thanh tự co giãn theo cỡ màn hình." },
+      { "kind": "p", "text": "**Viền khi đang chạy**: lúc app (bạn bấm Chạy, AI, hẹn giờ) điều khiển máy, mép màn hình có viền – xanh nhấp nháy = đang bấm / gõ (đừng chạm chuột), xanh mờ = đang chờ ảnh / chữ / cửa sổ, vàng = tạm dừng; xong thì tắt. Thanh mini ghi rõ đang chờ gì, còn bao giây. Viền không lọt vào ảnh chụp, tìm ảnh, đọc chữ. Chọn *Tắt*, *Mảnh* (mặc định) hoặc *Vừa*." }
     ]
   },
   {

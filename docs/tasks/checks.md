@@ -3,6 +3,13 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## 58 – Dấu hiệu đang điều khiển (2026-11-01) · [58](phase3/58-dau-hieu-dang-dieu-khien.md)
+- [ ] Chạy kịch bản có Chờ chữ 10 s → viền xanh mờ quanh màn hình + thanh mini *Đang chờ chữ "…" · còn N s* đếm lùi; tới node click / gõ → viền xanh nhấp nháy, thanh mini *Đang thao tác – đừng chạm chuột*; xong → viền tắt
+- [ ] Lượt AI, đụng chuột → viền vàng + *Bạn vừa đụng chuột · tự chạy tiếp sau 5 s*
+- [ ] Viền click xuyên qua (bấm được nút sát mép màn hình), không lấy focus; chụp màn / tìm ảnh / đọc chữ sát mép lúc có viền vẫn đúng (AI đã thử qua MCP: ảnh lúc lỗi không dính viền)
+- [ ] App toàn màn hình (Space riêng) vẫn thấy viền; hai màn hình → viền ở màn đang có chuột
+- [ ] Cài đặt → Màn hình → Viền khi đang chạy: Tắt / Mảnh / Vừa có tác dụng ở lần chạy sau
+
 ## 57 – AI chạy ổn định, đợt 2 (2026-11-01) · [57](phase3/57-ai-chay-on-dinh.md)
 - [ ] Cửa sổ chính Ghosthand đang mở, Chrome ở dưới → AI chạy kịch bản gõ vào Chrome → cửa sổ chính thu về thanh mini, Chrome lên trước, gõ đúng Chrome; xong thanh mini ghi *Đã chạy xong*, nút *Mở app* về màn chính
 - [ ] AI chạy lỗi giữa chừng (vd chờ chữ không có trên Messenger) → bấm sang VS Code → AI `resume_run` → Chrome lên lại trước rồi mới chạy; đóng Chrome rồi `resume_run` → lỗi "đã đóng – chưa thao tác gì"

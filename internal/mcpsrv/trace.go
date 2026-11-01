@@ -83,7 +83,7 @@ func traceView(tr session.Trace, sc model.Script, shotW map[string]int) map[stri
 		v["failedStep"] = tr.FailedStep
 	}
 	if p := tr.Progress; !tr.Done() && p != nil {
-		cur := map[string]any{"id": p.NodeID, "ref": p.Ref, "wait": p.Wait}
+		cur := map[string]any{"id": p.NodeID, "ref": p.Ref, "wait": p.Wait, "doing": session.ActivityOf(tr.Status, time.Now()).Doing}
 		if p.Paused {
 			cur["paused"] = pausedInfo(*p, time.Now())
 		}

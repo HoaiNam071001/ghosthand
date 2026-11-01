@@ -121,6 +121,7 @@ type run struct {
 	results []model.StepResult
 	seed    *engine.Carry          // Options.SeedRun đã tra ra
 	focus   *model.WindowInfo      // cửa sổ đang ở trước lúc lần chạy SeedRun lỗi – Stage đưa lên lại
+	doing   Activity               // việc đang làm đã phát gần nhất (noteActivity)
 	carry   *engine.Carry          // kết quả + biến vòng cuối (có khi xong) – SeedRun của lần sau
 	shots   map[string]image.Image // ảnh lúc node lỗi theo StepResult.Shot
 }
@@ -131,6 +132,8 @@ type Manager struct {
 	deps Deps
 	// OnEnd chạy sau mỗi phiên (đã ghi lịch sử) – hẹn giờ gửi thông báo. Không chặn phiên kế.
 	OnEnd func(Status, error)
+	// OnActivity chạy mỗi khi việc lần chạy đang làm đổi loại (58 D1) – viền quanh màn hình. Gọi ngoài khoá.
+	OnActivity func(Activity)
 
 	mu   sync.Mutex
 	cur  *run

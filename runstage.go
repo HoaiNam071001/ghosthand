@@ -7,7 +7,12 @@ import (
 
 	"ghosthand/internal/device"
 	"ghosthand/internal/model"
+	"ghosthand/internal/runborder"
+	"ghosthand/internal/session"
+	"ghosthand/internal/store"
 )
+
+// Chuẩn bị màn hình cho lần chạy: thu thanh mini + đưa cửa sổ đích lên (57 B1–B2), viền lúc đang chạy (58 D2).
 
 // stageRun – trước lần chạy từ AI / hẹn giờ / CLI / API (57 B1, B2, session.Deps.Stage): cửa sổ chính đang mở thì thu về
 // thanh mini như bấm Chạy trong app (không đè lên app đích), rồi đưa cửa sổ đích lên trước – thanh mini vừa hiện làm app
@@ -66,4 +71,17 @@ func stageTarget(wins []model.WindowInfo, focus *model.WindowInfo, self int) (mo
 		}
 	}
 	return model.WindowInfo{}, nil
+}
+
+// showBorder – viền quanh màn hình theo việc lần chạy đang làm (58 D2, session.OnActivity): hiện trên màn đang có
+// chuột (chỗ engine vừa / sắp thao tác), xong / lỗi / dừng hoặc Cài đặt tắt thì ẩn.
+func (a *App) showBorder(act session.Activity) {
+	px := runborder.Px(store.CurrentSettings().Overlay.Border)
+	look, ok := runborder.LookFor(act.Doing)
+	if px == 0 || !ok {
+		runborder.Hide()
+		return
+	}
+	x, y := device.Location()
+	runborder.Show(x, y, px, look)
 }

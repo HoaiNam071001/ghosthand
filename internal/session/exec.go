@@ -58,6 +58,7 @@ func (m *Manager) exec(ctx context.Context, r *run, canDanger bool) {
 			r.status.Progress = &p
 			m.mu.Unlock()
 			m.emit("engine:progress", p)
+			m.noteActivity(r)
 		},
 		OnNode: func(res model.StepResult) {
 			rec.Add(res, types[res.NodeID])
@@ -71,6 +72,7 @@ func (m *Manager) exec(ctx context.Context, r *run, canDanger bool) {
 
 	m.emit("run:started", Started{RunID: st.RunID, Source: st.Source, Script: st.Script, Path: st.Path, Preset: st.Preset})
 	m.emit("engine:state", true)
+	m.noteActivity(r)
 	defer m.emit("engine:state", false)
 
 	if st.Source != SourceUser && m.deps.Stage != nil {
@@ -87,6 +89,7 @@ func (m *Manager) exec(ctx context.Context, r *run, canDanger bool) {
 	}
 	m.emit("engine:countdown", 0)
 	m.setState(r, StateRunning)
+	m.noteActivity(r)
 
 	go m.deps.Corners(ctx, in, func() { m.StopWith(StopByCorner) })
 	if st.Source == SourceAI { // người dùng cầm chuột lúc AI đang điều khiển → nhường: tạm dừng, wait_run báo AI
@@ -180,6 +183,7 @@ func (m *Manager) finish(r *run, err error) {
 	st := r.status
 	m.mu.Unlock()
 	close(r.done)
+	m.noteActivity(r)
 	m.emit("run:ended", st)
 	if m.OnEnd != nil {
 		m.OnEnd(st, r.err)

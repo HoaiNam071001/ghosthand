@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"cmp"
 	"context"
 	"fmt"
 	"time"
@@ -87,7 +88,7 @@ func (e *Engine) pollUntil(ctx context.Context, s model.Step, kind string, done 
 			return late()
 		}
 		e.update(first, func(p *Progress) {
-			p.Wait = &WaitProgress{Kind: kind, ElapsedMs: elapsed.Milliseconds(), TimeoutMs: int64(s.TimeoutMs)}
+			p.Wait = &WaitProgress{Kind: kind, ElapsedMs: elapsed.Milliseconds(), TimeoutMs: int64(s.TimeoutMs), What: cmp.Or(s.WinTitle, s.WinApp, s.Target)}
 		})
 		if err := Sleep(ctx, pollMs); err != nil {
 			return err

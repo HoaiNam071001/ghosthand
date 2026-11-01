@@ -30,7 +30,11 @@ static int capture_clean(double x, double y, double w, double h, unsigned char *
 				for (SCDisplay *d in content.displays) if (CGRectContainsPoint(CGDisplayBounds(d.displayID), mid)) disp = d;
 				if (!disp) { rc = 3; dispatch_semaphore_signal(sem); return; }
 				CGRect db = CGDisplayBounds(disp.displayID);
-				SCContentFilter *f = [[SCContentFilter alloc] initWithDisplay:disp excludingWindows:@[]];
+				// bỏ viền quanh màn hình lúc chạy (runborder.Title) – sharingType None không chặn được ScreenCaptureKit
+				NSMutableArray<SCWindow *> *skip = [NSMutableArray array];
+				for (SCWindow *sw in content.windows)
+					if (sw.owningApplication.processID == getpid() && [sw.title isEqualToString:@"ghosthand-border"]) [skip addObject:sw];
+				SCContentFilter *f = [[SCContentFilter alloc] initWithDisplay:disp excludingWindows:skip];
 				SCStreamConfiguration *c = [[SCStreamConfiguration alloc] init];
 				CGFloat k = f.pointPixelScale;
 				c.sourceRect = CGRectMake(x - db.origin.x, y - db.origin.y, w, h);

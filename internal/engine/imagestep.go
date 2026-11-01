@@ -20,7 +20,20 @@ type WaitProgress struct {
 	Kind      string `json:"kind"` // image | text | pixel | web | cond | time (chờ đến giờ) | window | app | tab | screen (chờ màn hình)
 	ElapsedMs int64  `json:"elapsedMs"`
 	TimeoutMs int64  `json:"timeoutMs"`
-	Best      int    `json:"best"` // % khớp tốt nhất tới giờ (pixel: 100 = đúng màu)
+	Best      int    `json:"best"`           // % khớp tốt nhất tới giờ (pixel: 100 = đúng màu)
+	What      string `json:"what,omitempty"` // đang chờ gì: chữ cần tìm / selector đầu (58 D1 – thanh mini, wait_run); trống = ảnh mẫu, điều kiện…
+}
+
+// waitWhat – thứ node s đang chờ, đủ ngắn để hiện trên thanh mini.
+func waitWhat(s model.Step) string {
+	w := s.FindText
+	if w == "" && len(s.Selectors) > 0 {
+		w = s.Selectors[0]
+	}
+	if r := []rune(w); len(r) > 40 {
+		w = string(r[:40]) + "…"
+	}
+	return w
 }
 
 // searchArea: vùng tìm ảnh theo toạ độ robotgo – vùng của kịch bản, hoặc cả màn chứa vùng đó (không có vùng: màn chính).
@@ -60,7 +73,7 @@ func (e *Engine) waitLoop(ctx context.Context, s model.Step, kind string, check 
 		}
 		elapsed := time.Since(start) - (e.gate.pausedTotal() - paused0)
 		e.update(first, func(p *Progress) { // lần đầu báo ngay để thanh mini hiện "đang tìm"
-			p.Wait = &WaitProgress{Kind: kind, ElapsedMs: elapsed.Milliseconds(), TimeoutMs: int64(s.TimeoutMs), Best: best}
+			p.Wait = &WaitProgress{Kind: kind, ElapsedMs: elapsed.Milliseconds(), TimeoutMs: int64(s.TimeoutMs), Best: best, What: waitWhat(s)}
 		})
 		first = false
 		left := time.Duration(s.TimeoutMs)*time.Millisecond - elapsed

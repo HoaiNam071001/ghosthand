@@ -288,6 +288,7 @@ export namespace engine {
 	    elapsedMs: number;
 	    timeoutMs: number;
 	    best: number;
+	    what?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new WaitProgress(source);
@@ -299,6 +300,7 @@ export namespace engine {
 	        this.elapsedMs = source["elapsedMs"];
 	        this.timeoutMs = source["timeoutMs"];
 	        this.best = source["best"];
+	        this.what = source["what"];
 	    }
 	}
 	export class Progress {
@@ -2481,6 +2483,7 @@ export namespace store {
 	}
 	export class OverlaySettings {
 	    toolbar?: string;
+	    border?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new OverlaySettings(source);
@@ -2489,6 +2492,7 @@ export namespace store {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.toolbar = source["toolbar"];
+	        this.border = source["border"];
 	    }
 	}
 	export class StorageSettings {

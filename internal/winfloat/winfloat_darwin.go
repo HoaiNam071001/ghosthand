@@ -19,6 +19,9 @@ static void prepare_launch(void) {
 	[NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
 }
 
+// Viền quanh màn hình lúc chạy (runborder) có cờ / mức riêng – các vòng dưới không đụng tới.
+static BOOL is_border(NSWindow *w) { return [[w title] isEqualToString:@"ghosthand-border"]; }
+
 static const NSWindowCollectionBehavior floatBehavior =
 	NSWindowCollectionBehaviorCanJoinAllSpaces | NSWindowCollectionBehaviorFullScreenAuxiliary;
 
@@ -30,7 +33,7 @@ static void set_normal_behavior(NSWindow *w) {
 
 static void follow_active_space(void) {
 	dispatch_async(dispatch_get_main_queue(), ^{
-		for (NSWindow *w in [NSApp windows]) set_normal_behavior(w);
+		for (NSWindow *w in [NSApp windows]) if (!is_border(w)) set_normal_behavior(w);
 	});
 }
 
@@ -40,6 +43,7 @@ static void set_floating(int on, int focus) {
 	dispatch_async(dispatch_get_main_queue(), ^{
 		if (on) [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
 		for (NSWindow *w in [NSApp windows]) {
+			if (is_border(w)) continue;
 			if (on) {
 				[w setCollectionBehavior:([w collectionBehavior] | floatBehavior) & ~NSWindowCollectionBehaviorMoveToActiveSpace];
 				[w setLevel:NSStatusWindowLevel];
@@ -64,6 +68,7 @@ static void set_minibar(void) {
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
 		for (NSWindow *w in [NSApp windows]) {
+			if (is_border(w)) continue;
 			set_normal_behavior(w);
 			[w setLevel:NSNormalWindowLevel];
 		}
@@ -75,6 +80,7 @@ static void set_minibar(void) {
 static void cover_screen(void) {
 	dispatch_async(dispatch_get_main_queue(), ^{
 		for (NSWindow *w in [NSApp windows]) {
+			if (is_border(w)) continue;
 			if (![w isVisible]) continue;
 			NSRect f = [w frame];
 			NSPoint c = NSMakePoint(NSMidX(f), NSMidY(f));

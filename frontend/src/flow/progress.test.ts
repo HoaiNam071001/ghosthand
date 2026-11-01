@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { makeStep } from '../types';
-import { counterText, isForeignRun, pauseText, progressNode, progressSteps } from './progress';
+import { counterText, isForeignRun, progressNode, progressSteps } from './progress';
 
 describe('progressNode', () => {
   const steps = [
@@ -40,17 +40,5 @@ describe('lần chạy của kịch bản khác', () => {
     expect(progressNode({ nodeId: 's3', ref: 'n3' }, progressSteps({ nodeId: 's3', ref: 'n3', type: 'ocrRead' }))).toBe('n3 · Đọc chữ vùng');
     expect(progressNode({ nodeId: 's3', ref: 'n3' }, progressSteps({ nodeId: 's3', ref: 'n3', type: 'click', name: 'Bấm Gửi' }))).toBe('n3 · Bấm Gửi');
     expect(progressSteps({ nodeId: 's3', ref: 'n3' })).toEqual([]);
-  });
-});
-
-describe('pauseText', () => {
-  it('đụng chuột: đếm ngược tự chạy tiếp, tắt tự chạy thì chờ bấm', () => {
-    expect(pauseText({ paused: true, pausedBy: 'touch', resumeAt: 10_000 }, 6_100)).toBe('Bạn vừa đụng chuột · tự chạy tiếp sau 4 s · ');
-    expect(pauseText({ paused: true, pausedBy: 'touch' }, 0)).toBe('Bạn vừa đụng chuột – đã tạm dừng · ');
-  });
-  it('debug / nút / đang chạy', () => {
-    expect(pauseText({ paused: true, break: 'step' }, 0)).toBe('Dừng trước node kế · ');
-    expect(pauseText({ paused: true }, 0)).toBe('Tạm dừng · ');
-    expect(pauseText({ paused: false, pausedBy: 'touch', resumeAt: 5 }, 0)).toBe('');
   });
 });
