@@ -14,6 +14,10 @@ import (
 // Version – phiên bản đang chạy, gắn lúc build (-ldflags "-X ghosthand/internal/update.Version=1.2.0"); "dev" = chưa gắn.
 var Version = "dev"
 
+// Commit / BuiltAt – commit git + giờ build (RFC3339), gắn lúc build cùng Version (59 U1): AI kiểm đúng bản vừa cài
+// đang chạy (`app_info`, /health). Trống = build không qua script.
+var Commit, BuiltAt string
+
 // IsDev – bản tự build chưa gắn số phiên bản (không có tag git khi build cũng ra chuỗi rỗng).
 func IsDev() bool { return Version == "" || Version == "dev" }
 

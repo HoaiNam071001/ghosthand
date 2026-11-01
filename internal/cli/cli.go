@@ -23,6 +23,7 @@ const (
 
 const usage = `Cách dùng:
   ghosthand run <file.json> [--preset "Tên bộ"] [--set KEY=GIÁ_TRỊ]… [--countdown GIÂY] [--no-wait]
+  ghosthand quit      thoát app đang mở (từ chối khi đang chạy kịch bản / kịch bản chưa lưu), chờ tới khi tắt hẳn
 
   --preset     bộ giá trị input đã lưu trong form Chạy của app
   --set        giá trị một input (ghi đè preset), lặp lại được
@@ -42,7 +43,7 @@ type Args struct {
 
 // IsCommand – args (không gồm tên chương trình) là lệnh CLI (không mở giao diện).
 func IsCommand(args []string) bool {
-	return len(args) > 0 && (args[0] == "run" || args[0] == "help" || args[0] == "--help" || args[0] == "-h")
+	return len(args) > 0 && (args[0] == "run" || args[0] == "quit" || args[0] == "help" || args[0] == "--help" || args[0] == "-h")
 }
 
 var errHelp = errors.New("help")
@@ -107,6 +108,9 @@ func Parse(args []string) (Args, error) {
 
 // Main chạy lệnh CLI, trả mã thoát.
 func Main(args []string, c *Client, out, errOut io.Writer) int {
+	if len(args) == 1 && args[0] == "quit" {
+		return c.Quit(out, errOut)
+	}
 	a, err := Parse(args)
 	if errors.Is(err, errHelp) {
 		fmt.Fprintln(out, usage)

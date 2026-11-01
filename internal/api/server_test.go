@@ -17,9 +17,11 @@ import (
 )
 
 type fakeBackend struct {
-	busy bool
-	last RunRequest
-	rev  int
+	quitErr error
+	quits   int
+	busy    bool
+	last    RunRequest
+	rev     int
 }
 
 func (f *fakeBackend) Run(req RunRequest) (string, error) {
@@ -48,6 +50,13 @@ func (f *fakeBackend) WriteScript(path string, _ model.Script, rev int) (int, er
 	}
 	f.rev++
 	return f.rev, nil
+}
+
+func (f *fakeBackend) Quit() error {
+	if f.quitErr == nil {
+		f.quits++
+	}
+	return f.quitErr
 }
 
 func start(t *testing.T) (*fakeBackend, *Hub, string) {
@@ -162,5 +171,28 @@ func TestEventsEndAfterRun(t *testing.T) {
 	}
 	if strings.Join(names, ",") != "status,engine:progress,run:ended" {
 		t.Fatalf("event: %v", names)
+	}
+}
+
+// 59 U2: thoát êm qua API – cần token; đang chạy / chưa lưu → 409 kèm mã để dev-install báo rõ.
+func TestQuit(t *testing.T) {
+	back, _, base := start(t)
+	if code, _ := call(t, "POST", base+"/quit", "", nil); code != 401 {
+		t.Fatalf("quit không token phải 401: %d", code)
+	}
+	if code, out := call(t, "POST", base+"/quit", "tok", nil); code != 200 || back.quits != 1 {
+		t.Fatalf("quit: %d %v", code, out)
+	}
+	for _, c := range []struct {
+		err  error
+		code string
+	}{{fmt.Errorf("đang chạy: %w", session.ErrBusy), "busy"}, {fmt.Errorf("%w – lưu lại rồi thoát", ErrUnsaved), "unsaved"}} {
+		back.quitErr = c.err
+		if code, out := call(t, "POST", base+"/quit", "tok", nil); code != 409 || out["code"] != c.code {
+			t.Errorf("%v: %d %v", c.err, code, out)
+		}
+	}
+	if _, out := call(t, "GET", base+"/health", "", nil); out["version"] != "dev" {
+		t.Errorf("health thiếu version: %v", out)
 	}
 }

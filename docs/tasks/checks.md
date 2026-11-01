@@ -3,6 +3,11 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## 59 – AI tự cập nhật + test, vòng dev (2026-11-01) · [59](phase3/59-ai-tu-cap-nhat-va-test.md)
+- [ ] Sau lần `make dev-install` đầu (2026-11-01 16:55): Cài đặt → Quyền vẫn còn Accessibility + Screen Recording; tab Giới thiệu hiện phiên bản
+- [ ] Có kịch bản chưa lưu → `make dev-install` dừng với "chưa lưu", app không bị đóng; lưu rồi chạy lại → app tự mở lại nền
+- [ ] Claude Desktop / Claude Code đang nối MCP → `make dev-install` → lệnh MCP kế tiếp vẫn chạy (không báo lỗi nối)
+
 ## 57 – AI chạy ổn định, đợt 1 (2026-11-01) · [57](phase3/57-ai-chay-on-dinh.md)
 - [ ] Bản build mới: VS Code đang mở, bấm sang Chrome cho Chrome active → AI chạy kịch bản tạm có node Gõ chữ `onlyInWindow` + `winApp: Google Chrome` → gõ được (không còn `window_mismatch` "đang ở trước: Code"), output `windowApp` = Google Chrome
 - [ ] Hai cửa sổ Chrome, cửa sổ thứ hai đang active → node Gõ chữ `onlyInWindow` Chrome vẫn chạy

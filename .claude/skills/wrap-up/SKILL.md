@@ -12,6 +12,8 @@ go vet ./... && go test ./...
 cd frontend && npm run build && npm test
 ```
 
+Sửa đụng thứ chỉ máy thật mới biết (chuột / phím, cửa sổ, OCR, phần tử, web, MCP) trên macOS → chạy skill `test-after-change` (cài bản vừa sửa + thử qua MCP) trước khi báo xong.
+
 Không xanh thì dừng, báo người dùng (kèm output) – không commit đỏ trừ khi người dùng bảo.
 
 ## 2. Đồng bộ tài liệu

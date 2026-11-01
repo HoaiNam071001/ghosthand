@@ -12,7 +12,9 @@ import (
 
 	wailsruntime "github.com/wailsapp/wails/v2/pkg/runtime"
 
+	"ghosthand/internal/api"
 	"ghosthand/internal/launch"
+	"ghosthand/internal/session"
 	"ghosthand/internal/update"
 )
 
@@ -25,12 +27,15 @@ type updateState struct {
 
 func (u *updateState) set(i update.Info) { u.mu.Lock(); u.info = i; u.mu.Unlock() }
 
-// AppVersion – phiên bản đang chạy ("dev" khi build không gắn số).
+// AppVersion – phiên bản đang chạy ("dev" khi build không gắn số; bản dev có commit thì kèm theo – "dev (abc1234)").
 func (a *App) AppVersion() string {
-	if update.IsDev() {
-		return "dev"
+	if !update.IsDev() {
+		return update.Version
 	}
-	return update.Version
+	if update.Commit != "" {
+		return "dev (" + update.Commit + ")"
+	}
+	return "dev"
 }
 
 // CheckUpdate hỏi GitHub Releases có bản mới không (nút Kiểm tra trong Cài đặt → Giới thiệu).
@@ -94,14 +99,8 @@ func (a *App) InstallUpdate() error {
 	}
 	defer func() { a.upd.mu.Lock(); a.upd.busy = false; a.upd.mu.Unlock() }()
 
-	if a.sess.Running() != "" {
-		return fmt.Errorf("đang chạy kịch bản – dừng lại rồi cập nhật")
-	}
-	a.mu.Lock()
-	dirty := a.dirty
-	a.mu.Unlock()
-	if dirty {
-		return fmt.Errorf("kịch bản đang soạn chưa lưu – lưu lại rồi cập nhật")
+	if err := a.quitBlocker("cập nhật"); err != nil {
+		return err
 	}
 	file, sum, err := update.PickAsset(info.Assets, runtime.GOOS, update.Installed())
 	if err != nil {
@@ -120,9 +119,28 @@ func (a *App) InstallUpdate() error {
 		return err
 	}
 	a.emit("update:progress", updateProgress{Phase: "restart"})
+	a.quitSoon()
+	return nil
+}
+
+// quitBlocker – lý do không thoát được lúc này (đang chạy kịch bản / kịch bản chưa lưu); what = việc đang làm.
+func (a *App) quitBlocker(what string) error {
+	if a.sess.Running() != "" {
+		return fmt.Errorf("%w – dừng lại rồi %s", session.ErrBusy, what)
+	}
 	a.mu.Lock()
-	a.quitting = true // đã hỏi xong ở trên (không còn thay đổi chưa lưu)
+	dirty := a.dirty
+	a.mu.Unlock()
+	if dirty {
+		return fmt.Errorf("%w – lưu lại rồi %s", api.ErrUnsaved, what)
+	}
+	return nil
+}
+
+// quitSoon thoát sau khi trả lời xong (kết quả kịp tới frontend / người gọi API); đã kiểm quitBlocker nên không hỏi lưu.
+func (a *App) quitSoon() {
+	a.mu.Lock()
+	a.quitting = true
 	a.mu.Unlock()
 	go func() { time.Sleep(600 * time.Millisecond); wailsruntime.Quit(a.ctx) }()
-	return nil
 }

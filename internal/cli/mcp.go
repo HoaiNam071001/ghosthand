@@ -4,10 +4,12 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
 	"ghosthand/internal/mcpsrv"
 )
@@ -41,7 +43,8 @@ func (c *Client) MCP(in io.Reader, out, errOut io.Writer) int {
 		}
 		client = initClient(line, client)
 		res, err := c.postMCP(line, client)
-		if err != nil && c.try() { // app vừa mở lại (cổng / token mới) → thử lại một lần
+		var bad *mcpStatusErr
+		if err != nil && !errors.As(err, &bad) && c.reconnect(errOut) == nil { // mất kết nối: app đang mở lại → gửi lại
 			res, err = c.postMCP(line, client)
 		}
 		if err != nil {
@@ -82,9 +85,29 @@ func (c *Client) postMCP(msg []byte, client string) ([]byte, error) {
 	case res.StatusCode == http.StatusAccepted:
 		return nil, nil
 	case res.StatusCode != http.StatusOK:
-		return nil, fmt.Errorf("app trả %s: %s", res.Status, strings.TrimSpace(string(body)))
+		return nil, &mcpStatusErr{fmt.Sprintf("app trả %s: %s", res.Status, strings.TrimSpace(string(body)))}
 	}
 	return body, nil
+}
+
+// mcpStatusErr – app có trả lời nhưng báo lỗi (không phải mất kết nối – gửi lại vô ích).
+type mcpStatusErr struct{ msg string }
+
+func (e *mcpStatusErr) Error() string { return e.msg }
+
+// reconnect sau khi mất kết nối (59 U4): app đang mở lại (cập nhật / dev-install – cổng + token mới) thì chờ nó lên
+// (≤ RestartWait) thay vì trả lỗi cho AI; hết giờ vẫn chưa có thì mở app như lúc đầu.
+func (c *Client) reconnect(errOut io.Writer) error {
+	wait := c.RestartWait
+	if wait == 0 {
+		wait = 30 * time.Second
+	}
+	for end := time.Now().Add(wait); time.Now().Before(end); time.Sleep(300 * time.Millisecond) {
+		if c.try() {
+			return nil
+		}
+	}
+	return c.connect(errOut)
 }
 
 // writeRPCError – trả lỗi JSON-RPC cho request (có id); notification thì bỏ qua.

@@ -27,11 +27,16 @@ fi
 # phiên bản = VERSION=1.2.0 scripts/mac-build.sh, không có thì lấy tag git gần nhất (v1.2.0), không có nữa = "dev" (app không nhắc cập nhật)
 VERSION="${VERSION:-$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//' || true)}"
 VERSION="${VERSION:-dev}"
+COMMIT="$(git rev-parse --short HEAD)$(git diff --quiet HEAD -- . ':!frontend/wailsjs' || echo -dirty)"
+BUILT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 export PATH="$PATH:$HOME/go/bin"
-wails build -ldflags "-X ghosthand/internal/update.Version=$VERSION"
+U=ghosthand/internal/update
+wails build -ldflags "-X $U.Version=$VERSION -X $U.Commit=$COMMIT -X $U.BuiltAt=$BUILT"
 codesign --force --deep --sign "$CERT" --identifier "$BUNDLE_ID" "$APP"
 codesign --verify --deep --strict "$APP"
 echo "Chữ ký:"; codesign -dr - "$APP" 2>&1 | grep designated
+# NO_DMG=1: chỉ cần app đã ký (scripts/dev-install.sh cài thẳng) – bỏ bước đóng dmg
+if [ -n "${NO_DMG:-}" ]; then echo "Xong: $APP (commit $COMMIT)"; exit 0; fi
 
 dmg="build/bin/Ghosthand-$VERSION.dmg"
 rm -f "$dmg"

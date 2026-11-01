@@ -124,6 +124,15 @@ func presetValues(path, name string) (map[string]any, error) {
 	return nil, fmt.Errorf("không có bộ giá trị %q (có: %s)", name, strings.Join(names, ", "))
 }
 
+// Quit – dev-install / `ghosthand quit` (59 U2).
+func (b apiBackend) Quit() error {
+	if err := b.a.quitBlocker("thoát"); err != nil {
+		return err
+	}
+	b.a.quitSoon()
+	return nil
+}
+
 func (b apiBackend) Stop(id string) bool                      { return b.a.sess.Stop(id, session.StopByAPI) }
 func (b apiBackend) Status(id string) (session.Status, error) { return b.a.sess.Status(id) }
 func (b apiBackend) Wait(ctx context.Context, id string) (session.Status, error) {

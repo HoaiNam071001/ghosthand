@@ -1,7 +1,8 @@
 // Package api – API local của app (bước 22): HTTP chỉ nghe 127.0.0.1, Bearer token. CLI (`ghosthand run`), chương
 // trình khác và MCP (31 – gắn route /mcp qua Handle) đều gọi vào đây; việc thật làm ở Backend (App trong main).
 //
-//	GET  /health                 – app đang mở (không cần token)
+//	GET  /health                 – app đang mở (không cần token) → {ok, version, commit}
+//	POST /quit                   – thoát êm (59 U2); đang chạy kịch bản → 409 busy, chưa lưu → 409 unsaved
 //	POST /run    {path, preset, values, countdown, source, wait} → {runId} (wait: chờ xong → Status)
 //	POST /stop   {runId}         → {stopped}
 //	GET  /status ?runId=         → Status (trống = đang chạy / gần nhất)
@@ -25,6 +26,7 @@ import (
 	"ghosthand/internal/model"
 	"ghosthand/internal/session"
 	"ghosthand/internal/store"
+	"ghosthand/internal/update"
 )
 
 // RunRequest – thân POST /run.
@@ -45,7 +47,13 @@ type Backend interface {
 	Wait(ctx context.Context, runID string) (session.Status, error)
 	ReadScript(path string) (model.Script, int, error)
 	WriteScript(path string, sc model.Script, revision int) (int, error)
+	// Quit thoát app sau khi trả lời (dev-install, CLI `ghosthand quit`); từ chối khi đang chạy (bọc session.ErrBusy)
+	// hoặc kịch bản đang soạn chưa lưu (bọc ErrUnsaved).
+	Quit() error
 }
+
+// ErrUnsaved – kịch bản đang soạn chưa lưu, không tự thoát được.
+var ErrUnsaved = errors.New("kịch bản đang soạn chưa lưu")
 
 type Server struct {
 	mux  *http.ServeMux
@@ -55,7 +63,17 @@ type Server struct {
 
 func New(back Backend, hub *Hub) *Server {
 	s := &Server{mux: http.NewServeMux(), back: back, hub: hub}
-	s.mux.HandleFunc("GET /health", func(w http.ResponseWriter, _ *http.Request) { writeJSON(w, 200, map[string]any{"ok": true}) })
+	s.mux.HandleFunc("GET /health", func(w http.ResponseWriter, _ *http.Request) {
+		r := update.Current()
+		writeJSON(w, 200, map[string]any{"ok": true, "version": r.Version, "commit": r.Commit})
+	})
+	s.mux.HandleFunc("POST /quit", func(w http.ResponseWriter, _ *http.Request) {
+		if err := s.back.Quit(); err != nil {
+			writeError(w, err)
+			return
+		}
+		writeJSON(w, 200, map[string]any{"quitting": true})
+	})
 	s.mux.HandleFunc("POST /run", s.run)
 	s.mux.HandleFunc("POST /stop", s.stop)
 	s.mux.HandleFunc("GET /status", s.status)
@@ -212,6 +230,8 @@ func writeError(w http.ResponseWriter, err error) {
 	switch {
 	case errors.Is(err, session.ErrBusy):
 		code, body["code"] = 409, "busy"
+	case errors.Is(err, ErrUnsaved):
+		code, body["code"] = 409, "unsaved"
 	case errors.Is(err, session.ErrNotFound), errors.Is(err, fs.ErrNotExist):
 		code, body["code"] = 404, "not_found"
 	case errors.Is(err, session.ErrDangerNotConfirmed):

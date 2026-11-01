@@ -19,14 +19,16 @@ import (
 
 // Client nói chuyện với app qua API local. Trường hàm thay được trong test.
 type Client struct {
-	Info      func() (store.APIInfo, error) // đọc api.json
-	Launch    func() error                  // mở app (không đối số)
-	HTTP      *http.Client
-	WaitApp   time.Duration    // chờ app vừa mở sẵn sàng tối đa
-	Interrupt <-chan os.Signal // Ctrl+C → dừng lần chạy rồi thoát
-	poll      time.Duration
-	base      string
-	token     string
+	Info    func() (store.APIInfo, error) // đọc api.json
+	Launch  func() error                  // mở app (không đối số)
+	HTTP    *http.Client
+	WaitApp time.Duration // chờ app vừa mở sẵn sàng tối đa
+	// RestartWait – proxy --mcp mất kết nối giữa chừng: chờ app tự mở lại (cập nhật) tối đa bấy nhiêu rồi mới tự mở
+	RestartWait time.Duration
+	Interrupt   <-chan os.Signal // Ctrl+C → dừng lần chạy rồi thoát
+	poll        time.Duration
+	base        string
+	token       string
 }
 
 // NewClient – client thật: api.json trong thư mục cấu hình, mở app bằng chính file exe này.

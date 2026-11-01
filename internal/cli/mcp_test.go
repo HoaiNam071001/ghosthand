@@ -1,12 +1,15 @@
 package cli
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"os"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -94,4 +97,52 @@ func TestInitClient(t *testing.T) {
 	if got := initClient([]byte(`{"jsonrpc":"2.0","id":2,"method":"tools/list"}`), "cursor"); got != "cursor" {
 		t.Errorf("dòng khác phải giữ tên cũ: %q", got)
 	}
+}
+
+// 59 U4: app mở lại giữa phiên (cập nhật – cổng + token mới) → proxy chờ app lên rồi gửi lại, AI không thấy lỗi.
+func TestMCPSurvivesRestart(t *testing.T) {
+	listen := func(tok string) *api.Listener {
+		srv := api.New(nil, api.NewHub())
+		srv.Handle("/mcp", mcpsrv.New(emptyBackend{dir: t.TempDir()}).Handler())
+		l, err := srv.Listen(0, tok)
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { l.Close() })
+		return l
+	}
+	var mu sync.Mutex
+	info := store.APIInfo{}
+	setInfo := func(i store.APIInfo) { mu.Lock(); info = i; mu.Unlock() }
+	l1 := listen("a")
+	setInfo(store.APIInfo{Port: l1.Port, Token: "a"})
+	c := &Client{Info: func() (store.APIInfo, error) { mu.Lock(); defer mu.Unlock(); return info, nil }, HTTP: http.DefaultClient,
+		Launch: func() error { return errors.New("không được mở") }, RestartWait: 5 * time.Second, WaitApp: 50 * time.Millisecond}
+
+	inR, inW := io.Pipe()
+	outR, outW := io.Pipe()
+	done := make(chan struct{})
+	go func() { c.MCP(inR, outW, io.Discard); outW.Close(); close(done) }()
+	lines := bufio.NewScanner(outR)
+	send := func(msg string) string {
+		go inW.Write([]byte(msg + "\n"))
+		if !lines.Scan() {
+			t.Fatal("không có trả lời")
+		}
+		return lines.Text()
+	}
+	if got := send(`{"jsonrpc":"2.0","id":1,"method":"tools/list"}`); !strings.Contains(got, "list_scripts") {
+		t.Fatalf("trước khi mở lại: %s", got)
+	}
+	l1.Close()
+	setInfo(store.APIInfo{})
+	time.AfterFunc(600*time.Millisecond, func() {
+		l2 := listen("b")
+		setInfo(store.APIInfo{Port: l2.Port, Token: "b"})
+	})
+	if got := send(`{"jsonrpc":"2.0","id":2,"method":"tools/list"}`); !strings.Contains(got, `"id":2`) || !strings.Contains(got, "list_scripts") {
+		t.Fatalf("sau khi mở lại: %s", got)
+	}
+	inW.Close()
+	<-done
 }

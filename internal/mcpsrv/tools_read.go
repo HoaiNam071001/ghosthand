@@ -12,6 +12,7 @@ import (
 	manual "ghosthand/internal/guide"
 	"ghosthand/internal/model"
 	"ghosthand/internal/script"
+	"ghosthand/internal/update"
 )
 
 type pathIn struct {
@@ -49,7 +50,7 @@ func (s *Server) addReadTools() {
 	addTool(s, KindRead, &mcp.Tool{Name: "get_step_types", Description: "Hướng dẫn viết kịch bản: cấu trúc flow, biến {{…}}, trường chung, " +
 		"từng loại node app hỗ trợ (mô tả, trường, ví dụ JSON, output, cổng ra) và mẹo viết kịch bản bền. Đọc trước khi tạo / sửa. " +
 		"Đầy đủ rất dài: compact=true trước, rồi type=a,b,c lấy chi tiết các loại sẽ dùng; topic=debug khi chạy thử."}, s.stepTypes)
-	addTool(s, KindRead, &mcp.Tool{Name: "get_node_guide", Description: "Trang hướng dẫn của một loại node (cùng nội dung modal Hướng dẫn của người dùng): " +
+	addTool(s, KindRead, &mcp.Tool{Name: "get_node_guide", Description: "Trang hướng dẫn của một loại node: " +
 		"công nghệ bên dưới, chạy được với web / app nào, độ chính xác, tốc độ, nên / không nên dùng, mẹo, trường quan trọng. " +
 		"Dùng để chọn đúng node cho trang / app; trường + ví dụ JSON lấy ở get_step_types. Khoá = tên loại node (vd clickText, waitImage)."}, s.nodeGuide)
 	addTool(s, KindRead, &mcp.Tool{Name: "list_secrets", Description: "Tên các bí mật người dùng đã lưu trong Cài đặt → Bí mật (mật khẩu, token…). " +
@@ -58,8 +59,8 @@ func (s *Server) addReadTools() {
 	addTool(s, KindRead, &mcp.Tool{Name: "list_mcp_servers", Description: "MCP server ngoài người dùng đã thêm (Cài đặt → MCP server): id, state (ok | error | idle | off), " +
 		"tool (tên, readOnly, args – bắt buộc có *). Dùng cho node mcpTool: mcpServer = id, mcpTool = tên tool, mcpArgs = JSON theo args. " +
 		"Chưa có server cần dùng thì bảo người dùng thêm ở Cài đặt – AI không thêm / sửa server."}, s.listMCPServers)
-	addTool(s, KindRead, &mcp.Tool{Name: "get_screen_info", Description: "Các màn hình: khung theo toạ độ chuột (x, y, w, h), tỷ lệ DPI / Retina, màn chính. " +
-		"Toạ độ trong kịch bản dùng cùng hệ này."}, s.screenInfo)
+	addTool(s, KindRead, &mcp.Tool{Name: "get_screen_info", Description: "Các màn hình: khung (x, y, w, h) theo hệ toạ độ chuột = hệ của kịch bản, tỷ lệ DPI, màn chính."}, s.screenInfo)
+	addTool(s, KindRead, &mcp.Tool{Name: "app_info", Description: "Bản app đang chạy (version, commit): kiểm bản vừa cài đã lên."}, s.appInfo)
 }
 
 // paths – mở gần đây (mới nhất trước) rồi file trong thư mục kịch bản của AI, không trùng.
@@ -163,6 +164,10 @@ func (s *Server) nodeGuide(_ context.Context, _ *mcp.CallToolRequest, in nodeGui
 func (s *Server) screenInfo(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp.CallToolResult, any, error) {
 	return ok(map[string]any{"displays": s.back.Displays(),
 		"note": "Toạ độ theo hệ của chuột (robotgo): Windows là pixel thật, macOS là điểm logic (Retina scale 2 = 1 điểm 2 pixel)."})
+}
+
+func (s *Server) appInfo(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp.CallToolResult, any, error) {
+	return ok(update.Current())
 }
 
 func (s *Server) listSecrets(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp.CallToolResult, any, error) {

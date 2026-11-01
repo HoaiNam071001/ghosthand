@@ -7,7 +7,7 @@ Desktop app tự động click theo kịch bản (flow node + cạnh kiểu n8n:
 1. *Trạng thái hiện tại* + số việc chờ kiểm tra tay được hook SessionStart chèn sẵn (`scripts/session-status.sh`) – **không cần đọc cả `docs/tasks/README.md`**. Chỉ mở file của bước đang làm (`docs/tasks/phase3/<số>-<tên>.md`; phần đã xong của bước dài ở `<số>-<tên>-xong.md` – chỉ mở khi cần).
 2. Cần hiểu hệ thống / tìm file → **`docs/ARCHITECTURE.md`** (luồng soạn / chạy, API Go ↔ frontend, event, *muốn làm X → sửa ở đâu*, bản đồ file) trước khi mở code.
 3. Tài liệu khác chỉ mở khi cần: `decisions.md` (quyết định đã chốt – không bàn lại), `checks.md` (việc chờ người dùng thử tay), `README.md` (bảng tính năng, thứ tự bước), `design/DESIGN.md` (UI), `docs/hoc-tu-mcp-ngoai.md` (ý học từ MCP / công cụ ngoài – mở khi làm web, MCP, tìm phần tử bằng AI). **Không đọc `log.md`** – chỉ thêm dòng bằng `>>`.
-4. **Skill dự án** (`.claude/skills/`): `implement-step` (làm bước theo plan), `add-node-type` (thêm loại node / trường – đủ chỗ Go + TS), `fix-bug`, `new-request` (yêu cầu mới → ghi plan, hỏi chốt trước khi code), `senior-review` (review diff trước commit), `wrap-up` (cập nhật tài liệu + kiểm tra + commit – quy ước tick / checks / log / README nằm ở đây).
+4. **Skill dự án** (`.claude/skills/`): `implement-step` (làm bước theo plan), `add-node-type` (thêm loại node / trường – đủ chỗ Go + TS), `fix-bug`, `new-request` (yêu cầu mới → ghi plan, hỏi chốt trước khi code), `senior-review` (review diff trước commit), `test-after-change` (cài bản vừa sửa vào app thật + thử qua MCP), `wrap-up` (cập nhật tài liệu + kiểm tra + commit – quy ước tick / checks / log / README nằm ở đây).
 5. Người dùng trao đổi bằng **tiếng Việt** – trả lời, comment, UI, tài liệu tiếng Việt; tên biến / hàm tiếng Anh.
 
 ## Lệnh
@@ -15,6 +15,7 @@ Desktop app tự động click theo kịch bản (flow node + cạnh kiểu n8n:
 ```bash
 wails dev                      # chạy app (hot reload). wails nằm ở ~/go/bin
 wails build                    # build ra build/bin/
+make dev-install               # macOS: build bản dev + cài đè /Applications + mở lại nền (AI thử qua MCP ngay – skill test-after-change)
 scripts/mac-build.sh            # macOS: build + ký chứng chỉ tự tạo "Ghosthand Dev" + .dmg – giữ quyền Accessibility / Screen Recording qua các bản build (bundle ID cố định app.ghosthand)
 make release V=1.0.1           # phát hành: build mac (.dmg) + tag + GitHub Release; tag kích hoạt workflow "Release Windows" (setup.exe + portable.zip tự đính vào Release) – cần gh
 make win V=1.0.1               # Windows (Git Bash): build/bin/ghosthand.exe (không cài đặt) + portable.zip, có NSIS thì thêm bộ cài; make mac V=…: chỉ build mac
