@@ -81,7 +81,7 @@ func (c *Chrome) Pick(ctx context.Context, tab string) (Picked, error) {
 func (c *Chrome) verify(ctx context.Context, t *tabConn, cands []string) ([]string, error) {
 	var out []string
 	loose := map[string]bool{} // giá trị text= (chứa) đã giữ
-	for _, line := range cands {
+	for _, line := range model.StableFirst(cands) {
 		if len(out) == maxPicked {
 			break
 		}

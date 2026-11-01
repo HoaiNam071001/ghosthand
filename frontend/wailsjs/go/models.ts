@@ -142,6 +142,7 @@ export namespace engine {
 	    colorDiff?: number;
 	    count?: number;
 	    all?: model.Rect[];
+	    fix?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new FindResult(source);
@@ -161,6 +162,7 @@ export namespace engine {
 	        this.colorDiff = source["colorDiff"];
 	        this.count = source["count"];
 	        this.all = this.convertValues(source["all"], model.Rect);
+	        this.fix = source["fix"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

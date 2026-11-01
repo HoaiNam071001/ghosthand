@@ -140,7 +140,11 @@ func (e *Engine) findAll(ctx context.Context, s model.Step) (map[string]any, err
 		return countOK(s, len(hits)), min(100, len(hits)*100/max(s.MinCount, 1)), nil
 	})
 	if errors.Is(err, errTimeout) {
-		return nil, countMiss(s, len(got), read, area)
+		fix := ""
+		if len(got) == 0 {
+			fix = e.elementFix(s)
+		}
+		return nil, countMiss(s, len(got), read, area, fix)
 	}
 	if err != nil {
 		return nil, err
@@ -153,7 +157,7 @@ func (e *Engine) findAll(ctx context.Context, s model.Step) (map[string]any, err
 }
 
 // countMiss – hết giờ mà số chỗ chưa đạt: detail có count lần nhìn cuối so với minCount / maxCount.
-func countMiss(s model.Step, n int, read []string, area model.Rect) error {
+func countMiss(s model.Step, n int, read []string, area model.Rect, fix string) error {
 	lo := max(s.MinCount, 1)
 	msg := fmt.Sprintf("chỉ thấy %d chỗ %s sau %s (cần ít nhất %d)", n, findName(s), fmtSeconds(s.TimeoutMs), lo)
 	if s.MaxCount > 0 && n > s.MaxCount {
@@ -168,6 +172,9 @@ func countMiss(s model.Step, n int, read []string, area model.Rect) error {
 	}
 	if len(read) > 0 {
 		d["read"] = read
+	}
+	if fix != "" {
+		d["fix"] = fix
 	}
 	return &notFoundErr{msg: msg, detail: d}
 }
@@ -184,6 +191,9 @@ func (e *Engine) findAllOnce(s model.Step) (FindResult, error) {
 		return FindResult{}, err
 	}
 	res := FindResult{Found: countOK(s, len(hits)), Count: len(hits), Area: area, Read: read, Ms: int(time.Since(start).Milliseconds())}
+	if len(hits) == 0 {
+		res.Fix = e.elementFix(s)
+	}
 	for i, h := range hits {
 		res.All = append(res.All, h.Box)
 		if i == 0 {

@@ -101,6 +101,8 @@ type FindResult struct {
 	// Tìm tất cả (42 G3): số chỗ thấy + khung từng chỗ theo thứ tự đọc (X / Y / W / H = chỗ đầu); Found = số chỗ đạt min / max
 	Count int          `json:"count,omitempty"`
 	All   []model.Rect `json:"all,omitempty"`
+	// phần tử không thấy vì nhãn có phần hay đổi ("Messenger, 1 unread") → selector sửa (model.SelectorFix)
+	Fix string `json:"fix,omitempty"`
 }
 
 // FindOnce tìm ảnh mẫu / chữ / phần tử (Đọc phần tử: phần tử / nhãn) của node s trên màn hình lúc này (một lần, không chờ) – nút "Thử tìm".

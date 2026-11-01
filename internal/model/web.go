@@ -42,8 +42,12 @@ func ParseSelector(line string) (Selector, error) {
 	line = strings.TrimSpace(line)
 	sel := Selector{By: SelText, Value: line}
 	if by, v, ok := strings.Cut(line, "="); ok {
+		by = strings.TrimSpace(by)
+		if strings.EqualFold(by, "aria-label") { // chép thẳng từ DevTools
+			by = SelAria
+		}
 		for _, k := range SelectorKinds {
-			if strings.EqualFold(strings.TrimSpace(by), k) {
+			if strings.EqualFold(by, k) {
 				sel = Selector{By: k, Value: strings.TrimSpace(v)}
 			}
 		}

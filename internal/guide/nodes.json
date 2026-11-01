@@ -409,6 +409,7 @@
     ],
     "tips": [
       "Dùng nút chọn phần tử trong inspector để app gợi ý cách tìm bền.",
+      "Nhãn có phần hay đổi (\"Messenger, 1 unread\", \"Hộp thư (3)\") → chỉ ghi phần cố định, không nháy kép: aria=Messenger. Chép từ DevTools thì aria-label=… cũng được.",
       "Chờ mãi không thấy: kiểm tra cửa sổ đang hiện, và app đã cấp quyền Accessibility / chạy cùng quyền."
     ],
     "fields": [
@@ -1073,7 +1074,8 @@
       "Trang chặn bot / canvas → [[node:waitImage]]"
     ],
     "tips": [
-      "Selector thử bằng *Thử tìm*, lấy bằng *Chọn phần tử trên trang*."
+      "Selector thử bằng *Thử tìm*, lấy bằng *Chọn phần tử trên trang*.",
+      "Nhãn có phần hay đổi (\"Messenger, 1 unread\", \"Hộp thư (3)\") → chỉ ghi phần cố định, không nháy kép: aria=Messenger. Chép từ DevTools thì aria-label=… cũng được."
     ],
     "fields": [
       "**Tìm theo** – chữ / aria / role / label / css / xpath",

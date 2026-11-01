@@ -81,12 +81,22 @@ func (e *Engine) webFindQ(ctx context.Context, s model.Step, q web.Query, lines 
 	if errors.Is(err, errTimeout) {
 		gone := q.CheckOnly && s.WebGone
 		var near []web.OutlineItem
+		fix := ""
 		if !gone && last.Selector < 0 && !last.NoTab { // không selector nào khớp: đọc trang một lần, gửi chỗ gần giống
 			if o, err := e.browser.PageOutline(ctx, s.Tab); err == nil {
 				near = outlineNear(o, q.Selectors)
+				names := make([]string, len(o.Items))
+				for i, it := range o.Items {
+					names[i] = it.Name
+				}
+				fix = model.SelectorFix(lines, names)
 			}
 		}
-		return last, lines, &notFoundErr{msg: webMissMsg(s, last, lines, gone), detail: webMiss(last, lines, near, e.lastPageCheck(last.Tab))}
+		d := webMiss(last, lines, near, e.lastPageCheck(last.Tab))
+		if fix != "" {
+			d["fix"] = fix
+		}
+		return last, lines, &notFoundErr{msg: webMissMsg(s, last, lines, gone), detail: d}
 	}
 	return last, lines, err
 }

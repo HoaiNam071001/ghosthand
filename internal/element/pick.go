@@ -2,6 +2,7 @@ package element
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
 	"ghosthand/internal/model"
@@ -31,7 +32,8 @@ type Pick struct {
 }
 
 // QueryFor – sinh selector cho nodes[i], mỗi dòng đều kiểm lại bằng Find (tìm lại phải ra đúng phần tử này hoặc phần
-// tử nằm trong nó). Thứ tự ưu tiên: chữ đúng cả chuỗi → nhãn aria → vai trò + tên → vai trò. Chữ / nhãn dài quá 60 ký tự
+// tử nằm trong nó). Thứ tự ưu tiên: chữ đúng cả chuỗi → nhãn aria → vai trò + tên → vai trò; giá trị có phần hay đổi
+// ("Messenger, 1 unread") thì dạng chứa phần cố định đứng trước (model.StableFirst). Chữ / nhãn dài quá 60 ký tự
 // thì bỏ (trang đổi một chữ là hỏng). Không dòng nào tìm lại đúng → Pick rỗng.
 func QueryFor(nodes []Node, i int) Pick {
 	n := nodes[i]
@@ -49,14 +51,14 @@ func QueryFor(nodes []Node, i int) Pick {
 		lines = append(lines, "role="+n.Role)
 	}
 	var p Pick
-	for _, line := range lines {
+	for _, line := range model.StableFirst(lines) {
 		s, err := model.ParseSelector(line)
 		if err != nil {
 			continue
 		}
 		k := occurrenceOf(nodes, s, i)
-		if k == 0 {
-			continue
+		if k == 0 || !slices.Contains(lines, line) && len(match(nodes, s, Query{})) != 1 {
+			continue // dạng chứa phần cố định chỉ dùng khi không lẫn phần tử khác
 		}
 		if len(p.Selectors) == 0 {
 			p.Occurrence = k

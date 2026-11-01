@@ -1,0 +1,39 @@
+{
+  "labels": [
+    {"in": "Messenger, 1 unread", "want": "Messenger"},
+    {"in": "Messenger", "want": ""},
+    {"in": "Notifications, 12 unread notifications", "want": "Notifications"},
+    {"in": "Hộp thư (3)", "want": "Hộp thư"},
+    {"in": "Giỏ hàng (99+)", "want": "Giỏ hàng"},
+    {"in": "Huy Hoàng · 5 phút", "want": "Huy Hoàng"},
+    {"in": "Giỏ hàng: 3", "want": "Giỏ hàng"},
+    {"in": "Trang 2", "want": ""},
+    {"in": "Chrome, cập nhật", "want": ""},
+    {"in": "3 tin nhắn, Messenger", "want": ""},
+    {"in": "(3)", "want": ""},
+    {"in": "Bản 2, 5 lượt", "want": ""},
+    {"in": "  Thông báo - 4 mới ", "want": "Thông báo"}
+  ],
+  "selectors": [
+    {"in": "aria=\"Messenger, 1 unread\"", "want": "aria=Messenger"},
+    {"in": "aria=Messenger, 1 unread", "want": "aria=Messenger"},
+    {"in": "aria-label=\"Messenger, 1 unread\"", "want": "aria=Messenger"},
+    {"in": "text=\"Hộp thư (3)\"", "want": "text=Hộp thư"},
+    {"in": "Hộp thư (3)", "want": "text=Hộp thư"},
+    {"in": "label=Số lượng: 2", "want": "label=Số lượng"},
+    {"in": "role=combobox[name=\"Messenger, 1 unread\"]", "want": "role=combobox[name=\"Messenger\"]"},
+    {"in": "aria=\"Messenger\"", "want": ""},
+    {"in": "role=combobox", "want": ""},
+    {"in": "css=#a, b:nth-child(2)", "want": ""},
+    {"in": "aria={{ten}}, 1 unread", "want": ""},
+    {"in": "role=", "want": ""}
+  ],
+  "fixes": [
+    {"lines": ["aria=\"Messenger, 1 unread\""], "near": [], "want": "aria=Messenger"},
+    {"lines": ["aria=\"Messenger\""], "near": ["Notifications", "Messenger, 2 unread"], "want": "aria=Messenger"},
+    {"lines": ["text=\"messenger\""], "near": ["Messenger (5)"], "want": "text=messenger"},
+    {"lines": ["aria=Messenger"], "near": ["Messenger, 2 unread"], "want": ""},
+    {"lines": ["aria=\"Gửi\""], "near": ["Gửi lại"], "want": ""},
+    {"lines": ["", "aria=\"{{ten}}\""], "near": ["x, 1"], "want": ""}
+  ]
+}

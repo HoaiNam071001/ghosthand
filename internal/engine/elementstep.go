@@ -126,6 +126,28 @@ func (e *Engine) findElementStep(ctx context.Context, s model.Step, settle bool)
 	return at, err
 }
 
+// nameFix – selector sửa khi không thấy vì nhãn có phần hay đổi: so với tên mọi phần tử (không lọc theo độ giống –
+// "Messenger, 1 unread" dài gấp đôi "Messenger" nên dưới ngưỡng gần giống).
+func nameFix(selectors []string, nodes []element.Node) string {
+	names := make([]string, len(nodes))
+	for i, n := range nodes {
+		names[i] = n.Name()
+	}
+	return model.SelectorFix(selectors, names)
+}
+
+// elementFix – như nameFix cho node Tìm tất cả theo phần tử (đọc lại cây một lần – chỉ khi đã không thấy chỗ nào).
+func (e *Engine) elementFix(s model.Step) string {
+	if s.FindBy != model.FindByElement {
+		return ""
+	}
+	nodes, err := e.elems.Elements(s.ElementApp)
+	if err != nil {
+		return ""
+	}
+	return nameFix(s.Selectors, nodes)
+}
+
 // elementNames – vài phần tử có chữ đọc được (gợi ý khi Thử tìm không thấy), bỏ trùng.
 func elementNames(nodes []element.Node, n int) []string {
 	var out []string
@@ -162,6 +184,7 @@ func (e *Engine) findElementOnce(s model.Step) (FindResult, error) {
 	}
 	if !r.Found {
 		res.Read = elementNames(nodes, 40)
+		res.Fix = nameFix(s.Selectors, nodes)
 		return res, nil
 	}
 	b := r.Hit.Box

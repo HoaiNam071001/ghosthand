@@ -34,7 +34,12 @@ func Suggest(nodes []Node, i int) []Suggestion {
 		}
 		n := len(match(nodes, s, Query{}))
 		sg := Suggestion{Selector: line, Occurrence: k, Matches: n, Unique: n == 1, rank: rankOf(line)}
+		_, volatile := model.StableSelector(line)
 		switch {
+		case volatile:
+			sg.rank = rankVolatile
+			sg.Stability = "poor"
+			sg.Note = "giá trị có phần hay đổi (số) – gãy khi số đổi"
 		case n == 1 && sg.rank <= 1:
 			sg.Stability = "good"
 		case n == 1:
@@ -56,6 +61,7 @@ func Suggest(nodes []Node, i int) []Suggestion {
 }
 
 // candidates – các dòng selector có thể viết cho n, theo độ ưu tiên (nhãn aria bền hơn chữ vì ít bị đổi theo ngôn ngữ).
+// Nhãn có phần hay đổi ("Messenger, 1 unread") → thêm dạng chứa phần cố định (aria=Messenger) đứng trước.
 func candidates(n Node) []string {
 	var lines []string
 	if d := strings.TrimSpace(n.Desc); usable(d) {
@@ -70,8 +76,11 @@ func candidates(n Node) []string {
 	if n.Role != "" {
 		lines = append(lines, "role="+n.Role)
 	}
-	return lines
+	return model.StableFirst(lines)
 }
+
+// rankVolatile – selector có giá trị hay đổi: xếp sau mọi loại khác.
+const rankVolatile = 4
 
 // rankOf – độ bền theo loại selector: aria 0, chữ 1, vai trò + tên 2, vai trò 3.
 func rankOf(line string) int {

@@ -2,6 +2,7 @@ package engine
 
 import (
 	"context"
+	"errors"
 	"reflect"
 	"strings"
 	"testing"
@@ -143,6 +144,33 @@ func TestFindElementOnce(t *testing.T) {
 	res, err = e.FindOnce(elementStep(model.StepWaitImage, nil))
 	if err != nil || !res.Found || res.X != 100 || res.W != 80 {
 		t.Errorf("thấy: %+v %v", res, err)
+	}
+}
+
+// Nhãn đổi theo số tin chưa đọc: aria="Messenger" (đúng cả chuỗi) không thấy "Messenger, 1 unread" → fix bỏ nháy kép,
+// cả ở Thử tìm, lỗi lúc chạy và Tìm tất cả.
+func TestElementMissFix(t *testing.T) {
+	nodes := []element.Node{
+		{Role: "window", Title: "Facebook", Box: elemBox(0, 0, 1000, 800)},
+		{Role: "combobox", Desc: "Messenger, 1 unread", Box: elemBox(900, 10, 40, 40), Depth: 1},
+	}
+	step := func(t string) model.Step {
+		return elementStep(t, func(s *model.Step) { s.Selectors, s.TimeoutMs = []string{`aria="Messenger"`}, 5 })
+	}
+	e := newEngine(&devicetest.FakeInput{}, model.Script{}, nil)
+	e.elems = &devicetest.FakeElements{Frames: [][]element.Node{nodes}}
+	for _, typ := range []string{model.StepWaitImage, model.StepFindAll} {
+		if res, err := e.FindOnce(step(typ)); err != nil || res.Found || res.Fix != "aria=Messenger" {
+			t.Errorf("%s Thử tìm: %+v %v", typ, res, err)
+		}
+	}
+	var se *notFoundErr
+	if _, err := e.findImage(context.Background(), step(model.StepWaitImage)); !errors.As(err, &se) || se.detail["fix"] != "aria=Messenger" ||
+		!strings.HasSuffix(err.Error(), "thử aria=Messenger") {
+		t.Errorf("chờ: %v", err)
+	}
+	if _, err := e.findAll(context.Background(), step(model.StepFindAll)); !errors.As(err, &se) || se.detail["fix"] != "aria=Messenger" {
+		t.Errorf("tìm tất cả: %v", err)
 	}
 }
 

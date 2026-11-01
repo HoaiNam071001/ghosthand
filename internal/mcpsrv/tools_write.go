@@ -52,7 +52,8 @@ type edgeIn struct {
 
 func (s *Server) addWriteTools() {
 	addTool(s, KindRead, &mcp.Tool{Name: "validate_script", Description: "Kiểm tra kịch bản (chưa lưu): cấu trúc flow + dữ liệu cần để chạy. " +
-		"Trả {ok, error, code, detail{stepId, ref, field, edgeId, input}} – sửa đúng chỗ rồi kiểm tra lại."}, s.validate)
+		"Trả {ok, error, code, detail{stepId, ref, field, edgeId, input}} – sửa đúng chỗ rồi kiểm tra lại. " +
+		"hints: selector có phần hay đổi (số tin chưa đọc…) – thay bằng fix."}, s.validate)
 	addTool(s, KindWrite, &mcp.Tool{Name: "create_script", Description: "Tạo một / nhiều kịch bản mới và lưu file (thư mục kịch bản của AI, " +
 		"hiện trong thư viện app với chip AI). Cấu trúc sai → không lưu, trả lỗi. Lưu được nhưng chưa chạy được (vd thiếu ảnh mẫu) → trả problems. " +
 		"Không tự mở trên app – gọi open_in_app."}, s.create)
@@ -79,17 +80,27 @@ func (s *Server) validate(_ context.Context, _ *mcp.CallToolRequest, in validate
 	if err != nil {
 		body := errorBody(err)
 		body["ok"] = false
+		withHints(body, sc)
 		return ok(body)
 	}
-	return ok(map[string]any{"ok": true, "steps": len(sc.Steps), "edges": len(sc.Edges)})
+	return ok(withHints(map[string]any{"ok": true, "steps": len(sc.Steps), "edges": len(sc.Edges)}, sc))
 }
 
 // created – một kịch bản vừa lưu.
 type created struct {
-	Path     string         `json:"path"`
-	Name     string         `json:"name"`
-	Revision int            `json:"revision"`
-	Problems map[string]any `json:"problems,omitempty"` // lưu được nhưng chưa chạy được
+	Path     string                `json:"path"`
+	Name     string                `json:"name"`
+	Revision int                   `json:"revision"`
+	Problems map[string]any        `json:"problems,omitempty"` // lưu được nhưng chưa chạy được
+	Hints    []script.SelectorHint `json:"hints,omitempty"`
+}
+
+// withHints – cảnh báo selector có phần hay đổi (không chặn lưu / chạy).
+func withHints(body map[string]any, sc model.Script) map[string]any {
+	if h := script.SelectorHints(sc); len(h) > 0 {
+		body["hints"] = h
+	}
+	return body
 }
 
 func (s *Server) create(_ context.Context, _ *mcp.CallToolRequest, in createIn) (*mcp.CallToolResult, any, error) {
@@ -125,7 +136,7 @@ func (s *Server) create(_ context.Context, _ *mcp.CallToolRequest, in createIn) 
 		if err != nil {
 			return fail(err)
 		}
-		c := created{Path: path, Name: sc.Name, Revision: rev}
+		c := created{Path: path, Name: sc.Name, Revision: rev, Hints: script.SelectorHints(sc)}
 		if err := s.runnable(sc); err != nil {
 			c.Problems = errorBody(err)
 		}
@@ -214,7 +225,7 @@ func (s *Server) update(_ context.Context, _ *mcp.CallToolRequest, in updateIn) 
 	if err := s.runnable(next); err != nil {
 		res["problems"] = errorBody(err)
 	}
-	return ok(res)
+	return ok(withHints(res, next))
 }
 
 func (s *Server) openInApp(_ context.Context, _ *mcp.CallToolRequest, in pathIn) (*mcp.CallToolResult, any, error) {

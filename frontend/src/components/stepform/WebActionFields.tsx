@@ -6,9 +6,10 @@ import VarTextInput from '../inputs/VarTextInput';
 import { updateStep, useScript } from '../../store';
 import { addInput } from '../../scriptInputs';
 import { ScrollDirection, Step } from '../../types';
-import { canBackground, parseSelector, READ_LABEL, ReadFrom, SCROLL_MODE_LABEL, ScrollMode, SELECTOR_LABEL, selectorLines } from '../../flow/web';
+import { canBackground, parseSelector, READ_LABEL, ReadFrom, SCROLL_MODE_LABEL, ScrollMode, SELECTOR_LABEL, selectorLines, stableSelector } from '../../flow/web';
 import { ButtonField, DIRECTION_OPTIONS, Field, NumField, SwitchField, useNodeVars, varHint } from './shared';
 import { TypeModeField } from './TextFields';
+import { SelectorFixHint } from './SelectorFixHint';
 
 const set = (s: Step, patch: Partial<Step>) => updateStep(s.id, patch);
 
@@ -22,6 +23,8 @@ export function SelectorsField({ step: s, label, value, onChange, placeholder, e
   const lines = selectorLines(value);
   const parsed = lines.map(parseSelector);
   const bad = parsed.findIndex((p) => !p);
+  const all = value ?? [];
+  const volatile = all.findIndex((l) => stableSelector(l));
   return (
     <Field label={label} wide group help={help} side={<span className="text-xs text-muted">mỗi dòng một cách</span>}>
       <VarTextInput value={(value ?? []).join('\n')} onChange={(v) => onChange(v.split('\n'))} inputs={script.inputs ?? []} nodeVars={nodeVars}
@@ -31,6 +34,10 @@ export function SelectorsField({ step: s, label, value, onChange, placeholder, e
           : bad >= 0 ? `Dòng “${lines[bad].trim()}” chưa có giá trị / sai dạng`
           : `${parsed.map((p) => SELECTOR_LABEL[p!.by] + (p!.exact ? ' (đúng cả chuỗi)' : '')).join(' → ')} · cách đầu thấy thì dùng`}
       </span>
+      {volatile >= 0 && (
+        <SelectorFixHint why={`“${all[volatile].trim()}” có phần hay đổi (số) – gãy khi số đổi.`} fix={stableSelector(all[volatile])!}
+          onUse={() => onChange(all.map((l, i) => (i === volatile ? stableSelector(l)! : l)))} />
+      )}
       {children}
     </Field>
   );

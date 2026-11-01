@@ -17,10 +17,10 @@ import (
 //   chờ / click ảnh: {kind: image, best, threshold, bestBox, area}
 //   chờ / click chữ: {kind: text, want, read[{text, box}], closest {text, box, score}, area}
 //   chờ màu:         {kind: pixel, point, actual, want, tolerance}
-//   phần tử:         {kind: element, selectors, read (số phần tử đã đọc), count, near[{role, name, box, score}]}
+//   phần tử:         {kind: element, selectors, read (số phần tử đã đọc), count, near[{role, name, box, score}], fix (selector sửa)}
 //   web:             {kind: web, selectors, perSelector[{selector, shown, hidden}], tab, matched, count, hidden, covered,
 //                     moving, offView, loading, hover, noTab, outline[{role, name, sel, …}] (không selector nào khớp),
-//                     pageCheck {verdict, useWeb, signs, url} (nếu đã Thử trang đó – captcha / canvas / chặn)
+//                     pageCheck {verdict, useWeb, signs, url} (nếu đã Thử trang đó – captcha / canvas / chặn), fix (selector sửa)
 //   quyền (permission): {permission: id quyền thiếu – khớp perm.ID, xem Cài đặt → Quyền}
 //   cửa sổ:          {kind: window, app, title, near[{title, app, box, minimized, score}]}
 //   ứng dụng:        {kind: app, app, running[] (khớp tên – vd chưa có cửa sổ / chưa thoát), near[{name, id, score}]}
@@ -32,7 +32,13 @@ type notFoundErr struct {
 	detail map[string]any // StepError.Detail
 }
 
-func (e *notFoundErr) Error() string { return e.msg }
+// Error – kèm cách sửa khi nhãn có phần hay đổi (thanh trạng thái, lịch sử thấy ngay, không cần mở detail).
+func (e *notFoundErr) Error() string {
+	if fix, _ := e.detail["fix"].(string); fix != "" {
+		return e.msg + " – nhãn có phần hay đổi (số), thử " + fix
+	}
+	return e.msg
+}
 
 // timeoutErr – chờ hết giờ (StepError code timeout): giờ hẹn đã qua, cửa sổ / app không mở · đóng kịp.
 type timeoutErr struct {
@@ -125,8 +131,12 @@ func textMiss(want string, read []vision.TextLine, area model.Rect) map[string]a
 
 func elementMiss(selectors []string, nodes []element.Node, r element.Result, q element.Query) map[string]any {
 	dump, roles := element.Dump(nodes)
-	return map[string]any{"kind": "element", "selectors": selectors, "read": len(nodes), "count": r.Count,
+	d := map[string]any{"kind": "element", "selectors": selectors, "read": len(nodes), "count": r.Count,
 		"near": element.NearMatches(nodes, q, nearMax), "dump": dump, "roles": roles}
+	if fix := nameFix(selectors, nodes); fix != "" {
+		d["fix"] = fix
+	}
+	return d
 }
 
 // webMiss – trạng thái lần tìm cuối; chỉ ghi trường có giá trị cho gọn. near: phần tử trong outline giống cách tìm.

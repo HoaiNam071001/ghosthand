@@ -65,6 +65,33 @@ func TestSuggestRanksUniqueFirst(t *testing.T) {
 	}
 }
 
+// Nhãn "Messenger, 1 unread" → dạng chứa phần cố định lên đầu, dạng đúng cả chuỗi xuống cuối (gãy khi số đổi).
+func TestSuggestStableLabel(t *testing.T) {
+	nodes := []Node{
+		{Role: "window", Title: "Facebook", Box: model.Rect{W: 500, H: 400}},
+		{Role: "combobox", Desc: "Facebook menu", Box: rc(10, 10), Depth: 1},
+		{Role: "combobox", Desc: "Messenger, 1 unread", Box: rc(100, 10), Depth: 1},
+		{Role: "combobox", Desc: "Notifications", Box: rc(200, 10), Depth: 1},
+	}
+	s := Suggest(nodes, 2)
+	if len(s) < 2 || s[0].Selector != "aria=Messenger" || s[0].Stability != "good" ||
+		s[1].Selector != `role=combobox[name="Messenger"]` {
+		t.Fatalf("suggest = %+v", s)
+	}
+	if p := QueryFor(nodes, 2); len(p.Selectors) == 0 || p.Selectors[0] != "aria=Messenger" || p.Occurrence != 1 {
+		t.Fatalf("tự điền = %+v", p)
+	}
+	// dạng chứa lẫn phần tử khác ("Messenger Kids") → không tự điền nó
+	nodes = append(nodes, Node{Role: "link", Desc: "Messenger Kids", Box: rc(300, 10), Depth: 1})
+	if p := QueryFor(nodes, 2); len(p.Selectors) == 0 || p.Selectors[0] != `aria="Messenger, 1 unread"` {
+		t.Fatalf("tự điền khi lẫn = %+v", p)
+	}
+	last := s[len(s)-1]
+	if last.Stability != "poor" || last.Selector == "aria=Messenger" {
+		t.Fatalf("dạng có số phải xếp cuối, kém: %+v", s)
+	}
+}
+
 func TestDiff(t *testing.T) {
 	before := sampleTree()
 	after := sampleTree()

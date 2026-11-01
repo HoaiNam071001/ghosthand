@@ -3,6 +3,13 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## Selector bền với nhãn hay đổi (2026-11-01) · [37](phase3/37-phan-tu-man-hinh.md) · [25d](phase3/25d-web-dom.md)
+- [ ] Facebook trên Chrome thường, có tin Messenger chưa đọc: node Tìm theo Phần tử, *Chọn trên màn* nút Messenger → ô tự điền `aria=Messenger` ở dòng đầu (không phải `aria="Messenger, 1 unread"`); đọc hết tin → *Thử tìm* vẫn thấy
+- [ ] Gõ tay `aria="Messenger, 1 unread"` → dưới ô hiện cảnh báo + nút *Dùng aria=Messenger*, bấm là thay đúng dòng đó
+- [ ] Gõ `aria="Messenger"` khi đang có tin chưa đọc → *Thử tìm* không thấy, hiện nút *Dùng aria=Messenger*; chạy kịch bản thì thanh trạng thái ghi “… thử aria=Messenger”
+- [ ] Dán `aria-label="Messenger"` chép từ DevTools → tìm được như `aria="Messenger"`
+- [ ] AI qua MCP: `validate_script` kịch bản có `aria="Messenger, 1 unread"` trả `hints[].fix`
+
 ## Sửa – lỗi AI tìm thấy khi kiểm tra tay qua MCP (2026-11-01) · [31](phase3/31-mcp-ai.md) · [43](phase3/43-node-chuyen-sau.md) · [28](phase3/28-mo-rong.md)
 - [ ] Mở một kịch bản trong app, để AI `run_script` một kịch bản tạm khác: canvas kịch bản đang mở không bị tô ✓ / đỏ, bảng Nhật ký không hiện “node đã xoá”, thanh mini ghi đúng tên node đang chạy (vd “n3 · Đọc chữ vùng”); AI chạy chính kịch bản đang mở (cùng file) thì vẫn tô như cũ
 - [ ] Mẫu *Chờ sự kiện giao diện* trên Chrome macOS: bấm BẮT ĐẦU → bắt được hộp thoại “Hoàn tất” ~2 s, kết thúc thành công

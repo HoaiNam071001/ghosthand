@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { browserStatusText, fmtSelectors, loginUrl, fmtWebStep, parseSelector, Selector, WebFind, webFindText } from './web';
+import { browserStatusText, fmtSelectors, loginUrl, fmtWebStep, parseSelector, Selector, selectorFix, stableLabel, stableSelector, WebFind, webFindText } from './web';
 import { makeStep } from '../types';
 import data from '../../../testdata/selectors.json';
+import stable from '../../../testdata/stable-labels.json';
 
 // Cùng dữ liệu với TestParseSelector (internal/model/web_test.go) – Go và TS phải đọc selector giống nhau.
 const cases = data as { in: string; want?: Selector; bad?: boolean }[];
@@ -9,6 +10,13 @@ const cases = data as { in: string; want?: Selector; bad?: boolean }[];
 describe('parseSelector (chung với Go)', () => {
   it('có dữ liệu', () => expect(cases.length).toBeGreaterThan(0));
   for (const c of cases) it(JSON.stringify(c.in), () => expect(parseSelector(c.in)).toEqual(c.bad ? null : c.want));
+});
+
+// Cùng dữ liệu với TestStableLabel (internal/model/selstable_test.go).
+describe('stableLabel / stableSelector (chung với Go)', () => {
+  for (const c of stable.labels) it(`nhãn ${JSON.stringify(c.in)}`, () => expect(stableLabel(c.in)).toBe(c.want));
+  for (const c of stable.selectors) it(`selector ${JSON.stringify(c.in)}`, () => expect(stableSelector(c.in)).toBe(c.want || null));
+  for (const c of stable.fixes) it(`sửa ${JSON.stringify(c.lines)}`, () => expect(selectorFix(c.lines, c.near)).toBe(c.want || null));
 });
 
 describe('fmtSelectors', () => {

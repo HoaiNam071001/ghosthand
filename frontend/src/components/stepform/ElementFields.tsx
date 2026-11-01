@@ -6,12 +6,14 @@ import { updateStep, useScript } from '../../store';
 import { addInput } from '../../scriptInputs';
 import { Step } from '../../types';
 import { elementSelectorError } from '../../flow/element';
+import { stableSelector } from '../../flow/web';
 import { SelectorsField } from './WebActionFields';
 import { errText, Field, fmtSec, hint, NumField, SwitchField, useNodeVars } from './shared';
 import { pickElement, testFind, useImageState } from '../../imageSteps';
 import { inWails, openOverlay } from '../../windowMode';
 import { FindAllResult } from './FindAllResult';
 import { ElementSuggestions } from './ElementSuggestions';
+import { SelectorFixHint } from './SelectorFixHint';
 
 // optional: cách tìm có thể trống (node Đọc chữ trang: trống = cả cửa sổ)
 export function ElementQueryFields({ step: s, optional }: { step: Step; optional?: boolean }) {
@@ -57,6 +59,10 @@ export function ElementSearchFields({ step: s }: { step: Step }) {
         </div>
         <ElementSuggestions list={suggestions[s.id] ?? []} current={s.selectors?.[0]}
           onPick={(g) => updateStep(s.id, { selectors: [g.selector], occurrence: g.occurrence > 1 ? g.occurrence : undefined })} />
+        {find && !find.found && find.fix && !s.selectors?.some((l) => stableSelector(l)) && (
+          <SelectorFixHint why="Nhãn trên màn có thêm phần hay đổi (vd số tin chưa đọc) – bỏ nháy kép để tìm dạng chứa."
+            fix={find.fix} onUse={() => updateStep(s.id, { selectors: [find.fix!, ...(s.selectors ?? []).filter((l) => l.trim())] })} />
+        )}
         {find && s.type === 'findAll' ? <FindAllResult step={s} find={find} /> : find && (
           <span className={`flex flex-col gap-1 text-xs ${find.found ? 'text-ok' : 'text-warn'}`}>
             <span className="flex flex-wrap items-center gap-x-2">

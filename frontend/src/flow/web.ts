@@ -25,7 +25,8 @@ export function parseSelector(line: string): Selector | null {
   let sel: Selector = { by: 'text', value: t };
   const eq = t.indexOf('=');
   if (eq >= 0) {
-    const by = t.slice(0, eq).trim().toLowerCase();
+    let by = t.slice(0, eq).trim().toLowerCase();
+    if (by === 'aria-label') by = 'aria'; // chép thẳng từ DevTools
     const kind = SELECTOR_KINDS.find((k) => k === by);
     if (kind) sel = { by: kind, value: t.slice(eq + 1).trim() };
   }
@@ -119,4 +120,53 @@ export function browserStatusText(st: BrowserState | null): string {
   const top = st.tabs[0];
   const name = top ? ` · tab đang dùng “${top.title || top.url}”` : '';
   return `Chrome của app: đang mở, ${st.tabs.length} tab${name}`;
+}
+
+// Nhãn hay đổi theo trạng thái ("Messenger" ↔ "Messenger, 1 unread", "Hộp thư (3)") – như model.StableLabel (Go),
+// dữ liệu test chung testdata/stable-labels.json. Phần cố định = trước dấu tách đầu tiên mà phía sau có số.
+const STABLE_SEPS = [',', '(', '·', '•', '|', ':', ' - ', ' – '];
+const hasDigit = (s: string) => /\p{Nd}/u.test(s);
+
+// '' = nhãn không có phần hay đổi (hoặc phần còn lại có số / không có chữ).
+export function stableLabel(label: string): string {
+  const s = label.trim();
+  let cut = -1;
+  for (const sep of STABLE_SEPS) {
+    const i = s.indexOf(sep);
+    if (i > 0 && hasDigit(s.slice(i)) && (cut < 0 || i < cut)) cut = i;
+  }
+  if (cut < 0) return '';
+  const core = s.slice(0, cut).trim();
+  return hasDigit(core) || !/\p{L}/u.test(core) ? '' : core;
+}
+
+// Selector tìm theo phần cố định (dạng chứa); null = selector đã bền / có {{biến}} / sai dạng / css, xpath.
+export function stableSelector(line: string): string | null {
+  if (line.includes('{{')) return null;
+  const sel = parseSelector(line);
+  if (!sel) return null;
+  if (sel.by === 'text' || sel.by === 'aria' || sel.by === 'label') {
+    const core = stableLabel(sel.value);
+    return core ? `${sel.by}=${core}` : null;
+  }
+  if (sel.by === 'role') {
+    const core = stableLabel(sel.name ?? '');
+    return core && !core.includes('"') ? `role=${sel.value}[name="${core}"]` : null;
+  }
+  return null;
+}
+
+// Cách sửa khi không tìm thấy (như model.SelectorFix): selector có phần hay đổi → dạng chứa phần cố định; selector đúng
+// cả chuỗi (aria="Messenger") mà phần tử đang có tên "Messenger, 1 unread" → bỏ nháy kép. null = không đoán được.
+export function selectorFix(lines: string[], nearNames: string[]): string | null {
+  for (const line of lines) {
+    const fix = stableSelector(line);
+    if (fix) return fix;
+  }
+  for (const line of lines) {
+    const sel = line.includes('{{') ? null : parseSelector(line);
+    if (!sel?.exact) continue;
+    if (nearNames.some((n) => stableLabel(n).toLowerCase() === sel.value.toLowerCase())) return `${sel.by}=${sel.value}`;
+  }
+  return null;
 }
