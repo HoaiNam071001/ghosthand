@@ -12,24 +12,37 @@ API="$HOME/Library/Application Support/ghosthand/api.json"
 NO_DMG=1 scripts/mac-build.sh
 COMMIT="$(git rev-parse --short HEAD)$(git diff --quiet HEAD -- . ':!frontend/wailsjs' || echo -dirty)"
 
+# Tiến trình app chính – bỏ proxy `ghosthand --mcp` của Claude (sống qua lần cài – 59 U6).
+app_pids() { pgrep -fl "Ghosthand.app/Contents/MacOS/ghosthand" | grep -v -- '--mcp' || true; }
+
 # Thoát app đang mở – bản mới biết lệnh quit; app bản cũ chưa có /quit (404 / 405) thì nhờ macOS đóng như bấm Cmd+Q.
-if out="$("$NEW/Contents/MacOS/ghosthand" quit 2>&1)"; then
-  echo "$out"
-else
-  if grep -qE '404|405' <<<"$out"; then
+quit_app() {
+  local out
+  if out="$("$NEW/Contents/MacOS/ghosthand" quit 2>&1)"; then
+    echo "$out"
+  elif grep -qE '404|405' <<<"$out"; then
     echo "App bản cũ chưa có lệnh thoát – đóng qua macOS…"
     osascript -e 'tell application id "app.ghosthand" to quit' || true
-    for _ in $(seq 50); do pgrep -qf "Ghosthand.app/Contents/MacOS/ghosthand" || break; sleep 0.2; done
-    if pgrep -qf "Ghosthand.app/Contents/MacOS/ghosthand"; then
-      echo "Không cài: app chưa đóng (đang hỏi lưu?) – đóng app rồi chạy lại." >&2
-      exit 1
-    fi
   else
     echo "$out" >&2
     echo "Không cài: app từ chối thoát (đang chạy kịch bản / kịch bản chưa lưu)." >&2
     exit 1
   fi
-fi
+}
+
+# `quit` chỉ chờ API tắt – tiến trình còn dọn dẹp thêm chút; mở lại khi nó chưa tắt hẳn thì LaunchServices báo -600.
+# Vẫn còn tiến trình (app vừa được mở lại từ Dock / proxy, chưa kịp có API) thì thoát lại – tối đa 3 vòng.
+for round in 1 2 3; do
+  quit_app
+  for _ in $(seq 50); do [ -z "$(app_pids)" ] && break; sleep 0.2; done
+  [ -z "$(app_pids)" ] && break
+  if [ "$round" = 3 ]; then
+    echo "Không cài: app vẫn chạy (đang hỏi lưu?) – đóng app rồi chạy lại:" >&2
+    app_pids >&2
+    exit 1
+  fi
+  echo "App vẫn còn tiến trình – thoát lại…"
+done
 
 # Thay app: giữ bản cũ tới khi chép xong, lỗi thì trả lại
 old="$DEST.old-$$"
@@ -42,7 +55,12 @@ if ! ditto "$NEW" "$DEST"; then
 fi
 rm -rf "$old"
 
-open -g -a "$DEST" --args --background
+# -600 vẫn có thể gặp vài trăm ms đầu sau khi thay bundle – thử lại
+for i in $(seq 5); do
+  open -g -a "$DEST" --args --background && break
+  [ "$i" = 5 ] && { echo "Không mở được $DEST" >&2; exit 1; }
+  sleep 1
+done
 # Chờ đúng bản vừa build lên (api.json mới + /health trả commit này)
 for _ in $(seq 100); do
   got="$(python3 - "$API" <<'EOF' 2>/dev/null || true
