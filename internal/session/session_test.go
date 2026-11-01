@@ -111,16 +111,16 @@ func TestBusyAndStop(t *testing.T) {
 	if st, _ := m.Status(""); st.RunID != id || st.State != StateCountdown {
 		t.Fatalf("status lúc đếm ngược %+v", st)
 	}
-	if m.Stop("khac") {
+	if m.Stop("khac", StopByButton) {
 		t.Error("dừng nhầm runId khác")
 	}
-	if !m.Stop(id) {
+	if !m.Stop(id, StopByButton) {
 		t.Fatal("không dừng được")
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 	st, err := m.Wait(ctx, id)
-	if err != nil || st.State != StateStopped {
+	if err != nil || st.State != StateStopped || st.StoppedBy != StopByButton {
 		t.Fatalf("dừng lúc đếm ngược: %+v %v", st, err)
 	}
 	if len(*saved) != 0 {

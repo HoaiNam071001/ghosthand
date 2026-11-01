@@ -36,6 +36,17 @@ func TestActionFocusOutput(t *testing.T) {
 	}
 }
 
+// Thanh mini của chính app nổi trên cùng lúc chạy (macOS còn liệt kê) – output vẫn ghi cửa sổ thật ở dưới.
+func TestFocusOutputSkipsSelf(t *testing.T) {
+	ws := append([]model.WindowInfo{{ID: 7, Title: "Ghosthand", App: "ghosthand", PID: selfPID}}, fakeWins().Wins...)
+	if w, _ := foreground(ws); w.ID != 2 {
+		t.Errorf("foreground = %+v, muốn Chrome", w)
+	}
+	if w, ok := newWindow(ws, map[uint64]bool{2: true}); ok {
+		t.Errorf("newWindow = %+v, muốn không có (chỉ cửa sổ của app mới hiện)", w)
+	}
+}
+
 // Mở: dò cửa sổ mới trong lúc chờ DelayAfter; tổng thời gian vẫn đúng DelayAfter (không chờ hai lần).
 func TestOpenNewWindowOutput(t *testing.T) {
 	run := func(appear bool) (map[string]any, time.Duration) {

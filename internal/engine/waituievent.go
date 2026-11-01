@@ -78,14 +78,10 @@ func (e *Engine) waitWindowEvent(ctx context.Context, s model.Step) (map[string]
 	return out, nil
 }
 
-// topWindow – cửa sổ trên cùng không thu nhỏ (List đã xếp trên cùng trước); id 0 = không có.
+// topWindow – cửa sổ trên cùng (foreground: bỏ thu nhỏ + cửa sổ của app); id 0 = không có.
 func topWindow(wins []model.WindowInfo) (model.WindowInfo, uint64) {
-	for _, w := range wins {
-		if !w.Minimized {
-			return w, w.ID
-		}
-	}
-	return model.WindowInfo{}, 0
+	w, _ := foreground(wins)
+	return w, w.ID
 }
 
 func windowMatches(w model.WindowInfo, s model.Step) (bool, error) {

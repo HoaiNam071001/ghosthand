@@ -10,7 +10,7 @@ import { RecordBarView } from '../components/minibar/RecordBar';
 import { stopRecording, useRecording, useScript } from '../store';
 import { inWails, setWindowMode } from '../windowMode';
 import { fmtCountdown } from '../flow/waitUntil';
-import { counterText, progressNode } from '../flow/progress';
+import { counterText, progressNode, progressSteps } from '../flow/progress';
 
 // Số mẫu khi xem trên trình duyệt (#minibar)
 const sample: Progress = {
@@ -75,7 +75,7 @@ function RunBar() {
       title={!running ? 'Chưa chạy'
         : counting ? `Bắt đầu sau ${engine.countdown} giây…`
         : !p ? 'Đang bắt đầu…'
-        : `${p.break ? `Dừng trước ${BREAK_LABEL[p.break]} · ` : p.pausedBy === 'touch' && paused ? 'Bạn vừa đụng chuột – đã tạm dừng · ' : paused ? 'Tạm dừng · ' : ''}${progressNode(p, steps)}`}
+        : `${p.break ? `Dừng trước ${BREAK_LABEL[p.break]} · ` : p.pausedBy === 'touch' && paused ? 'Bạn vừa đụng chuột – đã tạm dừng · ' : paused ? 'Tạm dừng · ' : ''}${progressNode(p, engine.foreign ? progressSteps(p) : steps)}`}
       lines={[
         ...(p?.counter || p?.retry ? [[p.counter && counterText(p.counter), p.retry && `thử lại ${p.retry} / ${p.retries}`].filter(Boolean).join('   ')] : []),
         ...(w ? [w.kind === 'time' ? `chờ đến giờ – còn ${fmtCountdown(w.timeoutMs - waitNow)}`

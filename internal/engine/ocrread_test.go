@@ -12,12 +12,13 @@ import (
 	"ghosthand/internal/vision"
 )
 
-func runOcrRead(t *testing.T, frames []image.Image, reads [][]vision.TextLine) model.StepResult {
+func runOcrRead(t *testing.T, frames []image.Image, reads [][]vision.TextLine, wins ...model.WindowInfo) model.StepResult {
 	t.Helper()
 	s := modeltest.Step(model.StepOcrRead, func(s *model.Step) { s.IntervalMs, s.TimeoutMs = 1, 200 })
 	sc := model.Script{Loops: 1, Region: &model.Rect{X: 0, Y: 0, W: 400, H: 300}, Steps: []model.Step{s}}
 	e := newEngine(&devicetest.FakeInput{}, scripttest.Linear(sc), nil)
 	e.scr, e.ocr = &fakeScreen{frames: frames}, &fakeOCR{reads: reads}
+	e.wins = &devicetest.FakeWindows{Wins: wins}
 	var res model.StepResult
 	e.onNode = func(r model.StepResult) { res = r }
 	_ = e.Run(context.Background())
@@ -45,5 +46,16 @@ func TestOcrReadNoTextFails(t *testing.T) {
 	res := runOcrRead(t, []image.Image{spinFrame(0)}, [][]vision.TextLine{{}})
 	if res.Status != model.StatusFail || res.Error == nil || res.Error.Code != model.ErrNotFound {
 		t.Fatalf("muốn not_found: %s %+v", res.Status, res.Error)
+	}
+}
+
+// Thanh mini của app đè lên vùng đọc (ảnh chụp có cả cửa sổ app) – chữ trên nó không lẫn vào kết quả.
+func TestOcrReadSkipsOwnWindow(t *testing.T) {
+	mini := model.WindowInfo{ID: 5, Title: "Ghosthand", PID: selfPID, Box: model.Rect{X: 0, Y: 0, W: 400, H: 40}}
+	res := runOcrRead(t, []image.Image{spinFrame(0)}, [][]vision.TextLine{
+		{line("n3 · Đi tới URL", 10, 5, 150, 20), line("Dừng F8", 300, 5, 60, 20), line("THẤT BẠI", 10, 100, 120, 30)},
+	}, mini)
+	if res.Output["text"] != "THẤT BẠI" {
+		t.Errorf("output %v", res.Output)
 	}
 }

@@ -41,7 +41,7 @@ func (f *fakeBackend) Wait(ctx context.Context, id string) error {
 	return err
 }
 func (f *fakeBackend) Trace(id string) (session.Trace, error) { return f.sess.Trace(id) }
-func (f *fakeBackend) Stop(id string) bool                    { return f.sess.Stop(id) }
+func (f *fakeBackend) Stop(id string) bool                    { return f.sess.Stop(id, session.StopByAI) }
 func (f *fakeBackend) Capture(r model.Rect) (image.Image, error) {
 	return image.NewRGBA(image.Rect(0, 0, r.W, r.H)), nil
 }

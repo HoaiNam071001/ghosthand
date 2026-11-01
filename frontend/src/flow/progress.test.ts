@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { makeStep } from '../types';
-import { counterText, progressNode } from './progress';
+import { counterText, isForeignRun, progressNode, progressSteps } from './progress';
 
 describe('progressNode', () => {
   const steps = [
@@ -24,5 +24,21 @@ describe('progressNode', () => {
 
   it('lượt Đếm', () => {
     expect(counterText({ ref: 'n5', count: 3, max: 10 })).toBe('lượt n5 3 / 10');
+  });
+});
+
+describe('lần chạy của kịch bản khác', () => {
+  it('isForeignRun: người dùng bấm Chạy / cùng file = của editor; kịch bản tạm / file khác = khác', () => {
+    expect(isForeignRun('user', '', '/a.json')).toBe(false);
+    expect(isForeignRun('ai', '/a.json', '/a.json')).toBe(false);
+    expect(isForeignRun('ai', '', '/a.json')).toBe(true);
+    expect(isForeignRun('ai', '', undefined)).toBe(true);
+    expect(isForeignRun('api', '/b.json', '/a.json')).toBe(true);
+  });
+
+  it('progressSteps: tên node lấy từ tiến độ, không tra kịch bản đang mở', () => {
+    expect(progressNode({ nodeId: 's3', ref: 'n3' }, progressSteps({ nodeId: 's3', ref: 'n3', type: 'ocrRead' }))).toBe('n3 · Đọc chữ vùng');
+    expect(progressNode({ nodeId: 's3', ref: 'n3' }, progressSteps({ nodeId: 's3', ref: 'n3', type: 'click', name: 'Bấm Gửi' }))).toBe('n3 · Bấm Gửi');
+    expect(progressSteps({ nodeId: 's3', ref: 'n3' })).toEqual([]);
   });
 });

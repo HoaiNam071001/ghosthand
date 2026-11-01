@@ -2,6 +2,7 @@ package engine
 
 import (
 	"context"
+	"os"
 	"strings"
 	"time"
 
@@ -38,10 +39,14 @@ func (e *Engine) actionOutput(s model.Step, wait int) map[string]any {
 	return nil
 }
 
-// foreground – cửa sổ đang ở trước: cửa sổ không thu nhỏ đầu tiên theo thứ tự chồng (device.Windows.List).
+// selfPID – cửa sổ của chính app (thanh mini luôn nổi trên cùng lúc chạy) không tính là cửa sổ đang ở trước / mới mở.
+// Windows đã bỏ sẵn ở device.List; macOS còn liệt kê (AI chụp được cửa sổ Ghosthand).
+var selfPID = os.Getpid()
+
+// foreground – cửa sổ đang ở trước: cửa sổ không thu nhỏ đầu tiên theo thứ tự chồng (device.Windows.List), bỏ cửa sổ của app.
 func foreground(ws []model.WindowInfo) (model.WindowInfo, bool) {
 	for _, w := range ws {
-		if !w.Minimized {
+		if !w.Minimized && w.PID != selfPID {
 			return w, true
 		}
 	}
@@ -112,7 +117,7 @@ func (e *Engine) openStep(ctx context.Context, s model.Step, wait int) (map[stri
 // newWindow – cửa sổ trên cùng không thu nhỏ chưa có trong known.
 func newWindow(ws []model.WindowInfo, known map[uint64]bool) (model.WindowInfo, bool) {
 	for _, w := range ws {
-		if !known[w.ID] && !w.Minimized {
+		if !known[w.ID] && !w.Minimized && w.PID != selfPID {
 			return w, true
 		}
 	}

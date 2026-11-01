@@ -225,6 +225,7 @@ func (e *Engine) execNode(ctx context.Context, s model.Step, loop int) (res mode
 		res.Attempts = t
 		e.update(true, func(p *Progress) {
 			p.Loop, p.Step, p.NodeID, p.Ref, p.Retry, p.Retries = loop, e.order[s.ID], s.ID, s.Ref, t-1, tries-1
+			p.Type, p.Name = s.Type, s.Name
 		})
 		var rs model.Step
 		if rs, err = resolveNodeVars(s, e.rv); err == nil {

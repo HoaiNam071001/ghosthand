@@ -42,7 +42,7 @@ func (a *App) RunScript(sc model.Script, values map[string]any, opt session.Opti
 }
 
 // StopScript dừng kịch bản đang chạy (không làm gì nếu đang không chạy).
-func (a *App) StopScript() { a.sess.Stop("") }
+func (a *App) StopScript() { a.sess.Stop("", session.StopByButton) }
 
 // PauseScript tạm dừng trước bước / lần click kế tiếp. Trả false nếu không có gì để tạm dừng.
 func (a *App) PauseScript() bool { return a.sess.Pause() }

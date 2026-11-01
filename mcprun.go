@@ -122,7 +122,7 @@ func (a *App) stopAIRun(m store.MCPSettings) {
 		return
 	}
 	if st, err := a.sess.Status(""); err == nil && !st.Done() && st.Source == session.SourceAI {
-		a.sess.Stop(st.RunID)
+		a.sess.Stop(st.RunID, session.StopBySettings)
 	}
 	a.ai.mu.Lock()
 	clear(a.ai.allowed)
@@ -155,7 +155,7 @@ func (b mcpBackend) Wait(ctx context.Context, id string) error {
 	return err
 }
 func (b mcpBackend) Trace(id string) (session.Trace, error) { return b.a.sess.Trace(id) }
-func (b mcpBackend) Stop(id string) bool                    { return b.a.sess.Stop(id) }
+func (b mcpBackend) Stop(id string) bool                    { return b.a.sess.Stop(id, session.StopByAI) }
 
 // Capture – chụp vùng r; cửa sổ app đang ở màn chính thì vẫn chụp như người dùng thấy (không ẩn – AI cần thấy cả app).
 func (b mcpBackend) Capture(r model.Rect) (image.Image, error) {

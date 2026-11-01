@@ -70,6 +70,9 @@ var subroleRoles = map[string]string{
 	"AXSearchField": "searchbox", "AXSecureTextField": "textbox", "AXSwitch": "switch", "AXTabButton": "tab",
 	"AXDialog": "dialog", "AXSystemDialog": "dialog", "AXCloseButton": "button", "AXMinimizeButton": "button",
 	"AXZoomButton": "button", "AXFullScreenButton": "button",
+	// ARIA trên trang web (Chrome / Safari): role="dialog" | "alertdialog" | "alert" | "status" thành AXGroup + subrole này
+	"AXApplicationDialog": "dialog", "AXApplicationAlertDialog": "alertdialog", "AXApplicationAlert": "alert",
+	"AXApplicationStatus": "status",
 }
 
 // axRoles – role macOS → vai trò kiểu web (cùng tên với IMPLICIT của web/common.js để role= viết như nhau).

@@ -32,7 +32,7 @@ func (e *Engine) readArea(area model.Rect) ([]vision.TextLine, error) {
 	}
 	h := vision.PixelHash(img)
 	if m, ok := e.ocrMemo[area]; ok && m.hash == h {
-		return m.lines, nil
+		return e.dropSelfLines(m.lines), nil
 	}
 	lines, err := e.ocr.ReadText(img)
 	if err != nil {
@@ -52,7 +52,49 @@ func (e *Engine) readArea(area model.Rect) ([]vision.TextLine, error) {
 		e.ocrMemo = map[model.Rect]ocrMemo{}
 	}
 	e.ocrMemo[area] = ocrMemo{h, out}
-	return out, nil
+	return e.dropSelfLines(out), nil
+}
+
+// selfBoxes – khung cửa sổ của chính app đang hiện (thanh mini lúc chạy). Ảnh chụp có cả cửa sổ app (quyết định
+// 2026-10-28) nên chữ đọc trong vùng phải bỏ phần nằm trên thanh mini – không thì Đọc chữ vùng lẫn "Dừng F8", tên node.
+func (e *Engine) selfBoxes() []model.Rect {
+	ws, err := e.wins.List()
+	if err != nil {
+		return nil
+	}
+	var out []model.Rect
+	for _, w := range ws {
+		if w.PID == selfPID && !w.Minimized {
+			out = append(out, w.Box)
+		}
+	}
+	return out
+}
+
+// inBoxes – tâm của b nằm trong một khung của bs.
+func inBoxes(b model.Rect, bs []model.Rect) bool {
+	cx, cy := b.X+b.W/2, b.Y+b.H/2
+	for _, r := range bs {
+		if cx >= r.X && cx < r.X+r.W && cy >= r.Y && cy < r.Y+r.H {
+			return true
+		}
+	}
+	return false
+}
+
+// dropSelfLines – bỏ dòng chữ (toạ độ màn hình) nằm trên cửa sổ của app.
+func (e *Engine) dropSelfLines(lines []vision.TextLine) []vision.TextLine {
+	self := e.selfBoxes()
+	if len(self) == 0 {
+		return lines
+	}
+	out := make([]vision.TextLine, 0, len(lines))
+	for _, l := range lines {
+		if !inBoxes(l.Box, self) {
+			out = append(out, l)
+		}
+	}
+	return out
 }
 
 // displayOf – khung màn chứa điểm p (zero = không biết màn – không kẹp vùng chụp).

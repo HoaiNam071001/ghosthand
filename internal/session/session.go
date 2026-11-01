@@ -30,10 +30,14 @@ const (
 	SourceAI       = "ai"
 )
 
-// Lý do dừng gửi kèm event "engine:stopped".
+// Lý do dừng (Status.StoppedBy); f8 / corner còn gửi kèm event "engine:stopped".
 const (
-	StopByF8     = "f8"
-	StopByCorner = "corner"
+	StopByF8       = "f8"
+	StopByCorner   = "corner"
+	StopByButton   = "button"   // nút Dừng trên app / thanh mini
+	StopByAI       = "ai"       // AI gọi stop_run
+	StopByAPI      = "api"      // chương trình khác gọi /stop
+	StopBySettings = "settings" // công tắc AI về Tắt / Chỉ soạn giữa lượt AI
 )
 
 // Trạng thái phiên (Status.State).
@@ -94,6 +98,7 @@ type Status struct {
 	FailedStep string           `json:"failedStep,omitempty"` // node làm lần chạy dừng vì lỗi
 	Reached    bool             `json:"reached,omitempty"`    // dừng vì đã chạy xong node StopAt
 	TimedOut   bool             `json:"timedOut,omitempty"`   // dừng vì hết thời gian tối đa (kịch bản / trần mỗi lượt AI)
+	StoppedBy  string           `json:"stoppedBy,omitempty"`  // ai dừng: StopBy* ("" = không rõ)
 }
 
 // Done – phiên đã kết thúc (thành công / lỗi / bị dừng).
@@ -296,12 +301,16 @@ func (m *Manager) Running() string {
 	return m.cur.status.RunID
 }
 
-// Stop dừng phiên id ("" = phiên đang chạy). Trả false nếu id không phải phiên đang chạy.
-func (m *Manager) Stop(id string) bool {
+// Stop dừng phiên id ("" = phiên đang chạy), by = ai dừng (StopBy*, ghi vào Status). Trả false nếu id không phải
+// phiên đang chạy.
+func (m *Manager) Stop(id, by string) bool {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	if m.cur == nil || (id != "" && m.cur.status.RunID != id) {
 		return false
+	}
+	if m.cur.status.StoppedBy == "" {
+		m.cur.status.StoppedBy = by
 	}
 	m.cur.cancel()
 	return true
@@ -313,7 +322,7 @@ func (m *Manager) StopWith(reason string) {
 		return
 	}
 	m.emit("engine:stopped", reason)
-	m.Stop("")
+	m.Stop("", reason)
 }
 
 // Pause / StepNext / Resume điều khiển phiên đang chạy; false nếu không có gì đang chạy.

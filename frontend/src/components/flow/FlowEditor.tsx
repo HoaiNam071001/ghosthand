@@ -36,7 +36,7 @@ const layoutOf = (sc: Script) => layoutFlow(sc.steps.map((s) => ({ id: s.id, por
 
 export default function FlowEditor() {
   const { script, selected, picked, path } = useEditor();
-  const { running, progress, failedStep } = useEngine();
+  const { running, progress, failedStep, foreign } = useEngine();
   const log = useRunLog();
   const [palette, setPalette] = useState(false);
   const [fitKey, setFitKey] = useState(0);
@@ -47,10 +47,10 @@ export default function FlowEditor() {
   // Trạng thái chạy trên thẻ + cạnh đã đi: từ nhật ký lần đang xem (đóng nhật ký thì thôi tô).
   // failedStep: lỗi không gắn với kết quả node nào (vd lặp quá 10 000 node) vẫn tô đỏ node đó.
   const trace = useMemo(() => {
-    const t = runTrace(log.open ? log.results : [], script.edges, running ? progress?.nodeId : undefined);
+    const t = runTrace(log.open ? log.results : [], script.edges, running && !foreign ? progress?.nodeId : undefined);
     if (log.open && failedStep && !t.nodes.has(failedStep)) t.nodes.set(failedStep, { run: 'fail' });
     return t;
-  }, [log.open, log.results, script.edges, running, progress?.nodeId, failedStep]);
+  }, [log.open, log.results, script.edges, running, foreign, progress?.nodeId, failedStep]);
   const { items: permItems } = usePerms();
   const views = useMemo(() => nodeViews(script, { inputs: (id) => stepInputCount(script, id), run: trace.nodes, pinned: (id) => id in pins }).map((v) => {
     const step = script.steps.find((s) => s.id === v.id);

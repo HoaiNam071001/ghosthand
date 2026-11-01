@@ -90,6 +90,8 @@ func TestRoleFromAX(t *testing.T) {
 		{"AXRadioButton", "AXTabButton"}:     "tab",
 		{"AXGroup", ""}:                      "group",
 		{"AXScrollArea", ""}:                 "scrollarea",
+		{"AXGroup", "AXApplicationDialog"}:   "dialog", // Chrome: <div role="dialog">
+		{"AXGroup", "AXApplicationAlert"}:    "alert",
 	}
 	for in, want := range cases {
 		if got := RoleFromAX(in[0], in[1]); got != want {

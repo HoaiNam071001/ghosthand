@@ -87,6 +87,17 @@ func traceView(tr session.Trace, sc model.Script, shotW map[string]int) map[stri
 	return v
 }
 
+// stoppedByText – ai dừng lần chạy (session.StopBy*); "" = không rõ.
+var stoppedByText = map[string]string{
+	session.StopByF8:       "người dùng bấm F8 – đừng chạy lại, hỏi người dùng",
+	session.StopByCorner:   "người dùng rê chuột vào góc màn hình (dừng khẩn cấp) – đừng chạy lại, hỏi người dùng",
+	session.StopByButton:   "người dùng bấm Dừng – đừng chạy lại, hỏi người dùng",
+	session.StopByAI:       "do stop_run",
+	session.StopByAPI:      "chương trình khác gọi API dừng",
+	session.StopBySettings: "người dùng tắt quyền chạy của AI trong Cài đặt – đừng chạy lại",
+	"":                     "không rõ ai dừng",
+}
+
 // nextHint – việc AI nên làm tiếp.
 func nextHint(tr session.Trace) string {
 	switch {
@@ -97,7 +108,7 @@ func nextHint(tr session.Trace) string {
 	case tr.State == session.StateFail && tr.FailedStep != "":
 		return "node " + tr.FailedStep + " lỗi: đọc error.detail / ảnh, sửa bằng update_script rồi resume_run (chạy tiếp từ node đó, giữ biến node trước)"
 	case tr.State == session.StateStopped:
-		return "đã dừng (người dùng / F8 / stop_run)"
+		return "đã dừng – " + stoppedByText[tr.StoppedBy]
 	case tr.TimedOut:
 		return "dừng vì hết thời gian tối đa (maxMinutes của kịch bản hoặc trần mỗi lượt AI trong Cài đặt) – chưa chắc đã chạy hết; resume_run from node kế nếu cần"
 	case tr.Reached:

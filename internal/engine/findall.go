@@ -65,9 +65,12 @@ func (e *Engine) textAll(s model.Step, area model.Rect) ([]hit, []string, error)
 	if len(found) == 0 {
 		return nil, vision.TextLines(lines, 40), nil
 	}
-	hits := make([]hit, len(found))
-	for i, f := range found {
-		hits[i] = hit{Box: screenBox(f.Box, area, k), Score: 100, Text: f.Line}
+	self := e.selfBoxes() // chữ trên thanh mini của app không tính (elementread.go selfBoxes)
+	hits := make([]hit, 0, len(found))
+	for _, f := range found {
+		if b := screenBox(f.Box, area, k); !inBoxes(b, self) {
+			hits = append(hits, hit{Box: b, Score: 100, Text: f.Line})
+		}
 	}
 	return hits, nil, nil
 }

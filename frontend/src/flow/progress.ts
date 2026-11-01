@@ -1,7 +1,7 @@
 // Chữ thanh mini theo tiến độ engine (Progress – internal/engine/engine.go): node đang chạy, node trước + cổng đã đi,
 // lượt node Đếm. Hàm thuần – MiniBar gọi, test ở progress.test.ts.
 import type { Progress } from '../engineStore';
-import { stepLabel, type Step } from '../types';
+import { makeStep, stepLabel, type Step, type StepType } from '../types';
 import { PORT_SUCCESS } from './model';
 import { portView } from './view';
 
@@ -17,5 +17,14 @@ export function progressNode(p: Pick<Progress, 'nodeId' | 'ref' | 'from'>, steps
   const from = steps.find((s) => s.ref === f.ref);
   return `${f.ref}${from ? ` · ${nameOf(from)}` : ''} · ${portView(f.port, from).label} → ${node}`;
 }
+
+// Lần chạy không phải của kịch bản đang mở (AI / API chạy kịch bản tạm hoặc file khác): id node không ứng với editor –
+// không tô canvas / nhật ký, thanh mini lấy tên node từ chính tiến độ. Người dùng bấm Chạy luôn là kịch bản đang mở.
+export const isForeignRun = (source: string, runPath: string | undefined, editorPath: string | null | undefined) =>
+  source !== 'user' && (!runPath || runPath !== (editorPath ?? ''));
+
+// Node đang chạy dựng từ tiến độ (Go gửi kèm loại + tên) – cho progressNode khi lần chạy là của kịch bản khác.
+export const progressSteps = (p: Pick<Progress, 'nodeId' | 'ref' | 'type' | 'name'>): Step[] =>
+  p.nodeId && p.type ? [makeStep({ id: p.nodeId, ref: p.ref, type: p.type as StepType, name: p.name })] : [];
 
 export const counterText = (c: NonNullable<Progress['counter']>) => `lượt ${c.ref} ${c.count} / ${c.max}`;

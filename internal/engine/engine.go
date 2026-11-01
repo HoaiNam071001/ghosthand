@@ -37,6 +37,8 @@ type Progress struct {
 	Total     int           `json:"total"` // số node đang bật
 	NodeID    string        `json:"nodeId,omitempty"`
 	Ref       string        `json:"ref,omitempty"`
+	Type      string        `json:"type,omitempty"` // loại + tên node đang chạy – thanh mini hiện được tên khi kịch bản chạy không phải kịch bản đang mở
+	Name      string        `json:"name,omitempty"`
 	Clicks    int           `json:"clicks"`
 	ElapsedMs int64         `json:"elapsedMs"` // không tính thời gian tạm dừng
 	Paused    bool          `json:"paused"`

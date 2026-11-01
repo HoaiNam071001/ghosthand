@@ -306,6 +306,8 @@ export namespace engine {
 	    total: number;
 	    nodeId?: string;
 	    ref?: string;
+	    type?: string;
+	    name?: string;
 	    clicks: number;
 	    elapsedMs: number;
 	    paused: boolean;
@@ -329,6 +331,8 @@ export namespace engine {
 	        this.total = source["total"];
 	        this.nodeId = source["nodeId"];
 	        this.ref = source["ref"];
+	        this.type = source["type"];
+	        this.name = source["name"];
 	        this.clicks = source["clicks"];
 	        this.elapsedMs = source["elapsedMs"];
 	        this.paused = source["paused"];
@@ -2221,6 +2225,7 @@ export namespace session {
 	    failedStep?: string;
 	    reached?: boolean;
 	    timedOut?: boolean;
+	    stoppedBy?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Status(source);
@@ -2241,6 +2246,7 @@ export namespace session {
 	        this.failedStep = source["failedStep"];
 	        this.reached = source["reached"];
 	        this.timedOut = source["timedOut"];
+	        this.stoppedBy = source["stoppedBy"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

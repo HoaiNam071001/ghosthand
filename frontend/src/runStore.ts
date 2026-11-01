@@ -4,6 +4,7 @@ import { useSyncExternalStore } from 'react';
 import { ClearRuns, DeleteRun, GetRun, ListRuns, RunShot, RunStats as LoadRunStats } from '../wailsjs/go/main/App';
 import { EventsOn } from '../wailsjs/runtime/runtime';
 import { getEditor, subscribe } from './store';
+import { isForeign } from './engineStore';
 import { inWails } from './windowMode';
 import type { StepResult } from './types';
 import type { RunStats } from './components/library/runs';
@@ -100,16 +101,18 @@ function watchEditor() {
 
 if (inWails) {
   subscribe(watchEditor);
+  // Lần chạy của kịch bản khác (AI chạy kịch bản tạm…): id node không khớp editor – không đưa vào nhật ký / canvas.
   EventsOn('engine:state', (running: boolean) => {
-    if (running) set({ results: [], summary: null, live: true, open: true, owner: ownerNow() });
+    if (running && !isForeign()) set({ results: [], summary: null, live: true, open: true, owner: ownerNow() });
   });
   EventsOn('engine:node', (r: StepResult) => {
+    if (isForeign()) return;
     const results = state.results.length >= MAX_RESULTS ? state.results.slice(1) : state.results.slice();
     results.push(r);
     set({ results });
   });
   EventsOn('engine:done', (summary: RunSummary) => {
-    set({ summary });
+    if (!isForeign()) set({ summary });
     loadHistory();
   });
 }

@@ -147,7 +147,7 @@ Dừng / tạm dừng: `StopScript` (huỷ ctx), `PauseScript` / `ResumeScript` 
 |---|---|---|
 | `engine:state` | bool | engineStore, runStore |
 | `engine:countdown` | số giây | engineStore |
-| `engine:progress` | `Progress` (vòng, node, thử lại, tạm dừng, thời gian, node trước + cổng đã đi `from`, lượt Đếm / phần tử thứ mấy của Lặp qua danh sách `counter`) | engineStore → MiniBar (`flow/progress.ts`) |
+| `engine:progress` | `Progress` (vòng, node + loại / tên node, thử lại, tạm dừng, thời gian, node trước + cổng đã đi `from`, lượt Đếm / phần tử thứ mấy của Lặp qua danh sách `counter`) | engineStore → MiniBar (`flow/progress.ts`) |
 | `engine:node` | `StepResult` | runStore |
 | `engine:done` | `RunSummary` | runStore |
 | `engine:failed` | `{stepId, miss?}` | engineStore, imageSteps |
@@ -155,7 +155,7 @@ Dừng / tạm dừng: `StopScript` (huỷ ctx), `PauseScript` / `ResumeScript` 
 | `hotkey:f8start` / `hotkey:f6` / `hotkey:error` | – / `Point` / chuỗi | runForm / store/points / engineStore |
 | `record:done` | – | store/record (gọi `FinishRecording`) |
 | `app:confirmClose` | – | scriptFile |
-| `run:started` / `run:ended` | `{runId, source, script, path, preset}` / `session.Status` | engineStore (nguồn ngoài app → thanh mini) |
+| `run:started` / `run:ended` | `{runId, source, script, path, preset}` / `session.Status` (`stoppedBy`: f8 · corner · button · ai · api · settings) | engineStore (nguồn ngoài app → thanh mini; path khác kịch bản đang mở / kịch bản tạm → `foreign`: không tô canvas / nhật ký) |
 | `script:changed` | `{path, revision, source}` | scriptFile (nạp lại, làm mới Mở gần đây) |
 | `mcp:open` | `path` | scriptFile (AI gọi `open_in_app` → mở như Mở gần đây) |
 | `mcp:nodePref` | `vision` | `web` | scriptFile (thông báo “AI đổi ưu tiên node”), AppSettings (cập nhật khi đang mở) |
