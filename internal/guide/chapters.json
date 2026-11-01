@@ -303,7 +303,7 @@
     "title": "MCP server",
     "summary": "Thêm server MCP ngoài (đọc file, GitHub, Sheets…) cho node Gọi tool MCP.",
     "blocks": [
-      { "kind": "p", "text": "Thêm server MCP ngoài (kiểu Chạy lệnh, HTTP hoặc SSE), xem trạng thái kết nối, bấm Tải lại để đọc danh sách tool, Tắt / Xoá khi không dùng. Kiểu Chạy lệnh chạy lệnh đó trên máy bạn nên lần đầu app hỏi có tin cấu hình không (đổi lệnh thì hỏi lại). Nút Thư viện có sẵn vài server gợi ý (Filesystem, Fetch, GitHub…) – Thêm sẽ điền sẵn form để bạn xem lại rồi Lưu; cần Node.js (npx) hoặc uv (uvx) trên máy. Token chỉ ghi dạng `{{secret.<tên>}}` (tab Bí mật). Dùng tool trong kịch bản bằng node Gọi tool MCP; AI qua MCP không thêm / sửa server." }
+      { "kind": "p", "text": "Thêm server MCP ngoài (kiểu Chạy lệnh, HTTP hoặc SSE), xem trạng thái kết nối, bấm Tải lại để đọc danh sách tool, Tắt / Xoá khi không dùng. Kiểu Chạy lệnh chạy lệnh đó trên máy bạn nên lần đầu app hỏi có tin cấu hình không (đổi lệnh thì hỏi lại). Nút Thư viện có sẵn server gợi ý chia theo nhóm (tệp – Filesystem, Git; web – Fetch, Exa, Brave Search, Tavily, Firecrawl; công việc – GitHub, Notion, Airtable; AI – Hugging Face, Context7…), có ô tìm – Thêm sẽ điền sẵn form để bạn xem lại rồi Lưu; cần Node.js (npx) hoặc uv (uvx) trên máy, server cần key ghi sẵn tên bí mật phải tạo. Token chỉ ghi dạng `{{secret.<tên>}}` (tab Bí mật). Dùng tool trong kịch bản bằng node Gọi tool MCP; AI qua MCP không thêm / sửa server." }
     ]
   },
   {

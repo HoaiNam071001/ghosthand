@@ -20,12 +20,22 @@ func TestEntriesAreValidServers(t *testing.T) {
 		for _, p := range e.Params {
 			vals[p.Key] = "/tmp/x"
 		}
-		s := store.MCPServer{ID: e.ID, Name: e.Name, Kind: e.Kind, Command: e.Command, URL: mcplib.Fill(e.URL, vals), Headers: e.Headers, Enabled: true}
+		s := store.MCPServer{ID: e.ID, Name: e.Name, Kind: e.Kind, Command: e.Command, URL: mcplib.Fill(e.URL, vals), Env: e.Env, Headers: e.Headers, Enabled: true}
 		for _, a := range e.Args {
 			s.Args = append(s.Args, mcplib.Fill(a, vals))
 		}
 		if err := s.Check(); err != nil {
 			t.Errorf("%s: %v", e.ID, err)
+		}
+		if e.Group == "" {
+			t.Errorf("%s: thiếu nhóm", e.ID)
+		}
+		for _, m := range []map[string]string{e.Env, e.Headers} {
+			for _, v := range m {
+				if !secretListed(v, e.Secrets) {
+					t.Errorf("%s: %q dùng bí mật không có trong Secrets", e.ID, v)
+				}
+			}
 		}
 		for _, a := range s.Args {
 			if strings.Contains(a, "${") {
@@ -54,4 +64,13 @@ func TestAvailability(t *testing.T) {
 			}
 		}
 	}
+}
+
+func secretListed(v string, names []string) bool {
+	for _, n := range names {
+		if strings.Contains(v, "{{secret."+n+"}}") {
+			return true
+		}
+	}
+	return false
 }

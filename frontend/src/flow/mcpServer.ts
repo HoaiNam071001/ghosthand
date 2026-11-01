@@ -37,12 +37,29 @@ export function statusText(st?: { state?: string; tools?: unknown[]; err?: strin
 }
 
 // Thư viện gợi ý (M6): thay ${key} bằng giá trị người dùng điền → các ô của form thêm server (khớp mcplib.Fill).
-type LibEntry = { name: string; kind: string; command?: string; args?: string[]; url?: string; headers?: Record<string, string> };
+type LibEntry = { name: string; kind: string; command?: string; args?: string[]; url?: string; env?: Record<string, string>; headers?: Record<string, string> };
 const fillParams = (s: string, v: Record<string, string>) => Object.entries(v).reduce((acc, [k, val]) => acc.split('${' + k + '}').join(val), s);
 
 export function libraryFields(e: LibEntry, values: Record<string, string>) {
   return {
     name: e.name, kind: e.kind, command: e.command ?? '', args: joinArgs((e.args ?? []).map((a) => fillParams(a, values))),
-    env: '', url: fillParams(e.url ?? '', values), headers: formatPairs(e.headers, ':'),
+    env: formatPairs(e.env, '='), url: fillParams(e.url ?? '', values), headers: formatPairs(e.headers, ':'),
   };
+}
+
+// Thư viện chia nhóm theo thứ tự xuất hiện (mcplib/library.go); query lọc theo tên / mô tả, không phân biệt hoa thường, dấu.
+type Groupable = { group?: string; name: string; desc: string };
+const fold = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase();
+
+export function groupLibrary<T extends Groupable>(entries: T[], query: string): { group: string; items: T[] }[] {
+  const q = fold(query.trim());
+  const out: { group: string; items: T[] }[] = [];
+  for (const e of entries) {
+    if (q && !fold(`${e.name} ${e.desc}`).includes(q)) continue;
+    const g = e.group || 'Khác';
+    const hit = out.find((x) => x.group === g);
+    if (hit) hit.items.push(e);
+    else out.push({ group: g, items: [e] });
+  }
+  return out;
 }

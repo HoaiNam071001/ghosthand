@@ -239,7 +239,7 @@ Dừng / tạm dừng: `StopScript` (huỷ ctx), `PauseScript` / `ResumeScript` 
 
 `internal/secrets` – `secrets.go` (`Backend`, `Store`: chỉ mục tên + `Resolve`), `keychain_darwin.go` (cgo Security), `keychain_windows.go` (Credential Manager), `keychain_other.go`; `store.Secrets()` là bản dùng chung; engine che giá trị ở `engine/mask.go`, session lấy bí mật kịch bản dùng ở `secretsFor`.
 
-`internal/mcplib` – thư viện MCP server gợi ý (55 M6): `mcplib.go` (`Entry`, `Entries` kèm máy có npx / uvx chưa, `Fill`); test kiểm mọi mục là cấu hình `store.MCPServer` hợp lệ. UI: `settings/McpLibrary.tsx`.
+`internal/mcplib` – thư viện MCP server gợi ý (55 M6): `mcplib.go` (`Entry` – nhóm, env / header chỉ `{{secret.*}}`, `Entries` kèm máy có npx / uvx chưa, `Fill`), `library.go` (danh sách chọn tay – thêm server ở đây); test kiểm mọi mục là cấu hình `store.MCPServer` hợp lệ. UI: `settings/McpLibrary.tsx` (nhóm + ô tìm – `groupLibrary` ở `flow/mcpServer.ts`).
 
 `internal/mcpclient` – app làm MCP client (55): `mcpclient.go` (`Config`, `Client`, `Tool`, `Result`, `Dial` stdio / HTTP / SSE, lỗi có mã), `manager.go` (`Manager` – nối lười, dùng lại, nối lại khi đổi cấu hình / lỗi, `CloseAll`), `proc_*.go` (ẩn console Windows), `mcpclienttest/fake.go` (server SDK trong bộ nhớ). Kết quả tool chỉ là dữ liệu.
 

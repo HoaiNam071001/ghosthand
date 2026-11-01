@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatPairs, joinArgs, libraryFields, parsePairs, splitArgs, statusText } from './mcpServer';
+import { formatPairs, groupLibrary, joinArgs, libraryFields, parsePairs, splitArgs, statusText } from './mcpServer';
 
 describe('args', () => {
   it('tách theo khoảng trắng, nháy kép gom lại', () => {
@@ -35,5 +35,22 @@ describe('libraryFields', () => {
     expect(f.args).toBe('-y pkg "/My Docs"');
     expect(libraryFields({ name: 'GH', kind: 'http', url: 'https://x/mcp/', headers: { Authorization: 'Bearer {{secret.t}}' } }, {}).headers)
       .toBe('Authorization: Bearer {{secret.t}}');
+    expect(libraryFields({ name: 'B', kind: 'stdio', env: { BRAVE_API_KEY: '{{secret.b}}' } }, {}).env).toBe('BRAVE_API_KEY={{secret.b}}');
+  });
+});
+
+describe('groupLibrary', () => {
+  const lib = [
+    { group: 'Web', name: 'Fetch', desc: 'Tải trang' },
+    { group: 'Tệp', name: 'Git', desc: 'Lịch sử repo' },
+    { group: 'Web', name: 'Exa', desc: 'Tìm kiếm web' },
+  ];
+  it('giữ thứ tự nhóm theo mục đầu tiên', () => {
+    expect(groupLibrary(lib, '').map((g) => [g.group, g.items.map((e) => e.name)])).toEqual([['Web', ['Fetch', 'Exa']], ['Tệp', ['Git']]]);
+  });
+  it('lọc theo tên / mô tả, bỏ dấu', () => {
+    expect(groupLibrary(lib, 'tim kiem').flatMap((g) => g.items.map((e) => e.name))).toEqual(['Exa']);
+    expect(groupLibrary(lib, 'LICH SU')[0].items[0].name).toBe('Git');
+    expect(groupLibrary(lib, 'không có')).toEqual([]);
   });
 });

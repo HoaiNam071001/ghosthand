@@ -33,6 +33,7 @@ Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi t
 - [ ] Mẫu *Gọi tool MCP*: thêm server `fs` (Filesystem) → chạy → hộp hỏi server → lời kết có nội dung file; chưa có server → node báo “không có server MCP” – *AI chạy thật macOS 2026-11-01 qua MCP: chưa có server → node báo “không có server MCP \"fs\"” (đúng); còn phần thêm server*
 
 - [ ] Cài đặt → MCP server → Thư viện: Filesystem hỏi thư mục → Thêm điền sẵn form → Lưu → Tải lại ra tool; máy không có npx / uvx thì thẻ báo cách cài và nút Thêm tắt; GitHub: thêm bí mật `github_token` rồi Thêm → Tải lại
+- [ ] Thư viện MCP mở rộng (M6b): 5 nhóm có tiêu đề, ô *Tìm server* lọc theo tên / mô tả (gõ không dấu “tim kiem” ra Exa / Brave…); Brave Search: thêm bí mật `brave_api_key` → Thêm → form có dòng env `BRAVE_API_KEY={{secret.brave_api_key}}` → Lưu → Tải lại ra tool; Exa (từ xa, không key) → Tải lại ra tool; Git hỏi thư mục repo
 - [ ] Node Gọi tool MCP → *Lưu thành node của tôi* (tên + icon) → Ctrl/Cmd+K: mục *Của tôi* có node, thả vào canvas ra node đã điền sẵn server / tool / đối số; Sửa tên / icon, Xoá chạy đúng; mở kịch bản đó ở máy không có server → node báo thiếu server, file vẫn mở
 - [ ] Node Gọi tool MCP: chọn server `fs` → chọn tool `read_text_file` → form hiện ô `path` (có dấu *) → điền → *Chạy thử* hiện nội dung file; tool ghi (vd `write_file`) hỏi quyền; bỏ trống `path` báo “Còn thiếu”; *Sửa JSON* ⇄ *Dùng form* giữ nguyên giá trị
 

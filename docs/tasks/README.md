@@ -116,7 +116,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 > Bảng tự sinh – sau khi tick chạy `python3 scripts/tasks-index.py`. Bấm tên bước để mở file chi tiết.
 
 <!-- index:start -->
-**52 / 66 bước xong code** · 🧪 **[297 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
+**52 / 66 bước xong code** · 🧪 **[298 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
 
 ### Phase 3 – Design v2 & tự động hoá (theo thứ tự làm)
 
@@ -157,7 +157,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 chờ kiểm tra tay | [52. MCP ít token](phase3/52-mcp-it-token.md) | 6 / 6 | [2 việc](checks.md) |
 | ✅ xong | [53. MCP: annotations, nhật ký lệnh AI, chống prompt injection](phase3/53-mcp-hoc-tu-openclaw.md) | 6 / 6 |  |
 | ⬜ chưa làm | [54. Đồng bộ cloud](phase3/54-dong-bo-cloud.md) | 0 / 11 |  |
-| 🧪 chờ kiểm tra tay | [55. MCP client + node tuỳ chỉnh](phase3/55-mcp-client-node-tuy-chinh.md) | 9 / 9 | [5 việc](checks.md) |
+| 🧪 chờ kiểm tra tay | [55. MCP client + node tuỳ chỉnh](phase3/55-mcp-client-node-tuy-chinh.md) | 10 / 10 | [6 việc](checks.md) |
 | ⬜ chưa làm | [56. Học từ MCP ngoài](phase3/56-hoc-tu-mcp-ngoai.md) | 0 / 13 |  |
 | 🧪 chờ kiểm tra tay | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | 12 / 12 | [11 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | 43 / 43 | [33 việc](checks.md) |

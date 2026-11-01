@@ -689,10 +689,12 @@ export namespace mcplib {
 	    id: string;
 	    name: string;
 	    desc: string;
+	    group: string;
 	    kind: string;
 	    command?: string;
 	    args?: string[];
 	    url?: string;
+	    env?: Record<string, string>;
 	    headers?: Record<string, string>;
 	    params?: Param[];
 	    secrets?: string[];
@@ -711,10 +713,12 @@ export namespace mcplib {
 	        this.id = source["id"];
 	        this.name = source["name"];
 	        this.desc = source["desc"];
+	        this.group = source["group"];
 	        this.kind = source["kind"];
 	        this.command = source["command"];
 	        this.args = source["args"];
 	        this.url = source["url"];
+	        this.env = source["env"];
 	        this.headers = source["headers"];
 	        this.params = this.convertValues(source["params"], Param);
 	        this.secrets = source["secrets"];

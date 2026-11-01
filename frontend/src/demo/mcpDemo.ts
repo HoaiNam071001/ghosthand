@@ -10,13 +10,15 @@ export const DEMO_SERVERS = [
 ].map((s) => main.MCPServerView.createFrom(s));
 
 export const DEMO_LIBRARY = [
-  { id: 'filesystem', name: 'Filesystem', desc: 'Đọc / ghi / tìm file trong thư mục bạn cho phép (server mẫu chính thức).', kind: 'stdio', command: 'npx',
+  { id: 'filesystem', group: 'Tệp & tài liệu', name: 'Filesystem', desc: 'Đọc / ghi / tìm file trong thư mục bạn cho phép (server mẫu chính thức).', kind: 'stdio', command: 'npx',
     args: ['-y', '@modelcontextprotocol/server-filesystem', '${dir}'], params: [{ key: 'dir', label: 'Thư mục được phép', placeholder: '/Users/ban/Documents' }],
     warn: 'Tool ghi / xoá file chỉ trong thư mục đã chọn; app hỏi trước mỗi lần.', available: true },
-  { id: 'fetch', name: 'Fetch', desc: 'Tải trang web về dạng chữ / Markdown.', kind: 'stdio', command: 'uvx', args: ['mcp-server-fetch'], available: false,
+  { id: 'fetch', group: 'Web & tìm kiếm', name: 'Fetch', desc: 'Tải trang web về dạng chữ / Markdown.', kind: 'stdio', command: 'uvx', args: ['mcp-server-fetch'], available: false,
     installHint: 'Cần uv (https://docs.astral.sh/uv) – cài xong mở lại Ghosthand.' },
-  { id: 'github', name: 'GitHub', desc: 'Repo, issue, pull request qua server GitHub chính thức (từ xa).', kind: 'http', url: 'https://api.githubcopilot.com/mcp/',
+  { id: 'github', group: 'Dữ liệu & công việc', name: 'GitHub', desc: 'Repo, issue, pull request qua server GitHub chính thức (từ xa).', kind: 'http', url: 'https://api.githubcopilot.com/mcp/',
     secrets: ['github_token'], available: true, thirdParty: false },
+  { id: 'brave-search', group: 'Web & tìm kiếm', name: 'Brave Search', desc: 'Tìm web / tin tức / ảnh / địa điểm qua Brave.', kind: 'stdio', command: 'npx',
+    args: ['-y', '@brave/brave-search-mcp-server'], env: { BRAVE_API_KEY: '{{secret.brave_api_key}}' }, secrets: ['brave_api_key'], available: true },
 ].map((e) => mcplib.Entry.createFrom(e));
 
 export const DEMO_SCHEMA = {
