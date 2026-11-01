@@ -733,6 +733,7 @@
     ],
     "tips": [
       "Sau node Mở nên có node Chờ (ảnh / chữ / [[node:waitScreen]]) trước khi bấm.",
+      "Cửa sổ vừa mở (hoặc cửa sổ của app đã mở sẵn) được đưa lên trước – node gõ / bấm sau đó vào đúng app.",
       "Muốn tab này đóng lại được về sau: nối [[node:browserTab]] theo tab node Mở đã mở."
     ],
     "fields": [

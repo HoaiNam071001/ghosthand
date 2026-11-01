@@ -129,3 +129,23 @@ func TestWatchTouch(t *testing.T) {
 	mouse.set(100, 100)
 	quiet("báo khi đang tạm dừng")
 }
+
+// Đụng chuột → tự chạy tiếp (57 B4): chuột động thì đếm lại, đứng yên đủ thì true; cancel (bấm Tiếp tục) thì false.
+func TestWaitStill(t *testing.T) {
+	mouse := &fakeMouse{x: 500, y: 500}
+	var ats atomic.Int32
+	go func() {
+		time.Sleep(3 * failsafeEvery)
+		mouse.set(600, 500)
+	}()
+	start := time.Now()
+	if !WaitStill(context.Background(), mouse.loc, 6*failsafeEvery, func() bool { return false }, func(time.Time) { ats.Add(1) }) {
+		t.Fatal("chuột đứng yên mà không xong")
+	}
+	if d := time.Since(start); d < 9*failsafeEvery || ats.Load() != 2 {
+		t.Errorf("chuột động giữa chừng phải đếm lại: xong sau %v, at %d lần", d, ats.Load())
+	}
+	if WaitStill(context.Background(), mouse.loc, time.Hour, func() bool { return true }, func(time.Time) {}) {
+		t.Error("đã bấm Tiếp tục mà vẫn báo xong")
+	}
+}

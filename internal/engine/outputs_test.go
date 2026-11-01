@@ -78,3 +78,38 @@ func TestOpenNewWindowOutput(t *testing.T) {
 		t.Errorf("không có cửa sổ mới: output %v sau %v", o, d)
 	}
 }
+
+// Mở (57 B3): cửa sổ mới / cửa sổ của app đã mở được đưa lên trước – thanh mini hay app khác đang đè thì node sau
+// vẫn gõ đúng chỗ. Mở URL không chọn app thì không đụng cửa sổ nào.
+func TestOpenRaisesWindow(t *testing.T) {
+	run := func(s model.Step, appear *model.WindowInfo) []string {
+		fw := fakeWins()
+		fw.Wins = append(fw.Wins, model.WindowInfo{ID: 3, Title: "Ghi chú", App: "Notes"})
+		s.DelayAfter = 300
+		e := newEngine(&devicetest.FakeInput{}, model.Script{Loops: 1, Start: s.ID, Steps: []model.Step{s}}, nil)
+		e.wins = fw
+		e.open = func(string, string) error {
+			if appear != nil {
+				fw.Show(*appear)
+			}
+			return nil
+		}
+		if err := e.Run(context.Background()); err != nil {
+			t.Fatal(err)
+		}
+		return fw.Log
+	}
+	open := func(f func(s *model.Step)) model.Step { return modeltest.Node("a", "n1", model.StepOpen, f) }
+	if l := run(open(func(s *model.Step) { s.Target = "notepad" }), &model.WindowInfo{ID: 9, App: "notepad"}); len(l) != 1 || l[0] != "focus 9" {
+		t.Errorf("cửa sổ mới: %v", l)
+	}
+	if l := run(open(func(s *model.Step) { s.Target = "Notes" }), nil); len(l) != 1 || l[0] != "focus 3" {
+		t.Errorf("app đang mở, đích là tên app: %v", l)
+	}
+	if l := run(open(func(s *model.Step) { s.Target, s.App = "https://x.vn", "Notes" }), nil); len(l) != 1 || l[0] != "focus 3" {
+		t.Errorf("mở URL bằng app đang mở: %v", l)
+	}
+	if l := run(open(func(s *model.Step) { s.Target = "https://x.vn" }), nil); len(l) != 0 {
+		t.Errorf("mở URL không chọn app: %v", l)
+	}
+}

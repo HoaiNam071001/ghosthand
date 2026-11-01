@@ -87,8 +87,6 @@ export function GetSettings():Promise<store.Settings>;
 
 export function ImportPack():Promise<main.ScriptFile>;
 
-export function InBackground():Promise<boolean>;
-
 export function InstallUpdate():Promise<void>;
 
 export function ListApps():Promise<Array<model.AppInfo>>;

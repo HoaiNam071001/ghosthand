@@ -3,6 +3,7 @@ package session
 import (
 	"context"
 	"errors"
+	"sync/atomic"
 
 	"ghosthand/internal/device"
 	"ghosthand/internal/engine"
@@ -72,6 +73,11 @@ func (m *Manager) exec(ctx context.Context, r *run, canDanger bool) {
 	m.emit("engine:state", true)
 	defer m.emit("engine:state", false)
 
+	if st.Source != SourceUser && m.deps.Stage != nil {
+		if err = m.deps.Stage(r.focus); err != nil {
+			return
+		}
+	}
 	for n := r.opt.Countdown; n > 0; n-- {
 		m.emit("engine:countdown", n)
 		if engine.Sleep(ctx, 1000) != nil {
@@ -84,7 +90,8 @@ func (m *Manager) exec(ctx context.Context, r *run, canDanger bool) {
 
 	go m.deps.Corners(ctx, in, func() { m.StopWith(StopByCorner) })
 	if st.Source == SourceAI { // người dùng cầm chuột lúc AI đang điều khiển → nhường: tạm dừng, wait_run báo AI
-		go m.deps.Touch(ctx, in, eng.Paused, func() { eng.PauseTouched() })
+		var touches atomic.Int64
+		go m.deps.Touch(ctx, in, eng.Paused, func() { m.touched(ctx, eng, &touches) })
 	}
 
 	if r.sc.KeepAwake { // giữ máy thức tới khi chạy xong; lỗi chỉ cảnh báo – kịch bản vẫn chạy
@@ -119,6 +126,26 @@ func (m *Manager) exec(ctx context.Context, r *run, canDanger bool) {
 		// frontend chọn bước lỗi; chờ ảnh hết giờ thì kèm chỗ giống nhất để xem lại
 		m.emit("engine:failed", FailedStep{StepID: id, Miss: miss})
 	}
+}
+
+// touched – người dùng đụng chuột giữa lượt AI: tạm dừng; bật tự chạy tiếp (57 B4) thì chuột đứng yên đủ lâu là chạy
+// tiếp – trừ khi người dùng đã tự bấm Tiếp tục / Dừng. touches đếm lần đụng: lần chờ cũ (đã Tiếp tục rồi lại đụng)
+// tự thôi, không chạy tiếp sớm theo hạn cũ.
+func (m *Manager) touched(ctx context.Context, eng *engine.Engine, touches *atomic.Int64) {
+	if !eng.PauseTouched() {
+		return
+	}
+	d := m.deps.TouchResume()
+	if d <= 0 {
+		return
+	}
+	n := touches.Add(1)
+	stale := func() bool { return touches.Load() != n || !eng.TouchPaused() }
+	go func() {
+		if m.deps.Still(ctx, d, stale, eng.SetResumeAt) && !stale() {
+			eng.Resume()
+		}
+	}()
 }
 
 func outcome(err error) (state, msg string) {

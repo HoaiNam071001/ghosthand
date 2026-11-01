@@ -28,3 +28,14 @@ export const progressSteps = (p: Pick<Progress, 'nodeId' | 'ref' | 'type' | 'nam
   p.nodeId && p.type ? [makeStep({ id: p.nodeId, ref: p.ref, type: p.type as StepType, name: p.name })] : [];
 
 export const counterText = (c: NonNullable<Progress['counter']>) => `lượt ${c.ref} ${c.count} / ${c.max}`;
+
+const BREAK_LABEL: Record<string, string> = { breakpoint: 'điểm dừng', step: 'node kế' };
+
+// Tiền tố tiêu đề thanh mini lúc tạm dừng: debug / đụng chuột (kèm đếm ngược tự chạy tiếp – 57 B4) / bấm Tạm dừng.
+export function pauseText(p: Pick<Progress, 'paused' | 'pausedBy' | 'break' | 'resumeAt'>, now: number): string {
+  if (p.break) return `Dừng trước ${BREAK_LABEL[p.break]} · `;
+  if (!p.paused) return '';
+  if (p.pausedBy !== 'touch') return 'Tạm dừng · ';
+  if (!p.resumeAt) return 'Bạn vừa đụng chuột – đã tạm dừng · ';
+  return `Bạn vừa đụng chuột · tự chạy tiếp sau ${Math.max(0, Math.ceil((p.resumeAt - now) / 1000))} s · `;
+}

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"image"
 	"image/png"
+	"math"
+	"time"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
@@ -81,10 +83,31 @@ func traceView(tr session.Trace, sc model.Script, shotW map[string]int) map[stri
 		v["failedStep"] = tr.FailedStep
 	}
 	if p := tr.Progress; !tr.Done() && p != nil {
-		v["current"] = map[string]any{"id": p.NodeID, "ref": p.Ref, "wait": p.Wait, "paused": p.Paused, "pausedBy": p.PausedBy}
+		cur := map[string]any{"id": p.NodeID, "ref": p.Ref, "wait": p.Wait}
+		if p.Paused {
+			cur["paused"] = pausedInfo(*p, time.Now())
+		}
+		v["current"] = cur
 	}
 	v["next"] = nextHint(tr)
 	return v
+}
+
+// pausedInfo – current.paused: by (touch | button | debug), resumeInS = giây nữa tự chạy tiếp (đụng chuột, 57 B4;
+// không có = chờ người dùng bấm Tiếp tục).
+func pausedInfo(p engine.Progress, now time.Time) map[string]any {
+	by := "button"
+	switch {
+	case p.PausedBy != "":
+		by = p.PausedBy
+	case p.Break != "":
+		by = "debug"
+	}
+	out := map[string]any{"by": by}
+	if p.PausedBy == engine.PausedTouch && p.ResumeAt > 0 {
+		out["resumeInS"] = max(0, int(math.Ceil(float64(p.ResumeAt-now.UnixMilli())/1000)))
+	}
+	return out
 }
 
 // stoppedByText – ai dừng lần chạy (session.StopBy*); "" = không rõ.
@@ -101,7 +124,9 @@ var stoppedByText = map[string]string{
 // nextHint – việc AI nên làm tiếp.
 func nextHint(tr session.Trace) string {
 	switch {
-	case !tr.Done() && tr.Progress != nil && tr.Progress.PausedBy == engine.PausedTouch:
+	case !tr.Done() && tr.Progress != nil && tr.Progress.Paused && tr.Progress.PausedBy == engine.PausedTouch && tr.Progress.ResumeAt > 0:
+		return "người dùng vừa đụng chuột nên app đã tạm dừng – chuột đứng yên thì tự chạy tiếp sau resumeInS giây; đừng chạy lại, gọi wait_run"
+	case !tr.Done() && tr.Progress != nil && tr.Progress.Paused && tr.Progress.PausedBy == engine.PausedTouch:
 		return "người dùng vừa đụng chuột nên app đã tạm dừng (nhường người dùng) – đừng chạy lại; chờ người dùng bấm Tiếp tục trên thanh mini (wait_run) hoặc hỏi người dùng / stop_run"
 	case !tr.Done():
 		return "chưa xong – gọi wait_run"

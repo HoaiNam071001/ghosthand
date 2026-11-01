@@ -23,7 +23,7 @@ func (e *Engine) Resume() bool {
 	if !e.gate.resume() {
 		return false
 	}
-	e.update(true, func(p *Progress) { p.Break, p.PausedBy = "", "" })
+	e.update(true, func(p *Progress) { p.Break, p.PausedBy, p.ResumeAt = "", "", 0 })
 	return true
 }
 
@@ -37,6 +37,19 @@ func (e *Engine) PauseTouched() bool {
 	}
 	e.update(true, func(p *Progress) { p.PausedBy = PausedTouch })
 	return true
+}
+
+// TouchPaused – đang tạm dừng vì đụng chuột (chưa ai bấm Tiếp tục).
+func (e *Engine) TouchPaused() bool {
+	e.mu.Lock()
+	by := e.prog.PausedBy
+	e.mu.Unlock()
+	return by == PausedTouch && e.gate.paused()
+}
+
+// SetResumeAt – lúc sẽ tự chạy tiếp sau khi đụng chuột (57 B4; chuột lại động thì lùi); thanh mini / wait_run đếm ngược.
+func (e *Engine) SetResumeAt(t time.Time) {
+	e.update(true, func(p *Progress) { p.ResumeAt = t.UnixMilli() })
 }
 
 // Paused – đang tạm dừng (nút, debug, đụng chuột).

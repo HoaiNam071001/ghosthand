@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react';
-import { DangerCheck, InBackground, RunScript, ValidateScript } from '../wailsjs/go/main/App';
+import { DangerCheck, RunScript, ValidateScript } from '../wailsjs/go/main/App';
 import { askDanger } from './dangerConfirm';
 import { askPerm } from './permConfirm';
 import { missingForRun } from './store/permStore';
@@ -25,6 +25,7 @@ export type Progress = {
   elapsedMs: number; // không tính thời gian tạm dừng
   paused: boolean;
   pausedBy?: 'touch'; // tạm dừng vì người dùng đụng chuột lúc AI chạy (engine.PausedTouch)
+  resumeAt?: number; // đụng chuột: tự chạy tiếp lúc này (Unix ms) nếu chuột đứng yên; không có = chờ bấm Tiếp tục (57 B4)
   retry?: number; // đang thử lại lần thứ mấy (0 / trống = lần đầu)
   retries?: number; // số lần thử lại tối đa của bước hiện tại
   wait?: { kind: 'image' | 'text' | 'pixel' | 'web' | 'cond' | 'time' | 'window' | 'app' | 'screen'; elapsedMs: number; timeoutMs: number; best: number }; // đang chờ ảnh / pixel (internal/engine/imagestep.go)
@@ -69,8 +70,9 @@ if (inWails) {
   EventsOn('hotkey:error', (hotkeyError: string) => set({ hotkeyError }));
   EventsOn('engine:stopped', (stopReason: string) => set({ stopReason }));
   EventsOn('engine:progress', (progress: Progress) => set({ progress, receivedAt: Date.now() }));
-  // Chạy từ ngoài (API / CLI / hẹn giờ – bước 22, AI – 31): không qua runScript nên tự thu thành thanh mini, xong thì về
-  // màn chính – trừ khi app do AI mở nền (InBackground): giữ thanh mini, người dùng bấm Dừng trên thanh mới mở màn chính.
+  // Chạy từ ngoài (API / CLI / hẹn giờ – bước 22, AI – 31): không qua runScript nên thu thành thanh mini (Go cũng tự thu
+  // + đưa cửa sổ đích lên trước – runstage.go). Xong vẫn giữ thanh mini (57 B2: lượt AI sau khỏi đè lên app đích) –
+  // người dùng bấm Mở app trên thanh mới về màn chính.
   EventsOn('run:started', (r: { source: string; preset?: string; path?: string }) => {
     set({ foreign: isForeignRun(r.source, r.path, getEditor().path) });
     if (r.source === 'user') return;
@@ -82,9 +84,6 @@ if (inWails) {
     if (!external) return;
     external = false;
     if (st.error) set({ lastError: st.error });
-    void InBackground().then((bg) => {
-      if (!bg) void setWindowMode('main');
-    });
   });
 }
 

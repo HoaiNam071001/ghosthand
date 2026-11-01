@@ -27,6 +27,15 @@ type Deps struct {
 	Corners func(ctx context.Context, in *device.TrackingInput, onHit func())
 	// Touch – lượt AI: người dùng đụng chuột (chuột tới chỗ engine không đưa tới) → onTouch (chạy tới khi ctx huỷ).
 	Touch func(ctx context.Context, in *device.TrackingInput, paused func() bool, onTouch func())
+	// Stage – lần chạy không do người dùng bấm trong app (AI / hẹn giờ / CLI / API – 57 B1, B2): thu cửa sổ chính về thanh
+	// mini rồi đưa cửa sổ đích lên trước – focus (chạy tiếp từ node lỗi: cửa sổ đang ở trước lúc lỗi), nil = cửa sổ đang ở
+	// trước lúc thu. Lỗi (cửa sổ đích đã đóng) = lần chạy lỗi, chưa thao tác gì. nil = không làm gì (test).
+	Stage func(focus *model.WindowInfo) error
+	// TouchResume – lượt AI bị tạm dừng vì đụng chuột: chuột đứng yên bao lâu thì tự chạy tiếp (57 B4); 0 = chờ bấm
+	// Tiếp tục. nil = Cài đặt → MCP.
+	TouchResume func() time.Duration
+	// Still – chờ chuột đứng yên liền d (device.WaitStill); nil = chuột thật.
+	Still func(ctx context.Context, d time.Duration, cancel func() bool, at func(time.Time)) bool
 	// SelfGuard – lượt AI: bọc Input để không bấm / gõ vào cửa sổ của chính app (hộp hỏi quyền, Cài đặt).
 	SelfGuard func(in device.Input) device.Input
 	SaveRun   func(rec model.RunRecord, path string, shots map[string]image.Image) error
@@ -79,6 +88,14 @@ func (d Deps) withDefaults() Deps {
 	if d.Touch == nil {
 		d.Touch = func(ctx context.Context, in *device.TrackingInput, paused func() bool, onTouch func()) {
 			device.WatchTouch(ctx, device.Location, in, paused, onTouch)
+		}
+	}
+	if d.TouchResume == nil {
+		d.TouchResume = func() time.Duration { return store.CurrentSettings().MCP.TouchResume() }
+	}
+	if d.Still == nil {
+		d.Still = func(ctx context.Context, dur time.Duration, cancel func() bool, at func(time.Time)) bool {
+			return device.WaitStill(ctx, device.Location, dur, cancel, at)
 		}
 	}
 	if d.SelfGuard == nil {

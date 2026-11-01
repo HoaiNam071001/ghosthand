@@ -1,4 +1,5 @@
-// Công tắc AI – mức chạy (bước 31b): chỉ soạn / hỏi trước khi chạy / tự chạy + trần phút mỗi lượt. Chỉ hiển thị;
+// Công tắc AI – mức chạy (bước 31b): chỉ soạn / hỏi trước khi chạy / tự chạy + trần phút mỗi lượt + tự chạy tiếp sau
+// khi người dùng đụng chuột (57 B4: touchResumeS 0 = mặc định, < 0 = tắt). Chỉ hiển thị;
 // McpSettings lưu. Tắt hẳn = công tắc MCP.
 import { store } from '../../../wailsjs/go/models';
 import { RunMode, runMode } from '../../aiLevel';
@@ -7,6 +8,7 @@ import Segmented from '../Segmented';
 import { Switch } from '../Switch';
 
 const AI_MAX_MINUTES = 10; // khớp store.AIMaxMinutes
+const TOUCH_RESUME_S = 5; // khớp store.TouchResumeDefault
 
 const MODES: { id: RunMode; label: string }[] = [
   { id: 'edit', label: 'Chỉ soạn' },
@@ -31,9 +33,19 @@ export default function AiRunSettings({ mcp, onChange }: { mcp: store.MCPSetting
         <Switch on={!mcp.hideCaptureDot} onChange={(on) => onChange({ hideCaptureDot: !on })} label="Chấm đỏ khi AI chụp màn hình" />
       </label>
       {mode !== 'edit' && (
-        <label className="flex items-center justify-between gap-3 text-muted">Tối đa mỗi lượt AI chạy
-          <NumInput value={mcp.maxMinutes || AI_MAX_MINUTES} min={1} unit="phút" className="w-24" onChange={(maxMinutes) => onChange({ maxMinutes })} />
-        </label>
+        <>
+          <label className="flex items-center justify-between gap-3 text-muted">Tối đa mỗi lượt AI chạy
+            <NumInput value={mcp.maxMinutes || AI_MAX_MINUTES} min={1} unit="phút" className="w-24" onChange={(maxMinutes) => onChange({ maxMinutes })} />
+          </label>
+          <label className="flex items-center justify-between gap-3 text-muted">Bạn đụng chuột → tạm dừng, chuột đứng yên thì tự chạy tiếp
+            <Switch on={(mcp.touchResumeS ?? 0) >= 0} onChange={(on) => onChange({ touchResumeS: on ? 0 : -1 })} label="Tự chạy tiếp sau khi đụng chuột" />
+          </label>
+          {(mcp.touchResumeS ?? 0) >= 0 && (
+            <label className="flex items-center justify-between gap-3 text-muted">Chạy tiếp khi chuột đứng yên
+              <NumInput value={mcp.touchResumeS || TOUCH_RESUME_S} min={1} unit="giây" className="w-24" onChange={(touchResumeS) => onChange({ touchResumeS })} />
+            </label>
+          )}
+        </>
       )}
     </div>
   );

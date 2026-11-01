@@ -10,7 +10,7 @@ import { RecordBarView } from '../components/minibar/RecordBar';
 import { stopRecording, useRecording, useScript } from '../store';
 import { inWails, setWindowMode } from '../windowMode';
 import { fmtCountdown } from '../flow/waitUntil';
-import { counterText, progressNode, progressSteps } from '../flow/progress';
+import { counterText, pauseText, progressNode, progressSteps } from '../flow/progress';
 
 // Số mẫu khi xem trên trình duyệt (#minibar)
 const sample: Progress = {
@@ -22,7 +22,6 @@ const CIRC = 2 * Math.PI * R;
 
 // Đang chờ gì (Progress.wait.kind – imagestep.go, nodes.go watch)
 const WAIT_LABEL: Record<string, string> = { image: 'đang tìm', text: 'đang tìm chữ', pixel: 'đang chờ màu', web: 'đang tìm phần tử', cond: 'đang xét điều kiện', window: 'đang chờ cửa sổ', app: 'đang chờ app', tab: 'đang chờ tab', screen: 'đang chờ màn hình', download: 'đang chờ file tải', power: 'đếm ngược nguồn máy – bấm Dừng để huỷ', print: 'đang chờ hộp in', save: 'đang chờ hộp lưu file' };
-const BREAK_LABEL: Record<string, string> = { breakpoint: 'điểm dừng', step: 'node kế' };
 
 export default function MiniBar() {
   const rec = useRecording();
@@ -66,16 +65,16 @@ function RunBar() {
   const ai = useAiLevel(inWails && running && engine.source === 'ai');
 
   const stop = () => {
-    StopScript();
+    if (running) StopScript();
     setWindowMode('main');
   };
 
   return (
     <MiniBarView progress={progress} paused={paused} countdown={engine.countdown} icon={cur?.type ?? 'click'}
-      title={!running ? 'Chưa chạy'
+      title={!running ? (engine.lastError ? `Lỗi – ${engine.lastError}` : engine.source === 'user' ? 'Chưa chạy' : 'Đã chạy xong')
         : counting ? `Bắt đầu sau ${engine.countdown} giây…`
         : !p ? 'Đang bắt đầu…'
-        : `${p.break ? `Dừng trước ${BREAK_LABEL[p.break]} · ` : p.pausedBy === 'touch' && paused ? 'Bạn vừa đụng chuột – đã tạm dừng · ' : paused ? 'Tạm dừng · ' : ''}${progressNode(p, engine.foreign ? progressSteps(p) : steps)}`}
+        : `${pauseText(p, Date.now())}${progressNode(p, engine.foreign ? progressSteps(p) : steps)}`}
       lines={[
         ...(p?.counter || p?.retry ? [[p.counter && counterText(p.counter), p.retry && `thử lại ${p.retry} / ${p.retries}`].filter(Boolean).join('   ')] : []),
         ...(w ? [w.kind === 'time' ? `chờ đến giờ – còn ${fmtCountdown(w.timeoutMs - waitNow)}`
@@ -83,7 +82,7 @@ function RunBar() {
         `vòng ${p?.loop ?? 0} / ${p && p.loops > 0 ? p.loops : '∞'}   ${p?.clicks ?? 0} click   ${fmtElapsed(elapsed)}`,
         ...(engine.preset ? [`bộ giá trị: ${engine.preset}`] : [])]}
       canPause={running && !counting} onPause={() => (paused ? ResumeScript() : PauseScript())} onStop={stop}
-      onStep={paused && p?.break ? () => StepScript() : undefined} ai={ai} capturing={capturing} />
+      onStep={paused && p?.break ? () => StepScript() : undefined} ai={ai} capturing={capturing} idle={!running} />
   );
 }
 
@@ -92,10 +91,11 @@ function RunBar() {
 // onStep: đang dừng vì debug – hiện nút chạy node kế (F10); nút Tiếp tục chạy tới điểm dừng sau.
 // capturing: AI vừa chụp / đọc màn hình – chấm đỏ cạnh tiêu đề.
 // ai: lượt do AI chạy – chip mức AI cạnh tiêu đề, bấm thì hàng chọn mức thay cho các dòng chữ.
-export function MiniBarView({ title, lines, icon, progress, paused, countdown, canPause, onPause, onStop, onStep, ai, aiOpen = false, capturing = false }: {
+// idle: không chạy (lần chạy từ ngoài đã xong, thanh mini giữ lại) – nút Dừng thành Mở app.
+export function MiniBarView({ title, lines, icon, progress, paused, countdown, canPause, onPause, onStop, onStep, ai, aiOpen = false, capturing = false, idle = false }: {
   title: string; lines: string[]; icon: StepIconName; progress: number; paused: boolean; countdown: number;
   canPause: boolean; onPause: () => void; onStop: () => void; onStep?: () => void;
-  ai?: { level: AiLevel; onLevel: (l: AiLevel) => void }; aiOpen?: boolean; capturing?: boolean;
+  ai?: { level: AiLevel; onLevel: (l: AiLevel) => void }; aiOpen?: boolean; capturing?: boolean; idle?: boolean;
 }) {
   const counting = countdown > 0;
   const [open, setOpen] = useState(aiOpen);
@@ -135,9 +135,13 @@ export function MiniBarView({ title, lines, icon, progress, paused, countdown, c
         className="grid h-11 w-11 place-items-center rounded-[9px] border border-line bg-surface hover:bg-hover disabled:opacity-40">
         {paused ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}
       </button>
-      <button onClick={onStop} className="btn-danger-soft flex h-11 items-center gap-2 rounded-[9px] px-3.5 font-semibold">
-        <Stop className="h-2.5 w-2.5" />Dừng <span className="font-mono text-[11px] font-normal opacity-75">F8</span>
-      </button>
+      {idle ? (
+        <button onClick={onStop} className="flex h-11 items-center rounded-[9px] border border-line bg-surface px-3.5 font-semibold hover:bg-hover">Mở app</button>
+      ) : (
+        <button onClick={onStop} className="btn-danger-soft flex h-11 items-center gap-2 rounded-[9px] px-3.5 font-semibold">
+          <Stop className="h-2.5 w-2.5" />Dừng <span className="font-mono text-[11px] font-normal opacity-75">F8</span>
+        </button>
+      )}
     </div>
   );
 }

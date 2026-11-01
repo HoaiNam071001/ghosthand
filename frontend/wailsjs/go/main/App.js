@@ -146,10 +146,6 @@ export function ImportPack() {
   return window['go']['main']['App']['ImportPack']();
 }
 
-export function InBackground() {
-  return window['go']['main']['App']['InBackground']();
-}
-
 export function InstallUpdate() {
   return window['go']['main']['App']['InstallUpdate']();
 }

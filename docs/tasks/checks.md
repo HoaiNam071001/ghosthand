@@ -3,6 +3,12 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## 57 – AI chạy ổn định, đợt 2 (2026-11-01) · [57](phase3/57-ai-chay-on-dinh.md)
+- [ ] Cửa sổ chính Ghosthand đang mở, Chrome ở dưới → AI chạy kịch bản gõ vào Chrome → cửa sổ chính thu về thanh mini, Chrome lên trước, gõ đúng Chrome; xong thanh mini ghi *Đã chạy xong*, nút *Mở app* về màn chính
+- [ ] AI chạy lỗi giữa chừng (vd chờ chữ không có trên Messenger) → bấm sang VS Code → AI `resume_run` → Chrome lên lại trước rồi mới chạy; đóng Chrome rồi `resume_run` → lỗi "đã đóng – chưa thao tác gì"
+- [ ] Node Mở `Calculator` / mở URL bằng Google Chrome đang mở sẵn → cửa sổ đó lên trước (AI đã thử qua MCP 2026-11-01: Calculator mới mở + đã mở sẵn đều qua)
+- [ ] Đụng chuột giữa lượt AI → thanh mini *Bạn vừa đụng chuột · tự chạy tiếp sau 5 s*, rê chuột tiếp thì đếm lại, để yên thì chạy tiếp; Cài đặt → AI (MCP) tắt *tự chạy tiếp* → phải bấm Tiếp tục; đổi 10 giây → đếm 10
+
 ## 59 – AI tự cập nhật + test, vòng dev (2026-11-01) · [59](phase3/59-ai-tu-cap-nhat-va-test.md)
 - [ ] Sau lần `make dev-install` đầu (2026-11-01 16:55): Cài đặt → Quyền vẫn còn Accessibility + Screen Recording; tab Giới thiệu hiện phiên bản
 - [ ] Có kịch bản chưa lưu → `make dev-install` dừng với "chưa lưu", app không bị đóng; lưu rồi chạy lại → app tự mở lại nền

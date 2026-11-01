@@ -91,9 +91,6 @@ func (a *App) SetWindowMode(mode string) error {
 		return fmt.Errorf("chế độ cửa sổ không hợp lệ: %q", mode)
 	}
 	a.mode = mode
-	if mode == ModeMain {
-		a.background = false // người dùng mở màn chính – thôi chế độ nền
-	}
 	runtime.WindowShow(a.ctx) // app mở nền (StartHidden) hiện lần đầu ở đây – thường là thanh mini khi AI chạy
 	return nil
 }
@@ -110,13 +107,6 @@ func (a *App) FocusWindow(id uint64) error {
 		time.AfterFunc(600*time.Millisecond, func() { winfloat.Set(true, true) }) // chờ hiệu ứng đổi Space rồi giành lại bàn phím
 	}
 	return nil
-}
-
-// InBackground – app do AI mở nền và người dùng chưa mở màn chính: lần chạy từ ngoài xong thì giữ thanh mini.
-func (a *App) InBackground() bool {
-	a.mu.Lock()
-	defer a.mu.Unlock()
-	return a.background
 }
 
 // DisplayInfo – một màn hình cho bộ chọn màn trên overlay. Khung theo toạ độ robotgo (như toạ độ điểm).

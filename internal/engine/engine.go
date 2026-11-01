@@ -43,6 +43,7 @@ type Progress struct {
 	ElapsedMs int64         `json:"elapsedMs"` // không tính thời gian tạm dừng
 	Paused    bool          `json:"paused"`
 	PausedBy  string        `json:"pausedBy,omitempty"` // tạm dừng không do nút Tạm dừng: PausedTouch
+	ResumeAt  int64         `json:"resumeAt,omitempty"` // đụng chuột: tự chạy tiếp lúc này (Unix ms) nếu chuột đứng yên tới đó; 0 = chờ bấm Tiếp tục
 	Wait      *WaitProgress `json:"wait,omitempty"`     // đang chờ ảnh / pixel
 	Retry     int           `json:"retry,omitempty"`    // đang thử lại lần thứ mấy (0 = lần đầu)
 	Retries   int           `json:"retries,omitempty"`  // số lần thử lại tối đa của bước hiện tại

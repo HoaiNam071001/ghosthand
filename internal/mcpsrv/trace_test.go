@@ -5,9 +5,11 @@ import (
 	"maps"
 	"slices"
 	"testing"
+	"time"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
+	"ghosthand/internal/engine"
 	"ghosthand/internal/model"
 	"ghosthand/internal/session"
 )
@@ -51,5 +53,20 @@ func TestShotImages(t *testing.T) {
 	}
 	if _, err := shotEach("all"); err == nil {
 		t.Error("shots sai phải lỗi")
+	}
+}
+
+// current.paused (57 B4): ai dừng + còn bao giây tự chạy tiếp (đụng chuột); bấm Tạm dừng thì không có resumeInS.
+func TestPausedInfo(t *testing.T) {
+	now := time.UnixMilli(1_000_000)
+	got := pausedInfo(engine.Progress{Paused: true, PausedBy: engine.PausedTouch, ResumeAt: now.UnixMilli() + 3_200}, now)
+	if got["by"] != "touch" || got["resumeInS"] != 4 {
+		t.Errorf("đụng chuột: %v", got)
+	}
+	if got := pausedInfo(engine.Progress{Paused: true}, now); got["by"] != "button" || got["resumeInS"] != nil {
+		t.Errorf("bấm Tạm dừng: %v", got)
+	}
+	if got := pausedInfo(engine.Progress{Paused: true, Break: "step"}, now); got["by"] != "debug" {
+		t.Errorf("debug: %v", got)
 	}
 }

@@ -314,6 +314,7 @@ export namespace engine {
 	    elapsedMs: number;
 	    paused: boolean;
 	    pausedBy?: string;
+	    resumeAt?: number;
 	    wait?: WaitProgress;
 	    retry?: number;
 	    retries?: number;
@@ -339,6 +340,7 @@ export namespace engine {
 	        this.elapsedMs = source["elapsedMs"];
 	        this.paused = source["paused"];
 	        this.pausedBy = source["pausedBy"];
+	        this.resumeAt = source["resumeAt"];
 	        this.wait = this.convertValues(source["wait"], WaitProgress);
 	        this.retry = source["retry"];
 	        this.retries = source["retries"];
@@ -2459,6 +2461,7 @@ export namespace store {
 	    clients?: Record<string, Array<string>>;
 	    hideCaptureDot?: boolean;
 	    nodePref?: string;
+	    touchResumeS?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new MCPSettings(source);
@@ -2473,6 +2476,7 @@ export namespace store {
 	        this.clients = source["clients"];
 	        this.hideCaptureDot = source["hideCaptureDot"];
 	        this.nodePref = source["nodePref"];
+	        this.touchResumeS = source["touchResumeS"];
 	    }
 	}
 	export class OverlaySettings {

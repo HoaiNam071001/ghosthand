@@ -75,9 +75,9 @@ func (e *Engine) withFocus(out map[string]any) map[string]any {
 	return out
 }
 
-// openStep mở rồi tự chờ DelayAfter (execNode không chờ thêm), trong lúc chờ dò cửa sổ mới hiện: thấy → window /
-// windowApp của nó + newWindow = true; hết giờ không thấy (vd mở URL vào tab mới của Chrome đang mở) → cửa sổ đang ở
-// trước + newWindow = false. Thấy sớm vẫn chờ đủ – giữ đúng thời gian người dùng đặt. Có node Tab trình duyệt làm với
+// openStep mở rồi tự chờ DelayAfter (execNode không chờ thêm), trong lúc chờ dò cửa sổ mới hiện: thấy → đưa lên trước,
+// window / windowApp của nó + newWindow = true; hết giờ không thấy (vd mở URL vào tab mới của Chrome đang mở) → cửa sổ
+// của app đã chọn (đưa lên trước – 57 B3: thanh mini / app khác có thể đang đè) hoặc cửa sổ đang ở trước + newWindow = false. Thấy sớm vẫn chờ đủ – giữ đúng thời gian người dùng đặt. Có node Tab trình duyệt làm với
 // tab node này mở (TabFrom) thì cuối cùng ghi thêm tab đang hiện của trình duyệt ở trước (tabId, tabUrl… – browsertab.go).
 func (e *Engine) openStep(ctx context.Context, s model.Step, wait int) (map[string]any, error) {
 	before, listErr := e.wins.List()
@@ -97,11 +97,15 @@ func (e *Engine) openStep(ctx context.Context, s model.Step, wait int) (map[stri
 			break
 		}
 		if w, ok := newWindow(ws, known); ok {
+			e.raise(w)
 			putWindow(out, w)["newWindow"] = true
 			break
 		}
 		if left() <= 0 {
-			if w, ok := foreground(ws); ok {
+			if w, ok := appWindow(ws, s); ok {
+				e.raise(w)
+				putWindow(out, w)
+			} else if w, ok := foreground(ws); ok {
 				putWindow(out, w)
 			}
 			out["newWindow"] = false
@@ -118,6 +122,32 @@ func (e *Engine) openStep(ctx context.Context, s model.Step, wait int) (map[stri
 		e.putOpenedTab(ctx, out)
 	}
 	return out, nil
+}
+
+// raise đưa cửa sổ vừa mở lên trước để node sau gõ / bấm đúng chỗ; lỗi bỏ qua – app tự lên trước là chuyện thường,
+// node sau có onlyInWindow vẫn chặn khi sai.
+func (e *Engine) raise(w model.WindowInfo) {
+	if !w.Front {
+		_ = e.wins.Focus(w.ID)
+	}
+}
+
+// appWindow – cửa sổ không thu nhỏ của app node Mở: app đã chọn, không chọn thì đích là tên app (không phải URL /
+// đường dẫn). Mở bằng Chrome của app thì không – nó chạy nền được.
+func appWindow(ws []model.WindowInfo, s model.Step) (model.WindowInfo, bool) {
+	want := s.App
+	if want == "" && !strings.ContainsAny(s.Target, "/\\:") {
+		want = strings.TrimSpace(s.Target)
+	}
+	if want == "" || s.WebBrowser {
+		return model.WindowInfo{}, false
+	}
+	for _, w := range ws {
+		if ok, _ := model.MatchApp(w.App, w.AppID, want, ""); ok && !w.Minimized && w.PID != selfPID {
+			return w, true
+		}
+	}
+	return model.WindowInfo{}, false
 }
 
 // newWindow – cửa sổ trên cùng không thu nhỏ chưa có trong known.

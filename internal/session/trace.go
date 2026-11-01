@@ -52,6 +52,32 @@ func (m *Manager) part(sc model.Script, opt Options) (model.Script, *engine.Carr
 	return sc, r.carry, nil
 }
 
+// resumeFocus – cửa sổ đang ở trước lúc lần chạy seedRun lỗi (error.detail.context.foreground của node lỗi): chạy tiếp
+// thì đưa nó lên lại – lúc AI sửa kịch bản, cửa sổ khác (Ghosthand, terminal) đã lên trước. nil = không biết.
+func (m *Manager) resumeFocus(seedRun string) *model.WindowInfo {
+	if seedRun == "" {
+		return nil
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	r := m.runs[seedRun]
+	if r == nil || r.carry == nil {
+		return nil
+	}
+	res, ok := r.carry.Results[r.status.FailedStep]
+	if !ok || res.Error == nil {
+		return nil
+	}
+	ctx, _ := res.Error.Detail["context"].(map[string]any)
+	fg, _ := ctx["foreground"].(map[string]any)
+	app, _ := fg["app"].(string)
+	title, _ := fg["title"].(string)
+	if app == "" && title == "" {
+		return nil
+	}
+	return &model.WindowInfo{App: app, Title: title}
+}
+
 // Trace – trạng thái + kết quả từng node + ảnh lúc lỗi của lần chạy id ("" = đang chạy / gần nhất).
 func (m *Manager) Trace(id string) (Trace, error) {
 	st, err := m.Status(id)

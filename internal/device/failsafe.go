@@ -143,3 +143,30 @@ func WatchTouch(ctx context.Context, location func() (int, int), t *TrackingInpu
 		}
 	}
 }
+
+// WaitStill – chờ chuột đứng yên liền d (57 B4: đụng chuột → tự chạy tiếp): mỗi lần chuột đổi chỗ đếm lại, at(lúc sẽ
+// xong) báo mỗi lần đếm lại. Trả false khi ctx huỷ hoặc cancel() true (người dùng đã bấm Tiếp tục / Dừng).
+func WaitStill(ctx context.Context, location func() (int, int), d time.Duration, cancel func() bool, at func(time.Time)) bool {
+	tick := time.NewTicker(failsafeEvery)
+	defer tick.Stop()
+	px, py := location()
+	end := time.Now().Add(d)
+	at(end)
+	for {
+		select {
+		case <-ctx.Done():
+			return false
+		case <-tick.C:
+		}
+		if cancel() {
+			return false
+		}
+		if x, y := location(); abs(x-px) > engineMoveTol || abs(y-py) > engineMoveTol {
+			px, py = x, y
+			end = time.Now().Add(d)
+			at(end)
+		} else if !time.Now().Before(end) {
+			return true
+		}
+	}
+}

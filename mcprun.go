@@ -181,11 +181,8 @@ func (b mcpBackend) TemplateScale(img image.Image, r model.Rect) float64 {
 func (b mcpBackend) MousePosition() (int, int)            { return device.Location() }
 func (b mcpBackend) Windows() ([]model.WindowInfo, error) { return device.SystemWindows{}.List() }
 
-// showMain – đưa màn chính lên (hộp hỏi cần chỗ; app mở nền thì từ giờ là app thường).
+// showMain – đưa màn chính lên (hộp hỏi cần chỗ).
 func (a *App) showMain() {
-	a.mu.Lock()
-	a.background = false
-	a.mu.Unlock()
 	runtime.WindowUnminimise(a.ctx)
 	runtime.WindowShow(a.ctx)
 }

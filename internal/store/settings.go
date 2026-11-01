@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"time"
 )
 
 // Cấu hình app (không thuộc kịch bản), lưu ở os.UserConfigDir()/ghosthand/settings.json.
@@ -41,6 +42,7 @@ type MCPSettings struct {
 	Clients        map[string][]string `json:"clients,omitempty"`        // tên loại AI → danh sách tool tắt riêng (thay hẳn mặc định)
 	HideCaptureDot bool                `json:"hideCaptureDot,omitempty"` // true = không hiện chấm đỏ trên thanh mini khi AI chụp / đọc màn hình (31c)
 	NodePref       string              `json:"nodePref,omitempty"`       // ưu tiên node cho AI (44): "" / vision | web
+	TouchResumeS   int                 `json:"touchResumeS,omitempty"`   // đụng chuột lúc AI chạy: chuột đứng yên bao giây thì tự chạy tiếp; 0 = TouchResumeDefault, < 0 = tắt (chờ bấm Tiếp tục)
 }
 
 // Ưu tiên node cho AI (MCPSettings.NodePref, bước 44): vision = node ảnh / chữ (mặc định); web = thử trang trên Chrome
@@ -98,6 +100,20 @@ func (m MCPSettings) Limit() int {
 		return m.MaxMinutes
 	}
 	return AIMaxMinutes
+}
+
+// TouchResumeDefault – giây chuột đứng yên để lượt AI tự chạy tiếp sau khi người dùng đụng chuột (57 B4).
+const TouchResumeDefault = 5
+
+// TouchResume – chờ chuột đứng yên bao lâu thì tự chạy tiếp; 0 = tắt.
+func (m MCPSettings) TouchResume() time.Duration {
+	switch {
+	case m.TouchResumeS < 0:
+		return 0
+	case m.TouchResumeS == 0:
+		return TouchResumeDefault * time.Second
+	}
+	return time.Duration(m.TouchResumeS) * time.Second
 }
 
 // SetMCP lưu cài đặt MCP.

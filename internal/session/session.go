@@ -120,6 +120,7 @@ type run struct {
 	// vết chạy cho AI (Trace) – ghi dưới Manager.mu
 	results []model.StepResult
 	seed    *engine.Carry          // Options.SeedRun đã tra ra
+	focus   *model.WindowInfo      // cửa sổ đang ở trước lúc lần chạy SeedRun lỗi – Stage đưa lên lại
 	carry   *engine.Carry          // kết quả + biến vòng cuối (có khi xong) – SeedRun của lần sau
 	shots   map[string]image.Image // ảnh lúc node lỗi theo StepResult.Shot
 }
@@ -192,6 +193,7 @@ func (m *Manager) Start(sc model.Script, values map[string]any, opt Options) (st
 	if err != nil {
 		return "", err
 	}
+	focus := m.resumeFocus(opt.SeedRun)
 	sc, err = script.ResolveInputs(sc, values)
 	if err != nil {
 		return "", err
@@ -215,7 +217,7 @@ func (m *Manager) Start(sc model.Script, values map[string]any, opt Options) (st
 	now := m.deps.Now()
 	id := m.newID(now)
 	ctx, cancel := context.WithCancel(context.Background())
-	r := &run{sc: sc, opt: opt, values: values, cancel: cancel, done: make(chan struct{}), seed: seed, secrets: secretVals,
+	r := &run{sc: sc, opt: opt, values: values, cancel: cancel, done: make(chan struct{}), seed: seed, focus: focus, secrets: secretVals,
 		status: Status{RunID: id, Script: sc.Name, Path: opt.Path, Source: opt.Source, Preset: opt.Preset, State: StateCountdown, StartedAt: now}}
 	m.cur = r
 	m.remember(r)

@@ -51,6 +51,7 @@ func testManager(t *testing.T) (*Manager, *events, *[]model.RunRecord) {
 		Corners:     func(context.Context, *device.TrackingInput, func()) {},
 		Touch:       func(context.Context, *device.TrackingInput, func() bool, func()) {},
 		SelfGuard:   func(in device.Input) device.Input { return in },
+		TouchResume: func() time.Duration { return 0 },
 		SaveRun: func(rec model.RunRecord, _ string, _ map[string]image.Image) error {
 			mu.Lock()
 			saved = append(saved, rec)
@@ -225,5 +226,34 @@ func TestAIRunCannotClickOwnWindow(t *testing.T) {
 
 	if st, _ := m.Wait(context.Background(), mustStart(t, m, sc, Options{Source: SourceUser})); st.State != StateSuccess {
 		t.Fatalf("lượt người dùng không bị chặn: %+v", st)
+	}
+}
+
+// Đụng chuột lúc AI chạy, bật tự chạy tiếp (57 B4): chuột đứng yên đủ lâu → chạy tiếp, Progress có lúc sẽ chạy tiếp.
+func TestAITouchAutoResume(t *testing.T) {
+	m, _, _ := testManager(t)
+	m.deps.Touch = func(_ context.Context, _ *device.TrackingInput, _ func() bool, onTouch func()) {
+		time.Sleep(30 * time.Millisecond)
+		onTouch()
+	}
+	m.deps.TouchResume = func() time.Duration { return 5 * time.Second }
+	gotAt := make(chan struct{})
+	m.deps.Still = func(_ context.Context, d time.Duration, _ func() bool, at func(time.Time)) bool {
+		at(time.Now().Add(d))
+		close(gotAt)
+		time.Sleep(100 * time.Millisecond)
+		return true
+	}
+	sc := twoWaits(t)
+	sc.Steps[0].DelayAfter, sc.Steps[1].DelayAfter = 200, 200
+	id := mustStart(t, m, sc, Options{Source: SourceAI})
+	<-gotAt
+	if st, _ := m.Status(id); st.Progress == nil || !st.Progress.Paused || st.Progress.ResumeAt == 0 {
+		t.Fatalf("đang chờ chạy tiếp phải có resumeAt: %+v", st.Progress)
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	if st, err := m.Wait(ctx, id); err != nil || st.State != StateSuccess {
+		t.Fatalf("không tự chạy tiếp: %+v %v", st, err)
 	}
 }
