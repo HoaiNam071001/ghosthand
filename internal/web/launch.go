@@ -58,6 +58,9 @@ func findBrowser(goos string) (string, error) {
 // launchArgs – tham số bật trình duyệt; url mở ngay ở tab đầu.
 func launchArgs(profile, url string) []string {
 	return []string{"--remote-debugging-port=0", "--user-data-dir=" + profile, "--no-first-run", "--no-default-browser-check",
+		// cổng debug làm navigator.webdriver = true ngay khi trang tải (bước 36 – trang chống bot đọc cờ này); Chrome hiện
+		// thanh cảnh báo cờ không hỗ trợ, đóng được
+		"--disable-blink-features=AutomationControlled",
 		// chạy nền (D4b): cửa sổ bị che / thu nhỏ, tab không hiện vẫn chạy đủ nhịp (không bị giảm tốc / dừng vẽ)
 		"--disable-backgrounding-occluded-windows", "--disable-renderer-backgrounding", "--disable-background-timer-throttling", url}
 }
@@ -167,13 +170,14 @@ func waitPort(ctx context.Context, profile string, timeout time.Duration) (int, 
 	return 0, &BrowserError{"trình duyệt đã bật nhưng không mở cổng điều khiển sau " + timeout.String()}
 }
 
-// startBrowser bật trình duyệt tách khỏi app (app tắt thì trình duyệt vẫn mở – detach_*.go).
-func startBrowser(bin string, args []string) error {
-	cmd := exec.Command(bin, args...)
+// startBrowser bật trình duyệt tách khỏi app (app tắt thì trình duyệt vẫn mở – detach_*.go); done đóng khi nó tắt.
+func startBrowser(bin string, args []string) (cmd *exec.Cmd, done <-chan struct{}, err error) {
+	cmd = exec.Command(bin, args...)
 	detach(cmd)
 	if err := cmd.Start(); err != nil {
-		return &BrowserError{fmt.Sprintf("không bật được trình duyệt %s: %v", filepath.Base(bin), err)}
+		return nil, nil, &BrowserError{fmt.Sprintf("không bật được trình duyệt %s: %v", filepath.Base(bin), err)}
 	}
-	go func() { _ = cmd.Wait() }() // không để tiến trình zombie khi trình duyệt tắt lúc app còn chạy
-	return nil
+	ch := make(chan struct{})
+	go func() { _ = cmd.Wait(); close(ch) }() // không để tiến trình zombie khi trình duyệt tắt lúc app còn chạy
+	return cmd, ch, nil
 }

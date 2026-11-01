@@ -7,8 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/chromedp/chromedp"
-
 	"ghosthand/internal/model"
 )
 
@@ -88,7 +86,7 @@ func (c *Chrome) ReadOutline(ctx context.Context, tab string, onlyDialog bool) (
 }
 
 func outlineOf(ctx context.Context, t *tabConn, onlyDialog bool) (Outline, error) {
-	r, err := run(ctx, t.ctx, "đọc cấu trúc trang", chromedp.Evaluate[outlineResult](pageJS(outlineJS, strconv.Itoa(maxOutline), strconv.FormatBool(onlyDialog))))
+	r, err := evalJS[outlineResult](ctx, t.ctx, "đọc cấu trúc trang", pageJS(outlineJS, strconv.Itoa(maxOutline), strconv.FormatBool(onlyDialog)))
 	if err != nil {
 		return Outline{}, err
 	}

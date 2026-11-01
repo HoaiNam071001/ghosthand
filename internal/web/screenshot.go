@@ -37,7 +37,7 @@ func (c *Chrome) Screenshot(ctx context.Context, tab string) (TabShot, error) {
 	if err != nil {
 		return TabShot{}, err
 	}
-	w, err := run(ctx, t.ctx, "đọc bề rộng trang", chromedp.Evaluate[int]("innerWidth"))
+	w, err := evalJS[int](ctx, t.ctx, "đọc bề rộng trang", "innerWidth")
 	if err != nil {
 		return TabShot{}, err
 	}

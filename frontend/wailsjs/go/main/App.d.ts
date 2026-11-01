@@ -69,6 +69,8 @@ export function FindImage(arg1:model.Script,arg2:string):Promise<engine.FindResu
 
 export function FinishRecording(arg1:model.Script):Promise<script.EmbedResult>;
 
+export function FinishWebLogin(arg1:string):Promise<void>;
+
 export function FlowGuide():Promise<model.FlowGuideDoc>;
 
 export function FocusWindow(arg1:number):Promise<void>;
@@ -228,6 +230,8 @@ export function SetTheme(arg1:string):Promise<void>;
 export function SetWindowMode(arg1:string):Promise<void>;
 
 export function StartRecording():Promise<void>;
+
+export function StartWebLogin(arg1:string):Promise<void>;
 
 export function StepOnlyOS():Promise<Record<string, Array<string>>>;
 

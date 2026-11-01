@@ -16,6 +16,8 @@ import (
 	"github.com/chromedp/cdproto/target"
 	"github.com/chromedp/chromedp"
 	"github.com/chromedp/chromedp/remote"
+
+	"ghosthand/internal/model"
 )
 
 // Chrome – Browser thật: Chrome / Edge / Brave của app (profile riêng) qua CDP. Nối lười ở lần dùng đầu; một bản cho
@@ -115,8 +117,11 @@ func (c *Chrome) launch(ctx context.Context, u string) error {
 	if err := os.MkdirAll(c.profile, 0o755); err != nil {
 		return err
 	}
+	if loggingIn(c.profile) {
+		return errLoggingIn
+	}
 	_ = os.Remove(filepath.Join(c.profile, "DevToolsActivePort")) // file sót – không nhầm cổng cũ
-	if err := startBrowser(bin, launchArgs(c.profile, u)); err != nil {
+	if _, _, err := startBrowser(bin, launchArgs(c.profile, u)); err != nil {
 		return err
 	}
 	if _, err := waitPort(ctx, c.profile, launchTimeout); err != nil {
@@ -150,6 +155,10 @@ func (c *Chrome) tab(id string, alive []tabInfo) (*tabConn, error) {
 	if err := chromedp.Do(ctx); err != nil {
 		cancel()
 		return nil, browserErr("nối vào tab", err)
+	}
+	if err := quietTab(ctx); err != nil {
+		cancel()
+		return nil, err
 	}
 	t := &tabConn{id: id, ctx: ctx, cancel: cancel}
 	c.tabs[id] = t
@@ -189,7 +198,7 @@ func (c *Chrome) Find(ctx context.Context, q Query) (Found, error) {
 		return Found{}, err
 	}
 	f := r.found(ti.URL, q)
-	if !f.OK || q.CheckOnly {
+	if !r.aimable(f) || q.CheckOnly {
 		return f, nil
 	}
 	if q.Background {
@@ -202,7 +211,7 @@ func (c *Chrome) Find(ctx context.Context, q Query) (Found, error) {
 		if r, err = runFind(ctx, t.ctx, q); err != nil {
 			return Found{}, err
 		}
-		if f = r.found(ti.URL, q); !f.OK {
+		if f = r.found(ti.URL, q); !r.aimable(f) {
 			return f, nil
 		}
 	}
@@ -213,9 +222,15 @@ func (c *Chrome) Find(ctx context.Context, q Query) (Found, error) {
 		if r, err = runFind(ctx, t.ctx, q); err != nil { // đo xong đọc lại khung (chuột đi qua có thể làm trang đổi)
 			return Found{}, err
 		}
-		if f = r.found(ti.URL, q); !f.OK {
+		if f = r.found(ti.URL, q); !r.aimable(f) {
 			return f, nil
 		}
+	}
+	if w := r.Wheel; w != nil { // ngoài khung nhìn: chỗ lăn chuột, không chờ đứng yên (chưa bấm)
+		box := t.cal.rectToScreen(w.X, w.Y, w.W, w.H)
+		f.Wheel = &Wheel{At: model.Point{X: box.X + box.W/2, Y: box.Y + box.H/2}, Dir: w.Dir, Px: int(w.Px)}
+		f.Rect = t.cal.rectToScreen(r.X, r.Y, r.W, r.H)
+		return f, nil
 	}
 	if q.Scroll { // sắp bấm: khung phải đứng yên (đọc lại sau một nhịp – cũng là đo lại ngay trước khi di chuột)
 		if r, f, err = steady(ctx, t.ctx, q, r, ti.URL); err != nil || !f.OK {

@@ -135,7 +135,7 @@ export function webHintText(s: Step, after: string): string {
   }
   switch (s.type) {
     case 'webWait': return s.webGone ? `Phần tử còn sau ${after} → cổng Thất bại.` : `Không thấy sau ${after} → cổng Thất bại.`;
-    case 'webClick': return `Không thấy sau ${after} → cổng Thất bại. Phần tử ngoài màn hình thì tự cuộn tới; bị popup che thì chờ tiếp.`;
+    case 'webClick': return `Không thấy sau ${after} → cổng Thất bại. Phần tử ngoài màn hình thì lăn chuột tới (như người); bị popup che thì chờ tiếp.`;
     case 'webType': return `Click chuột thật vào ô, ô phải nhận focus mới gõ (không thì cổng Thất bại). Không thấy sau ${after} → cổng Thất bại.`;
     case 'webRead': return `Không di chuột. Node sau dùng {{${s.ref}.output.text}}. Không thấy sau ${after} → cổng Thất bại.`;
     case 'webScroll':

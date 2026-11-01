@@ -66,8 +66,8 @@
       ] },
       { "kind": "h", "text": "Mỗi cách chạy được với loại app nào" },
       { "kind": "table", "head": ["Loại app / trang", "Nên dùng", "Tránh"], "rows": [
-        ["Web cần đăng nhập (Facebook, ngân hàng, Google) trên Chrome bạn đang dùng", "Phần tử (Accessibility), chữ OCR, node trình duyệt ([[node:browserTab]], [[node:pageText]], [[node:readTable]])", "Chrome của app – đăng nhập ở đó dễ bị captcha / khoá tài khoản"],
-        ["Web công khai, không cần đăng nhập", "Web DOM (Chrome của app) – bền nhất, chạy nền", "Toạ độ cố định"],
+        ["Web cần đăng nhập (Facebook, ngân hàng, Google) trên Chrome bạn đang dùng", "Phần tử (Accessibility), chữ OCR, node trình duyệt ([[node:browserTab]], [[node:pageText]], [[node:readTable]])", "Đăng nhập thẳng trong Chrome của app lúc đang điều khiển – dễ bị captcha"],
+        ["Web công khai, hoặc đã đăng nhập qua nút **Đăng nhập** của node web", "Web DOM (Chrome của app) – bền nhất, chạy nền", "Toạ độ cố định"],
         ["App native (Finder, Excel, Zalo PC, phần mềm kế toán)", "Phần tử, rồi tới chữ OCR", "Toạ độ khi cửa sổ hay đổi cỡ"],
         ["App Electron (Slack, Discord, VS Code)", "Phần tử (đọc được khá đủ), chữ OCR", "Ảnh mẫu khi app hay đổi theme"],
         ["Game, canvas, video, app vẽ", "Ảnh mẫu, màu pixel, toạ độ (ghép [[node:window]] để cố định cửa sổ)", "Phần tử / web DOM – không có cây phần tử"],
@@ -75,7 +75,7 @@
       ] },
       { "kind": "h", "text": "Cây quyết định" },
       { "kind": "steps", "items": [
-        "Trang web **không cần đăng nhập**? → dùng node Web trên Chrome của app ([[node:openWeb]] rồi [[node:webClick]] / [[node:webType]]).",
+        "Trang web **không cần đăng nhập** (hoặc đã đăng nhập bằng nút *Đăng nhập* ở node web – Chrome của app mở như Chrome thường, xong bấm *Xong*)? → dùng node Web trên Chrome của app ([[node:openWeb]] rồi [[node:webClick]] / [[node:webType]]).",
         "App / trang có **chữ hoặc nhãn rõ ràng** trên nút? → thử **Phần tử** trước ([[node:clickElement]]); bấm *Thử tìm* trong inspector để xem có thấy không.",
         "Không thấy phần tử (game, remote, canvas) nhưng **chữ đọc được**? → [[node:clickText]].",
         "Nút **chỉ có icon**, không chữ? → ảnh mẫu ([[node:clickImage]]), khoanh sát icon.",

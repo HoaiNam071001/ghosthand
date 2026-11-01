@@ -1,13 +1,13 @@
 // Node web (bước 25d D3) – phía giao diện: trạng thái Chrome của app, Thử tìm (khung trên overlay như ảnh mẫu),
 // Chọn phần tử trên trang. Tìm / sinh selector ở Go (webapi.go, internal/web).
 import { useSyncExternalStore } from 'react';
-import { BrowserStatus, CancelPick, FindElement, OpenAppBrowser, PickElement } from '../wailsjs/go/main/App';
+import { BrowserStatus, CancelPick, FindElement, FinishWebLogin, OpenAppBrowser, PickElement, StartWebLogin } from '../wailsjs/go/main/App';
 import { model } from '../wailsjs/go/models';
 import { getEditor, setNotice, updateStep } from './store';
 import { errorText } from './engineStore';
 import { showFind } from './imageSteps';
 import { inWails } from './windowMode';
-import { BrowserState, WebFind, webFindText } from './flow/web';
+import { BrowserState, loginUrl, WebFind, webFindText } from './flow/web';
 
 type WebState = {
   status: BrowserState | null; // null = chưa hỏi
@@ -15,8 +15,9 @@ type WebState = {
   busy: string; // id node đang thử tìm
   picking: string; // id node đang chờ chọn phần tử trên trang
   error: string;
+  login: '' | 'opening' | 'closing'; // Đăng nhập / Xong đang chạy (đóng / mở lại Chrome mất vài giây)
 };
-let state: WebState = { status: null, finds: {}, busy: '', picking: '', error: '' };
+let state: WebState = { status: null, finds: {}, busy: '', picking: '', error: '', login: '' };
 const listeners = new Set<() => void>();
 const set = (p: Partial<WebState>) => {
   state = { ...state, ...p };
@@ -39,6 +40,31 @@ export async function openAppBrowser() {
   } catch (e) {
     set({ error: errorText(e) });
   }
+  await refreshBrowser();
+}
+
+// Đăng nhập tài khoản web (bước 36): mở lại Chrome của app không cổng điều khiển ở trang đang dùng; Xong → mở lại
+// chế độ điều khiển ở trang đó.
+let loginAt = '';
+
+export async function startWebLogin() {
+  if (!inWails) return;
+  loginAt = loginUrl(state.status);
+  await loginStep('opening', () => StartWebLogin(loginAt));
+}
+
+export async function finishWebLogin() {
+  if (inWails) await loginStep('closing', () => FinishWebLogin(loginAt));
+}
+
+async function loginStep(phase: WebState['login'], call: () => Promise<void>) {
+  set({ login: phase, error: '' });
+  try {
+    await call();
+  } catch (e) {
+    set({ error: errorText(e) });
+  }
+  set({ login: '' });
   await refreshBrowser();
 }
 

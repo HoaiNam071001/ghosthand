@@ -4,8 +4,9 @@
 // khung nhìn của trang (lăn chuột giữa trang – webScroll). Trả khung theo toạ độ client của trang chính (CSS px), phần tử che tâm (elementFromPoint
 // từng tầng frame) và hình học cửa sổ để Go biết khi nào phải đo lại toạ độ. Phần tử thấy được ghi vào
 // window.__acTarget để probe.js kiểm khi thử hover. scope "dialog" = chỉ trong hộp thoại đang mở trên cùng; nth = chỗ thứ
-// mấy trong số phần tử đang hiện (0 = chỗ bấm được đầu tiên).
-(sels, { scroll, read, attr, viewport, scope, nth }) => {
+// mấy trong số phần tử đang hiện (0 = chỗ bấm được đầu tiên). wheel (cùng scroll) = không nhảy bằng scrollIntoView mà
+// trả out.wheel – khung cần lăn chuột thật (Go lăn rồi tìm lại); không tìm được khung lăn thì vẫn nhảy.
+(sels, { scroll, read, attr, viewport, scope, nth, wheel }) => {
   const norm = s => clean(s).toLowerCase();
   const matches = (got, value, exact) => {
     const a = norm(got), b = norm(value);
@@ -107,6 +108,43 @@
     for (let x = el; x; x = x.ownerDocument.defaultView.frameElement) if (dialog.contains(x)) return true;
     return false;
   };
+  // Khung cần lăn để tâm el (p – place) vào vùng nhìn: khung cuộn trong cùng mà tâm còn ngoài vùng của nó và phần thấy
+  // được trên màn đủ đặt chuột; hết khung cuộn trong một document thì là khung nhìn của document đó (trang / iframe).
+  // Trả vùng đặt chuột (toạ độ trang chính), hướng, quãng px từ tâm el tới giữa khung.
+  const wheelOf = (el, p) => {
+    const need = (c, sx, sy) => {
+      const mx = c.x + c.w / 2, my = c.y + c.h / 2;
+      if (sy && (p.cy < c.y || p.cy >= c.y + c.h)) return { dir: p.cy > my ? 'down' : 'up', px: Math.abs(p.cy - my) };
+      if (sx && (p.cx < c.x || p.cx >= c.x + c.w)) return { dir: p.cx > mx ? 'right' : 'left', px: Math.abs(p.cx - mx) };
+      return null;
+    };
+    for (let a = el; a;) {
+      const doc = a.ownerDocument, win = doc.defaultView;
+      let c, sx = true, sy = true;
+      a = a.parentElement;
+      if (a && a !== doc.body && a !== doc.documentElement) {
+        const cs = win.getComputedStyle(a);
+        sx = /auto|scroll|overlay/.test(cs.overflowX) && a.scrollWidth > a.clientWidth + 1;
+        sy = /auto|scroll|overlay/.test(cs.overflowY) && a.scrollHeight > a.clientHeight + 1;
+        if (!sx && !sy) continue;
+        const r = a.getBoundingClientRect(), off = frameOffset(win);
+        c = { x: r.left + a.clientLeft + off.x, y: r.top + a.clientTop + off.y, w: a.clientWidth, h: a.clientHeight };
+      } else if (a === doc.body) {
+        continue;
+      } else { // hết cây: khung nhìn của document, rồi đi tiếp từ iframe chứa nó
+        const f = win.frameElement;
+        if (f) {
+          const fc = frameContent(f), o = frameOffset(f.ownerDocument.defaultView);
+          c = { x: fc.x + o.x, y: fc.y + o.y, w: fc.w, h: fc.h };
+        } else c = { x: 0, y: 0, w: innerWidth, h: innerHeight };
+        a = f;
+      }
+      const d = need(c, sx, sy);
+      const x = Math.max(c.x, 0), y = Math.max(c.y, 0), w = Math.min(c.x + c.w, innerWidth) - x, h = Math.min(c.y + c.h, innerHeight) - y;
+      if (d && w >= 20 && h >= 20) return Object.assign(d, { x, y, w, h });
+    }
+    return null;
+  };
   // Nhiều phần tử cùng tên (ô lọc của lưới sau hộp thoại + ô trong hộp thoại): sắp bấm thì lấy cái đầu tiên đang trong
   // vùng nhìn mà không bị che; không có thì như cũ (cái đầu) để báo đúng phần tử che.
   const pickClear = list => {
@@ -133,8 +171,11 @@
     if (!el) { out.hidden = Math.max(out.hidden, found.length); continue; }
     let p = place(el);
     if (scroll && !p.inView) {
-      el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'instant' });
-      p = place(el);
+      if (wheel) out.wheel = wheelOf(el, p);
+      if (!out.wheel) {
+        el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'instant' });
+        p = place(el);
+      }
     }
     window.__acTarget = el;
     Object.assign(out, { sel: i, x: p.box.x, y: p.box.y, w: p.box.w, h: p.box.h, text: clean(ownText(el)).slice(0, 200), inView: p.inView, count: visible.length });

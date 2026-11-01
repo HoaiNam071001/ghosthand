@@ -152,6 +152,43 @@ func TestWebClickRetriesUntilHoverOK(t *testing.T) {
 	}
 }
 
+// Phần tử ngoài khung nhìn: lăn chuột thật giữa khung cuộn (nấc theo quãng, tối đa 5) rồi tìm lại; lăn mà phần tử không
+// nhích → tắt Wheel (find.js nhảy bằng scrollIntoView).
+func TestWebClickWheelsIntoView(t *testing.T) {
+	off := func(y, px int) web.Found {
+		return web.Found{Selector: 0, OffView: true, Rect: model.Rect{X: 100, Y: y, W: 40, H: 20}, Tab: "file:///a.html",
+			Wheel: &web.Wheel{At: model.Point{X: 500, Y: 400}, Dir: "down", Px: px}}
+	}
+	slow := func(s *model.Step) { s.TimeoutMs = 10000 } // nhịp lăn giống người
+	b := &fakeBrowser{finds: []web.Found{off(1900, 1500), off(1400, 250), found(0, model.Rect{X: 100, Y: 300, W: 40, H: 20})}}
+	in, _, err := runWeb(t, b, webNode(model.StepWebClick, slow))
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := []string{"move 500,400"}
+	for range 5 {
+		want = append(want, "scroll down")
+	}
+	want = append(want, "move 500,400", "scroll down", "scroll down", "move 120,310", "click left false")
+	if !reflect.DeepEqual(in.Lines(), want) {
+		t.Errorf("có %q, muốn %q", in.Lines(), want)
+	}
+	if !b.queries[0].Wheel {
+		t.Errorf("node click phải lăn chuột: %+v", b.queries[0])
+	}
+	b = &fakeBrowser{finds: []web.Found{off(1900, 1500), off(1900, 1500), found(0, model.Rect{X: 100, Y: 300, W: 40, H: 20})}}
+	if _, _, err := runWeb(t, b, webNode(model.StepWebClick, slow)); err != nil {
+		t.Fatal(err)
+	}
+	if !b.queries[1].Wheel || b.queries[2].Wheel {
+		t.Errorf("lăn không nhích phải tắt Wheel: %v %v", b.queries[1].Wheel, b.queries[2].Wheel)
+	}
+	b = &fakeBrowser{finds: []web.Found{found(0, model.Rect{W: 10, H: 10})}}
+	if _, _, err := runWeb(t, b, webNode(model.StepWebClick, func(s *model.Step) { s.WebBackground = true })); err != nil || b.queries[0].Wheel {
+		t.Errorf("chạy nền không lăn chuột thật: %v %+v", err, b.queries[0])
+	}
+}
+
 func TestWebWaitGone(t *testing.T) {
 	loading := web.Found{Selector: -1, Loading: true} // tab mới mở chưa tải xong – chưa tính là mất
 	b := &fakeBrowser{finds: []web.Found{loading, found(0, model.Rect{}), missing}}

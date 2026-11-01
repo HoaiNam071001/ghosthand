@@ -138,7 +138,7 @@ func (e *Engine) webScroll(ctx context.Context, s model.Step) (map[string]any, e
 	case model.ScrollModeUntil:
 		return e.scrollUntil(ctx, s)
 	}
-	q, lines, err := webQuery(s, s.Selectors, true) // Scroll: ngoài khung nhìn thì find.js đưa vào giữa
+	q, lines, err := webQuery(s, s.Selectors, true) // Scroll: ngoài khung nhìn thì lăn chuột thật tới (webFindQ)
 	if err != nil {
 		return nil, err
 	}

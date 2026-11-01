@@ -6,7 +6,7 @@ export const WEB_TYPES = ['webWait', 'webClick', 'webType', 'webRead', 'webScrol
 export type WebType = typeof WEB_TYPES[number];
 export const isWebStep = (t: StepType): t is WebType => (WEB_TYPES as readonly StepType[]).includes(t);
 // Ghi chú phạm vi – bảng thêm node, inspector node web và node Mở bằng Chrome của app dùng chung (quyết định 2026-10-18, bước 36).
-export const WEB_BASIC_NOTE = 'Chỉ dùng cho trang web cơ bản, không bắt đăng nhập / captcha – Google, Facebook… dùng Chrome thường + Click theo ảnh / chữ.';
+export const WEB_BASIC_NOTE = 'Trang cần đăng nhập (Gmail, Facebook…): nút Đăng nhập ở node web mở Chrome của app như Chrome thường để đăng nhập, xong bấm Xong. Trang vẫn hỏi captcha khi chạy thì dùng Chrome thường + Click theo ảnh / chữ.';
 
 // Selector của node web – cùng công thức ParseSelector (internal/model/web.go), test chung testdata/selectors.json.
 // Một dòng Step.selectors = "<cách>=<giá trị>", không tiền tố = text; text / aria trong nháy kép = đúng cả chuỗi.
@@ -98,16 +98,23 @@ export function webFindText(r: WebFind, tab?: string, read?: boolean): { ok: boo
   }
   const at = `“${r.selector}” tại X ${r.x + Math.round(r.w / 2)} Y ${r.y + Math.round(r.h / 2)}`;
   if (r.covered) return { ok: false, text: `Thấy ${at} nhưng đang bị ${r.covered} che${ms}` };
-  if (r.offView) return { ok: true, text: `Thấy ${at} – ngoài khung nhìn, lúc click sẽ tự cuộn tới${ms}` };
+  if (r.offView) return { ok: true, text: `Thấy ${at} – ngoài khung nhìn, lúc click sẽ lăn chuột tới${ms}` };
   return { ok: true, text: `Thấy ${at}${ms}` };
 }
 
 // Trạng thái Chrome của app (web.Status – Go internal/web/status.go).
-export interface BrowserState { open: boolean; tabs: { title: string; url: string }[] }
+export interface BrowserState { open: boolean; login?: boolean; tabs: { title: string; url: string }[] }
+
+// Trang mở lại khi Đăng nhập / Xong: tab đang dùng nếu là trang web, không thì trang trống.
+export const loginUrl = (st: BrowserState | null) => {
+  const u = st?.tabs[0]?.url ?? '';
+  return /^https?:/.test(u) ? u : '';
+};
 
 // null = chưa hỏi.
 export function browserStatusText(st: BrowserState | null): string {
   if (!st) return 'Chrome của app: đang kiểm tra…';
+  if (st.login) return 'Chrome của app: đang mở để đăng nhập – đăng nhập xong bấm Xong';
   if (!st.open) return 'Chrome của app: chưa mở';
   const top = st.tabs[0];
   const name = top ? ` · tab đang dùng “${top.title || top.url}”` : '';

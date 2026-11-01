@@ -16,10 +16,11 @@ import (
 var errNoBrowserOpt = &web.BrowserError{Msg: "lần chạy này không điều khiển trình duyệt"}
 
 // webQuery – query tìm theo các dòng selector đã thay biến (dòng trống bỏ qua; đã kiểm tra ở ValidateScript), kèm dòng
-// gốc để báo lại. click: sắp bấm / lăn chuột vào phần tử (cuộn tới, chưa tính khi bị che, tab lên trước – chạy nền
-// thì không đưa lên).
+// gốc để báo lại. click: sắp bấm / lăn chuột vào phần tử (cuộn tới bằng bánh xe thật – chạy nền thì nhảy, chưa tính
+// khi bị che, tab lên trước – chạy nền thì không đưa lên).
 func webQuery(s model.Step, sels []string, click bool) (web.Query, []string, error) {
-	q := web.Query{Tab: s.Tab, Scroll: click, Background: s.WebBackground, Scope: s.WebScope, Occurrence: s.Occurrence}
+	q := web.Query{Tab: s.Tab, Scroll: click, Wheel: click && !s.WebBackground, Background: s.WebBackground, Scope: s.WebScope,
+		Occurrence: s.Occurrence}
 	var lines []string
 	for _, line := range sels {
 		if strings.TrimSpace(line) == "" {
@@ -60,10 +61,19 @@ func (e *Engine) webFindQ(ctx context.Context, s model.Step, q web.Query, lines 
 		return webTry{}, nil, errNoBrowserOpt
 	}
 	var last webTry
+	wheels := 0
 	_, err := e.waitLoop(ctx, s, "web", func() (bool, int, error) {
+		prev := last
 		var err error
-		last, err = e.webTryOnce(ctx, s, q, aim)
-		return last.ok, 0, err
+		if last, err = e.webTryOnce(ctx, s, q, aim); err != nil || last.Wheel == nil {
+			return last.ok, 0, err
+		}
+		// lăn mà phần tử không nhích (khung không nhận bánh xe) hoặc lăn quá lâu → nhảy bằng scrollIntoView như cũ
+		if wheels++; wheels > maxWheels || prev.Wheel != nil && prev.Rect == last.Rect {
+			q.Wheel = false
+			return false, 0, nil
+		}
+		return false, 0, e.wheelTo(ctx, *last.Wheel)
 	})
 	if errors.Is(err, errTimeout) {
 		gone := q.CheckOnly && s.WebGone
@@ -77,6 +87,20 @@ func (e *Engine) webFindQ(ctx context.Context, s model.Step, q web.Query, lines 
 	}
 	return last, lines, err
 }
+
+// maxWheels – số lần lăn tối đa (mỗi lần ≤ maxNotches nấc) trước khi nhảy thẳng tới phần tử.
+const maxWheels = 15
+
+// wheelTo đưa chuột thật vào giữa khung cuộn rồi lăn về phía phần tử – mỗi nấc ~100 px (device.scrollNotchPx), tối đa
+// maxNotches nấc rồi tìm lại (trang lười tải / dàn lại khi cuộn).
+func (e *Engine) wheelTo(ctx context.Context, w web.Wheel) error {
+	if err := e.move(ctx, w.At.X, w.At.Y, 0); err != nil {
+		return err
+	}
+	return e.wheel(ctx, w.Dir, min(max(w.Px/100, 1), maxNotches))
+}
+
+const maxNotches = 5
 
 // webTryOnce – một lần tìm (+ thử hover khi aim); ok = đủ điều kiện dừng chờ.
 func (e *Engine) webTryOnce(ctx context.Context, s model.Step, q web.Query, aim bool) (webTry, error) {

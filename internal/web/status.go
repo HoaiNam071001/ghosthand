@@ -4,8 +4,9 @@ import "context"
 
 // Status – trạng thái Chrome của app cho giao diện (D3): đang mở chưa, các tab (tab dùng gần nhất đứng đầu).
 type Status struct {
-	Open bool  `json:"open"`
-	Tabs []Tab `json:"tabs"`
+	Open  bool  `json:"open"`
+	Login bool  `json:"login"` // đang mở để đăng nhập tài khoản (không cổng điều khiển – login.go)
+	Tabs  []Tab `json:"tabs"`
 }
 
 type Tab struct {
@@ -18,6 +19,9 @@ type Tab struct {
 func (c *Chrome) Status(ctx context.Context) Status {
 	c.mu.Lock()
 	defer c.mu.Unlock()
+	if loggingIn(c.profile) {
+		return Status{Login: true, Tabs: []Tab{}}
+	}
 	port, err := c.connect(ctx)
 	if err != nil {
 		return Status{Tabs: []Tab{}}

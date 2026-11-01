@@ -55,12 +55,44 @@ func (a *App) OpenAppBrowser(url string) error {
 	if err != nil {
 		return err
 	}
-	if url == "" {
-		url = "about:blank"
-	}
 	ctx, cancel := context.WithTimeout(context.Background(), webUITimeout)
 	defer cancel()
-	return b.Open(ctx, url)
+	return b.Open(ctx, orBlank(url))
+}
+
+// loginTimeout – đóng Chrome cũ (≤ 15 s) + mở lại chế độ điều khiển (≤ 20 s).
+const loginTimeout = 60 * time.Second
+
+// StartWebLogin – nút Đăng nhập tài khoản web (bước 36): mở Chrome của app không có cổng điều khiển ở url ("" = trang
+// trống) để người dùng đăng nhập Gmail / Facebook như Chrome thường.
+func (a *App) StartWebLogin(url string) error {
+	b, err := a.browser()
+	if err != nil {
+		return err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), loginTimeout)
+	defer cancel()
+	return b.StartLogin(ctx, orBlank(url))
+}
+
+// FinishWebLogin – nút Xong: Chrome đăng nhập tự tắt (lưu cookie) rồi mở lại chế độ điều khiển ở url; app lên lại trước.
+func (a *App) FinishWebLogin(url string) error {
+	b, err := a.browser()
+	if err != nil {
+		return err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), loginTimeout)
+	defer cancel()
+	err = b.FinishLogin(ctx, orBlank(url))
+	a.showWindow()
+	return err
+}
+
+func orBlank(url string) string {
+	if url == "" {
+		return "about:blank"
+	}
+	return url
 }
 
 // FindElement thử tìm phần tử của node web stepID trên tab hiện tại (một lần, không chờ) – nút "Thử tìm".

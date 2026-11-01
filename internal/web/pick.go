@@ -6,8 +6,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/chromedp/chromedp"
-
 	"ghosthand/internal/model"
 )
 
@@ -49,13 +47,13 @@ func (c *Chrome) Pick(ctx context.Context, tab string) (Picked, error) {
 		return Picked{}, err
 	}
 	pick := func(op string) (pickState, error) {
-		return run(ctx, t.ctx, "chọn phần tử", chromedp.Evaluate[pickState](pageJS(pickJS, strconv.Quote(op))))
+		return evalJS[pickState](ctx, t.ctx, "chọn phần tử", pageJS(pickJS, strconv.Quote(op)))
 	}
 	if _, err := pick("start"); err != nil {
 		return Picked{}, err
 	}
 	defer func() {
-		_, _ = run(context.Background(), t.ctx, "gỡ chế độ chọn", chromedp.Evaluate[pickState](pageJS(pickJS, `"stop"`)))
+		_, _ = evalJS[pickState](context.Background(), t.ctx, "gỡ chế độ chọn", pageJS(pickJS, `"stop"`))
 	}()
 	for {
 		if err := sleepCtx(ctx, pickPoll); err != nil {
@@ -98,7 +96,7 @@ func (c *Chrome) verify(ctx context.Context, t *tabConn, cands []string) ([]stri
 		if r.Sel < 0 {
 			continue
 		}
-		same, err := run(ctx, t.ctx, "kiểm selector", chromedp.Evaluate[bool](sameTargetJS))
+		same, err := evalJS[bool](ctx, t.ctx, "kiểm selector", sameTargetJS)
 		if err != nil {
 			return nil, err
 		}

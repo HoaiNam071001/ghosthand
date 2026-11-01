@@ -24,7 +24,7 @@ var nodePrefTips = map[string]string{
 - Form trong hộp thoại: node web đặt webScope "dialog" (bỏ ô cùng tên ở trang phía sau); ô theo nhãn: label="Ngày sinh" (cả nhãn antd không gắn for); nhiều chỗ khớp: occurrence N. Ô tuỳ biến (chọn ngày, editor) báo "không nhận focus" dù đã vào đúng ô → webType skipFocusCheck true.
 - loading (trang tải lâu): chờ vài giây rồi probe_page không url (dò lại tab, không tải lại) – tối đa 2–3 lần, vẫn loading thì screenshot xem trang rồi quyết.
 - captcha / blocked / canvas / empty: dùng node ảnh / chữ (open bằng trình duyệt thường, waitImage / clickImage findBy "text") và nói người dùng lý do (signs).
-- Chrome của app chỉ để trang không cần đăng nhập – không đăng nhập tài khoản thật ở đó (dễ bị captcha / khoá); trang cần đăng nhập dùng trình duyệt thường + node ảnh / chữ.`,
+- Trang cần đăng nhập: không tự gõ mật khẩu trong Chrome của app – nhờ người dùng bấm Đăng nhập ở node web (mở như Chrome thường), đăng nhập rồi bấm Xong; hoặc dùng trình duyệt thường + node ảnh / chữ.`,
 	store.NodePrefVision: `Ưu tiên node ảnh / chữ (mặc định): trang web cũng làm bằng node open (trình duyệt thường) + tìm chữ / ảnh trên màn hình.
 - Chỉ dùng node web khi người dùng xin hoặc sau khi đổi ưu tiên (set_node_preference "web"); muốn biết trang có dùng được node web không → probe_page(url).`,
 }

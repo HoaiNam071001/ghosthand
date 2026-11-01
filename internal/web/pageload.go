@@ -3,8 +3,6 @@ package web
 import (
 	"context"
 	"time"
-
-	"github.com/chromedp/chromedp"
 )
 
 // Chờ trang trước khi thử trang (bước 44 T6): nhiều trang không bao giờ tới readyState complete (quảng cáo, tracking
@@ -53,7 +51,7 @@ func waitSettled(ctx context.Context, tctx context.Context) (bool, error) {
 	var w loadWatch
 	end := time.Now().Add(loadTimeout)
 	for {
-		p, err := run(ctx, tctx, "chờ trang tải", chromedp.Evaluate[loadProbe](loadProbeJS))
+		p, err := evalJS[loadProbe](ctx, tctx, "chờ trang tải", loadProbeJS)
 		if err != nil {
 			return false, err
 		}

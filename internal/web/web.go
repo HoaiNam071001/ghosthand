@@ -45,6 +45,7 @@ type Query struct {
 	Viewport   bool   // tìm chính khung nhìn của trang (bỏ qua Selectors) – lăn chuột giữa trang (webScroll)
 	Scope      string // model.WebScopes: "dialog" = chỉ trong hộp thoại đang mở trên cùng (không có hộp thoại → không thấy)
 	Occurrence int    // chỗ thứ mấy trong số phần tử đang hiện (thứ tự trong trang); 0 = chỗ bấm được đầu tiên
+	Wheel      bool   // cùng Scroll: ngoài khung nhìn thì không nhảy mà trả Found.Wheel để lăn chuột thật (bước 36)
 	// Background: chạy nền – không đưa tab lên trước, không đo toạ độ bằng chuột; Found.Rect theo toạ độ trong trang
 	Background bool
 }
@@ -66,6 +67,15 @@ type Found struct {
 	Counts   []SelCount // số khớp từng selector đã xét (không thấy: mọi selector) – chi tiết lỗi cho AI
 	NoDialog bool       // Query.Scope dialog nhưng trang không có hộp thoại đang mở
 	Value    string     // Query.Read: giá trị đọc được
+	Wheel    *Wheel     // Query.Wheel và phần tử ngoài khung nhìn: khung cần lăn (OK = false, Rect là khung phần tử)
+}
+
+// Wheel – chỗ lăn chuột để phần tử vào khung nhìn: At giữa phần thấy được của khung cuộn (toạ độ màn hình), hướng
+// up | down | left | right, Px quãng còn lại (CSS px) để biết lăn mấy nấc.
+type Wheel struct {
+	At  model.Point
+	Dir string
+	Px  int
 }
 
 // SelCount – số phần tử khớp một selector: đang hiện / ẩn (cỡ 0, display none…).

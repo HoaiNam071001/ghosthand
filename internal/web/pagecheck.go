@@ -6,8 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-
-	"github.com/chromedp/chromedp"
 )
 
 // Thử trang (bước 44): mở url trên Chrome của app, chờ trang yên (pageload.go), gom dấu hiệu (pagecheck.js) → kết luận trang dùng
@@ -82,7 +80,7 @@ func (c *Chrome) CheckPage(ctx context.Context, u string) (PageCheck, error) {
 	if err != nil {
 		return PageCheck{}, err
 	}
-	s, err := run(ctx, t.ctx, "dò trang", chromedp.Evaluate[pageSigns](pageJS(pagecheckJS)))
+	s, err := evalJS[pageSigns](ctx, t.ctx, "dò trang", pageJS(pagecheckJS))
 	if err != nil {
 		return PageCheck{}, err
 	}

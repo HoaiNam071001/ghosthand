@@ -51,7 +51,7 @@ func (c *Chrome) Hover(ctx context.Context, x, y int, onTarget bool) (Hover, err
 		return Hover{}, err
 	}
 	if !ok { // chuột không vào trang: thường do Dock / thanh menu che mép dưới / trên → cuộn phần tử vào giữa rồi thử lại
-		if _, err := run(ctx, t.ctx, "cuộn tới phần tử", chromedp.Evaluate[bool](scrollCenterJS)); err != nil {
+		if _, err := evalJS[bool](ctx, t.ctx, "cuộn tới phần tử", scrollCenterJS); err != nil {
 			return Hover{}, err
 		}
 		return Hover{Miss: fmt.Sprintf("chuột tới (%d, %d) nhưng trang không nhận – bị Dock / thanh menu / cửa sổ khác che?", x, y)}, nil
@@ -90,7 +90,7 @@ func (c *Chrome) calibrate(ctx, tctx context.Context) (*calibration, error) {
 	if err != nil {
 		return nil, err
 	}
-	g, err := run(ctx, tctx, "đọc hình học trang", chromedp.Evaluate[geom](geomJS))
+	g, err := evalJS[geom](ctx, tctx, "đọc hình học trang", geomJS)
 	if err != nil {
 		return nil, err
 	}
@@ -101,12 +101,12 @@ func (c *Chrome) calibrate(ctx, tctx context.Context) (*calibration, error) {
 // tabProbe – đọc pointermove cuối trang nhận (probe.js).
 func tabProbe(tctx context.Context) pageProbe {
 	return func(ctx context.Context) (probeRead, error) {
-		mv, err := run(ctx, tctx, "đọc chuột trong trang", chromedp.Evaluate[struct {
+		mv, err := evalJS[struct {
 			X, Y float64
 			N    int
 			Hit  bool
 			At   string
-		}](pageJS(probeJS)))
+		}](ctx, tctx, "đọc chuột trong trang", pageJS(probeJS))
 		return probeRead{n: mv.N, at: fpoint{mv.X, mv.Y}, hit: mv.Hit, cover: mv.At}, err
 	}
 }

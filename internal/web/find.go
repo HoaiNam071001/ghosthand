@@ -43,6 +43,13 @@ type findResult struct {
 	Value    string     `json:"value"`
 	Counts   []SelCount `json:"counts"`
 	NoDialog bool       `json:"noDialog"`
+	Wheel    *wheelBox  `json:"wheel"`
+}
+
+// wheelBox – out.wheel của find.js: vùng đặt chuột (toạ độ client trang chính), hướng, quãng px.
+type wheelBox struct {
+	X, Y, W, H, Px float64
+	Dir            string
 }
 
 // found – Found chưa có khung màn hình. Bị che / tâm ngoài viewport khi phải bấm → chưa coi là thấy.
@@ -52,6 +59,9 @@ func (r findResult) found(tab string, q Query) Found {
 	f.OK = r.Sel >= 0 && (q.CheckOnly || r.Covered == "" && (r.InView || !q.Scroll))
 	return f
 }
+
+// aimable – đáng đo toạ độ màn hình: thấy để bấm, hoặc phải lăn chuột tới (find.js trả khung lăn).
+func (r findResult) aimable(f Found) bool { return f.OK || r.Wheel != nil }
 
 // cdpTimeout – mỗi lệnh CDP tối đa (trang treo / trình duyệt không trả lời thì báo lỗi, không treo engine).
 const cdpTimeout = 5 * time.Second
@@ -75,10 +85,10 @@ func runFind(ctx, tctx context.Context, q Query) (findResult, error) {
 		return findResult{}, err
 	}
 	opts, err := json.Marshal(map[string]any{"scroll": q.Scroll, "read": q.Read, "attr": q.Attr, "viewport": q.Viewport,
-		"scope": q.Scope, "nth": q.Occurrence})
+		"scope": q.Scope, "nth": q.Occurrence, "wheel": q.Wheel})
 	if err != nil {
 		return findResult{}, err
 	}
 	js := pageJS(findJS, string(sels), string(opts))
-	return run(ctx, tctx, "tìm phần tử", chromedp.Evaluate[findResult](js))
+	return evalJS[findResult](ctx, tctx, "tìm phần tử", js)
 }

@@ -1,0 +1,31 @@
+{
+ "meta": {
+  "name": "Facebook – vào trang cá nhân",
+  "description": "Mở Facebook trên Chrome của app, chờ thấy tên bạn ở cột trái, bấm vào đó (node web, chuột thật) rồi chờ trang cá nhân hiện tên làm tiêu đề. Chưa đăng nhập → kết thúc thất bại kèm lời nhắc. Đúng: dừng ở trang cá nhân, thanh mini báo Thành công.",
+  "app": "Web thật",
+  "level": 2,
+  "page": "https://www.facebook.com",
+  "real": true,
+  "prep": "Đăng nhập Facebook trước: chọn node web bất kỳ → Đăng nhập (Chrome của app mở như Chrome thường) → đăng nhập → Xong. Nhập đúng tên hiển thị Facebook ở form Chạy. Facebook đổi giao diện thì có thể phải sửa cách tìm."
+ },
+ "script": {
+  "steps": [
+   { "type": "open", "target": "https://www.facebook.com/", "webBrowser": true, "delayAfter": 2000 },
+   { "type": "webWait", "selectors": ["role=link[name=\"{{ten}}\"]", "text={{ten}}"], "timeoutMs": 15000 },
+   { "type": "webClick", "selectors": ["role=link[name=\"{{ten}}\"]", "text={{ten}}"], "timeoutMs": 5000, "delayAfter": 1500 },
+   { "type": "webWait", "selectors": ["role=heading[name=\"{{ten}}\"]"], "timeoutMs": 15000 },
+   { "type": "end", "endStatus": "success", "message": "Đã vào trang cá nhân của {{ten}}" },
+   { "type": "end", "endStatus": "fail", "message": "Không thấy tên “{{ten}}” trên Facebook – chưa đăng nhập (node web → Đăng nhập → Xong) hoặc tên nhập chưa đúng" }
+  ],
+  "edges": [
+   { "from": "s1", "port": "success", "to": "s2" },
+   { "from": "s2", "port": "success", "to": "s3" },
+   { "from": "s2", "port": "fail", "to": "s6" },
+   { "from": "s3", "port": "success", "to": "s4" },
+   { "from": "s4", "port": "success", "to": "s5" }
+  ],
+  "inputs": [
+   { "key": "ten", "label": "Tên hiển thị Facebook của bạn", "type": "text", "default": "" }
+  ]
+ }
+}

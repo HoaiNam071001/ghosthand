@@ -2751,6 +2751,7 @@ export namespace web {
 	}
 	export class Status {
 	    open: boolean;
+	    login: boolean;
 	    tabs: Tab[];
 	
 	    static createFrom(source: any = {}) {
@@ -2760,6 +2761,7 @@ export namespace web {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.open = source["open"];
+	        this.login = source["login"];
 	        this.tabs = this.convertValues(source["tabs"], Tab);
 	    }
 	

@@ -110,6 +110,10 @@ export function FinishRecording(arg1) {
   return window['go']['main']['App']['FinishRecording'](arg1);
 }
 
+export function FinishWebLogin(arg1) {
+  return window['go']['main']['App']['FinishWebLogin'](arg1);
+}
+
 export function FlowGuide() {
   return window['go']['main']['App']['FlowGuide']();
 }
@@ -428,6 +432,10 @@ export function SetWindowMode(arg1) {
 
 export function StartRecording() {
   return window['go']['main']['App']['StartRecording']();
+}
+
+export function StartWebLogin(arg1) {
+  return window['go']['main']['App']['StartWebLogin'](arg1);
 }
 
 export function StepOnlyOS() {

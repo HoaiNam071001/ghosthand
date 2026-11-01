@@ -2,8 +2,6 @@ package web
 
 import (
 	"context"
-
-	"github.com/chromedp/chromedp"
 )
 
 // Focused – webType: sau khi click, ô đang focus (xuống cả iframe cùng nguồn) phải là ô nhập và là phần tử đích / chỗ chuột
@@ -14,10 +12,10 @@ func (c *Chrome) Focused(ctx context.Context) (bool, string, error) {
 	if c.last == nil {
 		return false, "chưa tìm phần tử", nil
 	}
-	r, err := run(ctx, c.last.ctx, "đọc ô đang focus", chromedp.Evaluate[struct {
+	r, err := evalJS[struct {
 		OK bool
 		At string
-	}](pageJS(focusJS)))
+	}](ctx, c.last.ctx, "đọc ô đang focus", pageJS(focusJS))
 	return r.OK, r.At, err
 }
 

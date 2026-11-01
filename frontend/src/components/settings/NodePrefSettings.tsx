@@ -6,7 +6,7 @@ import Segmented from '../Segmented';
 
 const HINT: Record<NodePref, string> = {
   vision: 'AI tìm chữ / ảnh trên màn hình – chạy với mọi trang, kể cả trang đã đăng nhập trên trình duyệt thường',
-  web: 'Trang web: AI mở thử trên Chrome của app trước, không có captcha thì dùng node web (chính xác nhất) – chỉ cho trang không cần đăng nhập',
+  web: 'Trang web: AI mở thử trên Chrome của app trước, không có captcha thì dùng node web (chính xác nhất) – trang cần đăng nhập: bấm Đăng nhập ở node web trước',
 };
 
 export default function NodePrefSettings({ mcp, onChange }: { mcp: store.MCPSettings; onChange: (patch: Partial<store.MCPSettings>) => void }) {

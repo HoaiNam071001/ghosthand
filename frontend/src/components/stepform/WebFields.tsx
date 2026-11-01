@@ -5,7 +5,7 @@ import NumInput from '../NumInput';
 import { updateStep } from '../../store';
 import { Step } from '../../types';
 import { browserStatusText, parseSelector, selectorLines, WEB_BASIC_NOTE, webFindText } from '../../flow/web';
-import { cancelPick, openAppBrowser, pickElement, refreshBrowser, testWebFind, useWebState } from '../../webSteps';
+import { cancelPick, finishWebLogin, openAppBrowser, pickElement, refreshBrowser, startWebLogin, testWebFind, useWebState } from '../../webSteps';
 import { inWails, openOverlay } from '../../windowMode';
 import { WebTools } from './WebTools';
 import { WebScopeField } from './WebScopeField';
@@ -29,7 +29,7 @@ export function WebFields({ step: s }: { step: Step }) {
   return (
     <>
       <WebTools status={inWails ? browserStatusText(web.status) : 'Chrome của app: chỉ dùng được trong app'} open={!!web.status?.open}
-        enabled={inWails} picking={web.picking === s.id} finding={web.busy === s.id} canFind={lines.length > 0 && lines.every(parseSelector)}
+        login={!!web.status?.login} loginBusy={web.login} onLogin={startWebLogin} onFinishLogin={finishWebLogin} enabled={inWails} picking={web.picking === s.id} finding={web.busy === s.id} canFind={lines.length > 0 && lines.every(parseSelector)}
         result={find ? { ...webFindText(find, s.tab, s.type === 'webRead'), elText: find.found ? find.text : undefined } : null}
         error={web.busy === '' && web.picking === '' ? web.error : ''}
         onOpen={openAppBrowser} onRefresh={refreshBrowser} onPick={() => pickElement(s.id)} onCancelPick={cancelPick}

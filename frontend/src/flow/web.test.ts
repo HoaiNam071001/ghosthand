@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { browserStatusText, fmtSelectors, fmtWebStep, parseSelector, Selector, WebFind, webFindText } from './web';
+import { browserStatusText, fmtSelectors, loginUrl, fmtWebStep, parseSelector, Selector, WebFind, webFindText } from './web';
 import { makeStep } from '../types';
 import data from '../../../testdata/selectors.json';
 
@@ -39,6 +39,15 @@ describe('browserStatusText', () => {
   it('chưa mở', () => expect(browserStatusText({ open: false, tabs: [] })).toBe('Chrome của app: chưa mở'));
   it('đang mở', () => expect(browserStatusText({ open: true, tabs: [{ title: '', url: 'file:///web.html' }, { title: 'B', url: 'x' }] }))
     .toBe('Chrome của app: đang mở, 2 tab · tab đang dùng “file:///web.html”'));
+  it('đang đăng nhập', () => expect(browserStatusText({ open: false, login: true, tabs: [] })).toContain('đăng nhập xong bấm Xong'));
+});
+
+describe('loginUrl', () => {
+  it('tab web', () => expect(loginUrl({ open: true, tabs: [{ title: '', url: 'https://facebook.com/' }] })).toBe('https://facebook.com/'));
+  it('trang trống / file', () => {
+    expect(loginUrl({ open: true, tabs: [{ title: '', url: 'about:blank' }] })).toBe('');
+    expect(loginUrl(null)).toBe('');
+  });
 });
 
 describe('fmtWebStep', () => {
