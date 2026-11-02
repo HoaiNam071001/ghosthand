@@ -104,7 +104,7 @@ func (e *Engine) webFindQ(ctx context.Context, s model.Step, q web.Query, lines 
 // maxWheels – số đợt lăn tối đa (mỗi đợt ≤ maxNotches nấc) trước khi nhảy thẳng tới phần tử.
 const maxWheels = 10
 
-// wheelTo đưa chuột thật vào giữa khung cuộn rồi lăn về phía phần tử – mỗi nấc ~100 px (device.scrollNotchPx), đủ quãng
+// wheelTo đưa chuột thật vào giữa khung cuộn rồi lăn về phía phần tử – mỗi nấc ~100 px (device.scrollNotch), đủ quãng
 // còn lại nhưng tối đa maxNotches nấc rồi tìm lại (trang lười tải / dàn lại khi cuộn).
 func (e *Engine) wheelTo(ctx context.Context, w web.Wheel) error {
 	if err := e.move(ctx, w.At.X, w.At.Y, 0); err != nil {

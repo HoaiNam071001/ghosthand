@@ -13,6 +13,7 @@
 
 ## Lỗi riêng Windows (thử 2026-10-19, `TestRealSamples`, màn 1920×1080 scale 125 %)
 
-- [ ] `web-cuon-trong-khung`: “đã lăn 17 lần, thấy CỘT 12 nhưng chưa vào khung nhìn” – lăn ngang trong khung không tới (robotgo Windows lăn ngang bằng `MOUSEEVENTF_HWHEEL`; xem hướng / Chrome có nhận không)
-- [ ] `web-thanh-toan-iframe`: tick ô đồng ý trong iframe được, nút “Thanh toán” báo “nằm ngoài khung trang” sau 5 s – có thể do khung nhìn thấp (màn 864 px logic) mà phần tử trong iframe không được cuộn vào
-  - 2026-11-01 macOS: cũng hỏng ~1/2 lần (cả bản trước 36) – nguyên nhân gốc ở trang sân thử: xử lý click gắn trong sự kiện `load` của iframe, iframe srcdoc tải xong trước khi script đăng ký → tick không ăn, nút không trượt vào. Đã sửa `web-frame.html` (đã xong thì gắn ngay); macOS chạy thật 3/3. Thử lại trên Windows – nhiều khả năng cùng nguyên nhân
+- [x] `web-cuon-trong-khung`: “đã lăn 17 lần, thấy CỘT 12 nhưng chưa vào khung nhìn” – lăn ngang trong khung không tới (robotgo Windows lăn ngang bằng `MOUSEEVENTF_HWHEEL`; xem hướng / Chrome có nhận không)
+  - 2026-11-02 Windows: nguyên nhân gốc – `robotgo.ScrollDir` "left" / "right" trên Windows ra sự kiện cuộn *dọc* (trang trượt 100 px mỗi nấc, dải ngang đứng yên). Sửa: `device/cursor_windows.go` `scrollNotch` gửi `mouse_event` HWHEEL / WHEEL thẳng; chạy thật qua
+- [x] `web-thanh-toan-iframe`: tick ô đồng ý trong iframe được, nút “Thanh toán” báo “nằm ngoài khung trang” sau 5 s – có thể do khung nhìn thấp (màn 864 px logic) mà phần tử trong iframe không được cuộn vào
+  - 2026-11-01 macOS: cũng hỏng ~1/2 lần (cả bản trước 36) – nguyên nhân gốc ở trang sân thử: xử lý click gắn trong sự kiện `load` của iframe, iframe srcdoc tải xong trước khi script đăng ký → tick không ăn, nút không trượt vào. Đã sửa `web-frame.html` (đã xong thì gắn ngay); macOS chạy thật 3/3. Windows 2026-11-02: chạy thật qua (cùng nguyên nhân)

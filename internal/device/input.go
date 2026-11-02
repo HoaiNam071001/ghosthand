@@ -3,7 +3,6 @@
 package device
 
 import (
-	goruntime "runtime"
 	"time"
 
 	"github.com/go-vgo/robotgo"
@@ -61,16 +60,7 @@ func (RobotgoInput) Click(button string, double bool) error { return robotgo.Cli
 
 func (RobotgoInput) TypeStr(s string) error { return robotgo.TypeStr(s) }
 
-// scrollNotchPx – quãng một nấc cuộn trên macOS. robotgo gửi sự kiện cuộn macOS theo pixel (Windows theo nấc con lăn,
-// Chrome / Edge ≈ 100 px một nấc) – gửi 100 px để một nấc hai bên gần bằng nhau. Khớp SCROLL_NOTCH_PX (types.ts).
-const scrollNotchPx = 100
-
-func (RobotgoInput) Scroll(direction string) error {
-	if goruntime.GOOS == "darwin" {
-		return robotgo.ScrollDir(scrollNotchPx, direction)
-	}
-	return robotgo.ScrollDir(1, direction)
-}
+func (RobotgoInput) Scroll(direction string) error { return scrollNotch(direction) }
 
 func (RobotgoInput) KeyToggle(key string, down bool, modifiers []string) error {
 	if !down {

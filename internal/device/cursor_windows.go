@@ -1,6 +1,7 @@
 package device
 
 import (
+	"fmt"
 	"syscall"
 	"unsafe"
 )
@@ -31,3 +32,30 @@ func moveCursor(x, y int) error {
 
 // Kéo trên Windows: nút đang giữ (Toggle) thì đặt chuột là app nhận WM_MOUSEMOVE kèm trạng thái nút – đủ để kéo.
 func dragCursor(x, y int, _ string) error { return moveCursor(x, y) }
+
+// Cuộn trên Windows gửi thẳng mouse_event: robotgo.ScrollDir "left" / "right" ra sự kiện cuộn dọc (Chrome: dải ngang
+// đứng yên, cả trang trượt xuống 100 px mỗi nấc – web-cuon-trong-khung, 2026-11-02).
+
+const (
+	mouseeventfWheel  = 0x0800
+	mouseeventfHWheel = 0x1000
+	wheelDelta        = 120
+)
+
+func scrollNotch(direction string) error {
+	flag, delta := uintptr(mouseeventfWheel), int32(0)
+	switch direction {
+	case "up":
+		delta = wheelDelta
+	case "down":
+		delta = -wheelDelta
+	case "right":
+		flag, delta = mouseeventfHWheel, wheelDelta
+	case "left":
+		flag, delta = mouseeventfHWheel, -wheelDelta
+	default:
+		return fmt.Errorf("hướng cuộn không hợp lệ: %q", direction)
+	}
+	procMouseEvent.Call(flag, 0, 0, uintptr(uint32(delta)), 0)
+	return nil
+}
