@@ -14,7 +14,7 @@ const getElk = () => (elk ??= import('elkjs/lib/elk.bundled.js').then((m) => new
 export const GAP_X = 56;
 export const GAP_Y = 40;
 
-export type LayoutNode = { id: string; ports: string[] };
+export type LayoutNode = { id: string; ports: string[]; io?: number }; // io: chiều cao khối VÀO / RA (thẻ Đầy đủ – bước 60)
 export type Positions = Record<string, { x: number; y: number }>;
 
 export async function layoutFlow(nodes: LayoutNode[], edges: Edge[]): Promise<Positions> {
@@ -32,11 +32,11 @@ export async function layoutFlow(nodes: LayoutNode[], edges: Edge[]): Promise<Po
     children: nodes.map((n) => ({
       id: n.id,
       width: NODE_W,
-      height: nodeHeight(n.ports),
+      height: nodeHeight(n.ports, n.io),
       layoutOptions: { 'elk.portConstraints': 'FIXED_POS' },
       ports: [
         { id: `${n.id}|in`, x: 0, y: inputY, width: 1, height: 1, layoutOptions: { 'elk.port.side': 'WEST' } },
-        ...n.ports.map((p, i) => ({ id: `${n.id}|${p}`, x: NODE_W, y: portY(n.ports, i), width: 1, height: 1, layoutOptions: { 'elk.port.side': 'EAST' } })),
+        ...n.ports.map((p, i) => ({ id: `${n.id}|${p}`, x: NODE_W, y: portY(n.ports, i, n.io), width: 1, height: 1, layoutOptions: { 'elk.port.side': 'EAST' } })),
       ],
     })),
     edges: edges

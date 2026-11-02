@@ -2,7 +2,6 @@
 // Khung: đầu (màu nhóm, tên, mã node, loại, ⓘ, bật / tắt), tab Node / Input, khối thu gọn Thiết lập → Thời gian → khối flow;
 // trường theo loại nằm ở components/stepform/.
 import ChangeTypePalette from './palette/ChangeTypePalette';
-import { ResizeHandle, usePanelWidth } from './PanelResize';
 import { ReactNode, useState } from 'react';
 import { Eye } from './icons';
 import { Switch } from './Switch';
@@ -61,6 +60,9 @@ import { isWebStep } from '../flow/web';
 import FlowSections from './stepform/FlowSections';
 import ControlSection from './stepform/ControlSection';
 import InputsTab from './stepform/InputsTab';
+import DataTab from './stepform/DataTab';
+import InspectorFrame from './stepform/InspectorFrame';
+import type { DetailMode } from '../flowPrefs';
 import { HumanNodeField } from './HumanFields';
 import { usesHuman } from '../flow/human';
 import { infoKey, nodeInfo } from '../flow/nodeInfo';
@@ -70,18 +72,15 @@ import PermNotice from './stepform/PermNotice';
 // Loại node hành động đổi qua lại được trong ô loại node ở đầu (node điều khiển có trường riêng, không đổi loại)
 const REF_RE = /^[A-Za-z][A-Za-z0-9_]{0,31}$/; // khớp validRef (flow.go)
 
-export default function StepForm({ step: s }: { step: Step }) {
+export default function StepForm({ step: s, mode = 'panel', onClose }: { step: Step; mode?: DetailMode; onClose?: () => void }) {
   const script = useScript();
-  const [tab, setTab] = useState<'step' | 'inputs'>('step');
-  const size = usePanelWidth('inspector-width', 340, 300, 640);
+  const [tab, setTab] = useState<'step' | 'inputs' | 'data'>('step');
   const setPoint = (i: number, p: Partial<StepPoint>) => updateStep(s.id, { points: s.points.map((q, j) => (j === i ? { ...q, ...p } : q)) });
   const atPoint = isMouse(s) || s.type === 'waitPixel' || (s.type === 'scroll' && s.points.length > 0); // có vị trí trên màn hình
   const delay = numVarOf(s, 'delayAfter') ?? s.delayAfter;
 
   return (
-    <div className="relative flex flex-none">
-      <ResizeHandle edge="left" width={size.width} onWidth={size.setWidth} onReset={size.reset} label="Bề rộng bảng thuộc tính node" />
-      <aside aria-label={`Thuộc tính node ${s.ref}`} style={{ width: size.width }} className="flex flex-col gap-3 overflow-y-auto border-l border-line bg-surface p-3.5">
+    <InspectorFrame mode={mode} label={`Thuộc tính node ${s.ref}`} onClose={onClose}>
         <InspectorHead cat={nodeCategory(s)} icon={s.type}
           name={<input value={s.name ?? ''} placeholder={stepLabel(s)} onChange={(e) => updateStep(s.id, { name: e.target.value || undefined })}
             aria-label="Tên node" title="Tên hiện trên thẻ – bỏ trống = tên theo loại"
@@ -94,6 +93,7 @@ export default function StepForm({ step: s }: { step: Step }) {
                 title="Xem / sửa vị trí riêng node này trên màn hình – các node khác mờ đi" className={iconBtn}><Eye /></button>
             )}
             <Switch on={s.enabled} onChange={() => toggleStep(s.id)} label="Bật node" />
+            {onClose && <button onClick={onClose} aria-label="Đóng" title="Đóng (Esc)" className={iconBtn}>✕</button>}
           </>} />
 
         <div className="flex flex-none gap-4 border-b border-line" role="tablist">
@@ -101,9 +101,10 @@ export default function StepForm({ step: s }: { step: Step }) {
           <TabBtn active={tab === 'inputs'} onClick={() => setTab('inputs')} title="Các giá trị hỏi khi bấm Chạy">
             Input {!!script.inputs?.length && <span className="rounded-full bg-accent-soft px-1.5 text-[11px] font-semibold text-accent-text">{script.inputs.length}</span>}
           </TabBtn>
+          <TabBtn active={tab === 'data'} onClick={() => setTab('data')} title="Node đọc biến gì từ đâu, trả ra gì và node nào dùng">Dữ liệu</TabBtn>
         </div>
 
-        {tab === 'inputs' ? <InputsTab /> : <>
+        {tab === 'inputs' ? <InputsTab /> : tab === 'data' ? <DataTab step={s} /> : <>
           <PermNotice step={s} />
           {/* node Chờ: chỉ có thời gian chờ – không hiện khối Thiết lập trống, mở sẵn khối Thời gian */}
           {s.type !== 'wait' && <Section title="Thiết lập" scope={s.type} defaultOpen>
@@ -131,8 +132,7 @@ export default function StepForm({ step: s }: { step: Step }) {
 
           <FlowSections step={s} />
         </>}
-      </aside>
-    </div>
+    </InspectorFrame>
   );
 }
 
