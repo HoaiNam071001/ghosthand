@@ -1,8 +1,8 @@
-//go:build !darwin
+//go:build !darwin && !windows
 
 package runborder
 
-// Windows: layered window (WS_EX_TRANSPARENT + WDA_EXCLUDEFROMCAPTURE) làm trên máy Windows (58 D2) – tạm chưa hiện.
+// Linux: chưa hỗ trợ – không hiện viền.
 
 func Show(x, y, px int, l Look) {}
 

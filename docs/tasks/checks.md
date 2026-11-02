@@ -7,6 +7,7 @@ Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi t
 - [ ] Chạy kịch bản có Chờ chữ 10 s → viền xanh mờ quanh màn hình + thanh mini *Đang chờ chữ "…" · còn N s* đếm lùi; tới node click / gõ → viền xanh nhấp nháy, thanh mini *Đang thao tác – đừng chạm chuột*; xong → viền tắt
 - [ ] Lượt AI, đụng chuột → viền vàng + *Bạn vừa đụng chuột · tự chạy tiếp sau 5 s*
 - [ ] Viền click xuyên qua (bấm được nút sát mép màn hình), không lấy focus; chụp màn / tìm ảnh / đọc chữ sát mép lúc có viền vẫn đúng (AI đã thử qua MCP: ảnh lúc lỗi không dính viền)
+- [ ] **Windows (D2w):** cùng các việc trên – viền xanh quanh màn, nhấp nháy khi thao tác, vàng khi tạm dừng; click xuyên (bấm được nút sát mép), không đổi cửa sổ đang ở trước; ảnh chụp (kể cả MCP screenshot) không dính viền; 2 màn hình → viền ở màn có chuột; màn 125 % viền vẫn dày vừa
 - [ ] App toàn màn hình (Space riêng) vẫn thấy viền; hai màn hình → viền ở màn đang có chuột
 - [ ] Cài đặt → Màn hình → Viền khi đang chạy: Tắt / Mảnh / Vừa có tác dụng ở lần chạy sau
 - [ ] Trong lúc chạy thanh mini nổi trên app đích (Chrome / Zalo) mà phím vẫn gõ vào app đích; chạy xong thanh mini lại bị cửa sổ khác che được như thường
