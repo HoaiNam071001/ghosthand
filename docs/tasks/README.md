@@ -36,6 +36,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 | AI chạy ổn định | Nhận đúng cửa sổ đang ở trước, chạy tiếp giữ focus app đích, AI chạy thì thu về thanh mini, Mở URL đưa trình duyệt lên, đụng chuột tự chạy tiếp sau 5 s, lỗi phần tử gọn hơn | [57](phase3/57-ai-chay-on-dinh.md) |
 | ⬜ | Dấu hiệu đang điều khiển | Viền sáng quanh màn hình (không lọt vào ảnh chụp) + thanh mini ghi rõ đang thao tác / đang chờ gì / tạm dừng | [58](phase3/58-dau-hieu-dang-dieu-khien.md) |
 | ⬜ | AI tự cập nhật + test | Bản dev cài đè + mở lại một lệnh, `app_info`, proxy MCP sống qua lần mở lại, tool `update_app`, skill test sau khi sửa | [59](phase3/59-ai-tu-cap-nhat-va-test.md) |
+| ⬜ | Dữ liệu qua node | Thẻ node Gọn / Đầy đủ có VÀO / RA, kéo output sang input để nối (chỉ tới node chạy sau), thẻ gọn toả cổng khi rê; chi tiết Panel / Modal / Popover; Lịch sử chạy dạng cây node, rê thẻ xem giá trị vào / ra, đường dữ liệu + truy ngược | [60](phase3/60-du-lieu-qua-node.md) |
 
 ### Node hành động
 
@@ -119,7 +120,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 > Bảng tự sinh – sau khi tick chạy `python3 scripts/tasks-index.py`. Bấm tên bước để mở file chi tiết.
 
 <!-- index:start -->
-**52 / 69 bước xong code** · 🧪 **[314 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
+**52 / 70 bước xong code** · 🧪 **[313 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
 
 ### Phase 3 – Design v2 & tự động hoá (theo thứ tự làm)
 
@@ -163,14 +164,15 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 chờ kiểm tra tay | [55. MCP client + node tuỳ chỉnh](phase3/55-mcp-client-node-tuy-chinh.md) | 10 / 10 | [6 việc](checks.md) |
 | ⬜ chưa làm | [56. Học từ MCP ngoài](phase3/56-hoc-tu-mcp-ngoai.md) | 0 / 13 |  |
 | 🟡 đang làm | [57. AI chạy ổn định](phase3/57-ai-chay-on-dinh.md) | 7 / 10 | [7 việc](checks.md) |
-| 🟡 đang làm | [58. Dấu hiệu đang điều khiển](phase3/58-dau-hieu-dang-dieu-khien.md) | 6 / 7 | [6 việc](checks.md) |
+| 🟡 đang làm | [58. Dấu hiệu đang điều khiển](phase3/58-dau-hieu-dang-dieu-khien.md) | 7 / 7 | [7 việc](checks.md) |
 | 🟡 đang làm | [59. AI tự cập nhật + test](phase3/59-ai-tu-cap-nhat-va-test.md) | 6 / 7 | [3 việc](checks.md) |
-| 🧪 chờ kiểm tra tay | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | 12 / 12 | [11 việc](checks.md) |
-| 🧪 chờ kiểm tra tay | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | 43 / 43 | [33 việc](checks.md) |
+| ⬜ chưa làm | [60. Dữ liệu qua node](phase3/60-du-lieu-qua-node.md) | 0 / 9 |  |
+| 🧪 chờ kiểm tra tay | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | 12 / 12 | [10 việc](checks.md) |
+| 🧪 chờ kiểm tra tay | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | 43 / 43 | [32 việc](checks.md) |
 | 🟡 đang làm | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | 11 / 12 |  |
 | 🧪 chờ kiểm tra tay | [39. Gom kịch bản: nhóm node, nhúng kịch bản khác](phase3/39-gom-kich-ban.md) | 2 / 2 | [6 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [24. Ghi macro](phase3/24-ghi-macro.md) | 1 / 1 | [3 việc](checks.md) |
-| 🧪 chờ kiểm tra tay | [28. Mở rộng](phase3/28-mo-rong.md) | 5 / 5 | [4 việc](checks.md) |
+| 🧪 chờ kiểm tra tay | [28. Mở rộng](phase3/28-mo-rong.md) | 5 / 5 | [3 việc](checks.md) |
 | 🟡 đang làm | [36. Web qua Chrome của app – làm sau](phase3/36-chrome-app-sau.md) | 6 / 7 | [4 việc](checks.md) |
 
 ### Phase 0 – 2
@@ -260,6 +262,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 16a1n | [57. AI chạy ổn định](phase3/57-ai-chay-on-dinh.md) | Người dùng yêu cầu (2026-11-01, sau lần AI nhắn tin Messenger qua MCP): đợt 1 (lỗi nhận nhầm cửa sổ trước, `focus` / `keys` chuỗi) làm trước, đợt 2 cùng 58 |
 | 16a1o | [58. Dấu hiệu đang điều khiển](phase3/58-dau-hieu-dang-dieu-khien.md) | Người dùng yêu cầu (2026-11-01): viền sáng + thanh mini rõ trạng thái; làm cùng 57 đợt 2 |
 | 16a1p | [59. AI tự cập nhật + test](phase3/59-ai-tu-cap-nhat-va-test.md) | Người dùng yêu cầu (2026-11-01): vòng dev → cài bản local → test qua MCP (U1–U4, U6) trước, `update_app` qua Release sau |
+| 16a1q | [60. Dữ liệu qua node](phase3/60-du-lieu-qua-node.md) | Người dùng yêu cầu (2026-11-02), đã duyệt design bản 3: V0 (lưu input lúc chạy) + V1–V2 trước, rồi thẻ / kéo nối (V3–V5), cây lần chạy (V6–V7) |
 | 16a2 | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | Người dùng yêu cầu (2026-10-20): ngay sau 41 – chờ màn hình đứng yên thay Chờ cố định, lặp qua danh sách + tìm tất cả, tính toán / xử lý chữ; làm trên Mac được |
 | 16a3 | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | Người dùng yêu cầu (2026-10-20): sau 42, xen kẽ 40 O0–O3 (máy Windows) – trình duyệt Chromium thường không CDP, phần tử app không cần chuột, hệ điều hành, ảnh đánh số / cây giao diện cho AI trước 31c; mỗi việc một node |
 | 16b | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | Người dùng yêu cầu (2026-10-20): làm sau 31b, trước 31c – Windows chưa đọc được tiếng Việt (`Windows.Media.Ocr`); 31c (AI soạn bằng cách thử, ảnh mẫu) cần đọc chữ / tìm ảnh đáng tin |

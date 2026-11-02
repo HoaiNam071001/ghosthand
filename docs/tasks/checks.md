@@ -564,3 +564,7 @@ Người dùng chốt 2026-10-18: việc qua Chrome của app làm sau cùng –
 - [ ] (fix focus click, macOS) Mở Chrome thường, để cửa sổ khác (terminal) ở trước, AI chụp màn hình rồi `run_step` click vào nút trên trang → cú click đầu ăn ngay (không phải click hai lần); chạy trong app (F8) cũng vậy
 - [ ] (53) Cài đặt → AI (MCP): cho AI chạy vài lệnh (đọc, chạy kịch bản có `{{secret.x}}`) → mục *Lệnh AI gần đây* hiện giờ, tool, client, thời lượng; bấm một dòng thấy tham số, mật khẩu / token hiện `••••`; Claude Desktop / ChatGPT thấy tool đọc không hỏi quyền, tool chạy thì hỏi (tuỳ client)
 - [ ] (53 D) Đi tới URL một trang tải rất chậm với *Thử lại* bật: lần thử lại không tải lại trang từ đầu (trang đang tải tiếp tục)
+
+### 60 – Dữ liệu qua node · [phase3/60-du-lieu-qua-node.md](phase3/60-du-lieu-qua-node.md)
+
+- [ ] *(lỗi sửa 2026-11-02)* Mở một dropdown (vd ô chọn trong inspector, menu Chạy, menu chuột phải node) rồi bấm vào vùng trống của canvas flow → dropdown đóng

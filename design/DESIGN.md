@@ -1,6 +1,7 @@
 # Ghosthand – Design v3 (gọn) trên nền v2
 
 Canvas **v3 – gọn** (2026-10-19, đã dựng – bước [38](../docs/tasks/phase3/38-ui-v3.md)): https://claude.ai/artifact/Hr4MxJYqSwCgAFuuZFNVvD – mã nguồn artboard đã xoá khỏi repo khi xong 38, xem lại bằng `git show d5a6b52:design/canvas/<tên>.dc.html` (đủ 7 artboard) hoặc mở canvas.
+Design bước 60 – dữ liệu qua node (thẻ Gọn / Đầy đủ, kéo nối, Lịch sử dạng cây; duyệt 2026-11-02): https://claude.ai/artifact/GnFB6LJZXAcg4KWixJR8ne
 Canvas v2 (nền token, thành phần): https://claude.ai/artifact/5WdDyFZdB3WKxEXwkticnw
 Xuất ảnh / PDF: mở canvas → Share › Export.
 
