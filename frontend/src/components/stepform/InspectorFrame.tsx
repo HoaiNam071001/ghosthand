@@ -23,7 +23,7 @@ export default function InspectorFrame({ mode, label, onClose, children }: { mod
   if (mode === 'pop') {
     return (
       <aside role="dialog" aria-label={label}
-        className={`${body} nodrag nowheel nopan max-h-[60vh] w-[360px] rounded-[12px] border border-line text-[13px] shadow-[0_12px_32px_rgb(0_0_0/.2)]`}>{children}</aside>
+        className={`${body} nodrag nowheel nopan min-h-0 max-h-[60vh] w-[360px] rounded-[12px] border border-line text-[13px] shadow-[0_12px_32px_rgb(0_0_0/.2)]`}>{children}</aside>
     );
   }
   return <Panel label={label}>{children}</Panel>;

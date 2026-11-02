@@ -1,9 +1,9 @@
 // Canvas soạn flow kiểu n8n (bước 20) trên @xyflow/react. Chỉ hiển thị + báo thao tác qua callback –
 // dữ liệu (node, cạnh, vị trí) do nơi gọi giữ: màn mẫu #demo-flow (state cục bộ) hoặc store kịch bản (F4b, qua flowEdit.ts).
 import './flow.css';
-import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Background, BackgroundVariant, getNodesBounds, MarkerType, MiniMap, NodeToolbar, Panel, Position, ReactFlow, ReactFlowProvider, useNodesState, useReactFlow, useStore, useStoreApi,
+  Background, BackgroundVariant, getNodesBounds, MarkerType, MiniMap, Panel, ReactFlow, ReactFlowProvider, useNodesState, useReactFlow, useStore, useStoreApi,
 } from '@xyflow/react';
 import NodeCard, { CardNode } from './NodeCard';
 import FlowEdge, { edgeColor, FlowEdgeType } from './FlowEdge';
@@ -44,7 +44,6 @@ export type FlowCanvasProps = {
   dataEdges?: DataEdgeView[];
   onLinkData?: (from: string, key: string, to: string, slot: string) => void;
   linkBlock?: (from: string, to: string) => string | null;
-  popover?: ReactNode; // chi tiết node kiểu Popover – hiện dưới node đang chọn
 };
 
 const nodeTypes = { card: NodeCard, group: GroupFrame, groupCard: GroupCard };
@@ -57,7 +56,7 @@ export default function FlowCanvas(props: FlowCanvasProps) {
 
 function Canvas({
   nodes, edges, start, positions, selected, picked, onSelect, onSelectBox, onMove, onConnect, onDeleteEdge, onDeleteNodes, onDropPort, onNodeMenu, onLayout, fitKey, focus,
-  taken, activeEdge, groups, groupActions, onMoveGroup, mode = 'compact', dataEdges, onLinkData, linkBlock, popover,
+  taken, activeEdge, groups, groupActions, onMoveGroup, mode = 'compact', dataEdges, onLinkData, linkBlock,
 }: FlowCanvasProps) {
   const fan = useDataFan(mode === 'compact', linkBlock);
   const { fanOf } = fan;
@@ -206,7 +205,6 @@ function Canvas({
       deleteKeyCode={['Delete', 'Backspace']}
       connectionLineStyle={{ stroke: 'var(--c-accent)', strokeWidth: 2 }}
       minZoom={0.3} maxZoom={1.6} proOptions={{ hideAttribution: true }}>
-      {popover && selected && <NodeToolbar nodeId={selected} isVisible position={Position.Bottom} offset={12}>{popover}</NodeToolbar>}
       <Background variant={BackgroundVariant.Dots} gap={18} size={1.4} color="var(--c-dot)" />
       {tall && <MiniMap pannable zoomable nodeColor="var(--c-soft)" nodeStrokeColor="var(--c-line-strong)" nodeBorderRadius={6}
         maskColor="color-mix(in srgb, var(--c-bg) 70%, transparent)" style={{ width: 148, height: 92 }} />}

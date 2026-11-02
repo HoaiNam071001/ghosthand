@@ -16,6 +16,7 @@ import { runHead, runRows, runTrace } from '../../flow/run';
 import RunLog from './RunLog';
 import ViewMenu from './ViewMenu';
 import StepForm from '../StepForm';
+import FloatingPop from '../FloatingPop';
 import { ioHeight } from './model';
 import { dataEdges, dataPins, DataPins } from '../../flow/dataView';
 import { linkBlock as blockOf, usedKeys } from '../../flow/dataLinks';
@@ -127,7 +128,7 @@ export default function FlowEditor() {
   const { region } = script;
   return (
     <main aria-label="Flow" className="flex min-w-0 flex-1 flex-col">
-      <div className="relative min-h-0 flex-1">
+      <div data-float-clip className="relative min-h-0 flex-1">
         <FlowHeader count={script.steps.length}>
           <button onClick={() => openOverlay('region')} title="Chọn vùng trên màn hình – toạ độ điểm tính theo vùng" className={`${headerBtn} text-muted hover:text-ink`}>
             <Region className="h-3.5 w-3.5" />
@@ -151,7 +152,6 @@ export default function FlowEditor() {
         <FlowCanvas nodes={views} edges={edges} groups={groups} groupActions={groupActions} onMoveGroup={moveGroup} start={script.start} positions={positions} selected={selected || null} picked={picked} fitKey={fitKey}
           focus={focus} taken={trace.taken} activeEdge={trace.active}
           mode={prefs.card} dataEdges={dEdges} onLinkData={linkData} linkBlock={linkBlock}
-          popover={prefs.detail === 'pop' && cur ? <StepForm key={cur.id} step={cur} mode="pop" onClose={() => selectStep('')} /> : undefined}
           onSelect={(id, additive) => {
             if (id && additive) return toggleMultiStep(id);
             selectStep(id ?? '');
@@ -168,6 +168,12 @@ export default function FlowEditor() {
           }}
           onNodeMenu={(id, c) => setMenu({ id, x: c.x, y: c.y })}
           onLayout={relayout} />
+        {prefs.detail === 'pop' && cur && (
+          // chi tiết node kiểu Popover: lớp nổi ngoài canvas (không bị canvas / nhật ký cắt, không bị thẻ đè), bám theo node
+          <FloatingPop anchor={() => document.querySelector(`.react-flow__node[data-id="${CSS.escape(cur.id)}"]`)}>
+            <StepForm key={cur.id} step={cur} mode="pop" onClose={() => selectStep('')} />
+          </FloatingPop>
+        )}
         {script.steps.length === 0 && (
           <p className="pointer-events-none absolute inset-0 grid place-items-center text-center text-muted">
             Chưa có node nào – bấm “+ Thêm node” hoặc F6 để lưu vị trí chuột.
