@@ -38,6 +38,7 @@ type nodeView struct {
 	Attempts int              `json:"attempts,omitempty"`
 	Ms       int64            `json:"ms"`
 	Output   map[string]any   `json:"output,omitempty"`
+	Input    map[string]any   `json:"input,omitempty"` // chỉ node lỗi: ô có biến sau khi thay – AI thấy giá trị thật node đã dùng
 	Error    *model.StepError `json:"error,omitempty"`
 	Logs     []model.LogLine  `json:"logs,omitempty"`    // chỉ node lỗi
 	Shot     string           `json:"shot,omitempty"`    // ảnh lúc lỗi / sau node (shots: each) – gửi kèm dưới hoặc xin bằng wait_run shots
@@ -61,7 +62,7 @@ func traceView(tr session.Trace, sc model.Script, shotW map[string]int) map[stri
 			n.Shot = r.Shot
 		}
 		if r.Status == model.StatusFail {
-			n.Logs = r.Logs
+			n.Logs, n.Input = r.Logs, r.Input
 		}
 		nodes = append(nodes, n)
 	}

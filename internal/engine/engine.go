@@ -121,6 +121,7 @@ type Engine struct {
 	results  map[string]*model.StepResult // kết quả lần chạy gần nhất của từng node trong vòng này
 	rv       runVars                      // bảng tra biến {{nX…}} / {{last…}} / {{vars…}}
 	counts   map[string]int               // node Đếm: số lần đã đi qua trong vòng này
+	iters    iterStack                    // lượt của các node lặp đang mở (bước 60 – StepResult.Iter)
 	lists    map[string]*listCursor       // node Lặp qua danh sách: danh sách đã nạp + phần tử kế (foreach.go)
 	stopAt   string                       // Options.StopAt
 	sim      *Simulate                    // Options.Simulate

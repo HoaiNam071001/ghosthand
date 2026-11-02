@@ -25,6 +25,8 @@ export const CAN_FAIL: StepType[] = ['waitImage', 'clickImage', 'waitPixel', 'wa
 export interface Edge { id: string; from: string; port: string; to: string }
 export type StepStatus = 'success' | 'fail' | 'skipped' | 'cancelled';
 export type ErrorCode = 'not_found' | 'timeout' | 'permission' | 'invalid_input' | 'cancelled' | 'end' | 'browser' | 'http_status' | 'network' | 'exit_code' | 'window_mismatch' | 'internal';
+// Lượt thứ index (từ 1) của node lặp nodeId – khớp IterRef trong flow.go.
+export interface IterRef { nodeId: string; index: number }
 // Kết quả một lần chạy node (event engine:node) – khớp StepResult trong flow.go.
 export interface StepResult {
   nodeId: string;
@@ -38,6 +40,8 @@ export interface StepResult {
   loop: number; // vòng thứ mấy, từ 1
   shot?: string; // ảnh lúc thất bại (lịch sử chạy – RunShot)
   changes?: Record<string, unknown>; // phần tử mới / mất / đổi giá trị so với sau node trước (AI chạy shots: each – 43 A3)
+  input?: Record<string, unknown>; // ô có biến sau khi thay: tên trường (script.VarField.Name) → chữ đã thay (bước 60 V0)
+  iter?: IterRef; // lượt của node lặp đang bao node này (Lặp qua danh sách / Đếm)
   startedAt: string;
   durationMs: number;
 }

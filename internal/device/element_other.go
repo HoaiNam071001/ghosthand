@@ -17,6 +17,4 @@ func actAt(string, int, string, string) error { return errNoElements }
 
 func docTexts(string, []int, bool) ([]string, error) { return nil, errNoElements }
 
-func docTexts(string, []int, bool) ([]string, error) { return nil, errNoElements }
-
 var errNoElements = errors.New("tìm phần tử màn hình hiện chỉ có trên macOS")

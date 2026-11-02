@@ -81,6 +81,7 @@ func (e *Engine) runLoop(ctx context.Context, loop int) error {
 	e.rv = runVars{byRef: map[string]*model.StepResult{}, vars: map[string]any{}, secrets: e.rv.secrets}
 	e.results = map[string]*model.StepResult{}
 	e.counts = map[string]int{}
+	e.iters = nil
 	e.lists = map[string]*listCursor{}
 	if loop == 1 {
 		e.plant()
@@ -108,6 +109,7 @@ func (e *Engine) runLoop(ctx context.Context, loop int) error {
 			e.shoot(&res)
 		}
 		wait = e.shootAfter(ctx, &res, wait)
+		e.iters.track(s, &res)
 		shown := e.mask.result(res) // bản rời engine đã che bí mật; rv giữ bản thật cho node sau
 		e.results[s.ID], e.rv.byRef[s.Ref], e.rv.last = &shown, &res, &res
 		if e.onNode != nil {
@@ -229,6 +231,7 @@ func (e *Engine) execNode(ctx context.Context, s model.Step, loop int) (res mode
 		})
 		var rs model.Step
 		if rs, err = resolveNodeVars(s, e.rv); err == nil {
+			res.Input = nodeInput(s, rs)
 			err = script.ApplyNumVars(&rs)
 		}
 		if err != nil {

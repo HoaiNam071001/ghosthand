@@ -43,10 +43,12 @@ const (
 // StepResult – kết quả một lần chạy node. Engine gửi lên UI (event engine:node), lưu vào nhật ký chạy;
 // node sau đọc qua biến {{n2.status}}, {{n2.output.x}}, {{n2.error.message}}.
 type StepResult struct {
-	NodeID     string         `json:"nodeId"`
-	Ref        string         `json:"ref"`
-	Status     string         `json:"status"`
-	Port       string         `json:"port,omitempty"` // cổng đi ra ("" khi bị huỷ)
+	NodeID string `json:"nodeId"`
+	Ref    string `json:"ref"`
+	Status string `json:"status"`
+	Port   string `json:"port,omitempty"` // cổng đi ra ("" khi bị huỷ)
+	// Input – giá trị các ô có biến sau khi thay (tên trường như script.VarField.Name → chữ đã thay, cắt dài; bước 60 V0)
+	Input      map[string]any `json:"input,omitempty"`
 	Output     map[string]any `json:"output,omitempty"`
 	Error      *StepError     `json:"error,omitempty"`
 	Logs       []LogLine      `json:"logs,omitempty"`
@@ -54,8 +56,16 @@ type StepResult struct {
 	Loop       int            `json:"loop"`              // vòng thứ mấy của kịch bản, từ 1
 	Shot       string         `json:"shot,omitempty"`    // ảnh màn hình lúc node thất bại (file trong lịch sử chạy, runlog.go)
 	Changes    map[string]any `json:"changes,omitempty"` // phần tử mới / mất / đổi giá trị so với sau node trước (chỉ khi AI xin shots: each – engine/changes.go)
+	Iter       *IterRef       `json:"iter,omitempty"`    // lượt của node lặp (Lặp qua danh sách / Đếm) đang bao node này (bước 60 V0)
 	StartedAt  time.Time      `json:"startedAt"`
 	DurationMs int64          `json:"durationMs"`
+}
+
+// IterRef – lượt thứ Index (từ 1) của node lặp NodeID. Node lặp tự ghi lượt nó vừa mở; node trong thân vòng ghi lượt
+// của vòng trong cùng đang chạy – Lịch sử chạy dựng nhánh theo lượt.
+type IterRef struct {
+	NodeID string `json:"nodeId"`
+	Index  int    `json:"index"`
 }
 
 type StepError struct {
