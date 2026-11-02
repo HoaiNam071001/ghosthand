@@ -29,7 +29,7 @@ export type CondTools = {
 };
 // Kết quả đọc thử danh sách – khớp engine.ListPreview (foreach.go).
 export type ListPreview = { count: number; columns?: { name: string; key: string }[]; first?: unknown };
-// Kết quả chạy thử node xử lý chữ – khớp main.TextPreview (textapi.go).
+// Kết quả chạy thử node xử lý chữ – khớp app.TextPreview (textapi.go).
 export type TextPreview = { port: string; output?: Record<string, unknown> };
 export type CondCtx = { step: Step; set: (p: Partial<Step>) => void; vars: VarProps; tools?: CondTools };
 

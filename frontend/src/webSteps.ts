@@ -1,7 +1,7 @@
 // Node web (bước 25d D3) – phía giao diện: trạng thái Chrome của app, Thử tìm (khung trên overlay như ảnh mẫu),
 // Chọn phần tử trên trang. Tìm / sinh selector ở Go (webapi.go, internal/web).
 import { useSyncExternalStore } from 'react';
-import { BrowserStatus, CancelPick, FindElement, FinishWebLogin, OpenAppBrowser, PickElement, StartWebLogin } from '../wailsjs/go/main/App';
+import { BrowserStatus, CancelPick, FindElement, FinishWebLogin, OpenAppBrowser, PickElement, StartWebLogin } from '../wailsjs/go/app/App';
 import { model } from '../wailsjs/go/models';
 import { getEditor, setNotice, updateStep } from './store';
 import { errorText } from './engineStore';

@@ -1,7 +1,7 @@
 // Chờ ảnh / click theo ảnh / chờ pixel (bước 25) – phía giao diện: khoanh ảnh mẫu trên overlay, thử tìm trên màn hình,
 // lấy màu pixel, quyền chụp màn hình (macOS). Engine + so khớp ở Go (internal/engine, internal/vision, imageapi.go).
 import { useSyncExternalStore } from 'react';
-import { CaptureTemplate, FindImage, PickElementAt, PixelColorAt, RequestScreenCapture, ScreenCaptureAllowed, TestNode } from '../wailsjs/go/main/App';
+import { CaptureTemplate, FindImage, PickElementAt, PixelColorAt, RequestScreenCapture, ScreenCaptureAllowed, TestNode } from '../wailsjs/go/app/App';
 import { EventsOn } from '../wailsjs/runtime/runtime';
 import { element, model } from '../wailsjs/go/models';
 import { addStep, getEditor, pickScreenPoint, selectStep, setNotice, toScreen, updateCond, updateStep } from './store';

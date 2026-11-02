@@ -1,6 +1,6 @@
 // Node Shortcuts hệ điều hành (bước 43 S2, macOS): tên Shortcut (gõ hoặc chọn từ app Phím tắt) + input chữ + hết giờ.
 import { useEffect, useState } from 'react';
-import { ListShortcuts } from '../../../wailsjs/go/main/App';
+import { ListShortcuts } from '../../../wailsjs/go/app/App';
 import Select from '../Select';
 import VarTextInput from '../inputs/VarTextInput';
 import { updateStep, useScript } from '../../store';

@@ -1,6 +1,6 @@
 // Nút "Nhúng kịch bản" trên dòng đầu canvas (bước 39 G2): menu chọn file hoặc một kịch bản mẫu.
 import { useEffect, useState } from 'react';
-import { Samples } from '../../../wailsjs/go/main/App';
+import { Samples } from '../../../wailsjs/go/app/App';
 import { embedFile, embedSample } from '../../store';
 import { inWails } from '../../windowMode';
 import { usePopover } from '../usePopover';

@@ -1,7 +1,7 @@
 // Node Chụp màn hình (bước 35 N1): vùng chụp (ShotAreaField – dùng chung với Chờ màn hình), thư mục / tên file (nhận {{biến}}), chép vào clipboard.
 import Select from '../Select';
 import { useEffect, useState } from 'react';
-import { Displays } from '../../../wailsjs/go/main/App';
+import { Displays } from '../../../wailsjs/go/app/App';
 import NumInput from '../NumInput';
 import { Region } from '../icons';
 import VarTextInput from '../inputs/VarTextInput';

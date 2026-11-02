@@ -1,7 +1,7 @@
 // AI muốn chạy kịch bản (bước 31b – mức "Hỏi trước khi chạy"): Go gửi "ai:ask" (mcprun.go), AIRunDialog hiện + trả lời
 // qua AnswerAIRun. Thanh mini quá nhỏ cho hộp hỏi → về màn chính trước. Go hết giờ chờ thì gửi "ai:ask-timeout".
 import { useSyncExternalStore } from 'react';
-import { AnswerAIRun } from '../wailsjs/go/main/App';
+import { AnswerAIRun } from '../wailsjs/go/app/App';
 import { EventsOn } from '../wailsjs/runtime/runtime';
 import type { AIAsk } from './aiScope';
 import { inWails, setWindowMode } from './windowMode';

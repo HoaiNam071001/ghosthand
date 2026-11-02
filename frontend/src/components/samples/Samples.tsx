@@ -1,7 +1,7 @@
 // Hộp thoại Mẫu thử nối Go: nạp danh sách (App.Samples), dùng mẫu qua scriptFile (hỏi lưu nếu đang có thay đổi),
 // mở trang sân thử / web thật bằng trình duyệt mặc định.
 import { useEffect, useState } from 'react';
-import { OpenSandboxPage, Samples as LoadSamples } from '../../../wailsjs/go/main/App';
+import { OpenSandboxPage, Samples as LoadSamples } from '../../../wailsjs/go/app/App';
 import { openSample } from '../../scriptFile';
 import { inWails } from '../../windowMode';
 import { Sample } from '../../samples/filter';

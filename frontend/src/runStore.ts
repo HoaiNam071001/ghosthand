@@ -1,7 +1,7 @@
 // Nhật ký lần chạy đang xem (bước 20 F5): kết quả từng node của lần đang chạy / vừa chạy (event engine:node) hoặc
 // một lần trong lịch sử (internal/store/runs.go). Canvas tô đường đã đi, bảng Nhật ký, mục "Lần chạy gần nhất" đều đọc từ đây.
 import { useSyncExternalStore } from 'react';
-import { ClearRuns, DeleteRun, GetRun, ListRuns, RunShot, RunStats as LoadRunStats } from '../wailsjs/go/main/App';
+import { ClearRuns, DeleteRun, GetRun, ListRuns, RunShot, RunStats as LoadRunStats } from '../wailsjs/go/app/App';
 import { EventsOn } from '../wailsjs/runtime/runtime';
 import { getEditor, subscribe } from './store';
 import { isForeign } from './engineStore';

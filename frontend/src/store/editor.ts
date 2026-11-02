@@ -2,7 +2,7 @@
 // Dùng chung giữa các màn (MainScreen, OverlayScreen không cùng mount). Các thao tác theo nghiệp vụ nằm ở module bên cạnh
 // (nodes, points, multi) và chỉ đổi state qua `setEditor` / `updateScript` ở đây. Lưu / mở file: scriptFile.ts.
 import { useSyncExternalStore } from 'react';
-import { ScreenBounds } from '../../wailsjs/go/main/App';
+import { ScreenBounds } from '../../wailsjs/go/app/App';
 import { Point, Rect, Script } from '../types';
 import { browserEdges, browserSteps } from '../demo/browserSteps';
 import { inWails, setEditingBounds } from '../windowMode';

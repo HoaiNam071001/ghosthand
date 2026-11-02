@@ -1,7 +1,7 @@
 // Hẹn giờ (bước 22) – danh sách hẹn giờ từ Go (scheduleapi.go), làm mới khi Go báo "schedule:changed".
 // Lỗi lúc tới giờ (event "schedule:error") hiện thành thông báo của kịch bản.
 import { useSyncExternalStore } from 'react';
-import { ListSchedules, RemoveSchedule, SetSchedule } from '../wailsjs/go/main/App';
+import { ListSchedules, RemoveSchedule, SetSchedule } from '../wailsjs/go/app/App';
 import { model } from '../wailsjs/go/models';
 import { EventsOn } from '../wailsjs/runtime/runtime';
 import { setNotice } from './store';

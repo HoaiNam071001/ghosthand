@@ -1,6 +1,6 @@
 // Hệ điều hành + loại node bị giới hạn theo hệ điều hành (Go: App.Platform / StepOnlyOS), nạp một lần.
 import { useEffect, useState } from 'react';
-import { Platform, StepOnlyOS } from '../../../wailsjs/go/main/App';
+import { Platform, StepOnlyOS } from '../../../wailsjs/go/app/App';
 import { inWails } from '../../windowMode';
 import type { OnlyOS } from '../../flow/platform';
 

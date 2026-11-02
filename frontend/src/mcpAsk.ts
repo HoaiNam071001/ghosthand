@@ -1,7 +1,7 @@
 // Hỏi quyền dùng MCP server ngoài (bước 55 M2): Go gửi "mcp:ask" (mcpgate.go), MCPAskDialog hiện + trả lời qua
 // AnswerMCP. Thanh mini quá nhỏ cho hộp hỏi → về màn chính trước. Go hết giờ chờ thì gửi "mcp:ask-timeout".
 import { useSyncExternalStore } from 'react';
-import { AnswerMCP } from '../wailsjs/go/main/App';
+import { AnswerMCP } from '../wailsjs/go/app/App';
 import { EventsOn } from '../wailsjs/runtime/runtime';
 import { inWails, setWindowMode } from './windowMode';
 

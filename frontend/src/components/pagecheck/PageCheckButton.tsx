@@ -1,7 +1,7 @@
 // Nút Thử trang trên thanh tiêu đề (bước 44): mở hộp PageCheckDialog, gọi Go CheckPage (mở trang trên Chrome của app,
 // dò captcha). Nhớ URL lần thử trước trong phiên.
 import { useEffect, useState } from 'react';
-import { CheckPage } from '../../../wailsjs/go/main/App';
+import { CheckPage } from '../../../wailsjs/go/app/App';
 import { web } from '../../../wailsjs/go/models';
 import { errorText } from '../../engineStore';
 import { normalizeUrl } from '../../pageCheck';

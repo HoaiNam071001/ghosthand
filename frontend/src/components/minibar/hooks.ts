@@ -1,6 +1,6 @@
 // Hook của thanh mini.
 import { useEffect, useState } from 'react';
-import { GetSettings, SetMCPSettings } from '../../../wailsjs/go/main/App';
+import { GetSettings, SetMCPSettings } from '../../../wailsjs/go/app/App';
 import { store } from '../../../wailsjs/go/models';
 import { AiLevel, aiLevel, withLevel } from '../../aiLevel';
 import { errorText, setLastError } from '../../engineStore';

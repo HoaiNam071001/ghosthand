@@ -11,6 +11,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/mac"
 	"github.com/wailsapp/wails/v2/pkg/options/windows"
 
+	"ghosthand/internal/app"
 	"ghosthand/internal/cli"
 	"ghosthand/internal/store"
 	"ghosthand/internal/winfloat"
@@ -38,8 +39,8 @@ func main() {
 	winfloat.PrepareLaunch() // trước wails.Run – thanh mini / overlay nổi được trên app toàn màn hình (macOS)
 
 	// Create an instance of the app structure
-	app := NewApp()
-	app.background = cli.IsBackground(os.Args[1:])
+	a := app.NewApp(cli.IsBackground(os.Args[1:]))
+	startup, shutdown, beforeClose := app.Hooks(a)
 
 	// Create application with options
 	err := wails.Run(&options.App{
@@ -52,17 +53,17 @@ func main() {
 		// Frameless + nền trong suốt cố định từ đầu (Wails v2 không đổi được lúc chạy) để overlay nhìn xuyên được.
 		// Mỗi màn tự vẽ nền; MainScreen có thanh tiêu đề riêng để kéo cửa sổ.
 		Frameless:        true,
-		StartHidden:      app.background,
+		StartHidden:      app.Background(a),
 		BackgroundColour: &options.RGBA{R: 0, G: 0, B: 0, A: 0},
 		Mac:              &mac.Options{WebviewIsTransparent: true},
 		// Windows: chỉ WebviewIsTransparent thì cửa sổ Win32 vẫn đặc – cần WindowIsTranslucent (không bitmap nền) và
 		// BackdropType None (không Mica / Acrylic) để nhìn xuyên đúng alpha của trang.
 		Windows:       &windows.Options{WebviewIsTransparent: true, WindowIsTranslucent: true, BackdropType: windows.None},
-		OnStartup:     app.startup,
-		OnShutdown:    app.shutdown,
-		OnBeforeClose: app.beforeClose,
+		OnStartup:     startup,
+		OnShutdown:    shutdown,
+		OnBeforeClose: beforeClose,
 		Bind: []interface{}{
-			app,
+			a,
 		},
 	})
 

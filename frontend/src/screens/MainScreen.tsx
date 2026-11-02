@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { StatusBar, Toolbar } from '../components/AppChrome';
 import { RUN_ICON, RunMenuItem } from '../components/RunMenu';
-import { MousePos, StopScript } from '../../wailsjs/go/main/App';
+import { MousePos, StopScript } from '../../wailsjs/go/app/App';
 import { inWails, openOverlay } from '../windowMode';
 import { startRecording, useEditor } from '../store';
 import { closeRunForm, deletePreset, loadMemory, savePreset, startRun, submitRun, useRunForm } from '../runForm';

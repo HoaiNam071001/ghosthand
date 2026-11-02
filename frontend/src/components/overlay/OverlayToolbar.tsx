@@ -2,7 +2,7 @@
 // cạnh đó. Màn hẹp thì ẩn nhãn (chỉ icon), còn dài nữa thì xuống hàng – công thức ở overlay/toolbarLayout.
 // Ba dạng: xem riêng một node, xem trước, các công cụ đặt điểm / vùng.
 import { ReactNode } from 'react';
-import { main } from '../../../wailsjs/go/models';
+import { app } from '../../../wailsjs/go/models';
 import { PageKindPicker } from '../MockPage';
 import { Play, Region, SelectIcon, StepIcon, Stop, Target } from '../icons';
 import { Step, stepLabel } from '../../types';
@@ -39,7 +39,7 @@ export type ToolbarProps = {
   branches: BranchNode[]; choices: BranchChoices; onChooseBranch: (id: string, port: string) => void; onResetBranches: () => void;
   // công cụ; fullRegion: nút đặt vùng = cả màn (null = đang là cả màn)
   tool: OverlayTool; setTool: (t: OverlayTool) => void; fullRegion: { label: string; onClick: () => void } | null;
-  displays: main.DisplayInfo[]; onPickDisplay: (i: number) => void;
+  displays: app.DisplayInfo[]; onPickDisplay: (i: number) => void;
   apps: WindowChoice[]; onOpenApps: () => void; onPickApp: (id: number) => void;
 };
 
@@ -118,7 +118,7 @@ function MainTools({ tool, setTool, fullRegion }: ToolbarProps) {
   );
 }
 
-function DisplayPicker({ displays, onPick }: { displays: main.DisplayInfo[]; onPick: (i: number) => void }) {
+function DisplayPicker({ displays, onPick }: { displays: app.DisplayInfo[]; onPick: (i: number) => void }) {
   return (
     <div className={seg} role="radiogroup" aria-label="Màn hình">
       {displays.map((d) => (

@@ -1,7 +1,7 @@
 // Ghim output node (bước 31c): kết quả node giữ trên máy theo kịch bản (Go: internal/store/pins.go), không ghi vào file
 // kịch bản. Chạy từ app thì node ghim không chạy mà trả luôn kết quả đã ghim (runScript gửi kèm `pins`).
 import { useSyncExternalStore } from 'react';
-import { ClearPin, GetPins, SetPin } from '../wailsjs/go/main/App';
+import { ClearPin, GetPins, SetPin } from '../wailsjs/go/app/App';
 import { model } from '../wailsjs/go/models';
 import { getEditor, subscribe } from './store';
 import { inWails } from './windowMode';

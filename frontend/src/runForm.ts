@@ -2,7 +2,7 @@
 // "Lần sau chạy luôn". Giá trị lần trước + bộ giá trị (preset) lưu trên máy theo từng kịch bản (internal/store/inputmemory.go).
 import { useSyncExternalStore } from 'react';
 import { EventsOn } from '../wailsjs/runtime/runtime';
-import { GetInputMemory, SaveInputMemory, ValidateScript } from '../wailsjs/go/main/App';
+import { GetInputMemory, SaveInputMemory, ValidateScript } from '../wailsjs/go/app/App';
 import { model, store } from '../wailsjs/go/models';
 import { getEditor } from './store';
 import { Debug, errorText, runScript } from './engineStore';

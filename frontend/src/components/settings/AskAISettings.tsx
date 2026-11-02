@@ -1,7 +1,7 @@
 // Cài đặt – Hỏi AI (bước 31d): nhà cung cấp AI mặc định cho node Hỏi AI. Ô nào node để trống thì lấy ở đây
 // (chỉ khi node cùng loại nhà cung cấp). Key chọn từ tab Bí mật – không nhập key thẳng.
 import { useEffect, useState } from 'react';
-import { GetSettings, SetAISettings } from '../../../wailsjs/go/main/App';
+import { GetSettings, SetAISettings } from '../../../wailsjs/go/app/App';
 import { store } from '../../../wailsjs/go/models';
 import { errorText } from '../../engineStore';
 import { AI_KINDS, isLocalAI, LOCAL_AI_URL } from '../../flow/askAI';

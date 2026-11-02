@@ -1,4 +1,4 @@
-import { OverlayDisplayFor, SetWindowMode } from '../wailsjs/go/main/App';
+import { OverlayDisplayFor, SetWindowMode } from '../wailsjs/go/app/App';
 import { model } from '../wailsjs/go/models';
 import type { Rect } from './types';
 

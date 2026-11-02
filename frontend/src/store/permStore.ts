@@ -1,6 +1,6 @@
 // Quyền hệ điều hành (bước 48): trạng thái từng quyền, kiểm tra lại, xin quyền, mở System Settings.
 import { useSyncExternalStore } from 'react';
-import { OpenPermissionSettings, Permissions, RequestPermission } from '../../wailsjs/go/main/App';
+import { OpenPermissionSettings, Permissions, RequestPermission } from '../../wailsjs/go/app/App';
 import { perm } from '../../wailsjs/go/models';
 import { missingOf, needs } from '../flow/perms';
 import type { Script } from '../types';

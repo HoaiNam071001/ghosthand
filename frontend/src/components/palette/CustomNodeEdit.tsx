@@ -1,6 +1,6 @@
 // Sửa tên / icon hoặc xoá một node của tôi – hiện ở khung mô tả của bảng thêm node (bước 55 M5).
 import { useState } from 'react';
-import { DeleteCustomNode, SaveCustomNode } from '../../../wailsjs/go/main/App';
+import { DeleteCustomNode, SaveCustomNode } from '../../../wailsjs/go/app/App';
 import { store } from '../../../wailsjs/go/models';
 import { errorText } from '../../engineStore';
 import { customIcon } from './customIcons';

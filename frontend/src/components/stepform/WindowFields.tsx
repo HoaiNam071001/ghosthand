@@ -1,6 +1,6 @@
 // Node Cửa sổ (bước 26): chọn cửa sổ (app + tiêu đề, chọn từ danh sách đang mở), thao tác, khung đích của setBounds.
 import { useCallback, useState } from 'react';
-import { ListWindows } from '../../../wailsjs/go/main/App';
+import { ListWindows } from '../../../wailsjs/go/app/App';
 import NumInput from '../NumInput';
 import Segmented from '../Segmented';
 import Select from '../Select';

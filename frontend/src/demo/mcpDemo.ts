@@ -1,5 +1,5 @@
 // Dữ liệu giả cho màn #demo-mcp (bước 55 M8) – không cần Go.
-import { main, mcplib } from '../../wailsjs/go/models';
+import { app, mcplib } from '../../wailsjs/go/models';
 
 export const DEMO_SERVERS = [
   { id: 's1', name: 'Filesystem', kind: 'stdio', command: 'npx', args: ['-y', '@modelcontextprotocol/server-filesystem', '/Users/ban/Documents'], enabled: true,
@@ -7,7 +7,7 @@ export const DEMO_SERVERS = [
   { id: 's2', name: 'GitHub', kind: 'http', url: 'https://api.githubcopilot.com/mcp/', headers: { Authorization: 'Bearer {{secret.github_token}}' }, enabled: true,
     status: { state: 'error', code: 'connect', err: 'không nối được: 401 Unauthorized', at: 0 } },
   { id: 's3', name: 'Fetch', kind: 'stdio', command: 'uvx', args: ['mcp-server-fetch'], enabled: false, status: { state: 'idle' } },
-].map((s) => main.MCPServerView.createFrom(s));
+].map((s) => app.MCPServerView.createFrom(s));
 
 export const DEMO_LIBRARY = [
   { id: 'filesystem', group: 'Tệp & tài liệu', name: 'Filesystem', desc: 'Đọc / ghi / tìm file trong thư mục bạn cho phép (server mẫu chính thức).', kind: 'stdio', command: 'npx',

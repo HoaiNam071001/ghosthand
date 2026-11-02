@@ -1,3 +1,194 @@
+export namespace app {
+	
+	export class DangerCheck {
+	    ops: script.DangerOp[];
+	    fingerprint: string;
+	    confirmed: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new DangerCheck(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.ops = this.convertValues(source["ops"], script.DangerOp);
+	        this.fingerprint = source["fingerprint"];
+	        this.confirmed = source["confirmed"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class DisplayInfo {
+	    index: number;
+	    rect: model.Rect;
+	    work: model.Rect;
+	    main: boolean;
+	    current: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new DisplayInfo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.index = source["index"];
+	        this.rect = this.convertValues(source["rect"], model.Rect);
+	        this.work = this.convertValues(source["work"], model.Rect);
+	        this.main = source["main"];
+	        this.current = source["current"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class MCPServerView {
+	    id: string;
+	    name: string;
+	    kind: string;
+	    command?: string;
+	    args?: string[];
+	    env?: Record<string, string>;
+	    url?: string;
+	    headers?: Record<string, string>;
+	    enabled: boolean;
+	    status: mcpclient.Status;
+	
+	    static createFrom(source: any = {}) {
+	        return new MCPServerView(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.name = source["name"];
+	        this.kind = source["kind"];
+	        this.command = source["command"];
+	        this.args = source["args"];
+	        this.env = source["env"];
+	        this.url = source["url"];
+	        this.headers = source["headers"];
+	        this.enabled = source["enabled"];
+	        this.status = this.convertValues(source["status"], mcpclient.Status);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class ScriptFile {
+	    script: model.Script;
+	    path: string;
+	    revision: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ScriptFile(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.script = this.convertValues(source["script"], model.Script);
+	        this.path = source["path"];
+	        this.revision = source["revision"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class TemplateShot {
+	    png: string;
+	    scale: number;
+	    w: number;
+	    h: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new TemplateShot(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.png = source["png"];
+	        this.scale = source["scale"];
+	        this.w = source["w"];
+	        this.h = source["h"];
+	    }
+	}
+	export class TextPreview {
+	    port: string;
+	    output: Record<string, any>;
+	
+	    static createFrom(source: any = {}) {
+	        return new TextPreview(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.port = source["port"];
+	        this.output = source["output"];
+	    }
+	}
+
+}
+
 export namespace element {
 	
 	export class Suggestion {
@@ -410,197 +601,6 @@ export namespace engine {
 	        this.count = source["count"];
 	        this.value = source["value"];
 	        this.ms = source["ms"];
-	    }
-	}
-
-}
-
-export namespace main {
-	
-	export class DangerCheck {
-	    ops: script.DangerOp[];
-	    fingerprint: string;
-	    confirmed: boolean;
-	
-	    static createFrom(source: any = {}) {
-	        return new DangerCheck(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.ops = this.convertValues(source["ops"], script.DangerOp);
-	        this.fingerprint = source["fingerprint"];
-	        this.confirmed = source["confirmed"];
-	    }
-	
-		convertValues(a: any, classs: any, asMap: boolean = false): any {
-		    if (!a) {
-		        return a;
-		    }
-		    if (a.slice && a.map) {
-		        return (a as any[]).map(elem => this.convertValues(elem, classs));
-		    } else if ("object" === typeof a) {
-		        if (asMap) {
-		            for (const key of Object.keys(a)) {
-		                a[key] = new classs(a[key]);
-		            }
-		            return a;
-		        }
-		        return new classs(a);
-		    }
-		    return a;
-		}
-	}
-	export class DisplayInfo {
-	    index: number;
-	    rect: model.Rect;
-	    work: model.Rect;
-	    main: boolean;
-	    current: boolean;
-	
-	    static createFrom(source: any = {}) {
-	        return new DisplayInfo(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.index = source["index"];
-	        this.rect = this.convertValues(source["rect"], model.Rect);
-	        this.work = this.convertValues(source["work"], model.Rect);
-	        this.main = source["main"];
-	        this.current = source["current"];
-	    }
-	
-		convertValues(a: any, classs: any, asMap: boolean = false): any {
-		    if (!a) {
-		        return a;
-		    }
-		    if (a.slice && a.map) {
-		        return (a as any[]).map(elem => this.convertValues(elem, classs));
-		    } else if ("object" === typeof a) {
-		        if (asMap) {
-		            for (const key of Object.keys(a)) {
-		                a[key] = new classs(a[key]);
-		            }
-		            return a;
-		        }
-		        return new classs(a);
-		    }
-		    return a;
-		}
-	}
-	export class MCPServerView {
-	    id: string;
-	    name: string;
-	    kind: string;
-	    command?: string;
-	    args?: string[];
-	    env?: Record<string, string>;
-	    url?: string;
-	    headers?: Record<string, string>;
-	    enabled: boolean;
-	    status: mcpclient.Status;
-	
-	    static createFrom(source: any = {}) {
-	        return new MCPServerView(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.id = source["id"];
-	        this.name = source["name"];
-	        this.kind = source["kind"];
-	        this.command = source["command"];
-	        this.args = source["args"];
-	        this.env = source["env"];
-	        this.url = source["url"];
-	        this.headers = source["headers"];
-	        this.enabled = source["enabled"];
-	        this.status = this.convertValues(source["status"], mcpclient.Status);
-	    }
-	
-		convertValues(a: any, classs: any, asMap: boolean = false): any {
-		    if (!a) {
-		        return a;
-		    }
-		    if (a.slice && a.map) {
-		        return (a as any[]).map(elem => this.convertValues(elem, classs));
-		    } else if ("object" === typeof a) {
-		        if (asMap) {
-		            for (const key of Object.keys(a)) {
-		                a[key] = new classs(a[key]);
-		            }
-		            return a;
-		        }
-		        return new classs(a);
-		    }
-		    return a;
-		}
-	}
-	export class ScriptFile {
-	    script: model.Script;
-	    path: string;
-	    revision: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new ScriptFile(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.script = this.convertValues(source["script"], model.Script);
-	        this.path = source["path"];
-	        this.revision = source["revision"];
-	    }
-	
-		convertValues(a: any, classs: any, asMap: boolean = false): any {
-		    if (!a) {
-		        return a;
-		    }
-		    if (a.slice && a.map) {
-		        return (a as any[]).map(elem => this.convertValues(elem, classs));
-		    } else if ("object" === typeof a) {
-		        if (asMap) {
-		            for (const key of Object.keys(a)) {
-		                a[key] = new classs(a[key]);
-		            }
-		            return a;
-		        }
-		        return new classs(a);
-		    }
-		    return a;
-		}
-	}
-	export class TemplateShot {
-	    png: string;
-	    scale: number;
-	    w: number;
-	    h: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new TemplateShot(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.png = source["png"];
-	        this.scale = source["scale"];
-	        this.w = source["w"];
-	        this.h = source["h"];
-	    }
-	}
-	export class TextPreview {
-	    port: string;
-	    output: Record<string, any>;
-	
-	    static createFrom(source: any = {}) {
-	        return new TextPreview(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.port = source["port"];
-	        this.output = source["output"];
 	    }
 	}
 

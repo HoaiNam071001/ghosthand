@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react';
-import { DangerCheck, RunScript, ValidateScript } from '../wailsjs/go/main/App';
+import { DangerCheck, RunScript, ValidateScript } from '../wailsjs/go/app/App';
 import { askDanger } from './dangerConfirm';
 import { askPerm } from './permConfirm';
 import { missingForRun } from './store/permStore';

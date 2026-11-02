@@ -4,7 +4,7 @@ import { useSyncExternalStore } from 'react';
 import { EventsOn } from '../wailsjs/runtime/runtime';
 import {
   AIScripts, ClearDraft, ConfirmQuit, ExportPack, ForgetRecent, ImportPack, LoadDraft, NewScript, OpenSample, OpenScript, OpenScriptPath, RecentScripts, SaveDraft, SaveScript, SaveScriptAs, SetEditorState,
-} from '../wailsjs/go/main/App';
+} from '../wailsjs/go/app/App';
 import { model, store } from '../wailsjs/go/models';
 import { getEditor, markSaved, reloadScript, replaceScript, setNotice, subscribe } from './store';
 import { nodePrefLabel } from './aiLevel';

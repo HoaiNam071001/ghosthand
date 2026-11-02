@@ -1,12 +1,12 @@
 // Danh sách MCP server đã thêm (bước 55 M8) – chỉ hiển thị, hành động qua props (màn mẫu #demo-mcp dùng chung).
-import { main } from '../../../wailsjs/go/models';
+import { app } from '../../../wailsjs/go/models';
 import { statusText } from '../../flow/mcpServer';
 import { SettingCode } from './parts';
 
 type Props = {
-  list: main.MCPServerView[]; busy: string;
-  onReload: (s: main.MCPServerView) => void; onEdit: (s: main.MCPServerView) => void;
-  onToggle: (s: main.MCPServerView) => void; onRemove: (s: main.MCPServerView) => void;
+  list: app.MCPServerView[]; busy: string;
+  onReload: (s: app.MCPServerView) => void; onEdit: (s: app.MCPServerView) => void;
+  onToggle: (s: app.MCPServerView) => void; onRemove: (s: app.MCPServerView) => void;
 };
 
 export default function McpServerList({ list, busy, onReload, onEdit, onToggle, onRemove }: Props) {

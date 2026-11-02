@@ -1,5 +1,5 @@
 // Nhúng kịch bản khác (bước 39 G2): Go ghép (script.Embed), ở đây áp kết quả vào kịch bản đang soạn qua updateScript.
-import { EmbedSample, EmbedScriptFile } from '../../wailsjs/go/main/App';
+import { EmbedSample, EmbedScriptFile } from '../../wailsjs/go/app/App';
 import { model } from '../../wailsjs/go/models';
 import { Script } from '../types';
 import { getEditor, setEditor, updateScript } from './editor';

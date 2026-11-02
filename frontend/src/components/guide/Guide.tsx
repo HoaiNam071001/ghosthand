@@ -1,6 +1,6 @@
 // Modal Hướng dẫn nối app: mở qua guideNav (nút ?, F1, "Xem hướng dẫn"), nhớ trang trước để Quay lại, mở mẫu thử qua scriptFile (trang sân thử mở ở Mẫu thử như thường).
 import { useEffect, useState } from 'react';
-import { Samples } from '../../../wailsjs/go/main/App';
+import { Samples } from '../../../wailsjs/go/app/App';
 import { CHAPTERS, NODE_GUIDES } from '../../guide/content';
 import type { GuidePage } from '../../guide/types';
 import { onOpenGuide } from '../../guideNav';

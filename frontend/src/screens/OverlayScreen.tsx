@@ -1,7 +1,7 @@
 // Overlay chọn vùng / điểm – cửa sổ trong suốt phủ màn hình, always-on-top.
 // File này giữ state + xử lý chuột / phím; phần vẽ ở components/overlay/, hình học + chữ gợi ý ở overlay/ (thuần).
 import { MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
-import { MousePos } from '../../wailsjs/go/main/App';
+import { MousePos } from '../../wailsjs/go/app/App';
 import {
   boundsOf, cancelPick, endpoints, hasPoints, movePoint, pickingPoint, pickingStep, placePoint, placeStroke, placingType, pointKey, refOf,
   regionMapping, RegionMapMode, selectedScreenPoints, selectStep, setDragMode, setFocusLock, setMulti, setRegion,

@@ -4,7 +4,7 @@ import NumInput from '../NumInput';
 import Segmented from '../Segmented';
 import Select from '../Select';
 import VarTextInput from '../inputs/VarTextInput';
-import { ListProcesses } from '../../../wailsjs/go/main/App';
+import { ListProcesses } from '../../../wailsjs/go/app/App';
 import { errorText } from '../../engineStore';
 import { inWails } from '../../windowMode';
 import { updateStep, useScript } from '../../store';

@@ -1,6 +1,6 @@
 // "Chạy thử" tool MCP một lần (qua cổng quyền như chạy thật) + xem output mẫu (bước 55 M4).
 import { useState } from 'react';
-import { TestMCPTool } from '../../../wailsjs/go/main/App';
+import { TestMCPTool } from '../../../wailsjs/go/app/App';
 import { errorText } from '../../engineStore';
 import { errText, hint } from './shared';
 

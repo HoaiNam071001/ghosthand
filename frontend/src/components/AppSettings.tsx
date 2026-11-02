@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import {
   GetSettings, OpenFolder, PickFolder, SetAPISettings, SetMCPSettings, SetOverlaySettings, SetStorageSettings, StorageDefaults,
-} from '../../wailsjs/go/main/App';
+} from '../../wailsjs/go/app/App';
 import { store } from '../../wailsjs/go/models';
 import { EventsOn } from '../../wailsjs/runtime/runtime';
 import { errorText } from '../engineStore';

@@ -1,7 +1,7 @@
 // "Lưu thành node của tôi" (bước 55 M5): đặt tên + chọn icon, lưu server / tool / đối số đang điền làm mẫu ở mục Của tôi
 // của bảng thêm node. Ô để trống = chỗ điền sau khi thả node vào canvas.
 import { useState } from 'react';
-import { SaveCustomNode } from '../../../wailsjs/go/main/App';
+import { SaveCustomNode } from '../../../wailsjs/go/app/App';
 import { store } from '../../../wailsjs/go/models';
 import { errorText } from '../../engineStore';
 import IconPicker from '../palette/IconPicker';

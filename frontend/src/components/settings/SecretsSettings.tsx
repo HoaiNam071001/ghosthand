@@ -1,7 +1,7 @@
 // Cài đặt – Bí mật (bước 43 S10): tên → giá trị trong Keychain / Credential Manager. Giá trị chỉ đi một chiều (ghi vào kho),
 // giao diện không đọc lại được; kịch bản dùng {{secret.<tên>}}.
 import { useEffect, useState } from 'react';
-import { DeleteSecret, ListSecrets, SetSecret } from '../../../wailsjs/go/main/App';
+import { DeleteSecret, ListSecrets, SetSecret } from '../../../wailsjs/go/app/App';
 import { errorText } from '../../engineStore';
 import { refreshSecretNames } from '../../store';
 import { CopyButton, SettingCode } from './parts';

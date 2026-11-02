@@ -1,8 +1,8 @@
 // Hook nhỏ của overlay.
 import { appChoices, WindowChoice } from '../../overlay/windowChoices';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Displays, FocusWindow, GetSettings, ListWindows, MousePos, SetOverlayDisplay } from '../../../wailsjs/go/main/App';
-import { main } from '../../../wailsjs/go/models';
+import { Displays, FocusWindow, GetSettings, ListWindows, MousePos, SetOverlayDisplay } from '../../../wailsjs/go/app/App';
+import { app } from '../../../wailsjs/go/models';
 import { inWails } from '../../windowMode';
 import { applyCapture } from '../../imageSteps';
 import { Point, Rect } from '../../types';
@@ -82,7 +82,7 @@ export function useFlash(value: string, ms: number) {
 
 // Nhiều màn hình: chọn màn cho overlay (Go dời cửa sổ, phủ cả màn mới, nhớ lựa chọn cho lần mở sau).
 export function useDisplays() {
-  const [displays, setDisplays] = useState<main.DisplayInfo[]>([]);
+  const [displays, setDisplays] = useState<app.DisplayInfo[]>([]);
   const load = () => { if (inWails) Displays().then(setDisplays).catch(() => {}); };
   useEffect(load, []);
   const current = displays.find((d) => d.current);

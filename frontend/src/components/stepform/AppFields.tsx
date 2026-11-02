@@ -1,6 +1,6 @@
 // Node Ứng dụng (bước 26): thao tác, tên app (chọn từ app đang chạy, trạng thái đang chạy cạnh ô tên), buộc thoát.
 import { useCallback, useEffect, useState } from 'react';
-import { ListApps } from '../../../wailsjs/go/main/App';
+import { ListApps } from '../../../wailsjs/go/app/App';
 import Segmented from '../Segmented';
 import Select from '../Select';
 import VarTextInput from '../inputs/VarTextInput';

@@ -2,7 +2,7 @@
 // vẫn gõ tay hoặc chèn {{biến}} được. Dùng cho mọi ô đường dẫn của node.
 import { ComponentProps, useState } from 'react';
 import VarTextInput from '../inputs/VarTextInput';
-import { PickPath } from '../../../wailsjs/go/main/App';
+import { PickPath } from '../../../wailsjs/go/app/App';
 import { Folder } from '../icons';
 import { errorText } from '../../engineStore';
 import { errText } from './shared';

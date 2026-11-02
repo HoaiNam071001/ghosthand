@@ -1,6 +1,6 @@
 // Tên các bí mật đã lưu (bước 43 S10) – gợi ý {{secret.<tên>}} trong ô chữ. Chỉ tên, giá trị không bao giờ về giao diện.
 import { useEffect, useState } from 'react';
-import { ListSecrets } from '../../wailsjs/go/main/App';
+import { ListSecrets } from '../../wailsjs/go/app/App';
 
 let names: string[] = [];
 let loaded = false;

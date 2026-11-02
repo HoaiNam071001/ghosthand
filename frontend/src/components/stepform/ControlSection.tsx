@@ -8,7 +8,7 @@ import { addInput } from '../../scriptInputs';
 import { pickCondColor, startCapture, testNode, useImageState } from '../../imageSteps';
 import { inWails, openOverlay } from '../../windowMode';
 import { Step } from '../../types';
-import { PreviewList, PreviewText } from '../../../wailsjs/go/main/App';
+import { PreviewList, PreviewText } from '../../../wailsjs/go/app/App';
 import { model } from '../../../wailsjs/go/models';
 import { useNodeVars } from './shared';
 

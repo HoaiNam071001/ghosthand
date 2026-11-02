@@ -1,6 +1,6 @@
 // Chữ trên overlay (chỉ hiển thị): dòng gợi ý giữa trên, crosshair + toạ độ chuột, ô thông tin góc trên trái.
 import { ReactNode } from 'react';
-import { main } from '../../../wailsjs/go/models';
+import { app } from '../../../wailsjs/go/models';
 import type { Mapping } from '../../coordMap';
 import { Point, Rect, Step } from '../../types';
 import type { BarSide } from '../../overlay/toolbarLayout';
@@ -35,7 +35,7 @@ export function Crosshair({ at, screen, hidden }: { at: Point; screen: Point; hi
 
 // Thông tin toạ độ góc trên trái: vùng, màn hình, điểm của node đang xem riêng, ánh xạ toạ độ (map = null: ngoài Wails).
 export function CoordInfo({ region, displays, current, focusStep, focusEnds, map }: {
-  region: Rect | null; displays: main.DisplayInfo[]; current?: main.DisplayInfo; focusStep: Step | null;
+  region: Rect | null; displays: app.DisplayInfo[]; current?: app.DisplayInfo; focusStep: Step | null;
   focusEnds?: { start: Point | null; end: Point | null }; map: Mapping | null;
 }) {
   const pts = !focusStep ? [] : focusStep.type === 'drag' ? [['A', focusEnds?.start], ['B', focusEnds?.end]] as const : [['Điểm', focusEnds?.start]] as const;

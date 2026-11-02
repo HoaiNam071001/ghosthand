@@ -1,7 +1,7 @@
 // Cài đặt – AI qua MCP (bước 31): bật / tắt, mức chạy (31b – AiRunSettings), ưu tiên node (44 – NodePrefSettings), thêm vào Claude Desktop (hỏi trước khi ghi file của Claude), đoạn cấu
 // hình mẫu cho từng client AI, các lệnh AI đã gọi gần đây.
 import { useEffect, useState } from 'react';
-import { AddToClaudeDesktop, ClaudeDesktopConfigPath, MCPClients, MCPLog, MCPSeenClients, MCPTools } from '../../../wailsjs/go/main/App';
+import { AddToClaudeDesktop, ClaudeDesktopConfigPath, MCPClients, MCPLog, MCPSeenClients, MCPTools } from '../../../wailsjs/go/app/App';
 import { mcpsrv, store } from '../../../wailsjs/go/models';
 import { errorText } from '../../engineStore';
 import Select from '../Select';

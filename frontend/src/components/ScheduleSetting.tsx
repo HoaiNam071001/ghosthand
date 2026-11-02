@@ -2,7 +2,7 @@
 // Kịch bản chưa lưu thành file thì không hẹn được (hẹn giờ khoá theo đường dẫn file).
 import { useState } from 'react';
 import { WindowMinimise } from '../../wailsjs/runtime/runtime';
-import { GetInputMemory } from '../../wailsjs/go/main/App';
+import { GetInputMemory } from '../../wailsjs/go/app/App';
 import { useEditor } from '../store';
 import { errorText } from '../engineStore';
 import { removeSchedule, saveSchedule, scheduleOf, useSchedules } from '../scheduleStore';

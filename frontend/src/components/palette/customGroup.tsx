@@ -1,6 +1,6 @@
 // Mục "Của tôi" của bảng thêm node (bước 55 M5): mỗi node của tôi = một node Gọi tool MCP điền sẵn server / tool / đối số + tên.
 import { useCallback, useEffect, useState } from 'react';
-import { ListCustomNodes } from '../../../wailsjs/go/main/App';
+import { ListCustomNodes } from '../../../wailsjs/go/app/App';
 import { store } from '../../../wailsjs/go/models';
 import type { PaletteGroup } from '../PaletteView';
 import { addStep } from '../../store';

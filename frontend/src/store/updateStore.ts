@@ -1,7 +1,7 @@
 // Kiểm tra bản mới (Cài đặt → Giới thiệu): phiên bản đang chạy + kết quả hỏi GitHub Releases. Mở app có bản mới thì Go
 // bắn event update:available (scriptFile.ts báo nhẹ); nút Kiểm tra hỏi lại tay.
 import { useSyncExternalStore } from 'react';
-import { AppVersion, CheckUpdate, InstallUpdate, OpenReleasePage } from '../../wailsjs/go/main/App';
+import { AppVersion, CheckUpdate, InstallUpdate, OpenReleasePage } from '../../wailsjs/go/app/App';
 import { EventsOn } from '../../wailsjs/runtime/runtime';
 import { update } from '../../wailsjs/go/models';
 import { errorText } from '../engineStore';

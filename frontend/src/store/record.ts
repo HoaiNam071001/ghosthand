@@ -1,7 +1,7 @@
 // Ghi macro (bước 24): Go bắt chuột / phím toàn cục, F9 dừng (event record:done); ở đây ghép kết quả vào kịch bản
 // qua updateScript như Nhúng kịch bản.
 import { useSyncExternalStore } from 'react';
-import { FinishRecording, StartRecording, StopRecording } from '../../wailsjs/go/main/App';
+import { FinishRecording, StartRecording, StopRecording } from '../../wailsjs/go/app/App';
 import { EventsOn } from '../../wailsjs/runtime/runtime';
 import { model } from '../../wailsjs/go/models';
 import { Script } from '../types';
