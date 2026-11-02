@@ -70,3 +70,34 @@ func TestMergeBigLines(t *testing.T) {
 		}
 	}
 }
+
+// Mảnh rác cao như chữ to (lượt chính đọc “ĐÃ XONG” trắng trên nền xanh ra “X@ `”) không được chặn dòng của lượt chữ to.
+func TestMergeBigLinesJunkOverlap(t *testing.T) {
+	ln := func(s string, x, y, w, h int) TextLine {
+		return TextLine{Text: s, Box: model.Rect{X: x, Y: y, W: w, H: h}}
+	}
+	base := []TextLine{ln("X@ `", 905, 611, 108, 65)}
+	big := []TextLine{ln("ĐÃ XONG", 742, 590, 430, 86)}
+	got := TextLines(MergeBigLines(base, big), 0)
+	if len(got) != 1 || got[0] != "ĐÃ XONG" {
+		t.Fatalf("%q", got)
+	}
+}
+
+func TestMergeWideLines(t *testing.T) {
+	ln := func(s string, x, y, w, h int) TextLine {
+		return TextLine{Text: s, Box: model.Rect{X: x, Y: y, W: w, H: h}}
+	}
+	base := []TextLine{ln("THÔ", 700, 300, 40, 20), ln("15.€®9", 750, 300, 80, 20), ln("Đóng", 10, 10, 40, 14)}
+	wide := []TextLine{ln("THÊM 15.000 đ", 700, 298, 140, 22), ln("Đ ng", 10, 10, 40, 14), ln("Mới", 400, 400, 40, 14)}
+	got := TextLines(MergeWideLines(base, wide), 0)
+	want := []string{"Đóng", "THÊM 15.000 đ"} // dòng rộng ít chữ hơn base, hoặc không chồng dòng nào, bị bỏ
+	if len(got) != len(want) {
+		t.Fatalf("%q", got)
+	}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Fatalf("%q", got)
+		}
+	}
+}

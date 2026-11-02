@@ -23,30 +23,59 @@ const (
 	tessPSM   = 11 // sparse text: chữ rải rác trên giao diện, không theo đoạn
 )
 
+// tessLanes – số đối tượng Tesseract chạy song song: lượt chính, lượt cửa sổ rộng, lượt ảnh xám (cỡ gốc rồi chữ to).
+const tessLanes = 3
+
 var tess struct {
 	sync.Mutex
 	once sync.Once
-	api  *tessAPI
+	apis [tessLanes]*tessAPI
 	err  error
 }
 
+func loadTess() {
+	for i := range tess.apis {
+		if tess.apis[i], tess.err = newTessAPI(); tess.err != nil {
+			return
+		}
+	}
+}
+
 // tessRead đọc chữ bằng Tesseract; lỗi nạp (thiếu bộ kèm, DLL hỏng) trả lỗi để readText rơi về OCR Windows.
+// Các lượt phụ chỉ bù cho lượt chính (chữ đậm cỡ vừa mà chuẩn hoá nền khoét rỗng) nên chạy song song để không chậm hơn lượt chính.
 func tessRead(src image.Image) ([]vision.TextLine, error) {
 	tess.Lock()
 	defer tess.Unlock()
-	tess.once.Do(func() { tess.api, tess.err = newTessAPI() })
+	tess.once.Do(loadTess)
 	if tess.err != nil {
 		return nil, tess.err
 	}
-	lines, err := tess.api.read(vision.PrepOCR(src, tessScale, tessPad), tessScale)
-	if err != nil {
-		return nil, err
+	var main, wide, plain, big []vision.TextLine
+	var mainErr error
+	var wg sync.WaitGroup
+	wg.Add(tessLanes)
+	go func() {
+		defer wg.Done()
+		main, mainErr = tess.apis[0].read(vision.PrepOCR(src, tessScale, tessPad), tessScale)
+	}()
+	go func() {
+		defer wg.Done()
+		wide, _ = tess.apis[1].read(vision.PrepOCRWin(src, tessScale, tessPad, vision.PrepWinWide), tessScale)
+	}()
+	go func() {
+		defer wg.Done()
+		// chữ trắng đậm trên nền tối (“ĐÃ CHỌN: 4 MÓN”) đọc đúng ở ảnh xám cỡ gốc, không phóng không chuẩn hoá nền
+		plain, _ = tess.apis[2].read(vision.ShrinkGray(src, 1, tessPad), 1)
+		big, _ = tess.apis[2].read(vision.ShrinkGray(src, vision.BigTextScale, tessPad), vision.BigTextScale)
+	}()
+	wg.Wait()
+	if mainErr != nil {
+		return nil, mainErr
 	}
-	big, err := tess.api.read(vision.ShrinkGray(src, vision.BigTextScale, tessPad), vision.BigTextScale)
-	if err != nil {
-		return lines, nil // lượt chữ to chỉ là phần thêm
-	}
-	return vision.MergeBigLines(lines, big), nil
+	// chữ to trước: lượt xám cỡ gốc hay đọc “ĐANG CHỜ” thành “ĐANG CHè” – đủ chữ để chặn dòng đúng của lượt chữ to nếu gộp trước
+	lines := vision.MergeBigLines(main, big)
+	lines = vision.MergeWideLines(lines, wide)
+	return vision.MergeWideLines(lines, plain), nil
 }
 
 type tessAPI struct {
