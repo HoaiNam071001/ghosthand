@@ -11,6 +11,8 @@ import { runHead, runRows } from '../../flow/run';
 import type { StepResult } from '../../types';
 import { libraryRun, runDot, runStatsParts } from './runs';
 import RunsDelete from './RunsDelete';
+import RunTreeView from '../runs/RunTreeView';
+import Segmented from '../Segmented';
 
 export default function RunsDialog({ onClose }: { onClose: () => void }) {
   const { history, stats } = useRunLog();
@@ -18,6 +20,7 @@ export default function RunsDialog({ onClose }: { onClose: () => void }) {
   const [sel, setSel] = useState(history[0]?.id ?? '');
   const [run, setRun] = useState<{ summary: RunSummary; results: StepResult[] } | null>(null);
   const [error, setError] = useState('');
+  const [as, setAs] = useState<'tree' | 'list'>('tree'); // bước 60: cây node (mặc định) hoặc danh sách từng bước
   useEffect(() => {
     let live = true;
     setRun(null);
@@ -46,7 +49,7 @@ export default function RunsDialog({ onClose }: { onClose: () => void }) {
   };
   return (
     <div className="fixed inset-0 z-40 flex items-start justify-center bg-black/25 px-4 pt-[6vh]" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div role="dialog" aria-label="Lịch sử chạy" className="flex h-[82vh] w-[960px] max-w-full flex-col overflow-hidden rounded-panel border border-line bg-surface text-ink shadow-[0_16px_48px_rgb(0_0_0/.22)]">
+      <div role="dialog" aria-label="Lịch sử chạy" className="flex h-[86vh] w-[1240px] max-w-full flex-col overflow-hidden rounded-panel border border-line bg-surface text-ink shadow-[0_16px_48px_rgb(0_0_0/.22)]">
         <div className="flex items-center gap-3 border-b border-line px-[18px] py-3">
           <div className="flex-1">
             <div className="text-base font-semibold">Lịch sử chạy</div>
@@ -54,6 +57,7 @@ export default function RunsDialog({ onClose }: { onClose: () => void }) {
             {statsLine && <div className="text-xs text-muted" title="Tính từ các lần chạy đã lưu – lần bị dừng không tính vào tỷ lệ thành công">{statsLine}</div>}
             {error && <div className="text-[13px] text-danger-text">{error}</div>}
           </div>
+          <Segmented label="Kiểu xem lần chạy" value={as} onChange={setAs} options={[{ id: 'tree', label: 'Cây' }, { id: 'list', label: 'Danh sách' }]} />
           <RunsDelete count={history.length} canDelete={!!sel} onDelete={() => remove(sel)} onClear={() => remove('')} />
           <button disabled={!run} onClick={view} className="btn-primary h-8 rounded-control px-3 text-[13px] font-semibold disabled:opacity-50"
             title="Đóng hộp thoại, mở nhật ký dưới canvas và tô đường đã đi">Xem trên flow</button>
@@ -80,7 +84,8 @@ export default function RunsDialog({ onClose }: { onClose: () => void }) {
             {!history.length && <li className="px-3 py-2 text-[13px] text-muted">Chưa có lần chạy nào</li>}
           </ol>
           <div className="min-w-0 flex-1">
-            {head ? (
+            {head && as === 'tree' && run ? <RunTreeView key={sel} results={run.results} steps={script.steps} edges={script.edges} loadShot={(shot) => runShotUrl(sel, shot)} />
+              : head ? (
               <RunLog key={sel} fill title={head.title} summary={head.summary} tone={head.tone} rows={rows} nodes={views} selected={null}
                 onSelect={() => {}} loadShot={(shot) => runShotUrl(sel, shot)} />
             ) : <p className="grid h-full place-items-center text-muted">{sel ? 'Đang đọc…' : 'Chọn một lần chạy'}</p>}

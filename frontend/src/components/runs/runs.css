@@ -1,0 +1,5 @@
+/* Cây lần chạy (bước 60): đường dữ liệu nét đứt màu nhóm dữ liệu; đường đang tô chạy theo chiều giá trị */
+.run-tree-data { stroke: var(--c-cat-data); stroke-width: 1.4; stroke-dasharray: 4 3; opacity: .45; }
+.run-tree-data.on { stroke: var(--c-accent); stroke-width: 2; opacity: 1; animation: run-tree-flow 1s linear infinite; }
+@keyframes run-tree-flow { to { stroke-dashoffset: -14; } }
+@media (prefers-reduced-motion: reduce) { .run-tree-data.on { animation: none; } }

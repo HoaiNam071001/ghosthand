@@ -11,8 +11,9 @@ import DemoIllus from './screens/DemoIllus';
 import DemoGuide from './screens/DemoGuide';
 import DemoMcp from './screens/DemoMcp';
 import DemoData from './screens/DemoData';
+import DemoRunTree from './screens/DemoRunTree';
 
-// Chọn màn theo hash URL (#preview, #overlay, #minibar, #demo, #demo-overlay, #demo-minibar, #demo-flow, #demo-illus, #demo-guide, #demo-mcp, #demo-data). setWindowMode() (windowMode.ts) đổi
+// Chọn màn theo hash URL (#preview, #overlay, #minibar, #demo, #demo-overlay, #demo-minibar, #demo-flow, #demo-illus, #demo-guide, #demo-mcp, #demo-data, #demo-runtree). setWindowMode() (windowMode.ts) đổi
 // kích thước cửa sổ bên Go rồi đổi hash; trên trình duyệt đổi hash tay để xem từng màn.
 const screens: Record<string, ComponentType> = {
     main: MainScreen,
@@ -28,6 +29,7 @@ const screens: Record<string, ComponentType> = {
     'demo-guide': DemoGuide, // modal Hướng dẫn, nội dung thật (bước 51)
     'demo-mcp': DemoMcp, // tab MCP server + form đối số tool (bước 55)
     'demo-data': DemoData, // dữ liệu giữa node: thẻ Gọn / Đầy đủ, kéo nối (bước 60)
+    'demo-runtree': DemoRunTree, // Lịch sử chạy dạng cây (bước 60)
 };
 
 function App() {
