@@ -11,3 +11,4 @@ export * from './embed';
 export * from './control';
 export * from './secrets';
 export * from './record';
+export * from './dataLinks';

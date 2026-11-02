@@ -4,7 +4,8 @@ import { StatusBar, Toolbar } from '../components/AppChrome';
 import { RUN_ICON, RunMenuItem } from '../components/RunMenu';
 import { MousePos, StopScript } from '../../wailsjs/go/app/App';
 import { inWails, openOverlay } from '../windowMode';
-import { startRecording, useEditor } from '../store';
+import { selectStep, startRecording, useEditor } from '../store';
+import { useFlowPrefs } from '../flowPrefs';
 import { closeRunForm, deletePreset, loadMemory, savePreset, startRun, submitRun, useRunForm } from '../runForm';
 import { inputViews, runSections } from '../scriptInputs';
 import RunDialog from '../components/inputs/RunDialog';
@@ -34,6 +35,7 @@ export default function MainScreen() {
   const { draftAt, error: fileError } = useFile();
   const { steps } = script;
   const cur = steps.find((s) => s.id === selected); // undefined khi chưa chọn node nào
+  const { detail } = useFlowPrefs(); // chi tiết node: Panel (cột phải) / Modal / Popover (FlowEditor vẽ dưới node)
   const { running, lastError, stopReason, hotkeyError } = useEngine();
   const { summary, live } = useRunLog();
   const endMessage = !running && live && summary?.status === 'success' ? summary.message : undefined;
@@ -87,7 +89,8 @@ export default function MainScreen() {
         <Library />
         <FlowEditor />
         {/* chưa chọn node thì ẩn inspector – canvas lấy hết chiều ngang */}
-        {cur && <StepForm key={cur.id} step={cur} />}
+        {cur && detail === 'panel' && <StepForm key={cur.id} step={cur} />}
+        {cur && detail === 'modal' && <StepForm key={cur.id} step={cur} mode="modal" onClose={() => selectStep('')} />}
       </div>
 
       <StatusBar running={running} mouse={mouse ? `X ${mouse.x} Y ${mouse.y}` : 'X — Y —'}>

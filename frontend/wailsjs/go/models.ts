@@ -1071,6 +1071,20 @@ export namespace model {
 	        this.field = source["field"];
 	    }
 	}
+	export class IterRef {
+	    nodeId: string;
+	    index: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new IterRef(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.nodeId = source["nodeId"];
+	        this.index = source["index"];
+	    }
+	}
 	export class KV {
 	    key: string;
 	    value: string;
@@ -1183,6 +1197,7 @@ export namespace model {
 	    ref: string;
 	    status: string;
 	    port?: string;
+	    input?: Record<string, any>;
 	    output?: Record<string, any>;
 	    error?: StepError;
 	    logs?: LogLine[];
@@ -1190,6 +1205,7 @@ export namespace model {
 	    loop: number;
 	    shot?: string;
 	    changes?: Record<string, any>;
+	    iter?: IterRef;
 	    // Go type: time
 	    startedAt: any;
 	    durationMs: number;
@@ -1204,6 +1220,7 @@ export namespace model {
 	        this.ref = source["ref"];
 	        this.status = source["status"];
 	        this.port = source["port"];
+	        this.input = source["input"];
 	        this.output = source["output"];
 	        this.error = this.convertValues(source["error"], StepError);
 	        this.logs = this.convertValues(source["logs"], LogLine);
@@ -1211,6 +1228,7 @@ export namespace model {
 	        this.loop = source["loop"];
 	        this.shot = source["shot"];
 	        this.changes = source["changes"];
+	        this.iter = this.convertValues(source["iter"], IterRef);
 	        this.startedAt = this.convertValues(source["startedAt"], null);
 	        this.durationMs = source["durationMs"];
 	    }

@@ -1,6 +1,7 @@
 // Khối của thanh thư viện (design v3): nhóm thu gọn được có tóm tắt bên phải, chân "+ Mới" + nút icon.
 // Chỉ hiển thị – LibraryView (components/Library.tsx) ghép và nối việc.
 import { ReactNode, useEffect, useState } from 'react';
+import { usePopover } from '../usePopover';
 import { Chevron, Folder, Grid, Package, Save } from '../icons';
 
 const loadOpen = (key: string, fallback: boolean) => {
@@ -52,21 +53,15 @@ export function LibraryFooter({ ready, mod, shift, onNew, onOpen, onSave, onSamp
 
 // Nút Gói (bước 28 R3): menu nhỏ Xuất / Nhập gói .zip – kịch bản kèm file CSV / ảnh mà node đọc, để gửi máy khác.
 function PackMenu({ ready, icon, off, onExport, onImport }: { ready: boolean; icon: string; off?: string; onExport?: () => void; onImport?: () => void }) {
-  const [open, setOpen] = useState(false);
-  useEffect(() => {
-    if (!open) return;
-    const close = () => setOpen(false);
-    window.addEventListener('mousedown', close);
-    return () => window.removeEventListener('mousedown', close);
-  }, [open]);
+  const { open, setOpen, ref } = usePopover();
   const item = 'block w-full rounded-md px-3 py-1.5 text-left text-[13px] hover:bg-hover';
   const pick = (f?: () => void) => () => { setOpen(false); f?.(); };
   return (
-    <div className="relative">
+    <div ref={ref} className="relative">
       <button disabled={!ready} onClick={() => setOpen(!open)} aria-label="Gói kịch bản" aria-expanded={open} aria-haspopup="menu"
         title={off ?? 'Gói kịch bản (.zip) – xuất kèm file CSV / ảnh để gửi máy khác, hoặc nhập gói nhận được'} className={icon}><Package /></button>
       {open && (
-        <div role="menu" onMouseDown={(e) => e.stopPropagation()}
+        <div role="menu"
           className="absolute right-0 bottom-[40px] z-30 w-[200px] rounded-panel border border-line bg-surface p-1 shadow-[0_8px_24px_rgb(0_0_0/.16)]">
           <button role="menuitem" onClick={pick(onExport)} className={item}>Xuất gói .zip…</button>
           <button role="menuitem" onClick={pick(onImport)} className={item}>Nhập gói .zip…</button>

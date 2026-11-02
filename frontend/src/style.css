@@ -165,6 +165,7 @@
   --color-dot: var(--c-dot);
   --color-panel: var(--c-panel);
   --color-faint: var(--c-faint);
+  --color-data: var(--c-cat-data); /* dữ liệu giữa node (bước 60): chấm vuông, dây / pill nét đứt */
   /* Màu nhóm node: đặt class cat-<nhóm> lên khung rồi dùng text-cat / bg-cat-soft / bg-cat-tile bên trong */
   --color-cat: var(--cat);
   --color-cat-soft: color-mix(in srgb, var(--cat-base) var(--c-cat-soft-pct), transparent);

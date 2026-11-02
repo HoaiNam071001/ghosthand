@@ -2,23 +2,34 @@
 // Node chỉ có Thành công / Thất bại: 2 chấm trên mép phải (ok ngang đầu thẻ, danger sát đáy), không dòng nhãn;
 // node nhiều lối ra: mỗi cổng một dòng nhãn + chấm. Phần không còn chỗ (cổng chưa nối, chip phụ) nằm trong tooltip.
 // Cỡ cố định theo model.ts để xếp tự động không cần đo DOM.
-import { Handle, Node, NodeProps, Position } from '@xyflow/react';
+// Thẻ Đầy đủ (bước 60): thêm khối VÀO / RA giữa dòng chi tiết và cổng; thẻ Gọn toả cổng dữ liệu khi canvas báo (fan).
+import { useEffect } from 'react';
+import { Handle, Node, NodeProps, Position, useUpdateNodeInternals } from '@xyflow/react';
 import { StepIcon } from '../icons';
-import { FlowNodeView, inputY, NODE_DETAIL, NODE_HEAD, NODE_W, PORT_ROW, portRows, PORTS_PAD, portY, PortView } from './model';
+import { CardMode, FlowNodeView, inputY, ioHeight, NODE_DETAIL, NODE_HEAD, NODE_W, nodeHeight, PORT_ROW, portRows, PORTS_PAD, portY, PortView } from './model';
+import { DataBlock, DataFan } from './NodeData';
 
-export type CardData = { view: FlowNodeView; start: boolean; linked: string[] };
+export type CardData = {
+  view: FlowNodeView; start: boolean; linked: string[];
+  mode?: CardMode;
+  fan?: 'both' | 'in'; // thẻ Gọn: đang toả cổng dữ liệu (rê chuột / đang kéo nối tới)
+  block?: string; // đang kéo nối từ node khác mà không nối được vào node này – lý do
+};
 export type CardNode = Node<CardData, 'card'>;
 
-export default function NodeCard({ data, selected }: NodeProps<CardNode>) {
-  const { view: v, start, linked } = data;
+export default function NodeCard({ id, data, selected }: NodeProps<CardNode>) {
+  const { view: v, start, linked, mode = 'compact', fan, block } = data;
   const off = v.enabled === false;
   const ids = v.ports.map((p) => p.id);
   const rows = portRows(ids);
+  const io = ioHeight(v.data, mode);
+  const update = useUpdateNodeInternals();
+  useEffect(() => update(id), [id, fan, block, mode, io, update]); // chấm nối mới hiện / ẩn → React Flow đo lại
   const outline = v.run === 'running' ? 'outline-2 outline-offset-2 outline-accent' : v.run === 'fail' ? 'outline-2 outline-offset-2 outline-danger' : '';
   const tip = [v.warn, off && 'Đang tắt – chạy tới thì bỏ qua', v.chips?.join(' · ')].filter(Boolean).join('\n') || undefined;
   return (
     <div style={{ width: NODE_W }} title={tip}
-      className={`cat-${v.cat} relative rounded-[10px] ${selected ? 'ring-selected' : 'border border-line bg-surface shadow-[0_1px_2px_rgb(0_0_0/.05)]'} ${outline} ${v.run === 'skipped' ? 'opacity-60' : ''}`}>
+      className={`cat-${v.cat} relative rounded-[10px] ${selected ? 'ring-selected' : 'border border-line bg-surface shadow-[0_1px_2px_rgb(0_0_0/.05)]'} ${outline} ${v.run === 'skipped' ? 'opacity-60' : ''} ${fan ? 'flow-fanned' : ''} ${block ? 'opacity-50' : ''}`}>
       {start && (
         <span className="absolute -top-[23px] left-0 flex h-[19px] items-center gap-1 rounded-full bg-accent-soft px-2 text-[11px] font-semibold text-accent-text">
           <svg viewBox="0 0 24 24" className="h-2 w-2" fill="currentColor" aria-hidden><path d="M6 4l14 8-14 8z" /></svg>Bắt đầu
@@ -35,6 +46,7 @@ export default function NodeCard({ data, selected }: NodeProps<CardNode>) {
         <span className="flex-none font-mono text-[10.5px] text-muted">{off ? 'Tắt' : v.ref}</span>
       </div>
       <div style={{ height: NODE_DETAIL }} className={`truncate px-2.5 pt-[5px] font-mono text-[11px] text-muted ${off ? 'opacity-50' : ''}`}>{v.detail}</div>
+      {io > 0 && v.data && <div style={{ height: io }}><DataBlock pins={v.data} /></div>}
 
       {rows && (
         <div style={{ paddingBottom: PORTS_PAD }}>
@@ -44,9 +56,10 @@ export default function NodeCard({ data, selected }: NodeProps<CardNode>) {
         </div>
       )}
       {v.ports.map((p, i) => (
-        <Handle key={p.id} type="source" id={p.id} position={Position.Right} style={{ top: portY(ids, i) }}
+        <Handle key={p.id} type="source" id={p.id} position={Position.Right} style={{ top: portY(ids, i, io) }}
           title={portTip(p, !linked.includes(p.id))} className={`flow-handle flow-port-${p.kind}`} />
       ))}
+      {v.data && ((mode === 'compact' && fan) || block) && <DataFan pins={v.data} side={fan ?? 'in'} height={nodeHeight(ids)} block={block} />}
     </div>
   );
 }

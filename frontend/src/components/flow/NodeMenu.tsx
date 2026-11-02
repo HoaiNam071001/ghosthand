@@ -1,6 +1,7 @@
 // Menu chuột phải của thẻ node: chạy đến đây / chạy cụm / chạy tiếp, ghim output. Chỉ hiển thị – việc do nơi gọi truyền vào.
 import { useEffect, useRef } from 'react';
 import type { RunMenuItem } from '../RunMenu';
+import { onMouseDownAnywhere } from '../usePopover';
 
 export default function NodeMenu({ x, y, title, items, onClose }: { x: number; y: number; title: string; items: RunMenuItem[]; onClose: () => void }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -9,10 +10,10 @@ export default function NodeMenu({ x, y, title, items, onClose }: { x: number; y
       if (e instanceof KeyboardEvent ? e.key !== 'Escape' : ref.current?.contains(e.target as Node)) return;
       onClose();
     };
-    window.addEventListener('mousedown', close);
+    const off = onMouseDownAnywhere(close);
     window.addEventListener('keydown', close);
     return () => {
-      window.removeEventListener('mousedown', close);
+      off();
       window.removeEventListener('keydown', close);
     };
   }, [onClose]);

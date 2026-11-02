@@ -3,6 +3,7 @@
 import type { StepIconName } from '../icons';
 import type { NodeCategory } from '../../flow/category';
 import { PORT_FAIL, PORT_SUCCESS } from '../../flow/model';
+import type { DataPins } from '../../flow/dataView';
 
 // Màu cổng ra: ok = thành công, fail = thất bại, neutral = nhánh khác (đúng / sai, case, còn lượt…)
 export type PortKind = 'ok' | 'fail' | 'neutral';
@@ -30,7 +31,11 @@ export type FlowNodeView = {
   pinned?: boolean; // output đã ghim (pinStore) – node không chạy, dùng kết quả đã lưu
   run?: RunState;
   visits?: number; // số lần đã đi qua trong lần chạy
+  data?: DataPins; // khối VÀO / RA (bước 60) – thẻ Đầy đủ + toả cổng ở thẻ Gọn
 };
+
+// Kiểu thẻ (bước 60): Gọn = thẻ v3; Đầy đủ = thêm khối VÀO / RA có chấm nối dữ liệu
+export type CardMode = 'compact' | 'full';
 
 export type FlowEdgeView = {
   id: string;
@@ -81,10 +86,17 @@ export const PORTS_PAD = 6; // đệm dưới vùng cổng
 // Node khác (Nếu, Switch, Đếm): mỗi cổng một dòng có nhãn.
 export const portRows = (ports: string[]) => ports.some((p) => p !== PORT_SUCCESS && p !== PORT_FAIL);
 
-export const nodeHeight = (ports: string[]) => 2 + NODE_HEAD + NODE_DETAIL + (portRows(ports) ? ports.length * PORT_ROW + PORTS_PAD : 0);
+// Khối VÀO / RA của thẻ Đầy đủ: mỗi phần có dòng tiêu đề + mỗi ô / output một hàng; io = tổng chiều cao (0 ở thẻ Gọn).
+export const IO_HEAD = 16;
+export const PIN_ROW = 22;
+export const IO_PAD = 6;
+export const ioSection = (rows: number) => (rows ? 1 + IO_HEAD + rows * PIN_ROW + IO_PAD : 0); // 1 = viền trên
+export const ioHeight = (d: DataPins | undefined, mode: CardMode) => (mode === 'full' && d ? ioSection(d.ins.length) + ioSection(d.outs.length) : 0);
+
+export const nodeHeight = (ports: string[], io = 0) => 2 + NODE_HEAD + NODE_DETAIL + io + (portRows(ports) ? ports.length * PORT_ROW + PORTS_PAD : 0);
 // Toạ độ y (tính từ mép trên thẻ) của cổng vào và cổng ra thứ i: Thành công ngang đầu thẻ, Thất bại sát đáy.
 export const inputY = 1 + NODE_HEAD / 2;
-export function portY(ports: string[], i: number): number {
-  if (portRows(ports)) return 1 + NODE_HEAD + NODE_DETAIL + i * PORT_ROW + PORT_ROW / 2;
-  return ports[i] === PORT_FAIL ? nodeHeight(ports) - 11 : inputY;
+export function portY(ports: string[], i: number, io = 0): number {
+  if (portRows(ports)) return 1 + NODE_HEAD + NODE_DETAIL + io + i * PORT_ROW + PORT_ROW / 2;
+  return ports[i] === PORT_FAIL ? nodeHeight(ports, io) - 11 : inputY;
 }

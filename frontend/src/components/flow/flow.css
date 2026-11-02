@@ -43,3 +43,41 @@
 /* Khung nhóm (bước 39): chỉ thanh tên bắt chuột, phần thân để chuột xuyên xuống nền / thẻ node */
 .flow-canvas .react-flow__node-group { pointer-events: none !important; }
 .flow-canvas .react-flow__node-group .group-head { pointer-events: auto; }
+
+/* Dữ liệu giữa node (bước 60): chấm vuông = dữ liệu, chấm tròn = luồng chạy */
+.flow-pin {
+  width: 8px;
+  height: 8px;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 2px;
+  background: var(--c-surface);
+  border: 1.5px solid var(--c-cat-data);
+}
+.flow-pin::after { content: ""; position: absolute; inset: -6px; }
+.flow-pin.flow-pin-free { border-style: dashed; border-color: var(--c-line-strong); }
+.flow-pin.connectingto, .flow-pin:hover { background: var(--c-accent); border-color: var(--c-accent); }
+.flow-canvas .react-flow__handle.flow-pin.react-flow__handle-left { left: -5px; }
+.flow-canvas .react-flow__handle.flow-pin.react-flow__handle-right { right: -5px; }
+
+/* Thẻ Gọn toả cổng: VÀO bên trái, RA bên phải, chip nở dần */
+.flow-fanned { box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--c-cat-data) 70%, transparent), 0 0 0 7px color-mix(in srgb, var(--c-cat-data) 12%, transparent); }
+.flow-canvas .react-flow__node:has(.flow-fanned) { z-index: 1000 !important; }
+.flow-fan { position: absolute; display: flex; flex-direction: column; gap: 6px; transform: translateY(-50%); }
+.flow-fan-in { right: calc(100% + 20px); align-items: flex-end; }
+.flow-fan-out { left: calc(100% + 20px); align-items: flex-start; }
+.flow-fan-chip {
+  position: relative; display: flex; align-items: center; gap: 6px; height: 24px; padding: 0 9px; white-space: nowrap; font-size: 11px;
+  border-radius: 9999px; background: var(--c-surface); border: 1px solid var(--c-line-strong); box-shadow: 0 4px 12px rgb(0 0 0 / .1);
+  animation: flow-fan-in .22s cubic-bezier(.2, .8, .3, 1.2) both; animation-delay: calc(var(--i, 0) * 35ms);
+}
+.flow-fan-out .flow-fan-chip { cursor: grab; }
+.flow-fan-chip:hover { border-color: var(--c-accent); }
+.flow-fan-in .flow-fan-chip { --fx: 14px; }
+.flow-fan-out .flow-fan-chip { --fx: -14px; }
+@keyframes flow-fan-in { from { opacity: 0; transform: translateX(var(--fx, 0)) scale(.85); } }
+@media (prefers-reduced-motion: reduce) { .flow-fan-chip { animation: none; } }
+
+/* Dây dữ liệu: nét đứt màu nhóm dữ liệu, sáng accent khi node của nó đang chọn */
+.flow-data-edge { stroke: var(--c-cat-data); stroke-width: 1.5; stroke-dasharray: 4 3; opacity: .6; fill: none; }
+.flow-data-edge.on { stroke: var(--c-accent); stroke-width: 2; opacity: 1; }

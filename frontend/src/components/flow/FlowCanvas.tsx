@@ -1,14 +1,17 @@
 // Canvas soạn flow kiểu n8n (bước 20) trên @xyflow/react. Chỉ hiển thị + báo thao tác qua callback –
 // dữ liệu (node, cạnh, vị trí) do nơi gọi giữ: màn mẫu #demo-flow (state cục bộ) hoặc store kịch bản (F4b, qua flowEdit.ts).
 import './flow.css';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Background, BackgroundVariant, getNodesBounds, MarkerType, MiniMap, Panel, ReactFlow, ReactFlowProvider, useNodesState, useReactFlow, useStore, useStoreApi,
+  Background, BackgroundVariant, getNodesBounds, MarkerType, MiniMap, NodeToolbar, Panel, Position, ReactFlow, ReactFlowProvider, useNodesState, useReactFlow, useStore, useStoreApi,
 } from '@xyflow/react';
 import NodeCard, { CardNode } from './NodeCard';
 import FlowEdge, { edgeColor, FlowEdgeType } from './FlowEdge';
+import DataEdge, { DataEdgeType } from './DataEdge';
+import { isDataHandle, useDataFan } from './dataFan';
+import type { DataEdgeView } from '../../flow/dataView';
 import { GroupActions, GroupCard, GroupCardNode, GROUP_HANDLE, GroupFrame, GroupFrameNode } from './GroupNodes';
-import { FlowEdgeView, FlowGroupView, FlowNodeView } from './model';
+import { CardMode, FlowEdgeView, FlowGroupView, FlowNodeView } from './model';
 import type { Positions } from '../../flow/layout';
 import { fnOfKey, portForDrag } from '../../flow/dragConnect';
 
@@ -36,11 +39,17 @@ export type FlowCanvasProps = {
   groups?: FlowGroupView[]; // khung nhóm (bước 39); nhóm thu gọn ẩn các node thành viên
   groupActions?: GroupActions;
   onMoveGroup?: (id: string, dx: number, dy: number) => void; // kéo khung / thẻ nhóm
+  // Dữ liệu giữa node (bước 60): kiểu thẻ, dây dữ liệu (chỉ vẽ ở thẻ Đầy đủ), kéo output → ô; linkBlock = lý do không nối được
+  mode?: CardMode;
+  dataEdges?: DataEdgeView[];
+  onLinkData?: (from: string, key: string, to: string, slot: string) => void;
+  linkBlock?: (from: string, to: string) => string | null;
+  popover?: ReactNode; // chi tiết node kiểu Popover – hiện dưới node đang chọn
 };
 
 const nodeTypes = { card: NodeCard, group: GroupFrame, groupCard: GroupCard };
 const MIN_FIT = 0.65; // tự vừa màn hình không thu nhỏ hơn mức này (dưới đó chữ trên thẻ không đọc được)
-const edgeTypes = { flow: FlowEdge };
+const edgeTypes = { flow: FlowEdge, data: DataEdge };
 
 export default function FlowCanvas(props: FlowCanvasProps) {
   return <ReactFlowProvider><Canvas {...props} /></ReactFlowProvider>;
@@ -48,8 +57,10 @@ export default function FlowCanvas(props: FlowCanvasProps) {
 
 function Canvas({
   nodes, edges, start, positions, selected, picked, onSelect, onSelectBox, onMove, onConnect, onDeleteEdge, onDeleteNodes, onDropPort, onNodeMenu, onLayout, fitKey, focus,
-  taken, activeEdge, groups, groupActions, onMoveGroup,
+  taken, activeEdge, groups, groupActions, onMoveGroup, mode = 'compact', dataEdges, onLinkData, linkBlock, popover,
 }: FlowCanvasProps) {
+  const fan = useDataFan(mode === 'compact', linkBlock);
+  const { fanOf } = fan;
   const { fitView, getZoom, getIntersectingNodes, screenToFlowPosition, setCenter, setViewport, zoomIn, zoomOut } = useReactFlow();
   const fnKey = useRef(0); // phím F1..F9 đang giữ (chọn cổng khi kéo node nối node)
   useEffect(() => {
@@ -79,13 +90,13 @@ function Canvas({
       : { id: g.id, type: 'group' as const, position: { x: g.box.x, y: g.box.y }, data: { view: g, ...act }, dragHandle: GROUP_HANDLE, selectable: false, deletable: false, zIndex: -1 });
     setRfNodes((prev) => [...boxes, ...nodes.filter((v) => !hidden.has(v.id)).map((v) => {
       const old = prev.find((p) => p.id === v.id);
-      const data = { view: v, start: v.id === start, linked: edges.filter((e) => e.from === v.id).map((e) => e.port) };
+      const data = { view: v, start: v.id === start, linked: edges.filter((e) => e.from === v.id).map((e) => e.port), mode, ...fanOf(v.id) };
       const position = positions[v.id] ?? old?.position ?? { x: 0, y: 0 };
       return { ...old, id: v.id, type: 'card' as const, position, data, selected: v.id === selected || !!picked?.includes(v.id) } as CardNode;
     })]);
-  }, [nodes, edges, start, positions, selected, picked, groups, groupActions, setRfNodes]);
+  }, [nodes, edges, start, positions, selected, picked, groups, groupActions, setRfNodes, mode, fanOf]);
 
-  const rfEdges = useMemo<FlowEdgeType[]>(() => edges.map((e) => {
+  const rfEdges = useMemo<(FlowEdgeType | DataEdgeType)[]>(() => [...edges.map((e): FlowEdgeType => {
     const port = nodes.find((n) => n.id === (e.origFrom ?? e.from))?.ports.find((p) => p.id === e.port);
     const data = { kind: port?.kind ?? 'neutral', taken: taken?.has(e.id), active: e.id === activeEdge, onDelete: onDeleteEdge };
     const sel = e.id === edgeSel;
@@ -94,7 +105,10 @@ function Canvas({
       markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14, color: edgeColor(data, sel) },
       zIndex: sel || data.taken ? 1 : 0,
     };
-  }), [edges, nodes, taken, activeEdge, edgeSel, onDeleteEdge]);
+  }), ...(mode === 'full' ? dataEdges ?? [] : []).map((d): DataEdgeType => ({
+    id: d.id, source: d.from, sourceHandle: `o:${d.key}`, target: d.to, targetHandle: `i:${d.slot}`, type: 'data',
+    data: { on: d.from === selected || d.to === selected }, selectable: false, focusable: false, zIndex: 2,
+  }))], [edges, nodes, taken, activeEdge, edgeSel, onDeleteEdge, mode, dataEdges, selected]);
 
   // Tự vừa màn hình sau khi xếp: flow nhỏ thì vừa khít; flow quá rộng thì giữ zoom MIN_FIT và đặt mép trái
   // (node bắt đầu) sát cạnh trái – kéo / cuộn để xem tiếp, nút "Vừa màn hình" mới thu toàn bộ.
@@ -161,9 +175,25 @@ function Canvas({
       onNodeContextMenu={(e, n) => { if (!onNodeMenu || n.type !== 'card') return; e.preventDefault(); onNodeMenu(n.id, { x: e.clientX, y: e.clientY }); }}
       onEdgeClick={(_, e) => { setEdgeSel(e.id); onSelect(null); }}
       onPaneClick={() => { setEdgeSel(null); onSelect(null); }}
-      onConnect={(c) => c.sourceHandle && onConnect(c.source, c.sourceHandle, c.target)}
-      isValidConnection={(c) => c.source !== c.target}
+      onConnect={(c) => {
+        if (!c.sourceHandle) return;
+        if (isDataHandle(c.sourceHandle)) return c.targetHandle?.startsWith('i:') && onLinkData?.(c.source, c.sourceHandle.slice(2), c.target, c.targetHandle.slice(2));
+        onConnect(c.source, c.sourceHandle, c.target);
+      }}
+      isValidConnection={(c) => {
+        if (c.source === c.target) return false;
+        const dataTo = !!c.targetHandle?.startsWith('i:');
+        if (!isDataHandle(c.sourceHandle)) return !dataTo; // cạnh luồng chạy chỉ vào chấm tròn
+        return dataTo && !linkBlock?.(c.source, c.target);
+      }}
+      onNodeMouseEnter={(_, n) => n.type === 'card' && fan.enter(n.id)}
+      onNodeMouseLeave={fan.leave}
       onConnectEnd={(ev, st) => {
+        if (isDataHandle(st.fromHandle?.id)) { // thả output lên node không nối được → báo lý do (store ghi thông báo)
+          const to = st.toNode?.id ?? fan.target; // thả trên thân thẻ (không trúng ô) – node đang toả dưới chuột
+          if (!st.isValid && st.fromNode && to && to !== st.fromNode.id) onLinkData?.(st.fromNode.id, st.fromHandle!.id!.slice(2), to, '');
+          return;
+        }
         if (st.isValid || !st.fromNode || !st.fromHandle?.id || st.fromHandle.type !== 'source' || !onDropPort) return;
         const pt = 'changedTouches' in ev ? ev.changedTouches[0] : ev;
         onDropPort(st.fromNode.id, st.fromHandle.id, { x: pt.clientX, y: pt.clientY }, screenToFlowPosition({ x: pt.clientX, y: pt.clientY }));
@@ -176,6 +206,7 @@ function Canvas({
       deleteKeyCode={['Delete', 'Backspace']}
       connectionLineStyle={{ stroke: 'var(--c-accent)', strokeWidth: 2 }}
       minZoom={0.3} maxZoom={1.6} proOptions={{ hideAttribution: true }}>
+      {popover && selected && <NodeToolbar nodeId={selected} isVisible position={Position.Bottom} offset={12}>{popover}</NodeToolbar>}
       <Background variant={BackgroundVariant.Dots} gap={18} size={1.4} color="var(--c-dot)" />
       {tall && <MiniMap pannable zoomable nodeColor="var(--c-soft)" nodeStrokeColor="var(--c-line-strong)" nodeBorderRadius={6}
         maskColor="color-mix(in srgb, var(--c-bg) 70%, transparent)" style={{ width: 148, height: 92 }} />}
@@ -193,7 +224,7 @@ function Canvas({
   );
 }
 
-const HELP = 'Kéo từ chấm cổng ra sang node để nối · giữ Ctrl/Cmd (thành công) hoặc Option (thất bại) rồi kéo node này thả lên node kia để nối nhanh, thêm F1/F2… chọn cổng/case thứ n · thả ở chỗ trống để thêm node · Shift + kéo chọn nhiều · Delete xoá';
+const HELP = 'Kéo từ chấm cổng ra sang node để nối · kéo ô vuông output (rê thẻ chờ toả ra, hoặc thẻ Đầy đủ) sang ô VÀO của node chạy sau để nối dữ liệu · giữ Ctrl/Cmd (thành công) hoặc Option (thất bại) rồi kéo node này thả lên node kia để nối nhanh, thêm F1/F2… chọn cổng/case thứ n · thả ở chỗ trống để thêm node · Shift + kéo chọn nhiều · Delete xoá';
 
 function ToolBtn({ label, onClick, d }: { label: string; onClick: () => void; d: string }) {
   return (

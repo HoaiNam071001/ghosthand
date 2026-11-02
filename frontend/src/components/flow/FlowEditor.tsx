@@ -1,6 +1,6 @@
 // Canvas flow của màn chính (bước 20 F4b): nối FlowCanvas (chỉ hiển thị) với store kịch bản.
 // Dữ liệu thẻ tính ở flow/view.ts; mọi thao tác (nối, xoá, dời, thêm node) gọi hàm store – component không tự sửa script.
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import FlowCanvas from './FlowCanvas';
 import FlowHeader, { headerBtn } from './FlowHeader';
 import EmbedMenu from './EmbedMenu';
@@ -14,11 +14,17 @@ import { missingOf, needsOf } from '../../flow/perms';
 import { usePerms } from '../../store/permStore';
 import { runHead, runRows, runTrace } from '../../flow/run';
 import RunLog from './RunLog';
+import ViewMenu from './ViewMenu';
+import StepForm from '../StepForm';
+import { ioHeight } from './model';
+import { dataEdges, dataPins, DataPins } from '../../flow/dataView';
+import { linkBlock as blockOf, usedKeys } from '../../flow/dataLinks';
+import { setFlowPrefs, useFlowPrefs } from '../../flowPrefs';
 import NodeMenu from './NodeMenu';
 import { nodeMenuItems } from './nodeMenuItems';
 import {
   applyLayout, clearInsertAt, connectPort, copySelected, insertAfterSelected, moveNode, pasteClip, removeEdge, removeSteps, selectNodes, selectStep,
-  deleteGroup, getEditor, groupPicked, moveGroup, renameGroup, setGroupColor, setInsertAt, setRegion, toggleGroup, toggleMultiStep, ungroup, useEditor,
+  deleteGroup, getEditor, groupPicked, linkData, moveGroup, setNotice, renameGroup, setGroupColor, setInsertAt, setRegion, toggleGroup, toggleMultiStep, ungroup, useEditor,
 } from '../../store';
 import { stepInputCount } from '../../scriptInputs';
 import { useEngine } from '../../engineStore';
@@ -31,8 +37,9 @@ import type { Script } from '../../types';
 const groupActions = { onToggle: toggleGroup, onUngroup: ungroup, onDelete: deleteGroup, onRename: renameGroup, onColor: setGroupColor };
 const isMac = navigator.platform.startsWith('Mac');
 
-// Xếp tự động cho kịch bản (vị trí theo id node)
-const layoutOf = (sc: Script) => layoutFlow(sc.steps.map((s) => ({ id: s.id, ports: portsOf(s) })), sc.edges);
+// Xếp tự động cho kịch bản (vị trí theo id node); thẻ Đầy đủ cao thêm khối VÀO / RA
+const layoutOf = (sc: Script, pins?: Map<string, DataPins>) =>
+  layoutFlow(sc.steps.map((s) => ({ id: s.id, ports: portsOf(s), io: pins ? ioHeight(pins.get(s.id), 'full') : 0 })), sc.edges);
 
 export default function FlowEditor() {
   const { script, selected, picked, path } = useEditor();
@@ -52,12 +59,24 @@ export default function FlowEditor() {
     return t;
   }, [log.open, log.results, script.edges, running, foreign, progress?.nodeId, failedStep]);
   const { items: permItems } = usePerms();
-  const views = useMemo(() => nodeViews(script, { inputs: (id) => stepInputCount(script, id), run: trace.nodes, pinned: (id) => id in pins }).map((v) => {
+  const prefs = useFlowPrefs();
+  // khối VÀO / RA (bước 60): giá trị của lần chạy đang xem trong nhật ký
+  const pinsById = useMemo(() => {
+    const used = usedKeys(script.steps);
+    return new Map(script.steps.map((s) => [s.id, dataPins(s, script.steps, log.open ? log.results.findLast((r) => r.nodeId === s.id) : undefined, used.get(s.ref))]));
+  },
+    [script.steps, log.open, log.results]);
+  const dEdges = useMemo(() => dataEdges(script.steps), [script.steps]);
+  const linkBlock = useCallback((from: string, to: string) => blockOf(getEditor().script, from, to), []);
+  const views = useMemo(() => nodeViews(script, { inputs: (id) => stepInputCount(script, id), run: trace.nodes, pinned: (id) => id in pins }).map((v0) => {
+    const v = { ...v0, data: pinsById.get(v0.id) };
     const step = script.steps.find((s) => s.id === v.id);
     if (!step?.enabled) return v;
     const lack = missingOf(permItems, needsOf(step)).map((id) => permItems?.find((it) => it.id === id)?.name ?? id);
     return lack.length ? { ...v, warn: [v.warn, `Thiếu quyền: ${lack.join(', ')}`].filter(Boolean).join('\n') } : v;
-  }), [script, trace, pins, permItems]);
+  }), [script, trace, pins, permItems, pinsById]);
+  const cur = script.steps.find((s) => s.id === selected);
+  const relayout = () => layoutOf(script, prefs.card === 'full' ? pinsById : undefined).then((pos) => { applyLayout(pos); setFitKey((k) => k + 1); });
   const rows = useMemo(() => (log.open ? runRows(log.results, script.steps, script.edges) : []), [log.open, log.results, script.steps, script.edges]);
   const head = runHead(log.results, log.summary, log.live, running);
   const jump = (id: string) => {
@@ -124,12 +143,15 @@ export default function FlowEditor() {
             </button>
           )}
           <EmbedMenu />
+          <ViewMenu card={prefs.card} detail={prefs.detail} onCard={(card) => { setFlowPrefs({ card }); if (card === 'full') setNotice('Thẻ Đầy đủ cao hơn – thẻ chồng nhau thì bấm Sắp xếp lại (góc dưới trái)'); }} onDetail={(detail) => setFlowPrefs({ detail })} />
           <button onClick={openPalette} className={headerBtn}>
             + Thêm node <span className="font-mono text-[11px] text-muted">{isMac ? '⌘K' : 'Ctrl+K'}</span>
           </button>
         </FlowHeader>
         <FlowCanvas nodes={views} edges={edges} groups={groups} groupActions={groupActions} onMoveGroup={moveGroup} start={script.start} positions={positions} selected={selected || null} picked={picked} fitKey={fitKey}
           focus={focus} taken={trace.taken} activeEdge={trace.active}
+          mode={prefs.card} dataEdges={dEdges} onLinkData={linkData} linkBlock={linkBlock}
+          popover={prefs.detail === 'pop' && cur ? <StepForm key={cur.id} step={cur} mode="pop" onClose={() => selectStep('')} /> : undefined}
           onSelect={(id, additive) => {
             if (id && additive) return toggleMultiStep(id);
             selectStep(id ?? '');
@@ -145,7 +167,7 @@ export default function FlowEditor() {
             setPalette(true);
           }}
           onNodeMenu={(id, c) => setMenu({ id, x: c.x, y: c.y })}
-          onLayout={() => layoutOf(script).then((pos) => { applyLayout(pos); setFitKey((k) => k + 1); })} />
+          onLayout={relayout} />
         {script.steps.length === 0 && (
           <p className="pointer-events-none absolute inset-0 grid place-items-center text-center text-muted">
             Chưa có node nào – bấm “+ Thêm node” hoặc F6 để lưu vị trí chuột.

@@ -157,6 +157,15 @@
         "Trường số (số lần click, thời gian chờ…) bật được chế độ biến để tính lúc chạy.",
         "Biến đặt lại đầu mỗi vòng."
       ] },
+      { "kind": "h", "text": "Nối dữ liệu trên canvas" },
+      { "kind": "list", "items": [
+        "Nút **Xem** trên canvas: thẻ **Gọn** hoặc **Đầy đủ**. Thẻ Đầy đủ có khối **VÀO** (ô của node đang đọc biến gì – chấm vuông bên trái) và **RA** (output – chấm vuông bên phải); dây nét đứt nối output với ô đang dùng nó. Chấm tròn vẫn là cổng luồng chạy.",
+        "Thẻ Gọn: rê chuột lên thẻ một lúc, VÀO toả ra bên trái, RA toả ra bên phải.",
+        "**Kéo ô vuông output** sang ô VÀO của node khác để nối – ô chữ đang có nội dung thì biến chèn vào cuối, ô số / toạ độ thì thay. Kéo đi qua node nào thì VÀO của node đó toả ra. Chỉ nối được tới node **chạy sau** node nguồn; node chạy trước báo lý do. Ctrl+Z để hoàn tác.",
+        "Tab **Dữ liệu** ở chi tiết node: mỗi ô đọc biến của node nào (bấm để sang node đó, *Bỏ nối*), mỗi output đang được node nào dùng; mở nhật ký một lần chạy để thấy giá trị thật.",
+        "Chi tiết node mở kiểu **Panel** (cột phải), **Modal** (giữa màn) hoặc **Popover** (ngay dưới node) – chọn ở nút Xem."
+      ] },
+      { "kind": "sample", "sample": "bang-gia", "text": "Bảng giá: dữ liệu đi từ Tìm tất cả → Lặp qua danh sách → Số & ngày → Tính toán → Nếu → Click." },
       { "kind": "sample", "sample": "dat-bien", "text": "Đặt và cộng biến giữa các nhánh." },
       { "kind": "sample", "sample": "bi-mat", "text": "Điền mật khẩu từ kho bí mật mà không lộ ra kịch bản." }
     ]
@@ -195,6 +204,13 @@
     "summary": "Xem lại lần chạy, output từng node, hiểu mã lỗi.",
     "blocks": [
       { "kind": "p", "text": "Mỗi lần chạy lưu nhật ký: node nào chạy, ra cổng nào, output gì, mất bao lâu, ảnh màn hình lúc lỗi. Mở **Lịch sử chạy** ở thư viện; *Xem trên flow* tô đường đã đi lên canvas. Đầu hộp thoại có thống kê: số lần chạy, % thành công (không tính lần bạn dừng), thời gian trung bình lần thành công và node hay làm kịch bản thất bại nhất – sửa node đó trước." },
+      { "kind": "h", "text": "Xem dạng cây" },
+      { "kind": "list", "items": [
+        "Hộp thoại Lịch sử chạy mặc định xem **Cây** (đổi sang **Danh sách** ở góc trên): mỗi lần node chạy là một thẻ, xếp từ trên xuống; node Lặp qua danh sách / Đếm toả mỗi lượt thành một nhánh, gom về *Hết danh sách*. Mặc định mở lượt đầu và lượt có lỗi; ▸ / ▾ trên thẻ lượt để mở / thu nhánh, quá 10 lượt thì gộp thành *N lượt nữa*.",
+        "**Gọn · rê xem**: rê chuột lên thẻ mở popover VÀO (giá trị đã thay biến, lấy từ node nào) / RA (giá trị, node nào dùng tiếp) và vẽ đường dữ liệu của thẻ đó. **Luôn hiện**: giá trị toả sẵn trên / dưới mọi thẻ.",
+        "Bấm một thẻ: đường dữ liệu dẫn tới nó sáng lên, chạy theo chiều giá trị; bảng bên phải có VÀO / RA / cổng đi tiếp / **Truy ngược dữ liệu** (giá trị đi qua những node nào để tới đây) / log / ảnh lúc lỗi. Bấm nguồn để nhảy tới thẻ đó.",
+        "Lần chạy cũ (trước khi app lưu giá trị vào) vẫn xem được dạng cây, chỉ thiếu khối VÀO."
+      ] },
       { "kind": "table", "head": ["Mã lỗi", "Nghĩa", "Thường do / cách sửa"], "rows": [
         ["`not_found`", "Hết giờ chờ mà không thấy ảnh / chữ / màu / phần tử", "Giao diện đổi, sai vùng tìm, ngưỡng quá chặt – xem chi tiết lỗi: chỗ giống nhất, chữ đọc được"],
         ["`timeout`", "Node chạy quá thời gian cho phép", "Tăng thời gian chờ hoặc kiểm tra app có treo"],

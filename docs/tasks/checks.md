@@ -3,6 +3,16 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## 60 – Dữ liệu qua node (2026-11-02) · [60](phase3/60-du-lieu-qua-node.md)
+
+- [ ] *(lỗi sửa 2026-11-02)* Mở một dropdown (vd ô chọn trong inspector, menu Chạy, menu chuột phải node) rồi bấm vào vùng trống của canvas flow → dropdown đóng
+- [ ] Mở mẫu *Bảng giá – chọn món rẻ*, nút **Xem** → **Đầy đủ**: thẻ n5 có VÀO `Giá trị n4.item.text`, RA `value`; dây nét đứt n4 → n5 → n6; bấm *Sắp xếp lại* thì thẻ không chồng nhau
+- [ ] Thẻ **Gọn**: rê chuột lên một thẻ ~0.4 s → VÀO toả trái, RA toả phải; kéo ô vuông output của n5 qua n8 → VÀO của n8 toả ra, thả vào X → thông báo *Đã nối … · nối tiếp Y*, Ctrl+Z bỏ nối; kéo output n8 về n3 → n3 mờ + dòng *node này chạy trước…*
+- [ ] Tab **Dữ liệu** của inspector: nguồn bấm được sang node đó, *Bỏ nối* xoá đúng biến; sau một lần chạy (nhật ký đang mở) hiện giá trị *lần chạy* ở VÀO / RA
+- [ ] Nút Xem → Chi tiết **Modal** (bấm node mở giữa màn, Esc / bấm nền đóng) và **Popover** (mở ngay dưới node, cuộn trong popover không zoom canvas, bấm nền canvas đóng); mở lại app vẫn nhớ lựa chọn
+- [ ] Chạy mẫu Bảng giá thật xong → Lịch sử chạy → **Cây**: 6 nhánh lượt, mở sẵn lượt 1; rê thẻ n5 → popover VÀO `"THÊM 15.000 đ"` từ n4 · lượt 1, RA `15000`; bấm n8 → đường từ lượt của n4 sáng; *Truy ngược dữ liệu* n3 → n4 → …; **Luôn hiện** thấy pill trên / dưới mọi thẻ; lần chạy lỗi mở sẵn nhánh lỗi + ảnh lúc lỗi; theme tối
+- [ ] Lần chạy cũ (trước bản này) vẫn mở được dạng Cây, VÀO ghi *Lần chạy cũ – chưa lưu giá trị vào*; nút **Danh sách** về nhật ký cũ
+
 ## 58 – Dấu hiệu đang điều khiển (2026-11-01) · [58](phase3/58-dau-hieu-dang-dieu-khien.md)
 - [ ] Chạy kịch bản có Chờ chữ 10 s → viền xanh mờ quanh màn hình + thanh mini *Đang chờ chữ "…" · còn N s* đếm lùi; tới node click / gõ → viền xanh nhấp nháy, thanh mini *Đang thao tác – đừng chạm chuột*; xong → viền tắt
 - [ ] Lượt AI, đụng chuột → viền vàng + *Bạn vừa đụng chuột · tự chạy tiếp sau 5 s*
