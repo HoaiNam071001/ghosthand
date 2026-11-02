@@ -18,7 +18,7 @@ import ViewMenu from './ViewMenu';
 import StepForm from '../StepForm';
 import { ioHeight } from './model';
 import { dataEdges, dataPins, DataPins } from '../../flow/dataView';
-import { linkBlock as blockOf } from '../../flow/dataLinks';
+import { linkBlock as blockOf, usedKeys } from '../../flow/dataLinks';
 import { setFlowPrefs, useFlowPrefs } from '../../flowPrefs';
 import NodeMenu from './NodeMenu';
 import { nodeMenuItems } from './nodeMenuItems';
@@ -61,7 +61,10 @@ export default function FlowEditor() {
   const { items: permItems } = usePerms();
   const prefs = useFlowPrefs();
   // khối VÀO / RA (bước 60): giá trị của lần chạy đang xem trong nhật ký
-  const pinsById = useMemo(() => new Map(script.steps.map((s) => [s.id, dataPins(s, script.steps, log.open ? log.results.findLast((r) => r.nodeId === s.id) : undefined)])),
+  const pinsById = useMemo(() => {
+    const used = usedKeys(script.steps);
+    return new Map(script.steps.map((s) => [s.id, dataPins(s, script.steps, log.open ? log.results.findLast((r) => r.nodeId === s.id) : undefined, used.get(s.ref))]));
+  },
     [script.steps, log.open, log.results]);
   const dEdges = useMemo(() => dataEdges(script.steps), [script.steps]);
   const linkBlock = useCallback((from: string, to: string) => blockOf(getEditor().script, from, to), []);

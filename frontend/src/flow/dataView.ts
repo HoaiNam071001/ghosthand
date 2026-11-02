@@ -1,6 +1,6 @@
 // Dữ liệu hiển thị của khối VÀO / RA trên thẻ node + dây dữ liệu trên canvas (bước 60 V3). Logic thuần.
 import type { Step, StepResult } from '../types';
-import { dataSlots, usesOf } from './dataLinks';
+import { dataSlots, usedKeys } from './dataLinks';
 import { valueText } from './runOutputs';
 import { outputsOf } from './view';
 
@@ -22,7 +22,8 @@ const MAX_IN = 6, MAX_OUT = 4, MAX_SUB = 4;
 const short = (v: string, n = 28) => (v.length > n ? `${v.slice(0, n - 1)}…` : v);
 const HIDE = new Set(['startedAt', 'durationMs']); // output chung – chỉ hiện khi có node dùng
 
-export function dataPins(s: Step, steps: Step[], last?: StepResult): DataPins {
+// used: usedKeys(steps) tính sẵn khi gọi cho nhiều node (tránh quét cả kịch bản cho từng node)
+export function dataPins(s: Step, steps: Step[], last?: StepResult, used = usedKeys(steps).get(s.ref) ?? new Set<string>()): DataPins {
   const slots = dataSlots(s);
   const ins = [...slots.filter((x) => x.refs.length), ...slots.filter((x) => !x.refs.length)].slice(0, MAX_IN).map((sl): DataPinView => {
     const run = last?.input?.[sl.name];
@@ -31,7 +32,6 @@ export function dataPins(s: Step, steps: Step[], last?: StepResult): DataPins {
       : linked ? sl.refs.map((r) => `${r.ref}.${r.key}`).join(' + ') : sl.text.trim() || 'trống';
     return { id: sl.name, label: sl.label, value: short(value), ran: run !== undefined, linked, src: sl.refs[0]?.ref, tip: sl.text || undefined };
   });
-  const used = new Set(usesOf(steps, s.ref).map((u) => u.key));
   const out = last?.output;
   const keys: { key: string; desc: string }[] = [];
   const add = (key: string, desc: string) => { if (!keys.some((k) => k.key === key)) keys.push({ key, desc }); };

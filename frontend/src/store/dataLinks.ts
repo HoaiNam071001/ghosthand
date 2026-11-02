@@ -20,7 +20,11 @@ export function linkData(fromId: string, key: string, toId: string, slot: string
   const next = linkSlot(to, slot, from.ref, key);
   updateScript({ steps: sc.steps.map((s) => (s.id === toId ? next : s)) });
   const had = before.num && before.text.trim() ? ` (thay ${before.text.trim()})` : '';
-  setNotice(`Đã nối ${from.ref}.${key} → ${to.ref} · ${before.label}${had} – Ctrl+Z để hoàn tác`);
+  // điểm vừa chuyển sang toạ độ từ biến: trục kia còn trống thì nhắc (kiểm tra sẽ báo thiếu)
+  const other = /^points\[(\d+)\]\.(x|y)Var$/.exec(slot);
+  const p = other && next.points[Number(other[1])];
+  const lack = p && !(other[2] === 'x' ? p.yVar : p.xVar) ? ` · nối tiếp ${other[2] === 'x' ? 'Y' : 'X'}` : '';
+  setNotice(`Đã nối ${from.ref}.${key} → ${to.ref} · ${before.label}${had}${lack} – Ctrl+Z để hoàn tác`);
   return null;
 }
 

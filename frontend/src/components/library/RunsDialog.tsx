@@ -1,7 +1,7 @@
 // Hộp thoại Lịch sử chạy (thư viện → "Xem tất cả"): trái mọi lần chạy đã lưu, phải nhật ký của lần đang chọn (bấm
 // dòng xem output / lỗi / ảnh lúc lỗi ngay trong hộp thoại). "Xem trên flow" mới đóng hộp thoại, mở bảng Nhật ký và
 // tô đường đã đi trên canvas. Xoá lần đang chọn / xoá hết (bước 41 – RunsDelete).
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import RunLog from '../flow/RunLog';
 import { deleteRuns, fetchRun, openRun, RunSummary, runShotUrl, useRunLog } from '../../runStore';
 import { errorText } from '../../engineStore';
@@ -21,6 +21,7 @@ export default function RunsDialog({ onClose }: { onClose: () => void }) {
   const [run, setRun] = useState<{ summary: RunSummary; results: StepResult[] } | null>(null);
   const [error, setError] = useState('');
   const [as, setAs] = useState<'tree' | 'list'>('tree'); // bước 60: cây node (mặc định) hoặc danh sách từng bước
+  const loadShot = useCallback((shot: string) => runShotUrl(sel, shot), [sel]);
   useEffect(() => {
     let live = true;
     setRun(null);
@@ -84,10 +85,10 @@ export default function RunsDialog({ onClose }: { onClose: () => void }) {
             {!history.length && <li className="px-3 py-2 text-[13px] text-muted">Chưa có lần chạy nào</li>}
           </ol>
           <div className="min-w-0 flex-1">
-            {head && as === 'tree' && run ? <RunTreeView key={sel} results={run.results} steps={script.steps} edges={script.edges} loadShot={(shot) => runShotUrl(sel, shot)} />
+            {head && as === 'tree' && run ? <RunTreeView key={sel} results={run.results} steps={script.steps} edges={script.edges} loadShot={loadShot} />
               : head ? (
               <RunLog key={sel} fill title={head.title} summary={head.summary} tone={head.tone} rows={rows} nodes={views} selected={null}
-                onSelect={() => {}} loadShot={(shot) => runShotUrl(sel, shot)} />
+                onSelect={() => {}} loadShot={loadShot} />
             ) : <p className="grid h-full place-items-center text-muted">{sel ? 'Đang đọc…' : 'Chọn một lần chạy'}</p>}
           </div>
         </div>

@@ -130,3 +130,13 @@ export function usesOf(steps: Step[], ref: string): DataUse[] {
   for (const s of steps) for (const sl of dataSlots(s)) for (const r of sl.refs) if (r.ref === ref) out.push({ stepId: s.id, slot: sl.name, label: sl.label, key: r.key });
   return out;
 }
+
+// Khoá output đang được dùng của mọi node: ref → tập khoá (tính một lần cho cả kịch bản – thẻ node dùng chung).
+export function usedKeys(steps: Step[]): Map<string, Set<string>> {
+  const out = new Map<string, Set<string>>();
+  for (const s of steps) for (const sl of dataSlots(s)) for (const r of sl.refs) {
+    if (!out.has(r.ref)) out.set(r.ref, new Set());
+    out.get(r.ref)!.add(r.key);
+  }
+  return out;
+}
