@@ -3,9 +3,10 @@
 import './flow.css';
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Background, BackgroundVariant, getNodesBounds, MarkerType, MiniMap, NodeToolbar, Panel, Position, ReactFlow, ReactFlowProvider, useNodesState, useReactFlow, useStore, useStoreApi,
+  Background, BackgroundVariant, getNodesBounds, MarkerType, MiniMap, Panel, ReactFlow, ReactFlowProvider, useNodesState, useReactFlow, useStore, useStoreApi,
 } from '@xyflow/react';
 import NodeCard, { CardNode } from './NodeCard';
+import NodePopover from './NodePopover';
 import FlowEdge, { edgeColor, FlowEdgeType } from './FlowEdge';
 import DataEdge, { DataEdgeType } from './DataEdge';
 import { isDataHandle, useDataFan } from './dataFan';
@@ -206,7 +207,7 @@ function Canvas({
       deleteKeyCode={['Delete', 'Backspace']}
       connectionLineStyle={{ stroke: 'var(--c-accent)', strokeWidth: 2 }}
       minZoom={0.3} maxZoom={1.6} proOptions={{ hideAttribution: true }}>
-      {popover && selected && <NodeToolbar nodeId={selected} isVisible position={Position.Bottom} offset={12}>{popover}</NodeToolbar>}
+      {popover && selected && <NodePopover nodeId={selected}>{popover}</NodePopover>}
       <Background variant={BackgroundVariant.Dots} gap={18} size={1.4} color="var(--c-dot)" />
       {tall && <MiniMap pannable zoomable nodeColor="var(--c-soft)" nodeStrokeColor="var(--c-line-strong)" nodeBorderRadius={6}
         maskColor="color-mix(in srgb, var(--c-bg) 70%, transparent)" style={{ width: 148, height: 92 }} />}

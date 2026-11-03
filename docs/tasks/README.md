@@ -120,7 +120,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 > Bảng tự sinh – sau khi tick chạy `python3 scripts/tasks-index.py`. Bấm tên bước để mở file chi tiết.
 
 <!-- index:start -->
-**53 / 70 bước xong code** · 🧪 **[319 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
+**53 / 70 bước xong code** · 🧪 **[312 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
 
 ### Phase 3 – Design v2 & tự động hoá (theo thứ tự làm)
 
@@ -166,7 +166,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🟡 đang làm | [57. AI chạy ổn định](phase3/57-ai-chay-on-dinh.md) | 7 / 10 | [7 việc](checks.md) |
 | 🟡 đang làm | [58. Dấu hiệu đang điều khiển](phase3/58-dau-hieu-dang-dieu-khien.md) | 7 / 7 | [7 việc](checks.md) |
 | 🟡 đang làm | [59. AI tự cập nhật + test](phase3/59-ai-tu-cap-nhat-va-test.md) | 6 / 7 | [3 việc](checks.md) |
-| 🧪 chờ kiểm tra tay | [60. Dữ liệu qua node](phase3/60-du-lieu-qua-node.md) | 9 / 9 | [7 việc](checks.md) |
+| ✅ xong | [60. Dữ liệu qua node](phase3/60-du-lieu-qua-node.md) | 10 / 10 |  |
 | 🧪 chờ kiểm tra tay | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | 12 / 12 | [10 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | 43 / 43 | [32 việc](checks.md) |
 | 🟡 đang làm | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | 11 / 12 |  |
