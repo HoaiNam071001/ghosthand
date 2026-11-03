@@ -330,3 +330,5 @@
 - 2026-11-03 · 60 · AI thử tay trên app (giả lập chuột): 6/7 việc kiểm tra qua; Popover tràn mép trái / bị Nhật ký che – chưa sửa
 - 2026-11-03 · fix · Popover chi tiết node tràn khỏi canvas (NodeToolbar luôn dưới node) → NodePopover + placePopover (lật lên / dịch ngang / giới hạn cao); vitest 572 xanh, AI thử trên app qua
 - 2026-11-03 · thử tay · AI tự thử trên app thật macOS (CLI chạy 90 mẫu, MCP, giả lập chuột): ~64 mục checks ghi kết quả (đa số tick); sửa 3 lỗi tìm thấy – node Cửa sổ đặt khung Chrome (26), nghỉ sau node hiện đang thao tác (58), Thử trang tên miền sai (44); go test + vitest 572 xanh
+- 2026-11-03 Kế hoạch (người dùng yêu cầu): bước 61 Dùng AI gọn hơn – M1 trạng thái đầu phiên ngắn, M2 `ghosthand test` chạy nhiều kịch bản, M3 kiểm tra môi trường trước khi chạy, M4 `browserNorm` bắt buộc chọn đích, M5 tự dọn kịch bản thử của AI.
+- **2026-11-03** – 61 M1: *Trạng thái hiện tại* (README) rút từ ~9 200 còn ~520 ký tự – hook đầu phiên chèn gọn; check-docs cảnh báo khi > 1500 ký tự; wrap-up ghi quy ước giữ ngắn. check-docs 0 lỗi.

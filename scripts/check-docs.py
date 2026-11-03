@@ -3,7 +3,7 @@
 - Mọi method public của App và mọi event EventsEmit phải có trong docs/ARCHITECTURE.md.
 - Mọi loại node trong StepTypes (internal/model/kinds.go) phải có nhãn (types.ts), icon (icons.tsx), mô tả (internal/model/steptypes.go).
 - Mọi loại node phải có mục trong internal/guide/nodes.json (Hướng dẫn, bước 51); trường riêng *mới* của node chưa được nhắc trong mục đó → cảnh báo (nền: scripts/guide-fields-baseline.json).
-- Cảnh báo (không lỗi): file code > 300 dòng (quy tắc *Một file một việc*); file code chưa có trong bản đồ file."""
+- Cảnh báo (không lỗi): mục *Trạng thái hiện tại* của docs/tasks/README.md dài (hook chèn vào mọi phiên); file code > 300 dòng (quy tắc *Một file một việc*); file code chưa có trong bản đồ file."""
 import glob
 import json
 import os
@@ -88,6 +88,13 @@ for f in sorted(code):
     if f.endswith(('.test.ts', '.d.ts')) or '/demo/' in f or stem in arch or folder in arch or (stem.startswith('Demo') and 'Demo*' in arch):
         continue
     warns.append(f'{rel}: chưa có trong docs/ARCHITECTURE.md §8 Bản đồ file')
+
+# Trạng thái hiện tại: hook SessionStart (session-status.sh) chèn nguyên mục vào mọi phiên AI – dài là tốn token mỗi phiên.
+STATUS_MAX = 1500
+status = re.search(r'^## Trạng thái hiện tại\n(.*?)^## ', read('docs/tasks/README.md'), re.S | re.M)
+status_len = len(re.sub(r'^>.*\n', '', status.group(1), flags=re.M).strip()) if status else 0
+if status_len > STATUS_MAX:
+    warns.append(f'docs/tasks/README.md: *Trạng thái hiện tại* {status_len} ký tự (> {STATUS_MAX}) – rút gọn, chi tiết để ở file bước / log.md')
 
 for w in warns:
     print('cảnh báo:', w)

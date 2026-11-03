@@ -23,7 +23,7 @@ Quy ước chung: mục con làm xong là tick ngay (không đợi tới đây);
 - [ ] File bước: mục con xong đã `[x]`; mục cha tick khi **mọi mục con code** đã `[x]` (kiểm tra tay không chặn tick). Rà cả mục cha của bước khác bị sót.
 - [ ] Việc cần thử tay → `checks.md` (mới nhất ở trên, nhóm `## <số bước> – <tên> · [link]`), file bước chỉ để dòng link. Người dùng báo đã thử xong → tick ở `checks.md` + ghi `log.md`.
 - [ ] File bước dài (> ~150 dòng hoặc > ~15 KB): chuyển các mục con đã `[x]` sang `<số>-<tên>-xong.md` (giữ *Nguyên tắc* + mục còn làm ở file chính, dòng link sang file xong). `tasks-index.py` vẫn đếm mục con trong file `-xong` vào bước.
-- [ ] `README.md`: *Trạng thái hiện tại* (đang làm / tiếp theo / cập nhật lần cuối – ngày tuyệt đối); bảng *Tính năng của hệ thống* nếu tính năng đổi trạng thái (⬜ → 🧪 → ✅, 🟡). Bước mới → file mới + dòng trong bảng thứ tự.
+- [ ] `README.md`: *Trạng thái hiện tại* (đang làm / xong code chờ thử tay / tiếp theo / cập nhật lần cuối – ngày tuyệt đối) – **giữ ngắn** (hook chèn vào mọi phiên, ≤ ~1500 ký tự): mỗi dòng một ý, chỉ số bước + việc chính, không liệt kê chi tiết đã làm (để ở file bước / `log.md`), *Cập nhật lần cuối* chỉ lần gần nhất; bảng *Tính năng của hệ thống* nếu tính năng đổi trạng thái (⬜ → 🧪 → ✅, 🟡). Bước mới → file mới + dòng trong bảng thứ tự.
 - [ ] `log.md`: **thêm bằng `>>`, không Read / Edit cả file** – một dòng `- **YYYY-MM-DD** – <việc>. <kết quả kiểm tra: lệnh nào OK / chưa thử tay>.`
 - [ ] `docs/ARCHITECTURE.md`: đổi luồng, thêm method `App` / event / file lõi / cổng → sửa.
 - [ ] `docs/ARCHITECTURE.md` §8 *Bản đồ file*: thêm / xoá / đổi tên file → sửa dòng tương ứng.
