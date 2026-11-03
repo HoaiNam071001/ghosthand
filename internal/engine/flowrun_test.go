@@ -2,8 +2,10 @@ package engine
 
 import (
 	"context"
+	"fmt"
 	"image"
 	"reflect"
+	"slices"
 	"strings"
 	"testing"
 
@@ -11,6 +13,7 @@ import (
 	"ghosthand/internal/model"
 	"ghosthand/internal/model/modeltest"
 	"ghosthand/internal/script"
+	"ghosthand/internal/script/scripttest"
 	"ghosthand/internal/vision"
 )
 
@@ -182,5 +185,25 @@ func TestFlowPinnedNodeNotRun(t *testing.T) {
 	}
 	if got := strings.ReplaceAll(strings.Join(in.Lines(), "|"), "type ", ""); got != "L|a|n" {
 		t.Errorf("lệnh %q – node a không được chạy, node b gõ biến đã ghim", got)
+	}
+}
+
+// Nghỉ sau node (node Chờ) báo đang chờ kind delay – thanh mini / viền không hiện "đang thao tác" suốt lúc nghỉ.
+func TestRestAfterReportsDelayWait(t *testing.T) {
+	sc := model.Script{Loops: 1, Steps: []model.Step{
+		modeltest.Step(model.StepWait, func(s *model.Step) { s.DelayAfter = 400 }),
+		modeltest.Step(model.StepWait, func(s *model.Step) { s.DelayAfter = 50 }),
+	}}
+	var kinds []string
+	e := newEngine(&devicetest.FakeInput{}, scripttest.Linear(sc), func(p Progress) {
+		if p.Wait != nil {
+			kinds = append(kinds, fmt.Sprintf("%s %d", p.Wait.Kind, p.Wait.TimeoutMs))
+		}
+	})
+	if err := e.Run(t.Context()); err != nil {
+		t.Fatal(err)
+	}
+	if !slices.Equal(kinds, []string{"delay 400"}) {
+		t.Errorf("tiến độ chờ %v – muốn chỉ [delay 400] (nghỉ 50 ms không báo)", kinds)
 	}
 }

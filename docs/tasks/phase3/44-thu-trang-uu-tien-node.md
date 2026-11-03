@@ -21,3 +21,4 @@
     - [x] `error.detail` của node web thêm kết quả thử trang gần nhất của trang đó (nếu có) – AI biết lỗi do captcha chứ không do selector. *Xong 2026-10-25:* `web/checkmemo.go` nhớ kết quả theo URL (cùng host cũng khớp), `Chrome.LastCheck`, engine hỏi qua interface tuỳ chọn `pageChecker`, detail có `pageCheck {verdict, useWeb, signs, url}`
   - Kiểm tra tay: [checks.md](../checks.md) mục 44
   - Xong khi: trên Claude Code nói "ưu tiên dùng node trình duyệt, tạo kịch bản bấm nút Chơi trên trang game A" → AI gọi `set_node_preference(web)` (app báo), `probe_page` → trang không captcha thì kịch bản dùng node web; trang có captcha thì AI báo và dùng tìm theo chữ / ảnh
+  - [x] Sửa (2026-11-03): Thử trang / probe_page tên miền sai báo lỗi CDP thô hoặc dò nhầm tab cũ – trang lỗi chrome-error:// không chạy script; `CheckPage` dò đúng tab vừa mở (`pickFor` theo prefer) và báo *không mở được trang …*.

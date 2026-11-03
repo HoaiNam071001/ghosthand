@@ -19,3 +19,4 @@
   - Chuẩn bị cho MCP: D1 → `wait_run` / `run_script` trả `state` chi tiết (`waiting: {what, leftS}`), giữ `budget_test.go`.
   - Kiểm tra tay: AI chạy kịch bản có Chờ chữ 10 s → viền mờ + thanh mini ghi đang chờ gì, đếm giây; tới node click → viền sáng; đụng chuột → viền vàng + đếm ngược; xong → viền tắt; chụp màn / tìm ảnh lúc có viền vẫn đúng; toàn màn hình (Space riêng) vẫn thấy viền.
   - Xong khi: D1–D4 xong code trên macOS; Windows D2 làm trên máy Windows.
+  - [x] Sửa (2026-11-03): node Chờ / nghỉ sau node hiện *Đang thao tác – đừng chạm chuột* + viền nhấp nháy – nghỉ DelayAfter không báo Progress.Wait. `flowrun.go` `restAfter` báo kind `delay` (≥ 300 ms), thanh mini *Đang nghỉ giữa các bước · còn N s*. Test Go + `runState.test.ts`.

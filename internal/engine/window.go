@@ -36,7 +36,9 @@ func (e *Engine) windowStep(ctx context.Context, s model.Step) (map[string]any, 
 	case model.WinSetBounds:
 		var r model.Rect
 		if r, err = e.windowTarget(s, w); err == nil {
-			err = e.wins.SetBounds(w.ID, r)
+			if err = e.wins.SetBounds(w.ID, r); err == nil {
+				return e.windowOutput(e.settleBounds(ctx, w, r)), nil
+			}
 		}
 	case model.WinMin, model.WinMax, model.WinRestoreOp:
 		err = e.wins.SetState(w.ID, s.WinOp)
@@ -122,6 +124,26 @@ func (e *Engine) waitWindowGone(ctx context.Context, s model.Step) error {
 	}, func() error {
 		return &timeoutErr{msg: fmt.Sprintf("cửa sổ %s vẫn mở sau %s", windowName(s), fmtSeconds(s.TimeoutMs))}
 	})
+}
+
+// boundsSettleMs – chờ tối đa sau setBounds: Chrome macOS nhận lệnh AX ngay nhưng ~1 s sau mới đổi khung.
+const boundsSettleMs = 2000
+
+// settleBounds – đọc lại tới khi khung khớp đích (±2 px), để output và node sau (chụp, click theo toạ độ) thấy khung
+// mới. App kẹp cỡ (cỡ tối thiểu / cố định) không bao giờ khớp → hết boundsSettleMs trả lần đọc cuối (cỡ thật).
+func (e *Engine) settleBounds(ctx context.Context, w model.WindowInfo, want model.Rect) model.WindowInfo {
+	end := time.Now().Add(boundsSettleMs * time.Millisecond) // mỗi lần đọc danh sách cửa sổ cũng tốn thời gian
+	for {
+		cur := e.reread(w)
+		if nearRect(cur.Box, want) || time.Now().After(end) || Sleep(ctx, pollMs/2) != nil {
+			return cur
+		}
+	}
+}
+
+func nearRect(a, b model.Rect) bool {
+	d := func(x, y int) bool { return x-y <= 2 && y-x <= 2 }
+	return d(a.X, b.X) && d(a.Y, b.Y) && d(a.W, b.W) && d(a.H, b.H)
 }
 
 // reread – thông tin mới của cửa sổ w (theo id); không đọc được thì giữ w.

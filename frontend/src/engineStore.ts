@@ -29,7 +29,7 @@ export type Progress = {
   retry?: number; // đang thử lại lần thứ mấy (0 / trống = lần đầu)
   retries?: number; // số lần thử lại tối đa của bước hiện tại
   // đang chờ (internal/engine/imagestep.go WaitProgress); what: chữ / selector / cửa sổ đang chờ (58 D1)
-  wait?: { kind: 'image' | 'text' | 'pixel' | 'web' | 'element' | 'cond' | 'time' | 'window' | 'app' | 'tab' | 'screen' | 'download' | 'power' | 'print' | 'save' | 'ai'; elapsedMs: number; timeoutMs: number; best: number; what?: string };
+  wait?: { kind: 'image' | 'text' | 'pixel' | 'web' | 'element' | 'cond' | 'time' | 'delay' | 'window' | 'app' | 'tab' | 'screen' | 'download' | 'power' | 'print' | 'save' | 'ai'; elapsedMs: number; timeoutMs: number; best: number; what?: string };
   break?: 'breakpoint' | 'step'; // debug: đang dừng trước node nodeId (Tiếp / F10)
   from?: { ref: string; port: string }; // node vừa chạy + cổng đã đi tới node này
   counter?: { ref: string; count: number; max: number }; // node Đếm gần nhất còn lượt (đang trong vòng lặp của nó)

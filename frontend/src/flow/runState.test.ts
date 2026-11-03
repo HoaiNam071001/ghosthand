@@ -10,6 +10,7 @@ describe('runTitle', () => {
     const w = { ...base, wait: { kind: 'text' as const, what: 'Sent', elapsedMs: 0, timeoutMs: 10_000, best: 0 } };
     expect(runTitle(w, 2_500, 0)).toBe('Đang chờ chữ "Sent" · còn 8 s');
     expect(runTitle({ ...w, wait: { ...w.wait, kind: 'image', what: undefined } }, 0, 0)).toBe('Đang chờ ảnh · còn 10 s');
+    expect(runTitle({ ...w, wait: { ...w.wait, kind: 'delay', what: undefined, timeoutMs: 4_000 } }, 1_000, 0)).toBe('Đang nghỉ giữa các bước · còn 3 s');
   });
   it('đụng chuột: đếm ngược tự chạy tiếp / tắt tự chạy', () => {
     expect(runTitle({ ...base, paused: true, pausedBy: 'touch', resumeAt: 10_000 }, 0, 6_100)).toBe('Bạn vừa đụng chuột · tự chạy tiếp sau 4 s');

@@ -119,3 +119,36 @@ func TestWindowStopWhileWaiting(t *testing.T) {
 		t.Errorf("dừng giữa chừng: %v sau %v", err, time.Since(start))
 	}
 }
+
+// lagWins – cửa sổ đổi khung chậm như Chrome macOS: SetBounds chỉ có tác dụng sau vài lần List.
+type lagWins struct {
+	*devicetest.FakeWindows
+	pending *model.Rect
+	lists   int
+}
+
+func (l *lagWins) SetBounds(id uint64, r model.Rect) error {
+	l.pending = &r
+	return nil
+}
+
+func (l *lagWins) List() ([]model.WindowInfo, error) {
+	if l.lists++; l.pending != nil && l.lists > 3 {
+		l.FakeWindows.SetBounds(2, *l.pending)
+		l.pending = nil
+	}
+	return l.FakeWindows.List()
+}
+
+func TestWindowSetBoundsWaitsForSlowApp(t *testing.T) {
+	e, fw := winEngine()
+	e.wins = &lagWins{FakeWindows: fw}
+	s := winStep(model.WinSetBounds, func(s *model.Step) { s.WinRect = &model.Rect{X: 5, Y: 6, W: 700, H: 500} })
+	out, err := e.windowStep(t.Context(), s)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if out["w"] != 700 || out["h"] != 500 || out["left"] != 5 {
+		t.Errorf("output %v – muốn khung mới 5,6 700x500 (app đổi khung chậm)", out)
+	}
+}

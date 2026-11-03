@@ -23,6 +23,7 @@ export function runTitle(p: Progress, waitedMs: number, now: number): string {
   const w = p.wait;
   if (!w) return 'Đang thao tác – đừng chạm chuột';
   const left = w.timeoutMs - waitedMs;
+  if (w.kind === 'delay') return `Đang nghỉ giữa các bước · còn ${secs(left)} s`;
   if (w.kind === 'time') return `Chờ đến giờ · còn ${fmtCountdown(left)}`;
   if (w.kind === 'power') return `Sắp tắt / khởi động lại máy sau ${secs(left)} s – Dừng để huỷ`;
   const head = ['Đang chờ', WAIT_WHAT[w.kind], w.what && `"${w.what}"`].filter(Boolean).join(' ');

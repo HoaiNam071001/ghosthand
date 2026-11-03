@@ -132,7 +132,7 @@ func (e *Engine) runLoop(ctx context.Context, loop int) error {
 			return nil
 		}
 		if res.Status == model.StatusSuccess {
-			if err := Sleep(ctx, wait); err != nil {
+			if err := e.restAfter(ctx, wait); err != nil {
 				return err
 			}
 		}
@@ -329,4 +329,17 @@ func errCode(err error) string {
 		return model.ErrPermission
 	}
 	return model.ErrInternal
+}
+
+// restMinMs – nghỉ sau node từ mức này trở lên mới báo "đang chờ" (nghỉ ngắn giữa hai cú click không làm thanh mini / viền nháy).
+const restMinMs = 300
+
+// restAfter – nghỉ DelayAfter sau node (node Chờ chỉ có phần này). Báo Progress.Wait kind "delay" để thanh mini, viền và
+// wait_run thấy app đang chờ chứ không phải đang thao tác – người dùng biết lúc này chạm chuột không sao.
+func (e *Engine) restAfter(ctx context.Context, ms int) error {
+	if ms >= restMinMs {
+		e.update(true, func(p *Progress) { p.Wait = &WaitProgress{Kind: "delay", TimeoutMs: int64(ms)} })
+		defer e.update(true, func(p *Progress) { p.Wait = nil })
+	}
+	return Sleep(ctx, ms)
 }

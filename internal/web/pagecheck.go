@@ -1,6 +1,7 @@
 package web
 
 import (
+	"cmp"
 	"context"
 	_ "embed"
 	"errors"
@@ -69,7 +70,7 @@ func (c *Chrome) CheckPage(ctx context.Context, u string) (PageCheck, error) {
 			return PageCheck{}, err
 		}
 	}
-	t, _, err := c.activeTabFor(ctx, "")
+	t, _, err := c.pickFor(ctx, "", u == "") // có url: đúng tab vừa mở (c.prefer), không phải tab đang hiện – activate có thể chưa kịp
 	if errors.Is(err, ErrNoBrowser) && u == "" {
 		return PageCheck{}, &BrowserError{"chưa có trang nào mở trên Chrome của app – nhập URL để thử"}
 	}
@@ -78,11 +79,14 @@ func (c *Chrome) CheckPage(ctx context.Context, u string) (PageCheck, error) {
 	}
 	loaded, err := waitSettled(ctx, t.ctx)
 	if err != nil {
-		return PageCheck{}, err
+		return PageCheck{}, c.loadErr(ctx, t.id, u, err)
 	}
 	s, err := evalJS[pageSigns](ctx, t.ctx, "dò trang", pageJS(pagecheckJS))
 	if err != nil {
-		return PageCheck{}, err
+		return PageCheck{}, c.loadErr(ctx, t.id, u, err)
+	}
+	if strings.HasPrefix(s.URL, "chrome-error://") {
+		return PageCheck{}, failedOpen(u)
 	}
 	o, err := outlineOf(ctx, t, false)
 	if err != nil {
@@ -93,6 +97,21 @@ func (c *Chrome) CheckPage(ctx context.Context, u string) (PageCheck, error) {
 	pc.Tab, pc.Tabs = t.id, c.Status(ctx).Tabs
 	c.checks.put(pc)
 	return pc, nil
+}
+
+// loadErr – trang không mở được (sai tên miền, mất mạng): Chrome hiện trang lỗi chrome-error:// không chạy được script
+// của app, lỗi CDP thô ("Cannot find context…") vô nghĩa với người dùng → báo rõ.
+func (c *Chrome) loadErr(ctx context.Context, tabID, u string, err error) error {
+	for _, tb := range c.Status(ctx).Tabs {
+		if tb.ID == tabID && strings.HasPrefix(tb.URL, "chrome-error://") {
+			return failedOpen(u)
+		}
+	}
+	return err
+}
+
+func failedOpen(u string) error {
+	return &BrowserError{fmt.Sprintf("không mở được trang %s – tên miền sai, mất mạng hoặc máy chủ không trả lời", cmp.Or(u, "đang mở"))}
 }
 
 // LastCheck – kết quả Thử trang gần nhất của trang tabURL (cùng URL hoặc cùng host); chưa thử thì ok = false.

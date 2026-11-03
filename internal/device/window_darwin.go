@@ -8,6 +8,7 @@ package device
 #include <ApplicationServices/ApplicationServices.h>
 #import <AppKit/AppKit.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 
 // Không có trong header công khai nhưng ổn định từ macOS 10.x và mọi công cụ điều khiển cửa sổ đều dùng:
@@ -128,14 +129,38 @@ static pid_t win_owner(CGWindowID target) {
 	return -1;
 }
 
-static int win_set_size(AXUIElementRef w, double x, double y, double wd, double ht) {
+// win_cg_frame – khung thật đang vẽ của cửa sổ id (AX trả ngay giá trị vừa xin, CG mới là khung đã áp).
+static CGRect win_cg_frame(CGWindowID id) {
+	CGRect b = CGRectNull;
+	CFArrayRef l = CGWindowListCopyWindowInfo(kCGWindowListOptionIncludingWindow, id);
+	if (l && CFArrayGetCount(l) > 0)
+		CGRectMakeWithDictionaryRepresentation(CFDictionaryGetValue(CFArrayGetValueAtIndex(l, 0), kCGWindowBounds), &b);
+	if (l) CFRelease(l);
+	return b;
+}
+
+// win_wait_settle – chờ khung thật đứng yên 5 lần đọc liền (20 ms / lần, tối đa 1 s).
+static void win_wait_settle(CGWindowID id) {
+	CGRect last = win_cg_frame(id);
+	for (int i = 0, same = 0; i < 50 && same < 5; i++) {
+		usleep(20000);
+		CGRect f = win_cg_frame(id);
+		if (CGRectEqualToRect(f, last)) same++;
+		else { same = 0; last = f; }
+	}
+}
+
+// Chrome áp vị trí không đồng bộ rồi kẹp cỡ cho vừa màn tính từ vị trí CŨ – đặt liền một mạch thì cỡ bị cắt / bỏ.
+// Nên: vị trí → chờ áp → cỡ → chờ áp → vị trí lại (app kẹp cỡ theo màn có thể đẩy điểm đầu lệch).
+static int win_set_size(AXUIElementRef w, CGWindowID id, double x, double y, double wd, double ht) {
 	CGPoint p = CGPointMake(x, y);
 	CGSize s = CGSizeMake(wd, ht);
 	AXValueRef pv = AXValueCreate(kAXValueTypeCGPoint, &p);
 	AXValueRef sv = AXValueCreate(kAXValueTypeCGSize, &s);
-	// vị trí trước (cửa sổ chuyển màn khác cỡ), rồi cỡ, rồi vị trí lại – app kẹp cỡ theo màn nên điểm đầu có thể lệch
 	AXError e1 = AXUIElementSetAttributeValue(w, kAXPositionAttribute, pv);
+	win_wait_settle(id);
 	AXError e2 = AXUIElementSetAttributeValue(w, kAXSizeAttribute, sv);
+	win_wait_settle(id);
 	AXUIElementSetAttributeValue(w, kAXPositionAttribute, pv);
 	CFRelease(pv); CFRelease(sv);
 	return e1 == kAXErrorSuccess && e2 == kAXErrorSuccess;
@@ -163,7 +188,7 @@ static int win_do(unsigned int id, int act, double x, double y, double wd, doubl
 		AXUIElementSetAttributeValue(w, kAXMainAttribute, kCFBooleanTrue);
 		break;
 	}
-	case WIN_BOUNDS: if (!win_set_size(w, x, y, wd, ht)) rc = WIN_FAIL; break;
+	case WIN_BOUNDS: if (!win_set_size(w, id, x, y, wd, ht)) rc = WIN_FAIL; break;
 	case WIN_MINIMIZE:
 		if (AXUIElementSetAttributeValue(w, kAXMinimizedAttribute, kCFBooleanTrue) != kAXErrorSuccess) rc = WIN_FAIL;
 		break;
