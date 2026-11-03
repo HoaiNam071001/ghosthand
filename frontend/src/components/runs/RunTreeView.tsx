@@ -61,7 +61,7 @@ export default function RunTreeView({ results, steps, edges, loadShot }: Props) 
           <button className={btn} onClick={() => { setOpen(new Set(iterKeys(tree))); setAllIters(true); }}>Mở mọi lượt</button>
           <button className={btn} onClick={() => { setOpen(defaultOpen(tree)); setAllIters(false); }}>Thu gọn</button>
         </div>
-        <div ref={scroller} className="min-h-0 flex-1 overflow-auto bg-canvas [background-image:radial-gradient(var(--c-dot)_1.2px,transparent_1.3px)] [background-size:18px_18px]">
+        <div ref={scroller} data-float-clip className="min-h-0 flex-1 overflow-auto bg-canvas [background-image:radial-gradient(var(--c-dot)_1.2px,transparent_1.3px)] [background-size:18px_18px]">
           <RunTree tree={tree} results={results} rows={rows} steps={steps} sources={sources} show={show} open={open} allIters={allIters}
             selected={sel} onSelect={setSel} onAllIters={() => setAllIters(true)}
             onToggle={(k) => setOpen((o) => { const n = new Set(o); if (n.has(k)) n.delete(k); else n.add(k); return n; })} />

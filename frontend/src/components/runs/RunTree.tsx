@@ -6,6 +6,7 @@ import './runs.css';
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import RunTreeCard from './RunTreeCard';
 import RunTreePop from './RunTreePop';
+import FloatingPop from '../FloatingPop';
 import { layoutRunTree, lineage, TREE, TreeNode, type DataSource, type TreeCard } from '../../flow/runTree';
 import { cardText, dataPath, inPills, outPills, rounded } from '../../flow/runTreeView';
 import { nodeCategory } from '../../flow/category';
@@ -83,10 +84,11 @@ export default function RunTree(p: Props) {
         lin={!!lin && c.node.index !== undefined && (lin.up.has(c.node.index) || lin.down.has(c.node.index))}
         onEnter={() => enter(c.node.index)} onLeave={leave} />)}
       {popCard && (
-        <div onMouseEnter={() => clearTimeout(timer.current)} onMouseLeave={leave}
-          style={{ left: popCard.x + popCard.w + 300 < lay.W ? popCard.x + popCard.w + 12 : popCard.x - 292, top: popCard.y - 4 }} className="absolute z-10">
+        // lớp nổi trên hộp thoại (z 45 > 40): không bị khung cuộn cắt, không bị thẻ khác đè
+        <FloatingPop side="right" gap={12} z={45} anchor={() => box.current?.querySelector(`[data-card="${popCard.node.key}"]`)}
+          onMouseEnter={() => clearTimeout(timer.current)} onMouseLeave={leave}>
           <RunTreePop i={pop!} results={p.results} steps={p.steps} sources={p.sources} />
-        </div>
+        </FloatingPop>
       )}
     </div>
   );
