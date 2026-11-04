@@ -46,6 +46,7 @@ const debugTips = `Thử – sửa (chạy thật trên máy người dùng):
 - Kết quả run_script có env (dò lúc bắt đầu: trình duyệt hỏi nơi lưu tệp, hộp thoại lạ đang mở, cửa sổ trình duyệt nhỏ) – node lỗi mà khớp cảnh báo thì nhờ người dùng làm theo fix, đừng sửa kịch bản. Dò trước khi chạy: check_permissions.
 - Toạ độ trên ảnh lúc lỗi → toạ độ chuột: shotArea.x + px × shotArea.w / shotWidth (y tương tự). Ưu tiên sửa sang tìm theo chữ hơn sửa toạ độ.
 - error.detail.screenUnchanged = ref node chuột ngay trước: click đó không làm màn hình đổi (trượt chỗ / trang chưa phản hồi / lớp phủ chặn) – sửa node chuột, không phải node đang lỗi. Kết quả có stuck: lỗi giống hệt nhiều lần liên tiếp – đổi cách, đừng chạy lại y nguyên.
+- Output dài trong kết quả bị cắt ("… bỏ N ký tự …", "… còn N mục"): node sau vẫn nhận đủ qua {{nX.output.…}} – cần xem phần bỏ thì cho node sau lọc / đọc (textMatch, setVar).
 - Bị từ chối quyền chạy / Cài đặt chỉ cho soạn: báo người dùng, không gọi lại liên tục.`
 
 // guide – nội dung get_step_types / ghosthand://guide.

@@ -21,7 +21,6 @@ import (
 
 const (
 	maxTraceNodes = 40   // vòng lặp dài: chỉ trả chừng này node cuối
-	maxStrLen     = 400  // chuỗi output dài (body HTTP, chữ đọc được) cắt bớt
 	maxShots      = 2    // ảnh lúc lỗi gửi kèm (mới nhất)
 	maxEachSent   = 3    // ảnh sau node (shots: each) gửi kèm mặc định (mới nhất) – ảnh khác AI xin theo tên
 	maxWant       = 4    // ảnh AI xin theo tên mỗi lần
@@ -146,21 +145,6 @@ func nextHint(tr session.Trace) string {
 		return "đã chạy tới stopAt – resume_run với from = node kế để chạy tiếp"
 	}
 	return "xong"
-}
-
-// trimMap – bản sao output với chuỗi dài cắt bớt.
-func trimMap(m map[string]any) map[string]any {
-	if m == nil {
-		return nil
-	}
-	out := make(map[string]any, len(m))
-	for k, v := range m {
-		if s, ok := v.(string); ok && len([]rune(s)) > maxStrLen {
-			v = string([]rune(s)[:maxStrLen]) + "…"
-		}
-		out[k] = v
-	}
-	return out
 }
 
 // shotImages – ảnh gửi kèm + rộng từng ảnh đã gửi theo tên. want (AI xin theo tên) → đúng các ảnh đó (≤ maxWant);

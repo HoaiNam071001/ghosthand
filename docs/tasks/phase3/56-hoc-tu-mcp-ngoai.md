@@ -18,8 +18,10 @@
     - [ ] B4. Chương *Hướng dẫn* trang web + `topic=debug`: trang cần đăng nhập → người dùng tự đăng nhập một lần trong Chrome của app, không cho node tự điền mật khẩu (dễ bị chặn bot / khoá tài khoản) (*21.*)
     - Để sau (ghi lại): điền nhiều ô một lần (*5.*), lưu / nạp phiên đăng nhập (*6.* – nhạy cảm như bí mật, xem cùng [54](54-dong-bo-cloud.md))
   - **Đợt C – MCP gọn (giữ `budget_test.go`)**
-    - [ ] C1. Phân trang `pageSize` / `pageIdx` (+ `totalPages`, `hasNextPage`) cho `list_scripts`, lịch sử chạy, output `findAll` nhiều kết quả (*8.*)
-    - [ ] C2. Output dài (`shell`, `http`, `pageText`, `readDocument`) trả qua `wait_run` / `run_step` cắt đầu + cuối kèm số dòng / ký tự bỏ; bản đủ vẫn trong lịch sử chạy (*19.*)
+    - [x] C1. Phân trang `pageSize` / `pageIdx` (+ `totalPages`, `hasNextPage`) cho `list_scripts`, lịch sử chạy, output `findAll` nhiều kết quả (*8.*)
+      - *Làm (2026-11-04):* `list_scripts` nhận `pageIdx` (trang 30 mục, cố định – thêm `pageSize` làm vượt ngân sách `tools/list`), trả `total`, `totalPages`, `hasNextPage`; file đã xoá bỏ trước khi chia trang. Output mảng dài (findAll, readTable…) cắt ở C2. Lịch sử chạy: MCP chưa có tool đọc lịch sử → chưa có gì để chia trang
+    - [x] C2. Output dài (`shell`, `http`, `pageText`, `readDocument`) trả qua `wait_run` / `run_step` cắt đầu + cuối kèm số dòng / ký tự bỏ; bản đủ vẫn trong lịch sử chạy (*19.*)
+      - *Làm (2026-11-04):* `mcpsrv/trim.go` thay `trimMap` cũ (chỉ cắt đuôi chuỗi > 400): cắt đệ quy trong map / mảng lồng – chuỗi giữ 300 ký tự đầu + 100 cuối kèm “… bỏ N ký tự, M dòng …”, mảng giữ 20 phần tử + “… còn N mục”; áp cho mọi node (không chỉ shell / http / pageText / readDocument). Bản đủ vẫn ở lịch sử chạy + biến node sau; `topic=debug` thêm một dòng
     - [ ] C3. Cài đặt MCP *Gửi ảnh cho AI: có | không* (client không xem ảnh thì bỏ ảnh ở `screenshot` / ảnh lỗi) (*9.*); `screenshot` tuỳ chọn vẽ dấu vị trí chuột lên ảnh (*12.*)
     - Để sau: nhóm tool bật theo nhu cầu khi danh sách tool phình (*7.*)
   - **Đợt D – luồng**

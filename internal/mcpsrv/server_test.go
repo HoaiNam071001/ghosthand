@@ -294,6 +294,12 @@ func TestListAndDocs(t *testing.T) {
 	if len(list) != 1 || list[0].(map[string]any)["createdBy"] != "ai" {
 		t.Errorf("list_scripts (bỏ file không còn): %v", list)
 	}
+	if out["total"] != 1.0 || out["totalPages"] != 1.0 || out["hasNextPage"] != false {
+		t.Errorf("chia trang (56 C1): %v", out)
+	}
+	if out, _ = call(t, cs, "list_scripts", map[string]any{"pageIdx": 3}); len(out["scripts"].([]any)) != 0 || out["total"] != 1.0 {
+		t.Errorf("trang quá cuối: %v", out)
+	}
 	out, _ = call(t, cs, "get_step_types", nil)
 	if len(out["stepTypes"].([]any)) != len(model.StepTypeDocs()) || out["tips"] == "" {
 		t.Errorf("get_step_types thiếu: %v", out["tips"])

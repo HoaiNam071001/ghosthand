@@ -30,6 +30,13 @@ type typesIn struct {
 	Topic   string `json:"topic,omitempty" jsonschema:"debug = mẹo thử – sửa: run_script, đọc error.detail, ảnh lỗi"`
 }
 
+const scriptsPage = 30 // kịch bản mỗi trang
+
+// listIn – list_scripts chia trang (56 C1): thư mục AI lâu ngày có hàng trăm kịch bản.
+type listIn struct {
+	PageIdx int `json:"pageIdx,omitempty" jsonschema:"từ 0"`
+}
+
 // ScriptEntry – một kịch bản trong list_scripts.
 type ScriptEntry struct {
 	Path      string `json:"path"`
@@ -43,8 +50,7 @@ type ScriptEntry struct {
 }
 
 func (s *Server) addReadTools() {
-	addTool(s, KindRead, &mcp.Tool{Name: "list_scripts", Description: "Danh sách kịch bản: mở gần đây trên app + thư mục kịch bản của AI. " +
-		"Mỗi mục: path, name, số node, createdBy (ai), open / unsaved (đang mở trên app)."}, s.listScripts)
+	addTool(s, KindRead, &mcp.Tool{Name: "list_scripts", Description: "Kịch bản mở gần đây + thư mục AI: path, name, steps, createdBy, open / unsaved (đang mở). Trang 30."}, s.listScripts)
 	addTool(s, KindRead, &mcp.Tool{Name: "read_script", Description: "Đọc một kịch bản: {path, revision, script}. " +
 		"script dạng gọn như create_script (node xếp theo thứ tự chạy, trường bằng mặc định bị bỏ, cạnh = flow). " +
 		"Giữ revision để gửi kèm update_script."}, s.readScript)
@@ -78,10 +84,19 @@ func (s *Server) paths() []string {
 	return out
 }
 
-func (s *Server) listScripts(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp.CallToolResult, any, error) {
+func (s *Server) listScripts(_ context.Context, _ *mcp.CallToolRequest, in listIn) (*mcp.CallToolResult, any, error) {
 	ed := s.back.Editor()
-	list := []ScriptEntry{}
+	var paths []string
 	for _, p := range s.paths() {
+		if _, err := os.Stat(p); !os.IsNotExist(err) { // file đã xoá: bỏ trước khi chia trang – trang nào cũng đủ mục
+			paths = append(paths, p)
+		}
+	}
+	size := scriptsPage
+	pages := max((len(paths)+size-1)/size, 1)
+	from := min(max(in.PageIdx, 0)*size, len(paths))
+	list := []ScriptEntry{}
+	for _, p := range paths[from:min(from+size, len(paths))] {
 		e := ScriptEntry{Path: p, Name: strings.TrimSuffix(filepath.Base(p), filepath.Ext(p)), Open: samePath(p, ed.Path)}
 		e.Unsaved = e.Open && ed.Dirty
 		if sc, _, err := s.back.ReadScript(p); err != nil {
@@ -98,7 +113,8 @@ func (s *Server) listScripts(_ context.Context, _ *mcp.CallToolRequest, _ struct
 		list = append(list, e)
 	}
 	dir, _ := s.back.ScriptsDir()
-	return ok(map[string]any{"scripts": list, "aiFolder": dir})
+	return ok(map[string]any{"scripts": list, "aiFolder": dir, "total": len(paths), "pageIdx": max(in.PageIdx, 0), "totalPages": pages,
+		"hasNextPage": from+size < len(paths)})
 }
 
 func (s *Server) readScript(_ context.Context, _ *mcp.CallToolRequest, in readIn) (*mcp.CallToolResult, any, error) {

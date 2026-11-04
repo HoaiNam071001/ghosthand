@@ -6,6 +6,7 @@ Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi t
 
 ## 56 – Học từ MCP ngoài, đợt A + B1 + D1 (2026-11-04) · [56](phase3/56-hoc-tu-mcp-ngoai.md)
 
+- [ ] (C1–C2) Qua MCP: `list_scripts` có `total` / `totalPages` / `hasNextPage`, `pageIdx: 1` sang trang sau; chạy kịch bản tạm có node Tìm tất cả nhiều chỗ / Chạy lệnh in dài → output trong kết quả chỉ 20 mục + “… còn N mục”, chuỗi giữ đầu + cuối kèm “… bỏ N ký tự …”, node sau vẫn đọc đủ – *chưa thử trên app: make dev-install bị app từ chối thoát (kịch bản đang soạn chưa lưu)*
 - [ ] (D1) Mẫu thử *Hỏi người dùng – duyệt trước khi làm tiếp* → Chạy: thanh mini nở ra, có thẻ hỏi (câu hỏi, 3 email, ô nhập đang nhận phím) + thông báo hệ thống; gõ ghi chú rồi Enter → kết thúc thành công, lời kết có chữ vừa gõ; chạy lại bấm Từ chối (hoặc Esc) → báo “Bạn đã từ chối”; thanh mini thu lại sau khi trả lời
 - [ ] (D1) Thêm node *Hỏi người dùng* từ bảng thêm node (nhóm Rẽ nhánh): thẻ có 3 cổng Đồng ý / Từ chối / Hết giờ, inspector có Câu hỏi, Danh sách mục, Có ô nhập, Chờ tối đa; hoạt hoạ trong bảng thêm node; theme sáng + tối của thẻ hỏi (`#demo-minibar`)
 - [ ] (D1) Hẹn giờ một kịch bản có node Hỏi người dùng → đi thẳng cổng Hết giờ (không có ai trả lời); lượt AI chạy: rê chuột lên thẻ để trả lời không làm kịch bản tạm dừng – *AI thử macOS 2026-11-04 (46bf435-dirty): wait_run trả status needs_input + câu hỏi; thẻ hiện đúng dưới thanh mini; để 25 s → cổng timeout (waitedMs 25001), thanh mini thu lại*
