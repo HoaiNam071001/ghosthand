@@ -9,6 +9,9 @@
 //	GET  /events ?runId=         – SSE: event của app (engine:progress, engine:node, run:ended…); có runId thì đóng sau run:ended của nó
 //	GET  /script ?path=          → {script, revision}
 //	PUT  /script {path, script, revision} → {revision} (revision cũ → 409 conflict)
+//	POST /batch  batch.Request   → {batchId, names} – chạy nhiều kịch bản một lượt (61 M2, batch.go)
+//	GET  /batch  ?id=            → batch.Status (trống = lượt mới nhất)
+//	POST /batch/stop {batchId}   → {stopped}
 package api
 
 import (
@@ -23,6 +26,7 @@ import (
 	"strings"
 	"time"
 
+	"ghosthand/internal/batch"
 	"ghosthand/internal/model"
 	"ghosthand/internal/session"
 	"ghosthand/internal/store"
@@ -47,6 +51,10 @@ type Backend interface {
 	Wait(ctx context.Context, runID string) (session.Status, error)
 	ReadScript(path string) (model.Script, int, error)
 	WriteScript(path string, sc model.Script, revision int) (int, error)
+	// Lượt chạy nhiều kịch bản (61 M2): StartBatch trả id + tên các kịch bản sẽ chạy (theo thứ tự).
+	StartBatch(req batch.Request) (string, []string, error)
+	BatchStatus(id string) (batch.Status, error)
+	StopBatch(id string) bool
 	// Quit thoát app sau khi trả lời (dev-install, CLI `ghosthand quit`); từ chối khi đang chạy (bọc session.ErrBusy)
 	// hoặc kịch bản đang soạn chưa lưu (bọc ErrUnsaved).
 	Quit() error
@@ -80,6 +88,7 @@ func New(back Backend, hub *Hub) *Server {
 	s.mux.HandleFunc("GET /events", s.events)
 	s.mux.HandleFunc("GET /script", s.readScript)
 	s.mux.HandleFunc("PUT /script", s.writeScript)
+	s.addBatch()
 	return s
 }
 

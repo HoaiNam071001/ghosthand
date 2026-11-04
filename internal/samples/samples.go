@@ -27,15 +27,17 @@ const templatePrefix = "@"
 
 // Info – mô tả một mẫu cho danh sách. Steps tính từ kịch bản (không ghi tay để khỏi lệch).
 type Info struct {
-	ID          string   `json:"id"`
-	Name        string   `json:"name"`
-	Description string   `json:"description"`
-	App         string   `json:"app"`   // kiểu app: Cơ bản, Form, Shop, Chat…
-	Level       int      `json:"level"` // 1 dễ – 3 khó
-	Page        string   `json:"page"`  // trang sân thử (vd click.html) hoặc URL web thật; "" = mẫu chỉ dùng app của hệ điều hành
-	Real        bool     `json:"real"`  // chạy trên web thật – có thể hỏng khi trang đổi giao diện
-	Prep        string   `json:"prep,omitempty"`
-	Steps       []string `json:"steps"` // các loại bước có trong mẫu, theo thứ tự xuất hiện
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	App         string `json:"app"`   // kiểu app: Cơ bản, Form, Shop, Chat…
+	Level       int    `json:"level"` // 1 dễ – 3 khó
+	Page        string `json:"page"`  // trang sân thử (vd click.html) hoặc URL web thật; "" = mẫu chỉ dùng app của hệ điều hành
+	Real        bool   `json:"real"`  // chạy trên web thật – có thể hỏng khi trang đổi giao diện
+	// Manual – cần chuẩn bị tay (đăng nhập, bí mật, app riêng, nhập giờ) hoặc chỉ chạy trên Windows: lượt test mặc định bỏ qua (bước 61 M2)
+	Manual bool     `json:"manual,omitempty"`
+	Prep   string   `json:"prep,omitempty"`
+	Steps  []string `json:"steps"` // các loại bước có trong mẫu, theo thứ tự xuất hiện
 }
 
 type sampleFile struct {

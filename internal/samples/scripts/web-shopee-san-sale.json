@@ -6,6 +6,7 @@
   "level": 3,
   "page": "https://shopee.vn",
   "real": true,
+  "manual": true,
   "prep": "Đăng nhập Shopee trước: chọn node web bất kỳ → Đăng nhập → đăng nhập → Xong. Chọn sẵn phân loại (màu / cỡ) trên trang nếu sản phẩm có, không thì Shopee hỏi lại. Nhập phần sau “shopee.vn/” của link sản phẩm (vd Ao-thun-i.123.456) + giờ mở bán (HH:mm:ss). Shopee có thể hỏi captcha khi thấy thao tác nhanh – khi đó dùng Chrome thường + Click theo chữ."
  },
  "script": {

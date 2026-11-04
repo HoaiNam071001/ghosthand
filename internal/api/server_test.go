@@ -5,12 +5,14 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
 	"testing"
 	"time"
 
+	"ghosthand/internal/batch"
 	"ghosthand/internal/model"
 	"ghosthand/internal/session"
 	"ghosthand/internal/store"
@@ -51,6 +53,20 @@ func (f *fakeBackend) WriteScript(path string, _ model.Script, rev int) (int, er
 	f.rev++
 	return f.rev, nil
 }
+
+func (f *fakeBackend) StartBatch(req batch.Request) (string, []string, error) {
+	if len(req.Targets) == 0 {
+		return "", nil, errors.New("không có kịch bản nào")
+	}
+	return "b1", req.Targets, nil
+}
+func (f *fakeBackend) BatchStatus(id string) (batch.Status, error) {
+	if id != "" && id != "b1" {
+		return batch.Status{}, session.ErrNotFound
+	}
+	return batch.Status{ID: "b1", State: batch.StateDone, Total: 1, Rows: []batch.Row{{Name: "a", State: batch.RowSuccess}}}, nil
+}
+func (f *fakeBackend) StopBatch(id string) bool { return id == "b1" }
 
 func (f *fakeBackend) Quit() error {
 	if f.quitErr == nil {
@@ -194,5 +210,24 @@ func TestQuit(t *testing.T) {
 	}
 	if _, out := call(t, "GET", base+"/health", "", nil); out["version"] != "dev" {
 		t.Errorf("health thiếu version: %v", out)
+	}
+}
+
+func TestBatch(t *testing.T) {
+	_, _, base := start(t)
+	if code, out := call(t, "POST", base+"/batch", "tok", batch.Request{Targets: []string{"/a.json"}}); code != 200 || out["batchId"] != "b1" {
+		t.Fatalf("%d %v", code, out)
+	}
+	if code, _ := call(t, "POST", base+"/batch", "tok", batch.Request{}); code != 400 {
+		t.Errorf("không có kịch bản: %d", code)
+	}
+	if code, out := call(t, "GET", base+"/batch?id=b1", "tok", nil); code != 200 || out["state"] != "done" {
+		t.Errorf("%d %v", code, out)
+	}
+	if code, _ := call(t, "GET", base+"/batch?id=zz", "tok", nil); code != 404 {
+		t.Errorf("lượt không có: %d", code)
+	}
+	if _, out := call(t, "POST", base+"/batch/stop", "tok", map[string]string{"batchId": "b1"}); out["stopped"] != true {
+		t.Errorf("%v", out)
 	}
 }

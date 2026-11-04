@@ -6,6 +6,7 @@
   "level": 1,
   "page": "index.html",
   "real": false,
+  "manual": true,
   "prep": "Cần cài Spotify và đăng nhập sẵn. Mở app thật + phát nhạc trên máy."
  },
  "script": {

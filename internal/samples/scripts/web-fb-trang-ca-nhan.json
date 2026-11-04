@@ -6,6 +6,7 @@
   "level": 2,
   "page": "https://www.facebook.com",
   "real": true,
+  "manual": true,
   "prep": "Đăng nhập Facebook trước: chọn node web bất kỳ → Đăng nhập (Chrome của app mở như Chrome thường) → đăng nhập → Xong. Nhập đúng tên hiển thị Facebook ở form Chạy. Facebook đổi giao diện thì có thể phải sửa cách tìm."
  },
  "script": {

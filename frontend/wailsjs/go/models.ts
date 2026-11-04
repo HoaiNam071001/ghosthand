@@ -2088,6 +2088,7 @@ export namespace samples {
 	    level: number;
 	    page: string;
 	    real: boolean;
+	    manual?: boolean;
 	    prep?: string;
 	    steps: string[];
 	
@@ -2104,6 +2105,7 @@ export namespace samples {
 	        this.level = source["level"];
 	        this.page = source["page"];
 	        this.real = source["real"];
+	        this.manual = source["manual"];
 	        this.prep = source["prep"];
 	        this.steps = source["steps"];
 	    }

@@ -43,6 +43,7 @@ type AIAsk struct {
 	StopAt string   `json:"stopAt,omitempty"` // ref node dừng
 	Nodes  []string `json:"nodes,omitempty"`  // ref cụm node
 	Resume bool     `json:"resume,omitempty"` // chạy tiếp với kết quả lần trước
+	Batch  []string `json:"batch,omitempty"`  // run_batch (61 M2): tên các kịch bản của lượt – hỏi một lần cả lượt
 }
 
 // aiGate – các câu hỏi đang chờ + kịch bản đã cho phép đến khi đóng app.

@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
+	"ghosthand/internal/batch"
 	"ghosthand/internal/model"
 	"ghosthand/internal/perm"
 	"ghosthand/internal/script"
@@ -69,7 +71,7 @@ func (s *Server) addRunTools() {
 		"Kịch bản tạm chạy ổn mà người dùng muốn giữ → create_script."}, s.runScript)
 	addTool(s, KindRun, &mcp.Tool{Name: "wait_run", Description: "Chờ lần chạy runId xong (tối đa waitS giây) rồi trả kết quả như run_script. " +
 		"Chưa xong thì done=false + node đang chạy – gọi lại. Xem ảnh của node bất kỳ (trường shot, khi chạy với shots: each): shots = [tên ảnh]."}, s.waitRun)
-	addTool(s, KindRun, &mcp.Tool{Name: "stop_run", Description: "Dừng lần chạy runId đang chạy."}, s.stopRun)
+	addTool(s, KindRun, &mcp.Tool{Name: "stop_run", Description: "Dừng lần chạy runId (hoặc batchId) đang chạy."}, s.stopRun)
 	addTool(s, KindRun, &mcp.Tool{Name: "resume_run", Description: "Chạy tiếp sau khi sửa: đọc lại kịch bản (bản mới nhất), " +
 		"chạy từ node đã lỗi (hoặc from) với output / biến các node trước lấy từ lần chạy runId – không chạy lại từ đầu."}, s.resumeRun)
 }
@@ -175,6 +177,9 @@ func (s *Server) waitRun(ctx context.Context, _ *mcp.CallToolRequest, in runIDIn
 }
 
 func (s *Server) stopRun(_ context.Context, _ *mcp.CallToolRequest, in runIDIn) (*mcp.CallToolResult, any, error) {
+	if strings.HasPrefix(in.RunID, batch.IDPrefix) { // runId thường là giờ bắt đầu (số) – không trùng
+		return ok(map[string]any{"stopped": s.back.StopBatch(in.RunID)})
+	}
 	return ok(map[string]any{"stopped": s.back.Stop(in.RunID)})
 }
 

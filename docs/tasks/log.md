@@ -333,3 +333,4 @@
 - 2026-11-03 Kế hoạch (người dùng yêu cầu): bước 61 Dùng AI gọn hơn – M1 trạng thái đầu phiên ngắn, M2 `ghosthand test` chạy nhiều kịch bản, M3 kiểm tra môi trường trước khi chạy, M4 `browserNorm` bắt buộc chọn đích, M5 tự dọn kịch bản thử của AI.
 - **2026-11-03** – 61 M1: *Trạng thái hiện tại* (README) rút từ ~9 200 còn ~520 ký tự – hook đầu phiên chèn gọn; check-docs cảnh báo khi > 1500 ký tự; wrap-up ghi quy ước giữ ngắn. check-docs 0 lỗi.
 - **2026-11-04** – 61 M4: browserNorm bật đặt cỡ cửa sổ phải chọn đích (tabFrom hoặc browser + tab) – kiểm tra Go + cảnh báo TS + inspector + mô tả MCP + Hướng dẫn. go vet/test, npm build/test, check-docs OK; chưa thử tay.
+- **2026-11-04** – 61 M2: chạy nhiều kịch bản một lượt – `internal/batch`, API `/batch`, CLI `ghosthand test`, MCP `run_batch` (hỏi một lần cả lượt, không ghi lịch sử), meta mẫu `manual`. go vet/test (+ -race batch/app), npm build/test, check-docs OK; chưa thử tay trên app thật.

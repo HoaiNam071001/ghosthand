@@ -6,6 +6,7 @@
   "level": 2,
   "page": "clock.html",
   "real": false,
+  "manual": true,
   "prep": "Trình duyệt mở to gần toàn màn hình (nút neo giữa màn hình). Nhập giờ khoảng 1 phút sau lúc bấm Chạy, vd 20:15:00.000."
  },
  "script": {

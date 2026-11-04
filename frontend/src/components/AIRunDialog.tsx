@@ -1,8 +1,9 @@
 // AI muốn chạy kịch bản (bước 31b, mức "Hỏi trước khi chạy"): tên kịch bản, phần sẽ chạy, Cho phép một lần /
-// Cho phép kịch bản này đến khi đóng app / Từ chối. Enter = cho phép một lần, Esc = từ chối.
+// Cho phép kịch bản này đến khi đóng app / Từ chối. Enter = cho phép một lần, Esc = từ chối. Lượt run_batch (61 M2)
+// hỏi một lần cho cả lượt – liệt kê tên, không có "đến khi đóng app".
 import { useEffect } from 'react';
 import { answerAI, useAIAsk } from '../aiAsk';
-import { aiRunScope } from '../aiScope';
+import { aiBatchNames, aiRunScope } from '../aiScope';
 import { Play } from './icons';
 
 export default function AIRunDialog() {
@@ -27,13 +28,20 @@ export default function AIRunDialog() {
         <div className="flex gap-3 p-[18px]">
           <span className="grid h-9 w-9 flex-none place-items-center rounded-[9px] bg-accent-soft text-accent-text"><Play className="h-[18px] w-[18px]" /></span>
           <div className="flex min-w-0 flex-col gap-2">
-            <div id="ai-run-title" className="text-base font-semibold">AI muốn chạy “{ask.script}”</div>
-            <div id="ai-run-desc" className="flex flex-col gap-1 text-[13px]">
-              <span>Chạy {aiRunScope(ask)} – chuột và bàn phím sẽ do kịch bản điều khiển.</span>
-              {ask.path ? <span className="truncate font-mono text-xs text-muted" title={ask.path}>{ask.path}</span>
-                : <span className="text-xs text-muted">Kịch bản tạm AI gửi kèm (chưa lưu, {ask.steps} node) – lần sau vẫn hỏi lại.</span>}
-            </div>
-            <span className="text-xs text-muted">Dừng bất cứ lúc nào: F8 hoặc đưa chuột chạm góc màn hình.</span>
+            <div id="ai-run-title" className="text-base font-semibold">{ask.batch ? `AI muốn chạy ${ask.batch.length} kịch bản một lượt` : `AI muốn chạy “${ask.script}”`}</div>
+            {ask.batch ? (
+              <div id="ai-run-desc" className="flex flex-col gap-1 text-[13px]">
+                <span>Chạy lần lượt, kịch bản lỗi thì chạy tiếp – chuột và bàn phím sẽ do kịch bản điều khiển. Không ghi Lịch sử chạy.</span>
+                <span className="line-clamp-3 font-mono text-xs text-muted">{aiBatchNames(ask.batch)}</span>
+              </div>
+            ) : (
+              <div id="ai-run-desc" className="flex flex-col gap-1 text-[13px]">
+                <span>Chạy {aiRunScope(ask)} – chuột và bàn phím sẽ do kịch bản điều khiển.</span>
+                {ask.path ? <span className="truncate font-mono text-xs text-muted" title={ask.path}>{ask.path}</span>
+                  : <span className="text-xs text-muted">Kịch bản tạm AI gửi kèm (chưa lưu, {ask.steps} node) – lần sau vẫn hỏi lại.</span>}
+              </div>
+            )}
+            <span className="text-xs text-muted">Dừng bất cứ lúc nào: F8 hoặc đưa chuột chạm góc màn hình{ask.batch ? ' – dừng cả lượt' : ''}.</span>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2 border-t border-line bg-chrome px-[18px] py-3">

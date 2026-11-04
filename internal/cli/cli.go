@@ -23,6 +23,7 @@ const (
 
 const usage = `Cách dùng:
   ghosthand run <file.json> [--preset "Tên bộ"] [--set KEY=GIÁ_TRỊ]… [--countdown GIÂY] [--no-wait]
+%s
   ghosthand quit      thoát app đang mở (từ chối khi đang chạy kịch bản / kịch bản chưa lưu), chờ tới khi tắt hẳn
 
   --preset     bộ giá trị input đã lưu trong form Chạy của app
@@ -30,7 +31,7 @@ const usage = `Cách dùng:
   --countdown  đếm ngược trước khi chạy (mặc định 0)
   --no-wait    gửi lệnh rồi thoát ngay, in runId (mặc định: chờ xong, in tiến độ)
 
-Mã thoát: 0 xong · 1 lỗi / bị dừng · 2 sai lệnh · 3 không nối được app`
+Mã thoát: 0 xong (test: mọi kịch bản qua) · 1 lỗi / bị dừng · 2 sai lệnh · 3 không nối được app`
 
 // Args – lệnh run đã đọc.
 type Args struct {
@@ -43,7 +44,7 @@ type Args struct {
 
 // IsCommand – args (không gồm tên chương trình) là lệnh CLI (không mở giao diện).
 func IsCommand(args []string) bool {
-	return len(args) > 0 && (args[0] == "run" || args[0] == "quit" || args[0] == "help" || args[0] == "--help" || args[0] == "-h")
+	return len(args) > 0 && (args[0] == "run" || args[0] == "test" || args[0] == "quit" || args[0] == "help" || args[0] == "--help" || args[0] == "-h")
 }
 
 var errHelp = errors.New("help")
@@ -111,14 +112,17 @@ func Main(args []string, c *Client, out, errOut io.Writer) int {
 	if len(args) == 1 && args[0] == "quit" {
 		return c.Quit(out, errOut)
 	}
-	a, err := Parse(args)
-	if errors.Is(err, errHelp) {
-		fmt.Fprintln(out, usage)
-		return ExitOK
+	help := fmt.Sprintf(usage, testUsage)
+	if args[0] == "test" {
+		req, err := ParseTest(args)
+		if code, done := parseResult(err, help, out, errOut); done {
+			return code
+		}
+		return c.Test(req, out, errOut)
 	}
-	if err != nil {
-		fmt.Fprintf(errOut, "Lỗi: %v\n\n%s\n", err, usage)
-		return ExitUsage
+	a, err := Parse(args)
+	if code, done := parseResult(err, help, out, errOut); done {
+		return code
 	}
 	if abs, e := filepath.Abs(a.Path); e == nil {
 		a.Path = abs
@@ -128,4 +132,17 @@ func Main(args []string, c *Client, out, errOut io.Writer) int {
 		return ExitUsage
 	}
 	return c.Run(a, out, errOut)
+}
+
+// parseResult – lỗi đọc lệnh: help → in cách dùng (mã 0), sai → báo lỗi + cách dùng (mã 2); done = dừng tại đây.
+func parseResult(err error, help string, out, errOut io.Writer) (int, bool) {
+	switch {
+	case errors.Is(err, errHelp):
+		fmt.Fprintln(out, help)
+		return ExitOK, true
+	case err != nil:
+		fmt.Fprintf(errOut, "Lỗi: %v\n\n%s\n", err, help)
+		return ExitUsage, true
+	}
+	return 0, false
 }

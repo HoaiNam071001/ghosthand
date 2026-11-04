@@ -6,6 +6,7 @@
   "level": 1,
   "page": "index.html",
   "real": false,
+  "manual": true,
   "prep": "Cài đặt → Bí mật: thêm tên mat_khau_thu, giá trị bất kỳ từ 4 ký tự (vd Ghost-1234)."
  },
  "script": {

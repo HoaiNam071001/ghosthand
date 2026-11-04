@@ -14,6 +14,7 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
+	"ghosthand/internal/batch"
 	"ghosthand/internal/device/devicetest"
 	"ghosthand/internal/element"
 	"ghosthand/internal/model"
@@ -44,8 +45,9 @@ type fakeBackend struct {
 	probed        string
 	elems         []element.Node // Elements trả (43 A)
 	elemReads     int
-	captures      int        // số lần NoteCapture
-	found         model.Step // node FindImage nhận lần cuối
+	captures      int          // số lần NoteCapture
+	found         model.Step   // node FindImage nhận lần cuối
+	batch         *batch.Batch // run_batch (batch_test.go)
 }
 
 func (f *fakeBackend) Enabled() bool          { return true }

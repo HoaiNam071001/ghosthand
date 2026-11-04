@@ -193,6 +193,7 @@
       { "kind": "list", "items": [
         "**Hẹn giờ**: một lần, hằng ngày hoặc ngày làm việc; báo kết quả qua Telegram / Discord được. App phải đang mở – tắt app thì lỡ giờ, không chạy bù.",
         "**Dòng lệnh**: `ghosthand run kich-ban.json --set ten=An --preset \"Bộ 1\"` gửi sang app (chưa mở thì tự mở – xem [[chapter:settings-api]]).",
+        "**Chạy thử hàng loạt**: `ghosthand test thu-muc/ mau:go-chu --samples` chạy lần lượt nhiều kịch bản (kịch bản lỗi thì chạy tiếp, không ghi Lịch sử chạy), in mỗi kịch bản một dòng qua / lỗi kèm mã lỗi + node lỗi. `--samples` lấy mọi mẫu chạy trên sân thử (`--all` thêm mẫu web thật / cần chuẩn bị tay). AI làm cùng việc bằng tool `run_batch` – app hỏi bạn một lần cho cả lượt.",
         "**API local** cho chương trình khác và **AI qua MCP** – xem [[chapter:ai-mcp]]."
       ] }
     ]

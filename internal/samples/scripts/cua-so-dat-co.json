@@ -6,6 +6,7 @@
   "level": 1,
   "page": "click.html",
   "real": false,
+  "manual": true,
   "prep": "Hiện chỉ chạy trên Windows (macOS làm sau). Chụp cần quyền ghi màn hình (macOS: Screen Recording)."
  },
  "script": {

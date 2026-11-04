@@ -5,6 +5,7 @@
   "app": "Cửa sổ / app",
   "level": 1,
   "real": false,
+  "manual": true,
   "prep": "Hiện chỉ chạy trên Windows (macOS làm sau – dùng TextEdit). Đóng Notepad trước khi chạy. Notepad Windows 11 có thể giữ lại tab chưa lưu ở lần mở sau – đóng tab đó là xong."
  },
  "script": {

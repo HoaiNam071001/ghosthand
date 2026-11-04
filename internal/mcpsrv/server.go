@@ -11,6 +11,7 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
+	"ghosthand/internal/batch"
 	"ghosthand/internal/element"
 	"ghosthand/internal/engine"
 	"ghosthand/internal/model"
@@ -58,6 +59,10 @@ type Backend interface {
 	Wait(ctx context.Context, id string) error
 	Trace(id string) (session.Trace, error)
 	Stop(id string) bool
+	// Lượt nhiều kịch bản (61 M2): StartBatch hỏi người dùng một lần cho cả lượt (theo công tắc AI) rồi chạy nền.
+	StartBatch(req batch.Request) (string, error)
+	WaitBatch(ctx context.Context, id string) (batch.Status, error)
+	StopBatch(id string) bool
 
 	// Nhìn màn hình (31b).
 	Capture(r model.Rect) (image.Image, error)
@@ -118,6 +123,7 @@ func New(back Backend) *Server {
 	s.addElementTools()
 	s.addWriteTools()
 	s.addRunTools()
+	s.addBatchTools()
 	s.addScreenTools()
 	s.addTemplateTools()
 	s.addSimulateTools()

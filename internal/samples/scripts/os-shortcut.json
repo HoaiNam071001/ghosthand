@@ -6,6 +6,7 @@
   "level": 1,
   "page": "index.html",
   "real": false,
+  "manual": true,
   "prep": "Chỉ macOS. Mở ứng dụng Phím tắt, tạo Shortcut tên “Ghosthand thử”: nhận Đầu vào của Shortcut → Thay đổi chữ hoa/thường (CHỮ HOA) → Dừng và xuất kết quả. Chưa có Shortcut thì node báo not_found."
  },
  "script": {

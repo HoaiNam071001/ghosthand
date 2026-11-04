@@ -5,6 +5,9 @@ Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi t
 
 ## 61 – Dùng AI gọn hơn (2026-11-04) · [61](phase3/61-dung-ai-gon.md)
 
+- [ ] Terminal: `ghosthand test --samples --level 1` → mỗi mẫu một dòng ✓ / ✗ (dòng lỗi có mã + node + lý do), dòng cuối *Qua x/y · lỗi z*, mã thoát 1 nếu có lỗi; không có dòng nào mới trong Lịch sử chạy
+- [ ] `ghosthand test <thư mục kịch bản của bạn> mau:go-chu` → chạy cả file trong thư mục (kể cả thư mục con) + mẫu; Ctrl+C hoặc F8 giữa chừng → dừng cả lượt, dòng cuối ghi *đã dừng (N kịch bản chưa chạy)*
+- [ ] AI gọi `run_batch` khi app ở mức *Hỏi trước khi chạy* → hộp hỏi *AI muốn chạy N kịch bản một lượt* liệt kê tên, hỏi đúng một lần; Từ chối → AI nhận lỗi, không chạy gì
 - [ ] Node Chuẩn hoá trình duyệt: bật *Đặt vị trí + cỡ cửa sổ*, trình duyệt *Đang ở trước* → inspector hiện dòng đỏ *cần chọn trình duyệt*, thẻ có cảnh báo, bấm Chạy bị kiểm tra chặn; chọn Chrome nhưng để trống Tab → báo cần chọn tab; chọn Tab node Mở hoặc nhập tab → hết lỗi. Mẫu *Chuẩn hoá trình duyệt* vẫn chạy được
 
 ## Sửa – lỗi AI tìm thấy khi thử tay (2026-11-03) · [26](phase3/26-cua-so-ung-dung.md) · [58](phase3/58-dau-hieu-dang-dieu-khien.md) · [44](phase3/44-thu-trang-uu-tien-node.md)

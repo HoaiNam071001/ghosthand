@@ -41,6 +41,7 @@ type App struct {
 	mcpc      *mcpclient.Manager        // app làm MCP client tới server ngoài (mcpserversapi.go)
 	quitting  bool                      // đã hỏi xong, đóng thật
 	ai        aiGate                    // hỏi quyền AI chạy (mcprun.go)
+	batches   batchState                // lượt chạy nhiều kịch bản (batchrun.go)
 	// app do AI mở nền (`--background`, bước 31b): khởi động ẩn, AI chạy thì chỉ hiện thanh mini
 	background bool
 	running    bool // đang có lần chạy (theo session.Activity) – thanh mini nổi (58 D6); đọc / ghi dưới mu
