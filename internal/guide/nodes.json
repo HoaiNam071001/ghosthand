@@ -874,7 +874,8 @@
       "Đã dùng node web hoặc phần tử Accessibility (không phụ thuộc cỡ cửa sổ) thì khỏi cần"
     ],
     "tips": [
-      "Đặt cùng cỡ với lúc chụp ảnh mẫu."
+      "Đặt cùng cỡ với lúc chụp ảnh mẫu.",
+      "Bật đặt cỡ cửa sổ thì phải chọn đích: tab của node Mở, hoặc trình duyệt + tab theo tiêu đề / URL – để không đổi cỡ nhầm cửa sổ bạn đang dùng."
     ],
     "fields": [
       "**Cỡ cửa sổ**",

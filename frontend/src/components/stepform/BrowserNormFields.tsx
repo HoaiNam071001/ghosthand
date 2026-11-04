@@ -1,5 +1,6 @@
 // Node Chuẩn hoá trình duyệt (bước 43 B3): chọn tab, các việc cần làm, cỡ cửa sổ.
 import { updateStep } from '../../store';
+import { NORM_TARGET_MSG, normTargetMissing } from '../../flow/browserTab';
 import { Step } from '../../types';
 import { BoundsFields } from './BoundsFields';
 import { TAB_PLATFORM } from './BrowserTabFields';
@@ -15,10 +16,12 @@ const ITEMS: { key: 'normFullscreen' | 'normSize' | 'normZoom' | 'normPopups'; l
 
 export function BrowserNormFields({ step: s }: { step: Step }) {
   const none = !ITEMS.some((i) => s[i.key]);
+  const miss = normTargetMissing(s);
   return (
     <>
       <BrowserField step={s} />
-      <TabTargetFields step={s} fromOK need={false} placeholder="trống = tab đang hiện" />
+      <TabTargetFields step={s} fromOK need={false} placeholder={s.normSize ? 'tiêu đề / URL tab cần đặt cỡ' : 'trống = tab đang hiện'} />
+      {miss && <span className={`col-span-2 ${errText}`}>{NORM_TARGET_MSG[miss]}</span>}
       {ITEMS.map((i) => (
         <SwitchField key={i.key} label={i.label} help={i.help} on={!!s[i.key]} onChange={(v) => updateStep(s.id, { [i.key]: v || undefined })} />
       ))}

@@ -267,10 +267,19 @@ func TestValidateBrowserNorm(t *testing.T) {
 	if err := norm(func(s *model.Step) { s.NormZoom = false }); err == nil {
 		t.Error("không bật mục nào phải báo lỗi")
 	}
-	if err := norm(func(s *model.Step) { s.NormSize = true }); err == nil {
+	if err := norm(func(s *model.Step) { s.NormSize, s.Browser, s.Tab = true, "chrome", "x" }); err == nil {
 		t.Error("đặt cỡ theo toạ độ chưa nhập cỡ phải báo lỗi")
 	}
-	if err := norm(func(s *model.Step) { s.NormSize, s.WinPreset = true, model.PresetFull }); err != nil {
+	if err := norm(func(s *model.Step) { s.NormSize, s.WinPreset, s.Browser, s.Tab = true, model.PresetFull, "chrome", "x" }); err != nil {
 		t.Errorf("preset full không cần cỡ: %v", err)
+	}
+	// Đặt cỡ phải có đích – không lấy trình duyệt / tab đang ở trước (bước 61 M4).
+	for _, c := range []struct {
+		browser, tab, from, want string
+	}{{"", "", "", "trình duyệt"}, {"chrome", "", "", "tab theo"}, {"", "x", "", "trình duyệt"}, {"chrome", "x", "", ""}} {
+		err := norm(func(s *model.Step) { s.NormSize, s.WinPreset, s.Browser, s.Tab, s.TabFrom = true, model.PresetFull, c.browser, c.tab, c.from })
+		if c.want == "" && err != nil || c.want != "" && (err == nil || !strings.Contains(err.Error(), c.want)) {
+			t.Errorf("%+v: muốn %q, có %v", c, c.want, err)
+		}
 	}
 }

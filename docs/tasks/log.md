@@ -332,3 +332,4 @@
 - 2026-11-03 · thử tay · AI tự thử trên app thật macOS (CLI chạy 90 mẫu, MCP, giả lập chuột): ~64 mục checks ghi kết quả (đa số tick); sửa 3 lỗi tìm thấy – node Cửa sổ đặt khung Chrome (26), nghỉ sau node hiện đang thao tác (58), Thử trang tên miền sai (44); go test + vitest 572 xanh
 - 2026-11-03 Kế hoạch (người dùng yêu cầu): bước 61 Dùng AI gọn hơn – M1 trạng thái đầu phiên ngắn, M2 `ghosthand test` chạy nhiều kịch bản, M3 kiểm tra môi trường trước khi chạy, M4 `browserNorm` bắt buộc chọn đích, M5 tự dọn kịch bản thử của AI.
 - **2026-11-03** – 61 M1: *Trạng thái hiện tại* (README) rút từ ~9 200 còn ~520 ký tự – hook đầu phiên chèn gọn; check-docs cảnh báo khi > 1500 ký tự; wrap-up ghi quy ước giữ ngắn. check-docs 0 lỗi.
+- **2026-11-04** – 61 M4: browserNorm bật đặt cỡ cửa sổ phải chọn đích (tabFrom hoặc browser + tab) – kiểm tra Go + cảnh báo TS + inspector + mô tả MCP + Hướng dẫn. go vet/test, npm build/test, check-docs OK; chưa thử tay.

@@ -46,6 +46,15 @@ export const fmtBrowserGo = (s: TabStep, refOf: (id: string) => string): string 
 
 type NormStep = TabStep & Pick<Step, 'filePath' | 'normZoom' | 'normFullscreen' | 'normSize' | 'normPopups' | 'winPreset' | 'winRect'>;
 
+// Đặt cỡ cửa sổ thiếu đích (khớp validateNorm – bước 61 M4): cần tab node Mở, hoặc trình duyệt + tab – không đổi cỡ trình duyệt đang ở trước.
+export function normTargetMissing(s: NormStep): 'browser' | 'tab' | undefined {
+  if (!s.normSize || s.tabFrom) return undefined;
+  if (!s.browser) return 'browser';
+  return s.tab?.trim() ? undefined : 'tab';
+}
+
+export const NORM_TARGET_MSG = { browser: 'Đặt cỡ cửa sổ cần chọn trình duyệt (hoặc tab node Mở)', tab: 'Đặt cỡ cửa sổ cần chọn tab theo tiêu đề / URL (hoặc tab node Mở)' };
+
 // Dòng chi tiết node Chuẩn hoá: "Zoom 100 % · Toàn màn hình · Cỡ giữa · tab của n1".
 export function fmtBrowserNorm(s: NormStep, refOf: (id: string) => string): string {
   const size = s.winPreset ? `cỡ ${WIN_PRESETS.find((p) => p.id === s.winPreset)?.label.toLowerCase()}` : s.winRect ? `cỡ ${s.winRect.w}×${s.winRect.h}` : 'cỡ';
@@ -69,6 +78,8 @@ export function browserTabWarning(s: NormStep, refs: Map<string, string>): strin
   if (s.type === 'browserNorm') {
     if (!s.normZoom && !s.normFullscreen && !s.normSize && !s.normPopups) return 'Chưa bật việc nào';
     if (s.normSize && !s.winPreset && !(s.winRect && s.winRect.w > 0 && s.winRect.h > 0)) return 'Chưa nhập cỡ cửa sổ';
+    const miss = normTargetMissing(s);
+    if (miss) return NORM_TARGET_MSG[miss];
   }
   if (s.tabFrom && TAB_FROM_OPS.includes(op) && !refs.has(s.tabFrom)) return 'Node Mở đã chọn không còn – chọn lại';
   if (op === 'waitOpen' && !s.tab?.trim()) return 'Chưa nhập tiêu đề / URL tab cần chờ';

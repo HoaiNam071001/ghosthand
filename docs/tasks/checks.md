@@ -3,6 +3,10 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+## 61 – Dùng AI gọn hơn (2026-11-04) · [61](phase3/61-dung-ai-gon.md)
+
+- [ ] Node Chuẩn hoá trình duyệt: bật *Đặt vị trí + cỡ cửa sổ*, trình duyệt *Đang ở trước* → inspector hiện dòng đỏ *cần chọn trình duyệt*, thẻ có cảnh báo, bấm Chạy bị kiểm tra chặn; chọn Chrome nhưng để trống Tab → báo cần chọn tab; chọn Tab node Mở hoặc nhập tab → hết lỗi. Mẫu *Chuẩn hoá trình duyệt* vẫn chạy được
+
 ## Sửa – lỗi AI tìm thấy khi thử tay (2026-11-03) · [26](phase3/26-cua-so-ung-dung.md) · [58](phase3/58-dau-hieu-dang-dieu-khien.md) · [44](phase3/44-thu-trang-uu-tien-node.md)
 
 - [ ] macOS: node Cửa sổ *Đặt khung* Đầy / Trái / Phải / Giữa trên Chrome đang lệch (vd 1000 × 600 tại 300, 300) → khung đúng ngay lần đầu, output + ảnh Chụp màn hình ngay sau đó đúng cỡ mới (AI đã thử qua 4 kiểu)

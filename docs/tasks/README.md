@@ -6,10 +6,10 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 
 > Hook đầu phiên chèn nguyên mục này cho AI – giữ ngắn (≤ ~1500 ký tự, `check-docs.py` cảnh báo): mỗi dòng một ý, chi tiết để ở file bước / `log.md`. Cập nhật mỗi khi xong / bắt đầu một bước.
 
-- **Đang làm:** [61](phase3/61-dung-ai-gon.md) dùng AI gọn hơn – M1 xong, còn M4 → M2 → M3 → M5.
+- **Đang làm:** [61](phase3/61-dung-ai-gon.md) dùng AI gọn hơn – M1, M4 xong, còn M2 → M3 → M5.
 - **Xong code, chờ kiểm tra tay:** 60, 59, 58, 57, 46, 45, 44, 43, 42, 40 (còn I2b), 38, 37, 36, 35, 34, 31a/b, 28, 25d, 22 – xem bảng *Tổng quan* + [checks.md](checks.md).
 - **Tiếp theo:** 61; 58 D2w viền Windows; 2 lỗi Windows của 36 (`web-cuon-trong-khung`, `web-thanh-toan-iframe`); 59 U5 `update_app`; 57 đợt 3 khi cần. Hoãn: 17 (Windows), 18b.
-- **Cập nhật lần cuối:** 2026-11-03 (61 M1: trạng thái đầu phiên ngắn).
+- **Cập nhật lần cuối:** 2026-11-04 (61 M4: Chuẩn hoá trình duyệt bắt chọn đích khi đặt cỡ).
 
 ## Tính năng của hệ thống
 
@@ -122,7 +122,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 > Bảng tự sinh – sau khi tick chạy `python3 scripts/tasks-index.py`. Bấm tên bước để mở file chi tiết.
 
 <!-- index:start -->
-**53 / 71 bước xong code** · 🧪 **[276 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
+**53 / 71 bước xong code** · 🧪 **[277 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
 
 ### Phase 3 – Design v2 & tự động hoá (theo thứ tự làm)
 
@@ -169,7 +169,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🟡 đang làm | [58. Dấu hiệu đang điều khiển](phase3/58-dau-hieu-dang-dieu-khien.md) | 8 / 8 | [7 việc](checks.md) |
 | 🟡 đang làm | [59. AI tự cập nhật + test](phase3/59-ai-tu-cap-nhat-va-test.md) | 6 / 7 | [1 việc](checks.md) |
 | ✅ xong | [60. Dữ liệu qua node](phase3/60-du-lieu-qua-node.md) | 11 / 11 |  |
-| 🟡 đang làm | [61. Dùng AI gọn hơn](phase3/61-dung-ai-gon.md) | 1 / 5 |  |
+| 🟡 đang làm | [61. Dùng AI gọn hơn](phase3/61-dung-ai-gon.md) | 2 / 5 | [1 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | 12 / 12 | [10 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | 43 / 43 | [22 việc](checks.md) |
 | 🟡 đang làm | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | 11 / 12 |  |

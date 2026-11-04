@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { browserTabOutputs, browserTabWarning, fmtBrowserGo, fmtBrowserNorm, fmtBrowserTab } from './browserTab';
+import { browserTabOutputs, browserTabWarning, fmtBrowserGo, fmtBrowserNorm, fmtBrowserTab, normTargetMissing } from './browserTab';
 
 const refOf = (id: string) => (id === 'o' ? 'n1' : id);
 const refs = new Map([['o', 'n1']]);
@@ -44,7 +44,18 @@ describe('node Chuẩn hoá trình duyệt', () => {
     expect(fmtBrowserNorm({ type: 'browserNorm' }, refOf)).toBe('chưa bật việc nào · tab đang hiện');
     expect(browserTabWarning({ type: 'browserNorm' }, refs)).toBe('Chưa bật việc nào');
     expect(browserTabWarning({ ...on, winPreset: undefined }, refs)).toBe('Chưa nhập cỡ cửa sổ');
-    expect(browserTabWarning(on, refs)).toBeUndefined();
+    expect(browserTabWarning(on, refs)).toContain('chọn trình duyệt');
+    expect(browserTabWarning({ ...on, browser: 'chrome', tab: 'gmail' }, refs)).toBeUndefined();
+  });
+
+  it('đặt cỡ phải có đích (khớp validateNorm)', () => {
+    const size = { type: 'browserNorm' as const, normSize: true };
+    expect(normTargetMissing({ ...size })).toBe('browser');
+    expect(normTargetMissing({ ...size, browser: 'coccoc' })).toBe('tab');
+    expect(normTargetMissing({ ...size, browser: 'coccoc', tab: ' ' })).toBe('tab');
+    expect(normTargetMissing({ ...size, browser: 'coccoc', tab: 'gmail' })).toBeUndefined();
+    expect(normTargetMissing({ ...size, tabFrom: 's1' })).toBeUndefined();
+    expect(normTargetMissing({ type: 'browserNorm', normZoom: true })).toBeUndefined();
     expect(browserTabOutputs({ type: 'browserNorm' }).map((o) => o.key)).toContain('wasFullscreen');
   });
 });

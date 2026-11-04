@@ -33,13 +33,18 @@ func checkTab(s model.Step) error {
 	return nil
 }
 
-// validateNorm – node Chuẩn hoá phải làm ít nhất một việc; đặt cỡ theo toạ độ cần đủ W, H.
+// validateNorm – node Chuẩn hoá phải làm ít nhất một việc; đặt cỡ theo toạ độ cần đủ W, H. Đặt cỡ phải chọn đích
+// (tab node Mở, hoặc trình duyệt + tab) – để trống thì lấy trình duyệt đang ở trước, dễ đổi cỡ nhầm cửa sổ người dùng (bước 61 M4).
 func validateNorm(i int, s model.Step) error {
 	switch r := s.WinRect; {
 	case !s.NormZoom && !s.NormFullscreen && !s.NormSize && !s.NormPopups:
 		return stepErr(i, s, "normZoom", "chưa chọn việc nào – bật ít nhất một mục chuẩn hoá")
 	case s.NormSize && s.WinPreset == model.PresetRect && (r == nil || r.W <= 0 || r.H <= 0):
 		return stepErr(i, s, "winRect", "chưa nhập cỡ cửa sổ")
+	case s.NormSize && s.TabFrom == "" && s.Browser == "":
+		return stepErr(i, s, "browser", "đặt cỡ cửa sổ cần chọn trình duyệt (hoặc tab node Mở) – không đổi cỡ trình duyệt đang ở trước")
+	case s.NormSize && s.TabFrom == "" && strings.TrimSpace(s.Tab) == "":
+		return stepErr(i, s, "tab", "đặt cỡ cửa sổ cần chọn tab theo tiêu đề / URL (hoặc tab node Mở) – không đổi cỡ tab đang hiện")
 	}
 	return nil
 }
