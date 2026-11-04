@@ -20,7 +20,7 @@ const MODES: { id: RunMode; label: string }[] = [
 
 const HINT: Record<RunMode, string> = {
   edit: 'AI tạo / sửa kịch bản, bạn tự bấm Chạy',
-  ask: 'Mỗi kịch bản AI muốn chạy đều hỏi bạn trước (có “cho phép đến khi đóng app”)',
+  ask: 'Mỗi kịch bản AI muốn chạy đều hỏi bạn trước (có “cho phép đến khi đóng app” – AI sửa kịch bản thì hỏi lại)',
   auto: 'AI chạy, xem lỗi, sửa và chạy lại không cần hỏi. F8 / chuột chạm góc màn hình vẫn dừng được; thao tác nguy hiểm vẫn hỏi',
 };
 

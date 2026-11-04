@@ -4,7 +4,7 @@
 import { STEP_LABEL } from '../types';
 
 // Khớp script.DangerOp.
-export type DangerOp = { ref: string; op: string; folder?: string; pattern?: string; target?: string; lang?: string; script?: string; dir?: string };
+export type DangerOp = { ref: string; op: string; folder?: string; pattern?: string; target?: string; lang?: string; script?: string; dir?: string; file?: string; fileHash?: string };
 
 const POWER_TEXT: Record<string, string> = { sleep: 'Cho máy ngủ', logout: 'Đăng xuất', shutdown: 'Tắt máy', restart: 'Khởi động lại máy' };
 
@@ -15,7 +15,7 @@ export function dangerOpText(d: DangerOp): string {
     case 'trash': return `Chuyển các file khớp “${d.pattern}” trong ${d.folder} vào Thùng rác (khôi phục được)`;
     case 'forceQuit': return `Buộc thoát ${d.target} – mất dữ liệu chưa lưu`;
     case 'quit': return `Thoát ${d.target}, quá giờ chưa thoát thì buộc thoát – mất dữ liệu chưa lưu`;
-    case 'shell': return `Chạy lệnh${d.lang ? ` ${d.lang}` : ''}${d.dir ? ` trong ${d.dir}` : ''} – lệnh có toàn quyền như bạn trên máy này`;
+    case 'shell': return `Chạy lệnh${d.lang ? ` ${d.lang}` : ''}${d.dir ? ` trong ${d.dir}` : ''}${d.file ? ` – gọi file ${d.file} (sửa file thì hỏi lại)` : ''} – lệnh có toàn quyền như bạn trên máy này`;
     case 'power': return `${POWER_TEXT[d.target ?? ''] ?? 'Thao tác nguồn'} – mất công việc chưa lưu; đếm ngược để huỷ bằng Dừng`;
     case 'marked': return `Node ${d.ref} (${STEP_LABEL[d.target as keyof typeof STEP_LABEL] ?? d.target}) – bạn đã đánh dấu là ghi / xoá dữ liệu`;
     case 'close': return `Đóng cửa sổ ${d.target} (app có thể hỏi lưu)`;

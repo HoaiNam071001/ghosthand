@@ -207,6 +207,11 @@ func (s *Server) report(ctx context.Context, id string, sc model.Script, waitS *
 	if len(env) > 0 {
 		view["env"] = env // không chặn chạy – node lỗi thì xem có do môi trường không trước khi sửa kịch bản
 	}
+	if tr.Done() {
+		if n := s.fails.note(tr, sc); n >= stuckAfter {
+			view["stuck"] = fmt.Sprintf(stuckHint, n)
+		}
+	}
 	res, _, err := ok(view)
 	if err != nil {
 		return nil, nil, err

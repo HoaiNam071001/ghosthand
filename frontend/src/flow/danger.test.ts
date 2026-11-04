@@ -24,6 +24,10 @@ it('lệnh shell: câu, tiêu đề, nội dung nguyên văn', () => {
   expect(dangerTitle([d])).toBe('Kịch bản này sẽ chạy lệnh trên máy');
 });
 
+it('lệnh gọi file script: nêu file, sửa file thì hỏi lại (56 A2)', () => {
+  expect(dangerOpText({ ref: 'n1', op: 'shell', script: 'sh run.sh', file: '/a/run.sh', fileHash: 'ab' })).toContain('gọi file /a/run.sh');
+});
+
 it('node người dùng đánh dấu ghi / xoá', () => {
   expect(dangerOpText({ ref: 'n3', op: 'marked', target: 'click' })).toContain('Node n3 (Click)');
   expect(dangerTitle([{ ref: 'n3', op: 'marked', target: 'click' }])).toBe('Kịch bản có thao tác cần xác nhận');

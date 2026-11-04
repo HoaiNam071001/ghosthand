@@ -10,7 +10,7 @@ import (
 )
 
 // Thao tác nguy hiểm (bước 35 N4, mở rộng ở bước 26; node người dùng tự đánh dấu – 46 C1): xoá file vào / dọn Thùng rác, buộc thoát app, thoát app có buộc
-// thoát khi quá giờ, đóng cửa sổ, chạy lệnh (S1 – dấu vân tay theo nội dung lệnh). Lần chạy đầu (và mỗi khi đích đổi) người dùng phải đồng ý – main/dangerapi.go.
+// thoát khi quá giờ, đóng cửa sổ, chạy lệnh (S1 – dấu vân tay theo nội dung lệnh + file script lệnh gọi, 56 A2). Lần chạy đầu (và mỗi khi đích đổi) người dùng phải đồng ý – main/dangerapi.go.
 
 // Op của DangerOp.
 const (
@@ -26,14 +26,16 @@ const (
 
 // DangerOp – một thao tác nguy hiểm trong kịch bản – hiện cho người dùng xác nhận.
 type DangerOp struct {
-	Ref     string `json:"ref"`
-	Op      string `json:"op"`                // Danger*
-	Folder  string `json:"folder,omitempty"`  // trash: thư mục (có thể còn biến node)
-	Pattern string `json:"pattern,omitempty"` // trash: mẫu tên file
-	Target  string `json:"target,omitempty"`  // app / cửa sổ: tên app, “tiêu đề”
-	Lang    string `json:"lang,omitempty"`    // shell: ngôn ngữ ("" = shell của máy)
-	Script  string `json:"script,omitempty"`  // shell: nội dung lệnh nguyên văn – đổi dù một ký tự cũng phải đồng ý lại
-	Dir     string `json:"dir,omitempty"`     // shell: thư mục chạy
+	Ref      string `json:"ref"`
+	Op       string `json:"op"`                 // Danger*
+	Folder   string `json:"folder,omitempty"`   // trash: thư mục (có thể còn biến node)
+	Pattern  string `json:"pattern,omitempty"`  // trash: mẫu tên file
+	Target   string `json:"target,omitempty"`   // app / cửa sổ: tên app, “tiêu đề”
+	Lang     string `json:"lang,omitempty"`     // shell: ngôn ngữ ("" = shell của máy)
+	Script   string `json:"script,omitempty"`   // shell: nội dung lệnh nguyên văn – đổi dù một ký tự cũng phải đồng ý lại
+	Dir      string `json:"dir,omitempty"`      // shell: thư mục chạy
+	File     string `json:"file,omitempty"`     // shell: file script lệnh gọi (56 A2) – sửa file thì phải đồng ý lại
+	FileHash string `json:"fileHash,omitempty"` // shell: hash nội dung File
 }
 
 // dangerOf – thao tác nguy hiểm của node s (ok = false: không có).
@@ -52,6 +54,9 @@ func dangerOf(s model.Step) (DangerOp, bool) {
 		op.Op, op.Target = DangerPower, s.PowerOp
 	case s.Type == model.StepShell:
 		op.Op, op.Lang, op.Script, op.Dir = DangerShell, s.ShellLang, s.Script, strings.TrimSpace(s.FilePath)
+		if s.ShellLang == "" { // applescript / jxa / powershell: Script là mã, không phải lệnh gọi file
+			op.File, op.FileHash = shellFile(s.Script, op.Dir)
+		}
 	case s.Type == model.StepWindow && s.WinOp == model.WinClose:
 		op.Op, op.Target = DangerClose, strings.TrimSpace(s.WinApp)
 		if t := strings.TrimSpace(s.WinTitle); t != "" {

@@ -35,15 +35,17 @@ const (
 
 // AIAsk – nội dung hộp hỏi "AI muốn chạy kịch bản" (event ai:ask).
 type AIAsk struct {
-	ID     string   `json:"id"`
-	Script string   `json:"script"`
-	Path   string   `json:"path"`
-	Steps  int      `json:"steps"`
-	From   string   `json:"from,omitempty"`   // ref node bắt đầu
-	StopAt string   `json:"stopAt,omitempty"` // ref node dừng
-	Nodes  []string `json:"nodes,omitempty"`  // ref cụm node
-	Resume bool     `json:"resume,omitempty"` // chạy tiếp với kết quả lần trước
-	Batch  []string `json:"batch,omitempty"`  // run_batch (61 M2): tên các kịch bản của lượt – hỏi một lần cả lượt
+	ID      string   `json:"id"`
+	Script  string   `json:"script"`
+	Path    string   `json:"path"`
+	Steps   int      `json:"steps"`
+	From    string   `json:"from,omitempty"`    // ref node bắt đầu
+	StopAt  string   `json:"stopAt,omitempty"`  // ref node dừng
+	Nodes   []string `json:"nodes,omitempty"`   // ref cụm node
+	Resume  bool     `json:"resume,omitempty"`  // chạy tiếp với kết quả lần trước
+	Batch   []string `json:"batch,omitempty"`   // run_batch (61 M2): tên các kịch bản của lượt – hỏi một lần cả lượt
+	Changed bool     `json:"changed,omitempty"` // file đã đổi nội dung từ lần cho phép trước (56 A1)
+	hash    string   // runHash – rỗng (run_batch) = không nhớ được quyền
 }
 
 // aiGate – các câu hỏi đang chờ + kịch bản đã cho phép đến khi đóng app.
@@ -51,7 +53,7 @@ type aiGate struct {
 	mu      sync.Mutex
 	n       int
 	pending map[string]chan string
-	allowed map[string]bool // path
+	allowed allowList // aiallow.go
 }
 
 var errAIDenied = errors.New("người dùng không cho AI chạy kịch bản này – hỏi người dùng trước khi thử lại")
@@ -66,10 +68,12 @@ func (a *App) aiAllowed(ask AIAsk) error {
 	}
 	g := &a.ai
 	g.mu.Lock()
-	if ask.Path != "" && g.allowed[ask.Path] { // kịch bản tạm (path "") nội dung đổi mỗi lần – luôn hỏi
+	ok, changed := g.allowed.check(ask.Path, ask.hash)
+	if ok {
 		g.mu.Unlock()
 		return nil
 	}
+	ask.Changed = changed
 	g.n++
 	ask.ID = strconv.Itoa(g.n)
 	ch := make(chan string, 1)
@@ -87,11 +91,8 @@ func (a *App) aiAllowed(ask AIAsk) error {
 	case ans := <-ch:
 		switch ans {
 		case aiAllowScript:
-			if ask.Path == "" {
-				return nil
-			}
 			g.mu.Lock()
-			g.allowed[ask.Path] = true
+			g.allowed.allow(ask.Path, ask.hash)
 			g.mu.Unlock()
 			return nil
 		case aiAllowOnce:
@@ -126,7 +127,7 @@ func (a *App) stopAIRun(m store.MCPSettings) {
 		a.sess.Stop(st.RunID, session.StopBySettings)
 	}
 	a.ai.mu.Lock()
-	clear(a.ai.allowed)
+	a.ai.allowed.clear()
 	a.ai.mu.Unlock()
 }
 
@@ -136,7 +137,7 @@ func (b mcpBackend) Run(sc model.Script, path string, values map[string]any, opt
 	for _, s := range sc.Steps {
 		refs[s.ID] = s.Ref
 	}
-	ask := AIAsk{Script: sc.Name, Path: path, Steps: len(sc.Steps), From: refs[opt.From], StopAt: refs[opt.StopAt], Resume: opt.SeedRun != ""}
+	ask := AIAsk{Script: sc.Name, Path: path, Steps: len(sc.Steps), From: refs[opt.From], StopAt: refs[opt.StopAt], Resume: opt.SeedRun != "", hash: runHash(sc)}
 	for _, id := range opt.Nodes {
 		ask.Nodes = append(ask.Nodes, refs[id])
 	}

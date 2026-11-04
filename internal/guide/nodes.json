@@ -1500,7 +1500,7 @@
       "Có node riêng làm việc đó (tệp, nén, tiến trình) thì dùng node đó"
     ],
     "tips": [
-      "Mỗi nội dung lệnh phải được bạn đồng ý – đổi lệnh thì hỏi lại.",
+      "Mỗi nội dung lệnh phải được bạn đồng ý – đổi lệnh thì hỏi lại. Lệnh chỉ gọi một file script (`sh x.sh`, `python3 y.py`) thì sửa nội dung file cũng hỏi lại.",
       "Chữ in ra vào output để lọc tiếp."
     ],
     "fields": [

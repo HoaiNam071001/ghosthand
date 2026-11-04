@@ -3,6 +3,13 @@
 Những việc **đã xong code** nhưng cần người dùng thử trong app thật (`wails dev`). Mới nhất ở trên.
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
+
+## 56 – Học từ MCP ngoài, đợt A (2026-11-04) · [56](phase3/56-hoc-tu-mcp-ngoai.md)
+
+- [ ] (A1) Cài đặt → AI mức *Hỏi trước khi chạy*: AI chạy một kịch bản → bấm *Cho phép đến khi đóng app* → AI chạy lại không hỏi; AI `update_script` rồi chạy → hỏi lại, hộp ghi *Kịch bản đã đổi từ lần cho phép trước*; chỉ kéo node trên canvas / lưu tay không đổi gì khác → không hỏi lại. Kịch bản tạm (`run_script script=…`) cho phép đến khi đóng app → gửi lại đúng nội dung không hỏi
+- [ ] (A2) Node Chạy lệnh `sh ~/x.sh` (file có thật): Chạy → hộp xác nhận ghi *gọi file …/x.sh*; đồng ý → chạy lại không hỏi; sửa nội dung `x.sh` → bấm Chạy hỏi lại
+- [x] (A3) Qua MCP: chạy kịch bản tạm có node chờ chữ không có trên màn 3 lần y nguyên → lần 3 kết quả có `stuck`; kịch bản click vào chỗ trống rồi chờ chữ → node chờ lỗi có `error.detail.screenUnchanged` = ref node click – *AI thử macOS 2026-11-04 (8775642-dirty): lần 3 có `stuck`; click chỗ trống thanh menu → `screenUnchanged: "n3"`; click nền desktop (macOS ẩn cửa sổ – màn đổi thật) → không báo, đúng*
+
 ## 61 – Dùng AI gọn hơn (2026-11-04) · [61](phase3/61-dung-ai-gon.md)
 
 - [ ] Terminal: `ghosthand test --samples --level 1` → mỗi mẫu một dòng ✓ / ✗ (dòng lỗi có mã + node + lý do), dòng cuối *Qua x/y · lỗi z*, mã thoát 1 nếu có lỗi; không có dòng nào mới trong Lịch sử chạy

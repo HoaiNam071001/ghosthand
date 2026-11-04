@@ -1,5 +1,5 @@
 // AI muốn chạy kịch bản (bước 31b, mức "Hỏi trước khi chạy"): tên kịch bản, phần sẽ chạy, Cho phép một lần /
-// Cho phép kịch bản này đến khi đóng app / Từ chối. Enter = cho phép một lần, Esc = từ chối. Lượt run_batch (61 M2)
+// Cho phép kịch bản này đến khi đóng app (theo nội dung – AI sửa thì hỏi lại, 56 A1) / Từ chối. Enter = cho phép một lần, Esc = từ chối. Lượt run_batch (61 M2)
 // hỏi một lần cho cả lượt – liệt kê tên, không có "đến khi đóng app".
 import { useEffect } from 'react';
 import { answerAI, useAIAsk } from '../aiAsk';
@@ -37,8 +37,9 @@ export default function AIRunDialog() {
             ) : (
               <div id="ai-run-desc" className="flex flex-col gap-1 text-[13px]">
                 <span>Chạy {aiRunScope(ask)} – chuột và bàn phím sẽ do kịch bản điều khiển.</span>
+                {ask.changed && <span className="font-medium text-warn">Kịch bản đã đổi từ lần cho phép trước.</span>}
                 {ask.path ? <span className="truncate font-mono text-xs text-muted" title={ask.path}>{ask.path}</span>
-                  : <span className="text-xs text-muted">Kịch bản tạm AI gửi kèm (chưa lưu, {ask.steps} node) – lần sau vẫn hỏi lại.</span>}
+                  : <span className="text-xs text-muted">Kịch bản tạm AI gửi kèm (chưa lưu, {ask.steps} node).</span>}
               </div>
             )}
             <span className="text-xs text-muted">Dừng bất cứ lúc nào: F8 hoặc đưa chuột chạm góc màn hình{ask.batch ? ' – dừng cả lượt' : ''}.</span>
@@ -46,8 +47,8 @@ export default function AIRunDialog() {
         </div>
         <div className="flex flex-wrap items-center gap-2 border-t border-line bg-chrome px-[18px] py-3">
           <button onClick={() => answerAI('deny')} className="h-9 rounded-control border border-line bg-surface px-3.5 hover:bg-hover">Từ chối <span className="font-mono text-[11px] text-muted">Esc</span></button>
-          {ask.path && <button onClick={() => answerAI('script')} className="ml-auto h-9 rounded-control border border-line bg-surface px-3.5 hover:bg-hover">Cho phép đến khi đóng app</button>}
-          <button autoFocus onClick={() => answerAI('once')} className={`btn-primary h-9 ${ask.path ? '' : 'ml-auto'} rounded-control px-4 font-semibold text-on-accent`}>Cho phép lần này</button>
+          {!ask.batch && <button onClick={() => answerAI('script')} title="Cho phép đúng nội dung này – AI sửa kịch bản thì hỏi lại" className="ml-auto h-9 rounded-control border border-line bg-surface px-3.5 hover:bg-hover">Cho phép đến khi đóng app</button>}
+          <button autoFocus onClick={() => answerAI('once')} className={`btn-primary h-9 ${ask.batch ? 'ml-auto' : ''} rounded-control px-4 font-semibold text-on-accent`}>Cho phép lần này</button>
         </div>
       </div>
     </div>

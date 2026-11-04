@@ -55,7 +55,7 @@ type App struct {
 // NewApp tạo App; background = app do AI mở nền (cờ `--background`).
 func NewApp(background bool) *App {
 	a := &App{mode: ModeMain, winDisp: -1, ovDisp: -1, hub: api.NewHub(), mcpc: &mcpclient.Manager{}, revs: store.NewRevisions(), schedRuns: map[string]model.Schedule{},
-		ai: aiGate{pending: map[string]chan string{}, allowed: map[string]bool{}}}
+		ai: aiGate{pending: map[string]chan string{}, allowed: newAllowList()}}
 	a.sess = session.New(a.emit, session.Deps{MCP: a.mcpCall, Stage: a.stageRun})
 	a.sess.OnEnd = a.onRunEnd
 	a.sess.OnActivity = a.onActivity

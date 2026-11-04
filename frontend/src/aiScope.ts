@@ -1,6 +1,6 @@
 // Chữ cho hộp hỏi AI chạy kịch bản (bước 31b) – logic thuần, aiAsk.ts / AIRunDialog dùng.
 
-export type AIAsk = { id: string; script: string; path: string; steps: number; from?: string; stopAt?: string; nodes?: string[]; resume?: boolean; batch?: string[] };
+export type AIAsk = { id: string; script: string; path: string; steps: number; from?: string; stopAt?: string; nodes?: string[]; resume?: boolean; batch?: string[]; changed?: boolean };
 
 // Mô tả phần sẽ chạy: cả kịch bản / từ n3 / đến n5 / cụm n2, n3.
 export function aiRunScope(a: AIAsk): string {

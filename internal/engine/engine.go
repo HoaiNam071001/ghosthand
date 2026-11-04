@@ -104,32 +104,34 @@ type Engine struct {
 	allowDanger bool                                 // người dùng đã xác nhận thao tác nguy hiểm của kịch bản (Options.AllowDanger)
 	browser     web.Browser                          // node web (webstep.go) – nil = không điều khiển trình duyệt
 
-	onNode   func(model.StepResult)       // mỗi node chạy xong (event engine:node) – có thể nil
-	shots    map[string]image.Image       // ảnh màn hình lúc node thất bại theo tên file (nil = không chụp – runlog.go)
-	failN    int                          // số ảnh lúc lỗi đã chụp (shots còn có ảnh sau mỗi node)
-	eachShot bool                         // chụp sau mỗi node thành công (AI xin – shots.go)
-	eachKeep []string                     // tên ảnh sau mỗi node còn giữ, cũ trước
-	eachN    int                          // số ảnh sau node đã chụp (đặt tên)
-	debug    bool                         // dừng ở node có Breakpoint (chạy từ app); không thì bỏ qua breakpoint
-	step     atomic.Bool                  // chạy từng node: dừng trước mỗi node (StepScript bật, ResumeScript tắt)
-	failed   string                       // id node làm lần chạy dừng vì lỗi (runner gửi engine:failed)
-	miss     *FindResult                  // node chờ ảnh hết giờ: chỗ giống nhất (để xem lại vì sao không thấy)
-	tpls     map[string]vision.Template   // ảnh mẫu đã giải mã theo id node
-	ocrMemo  map[model.Rect]ocrMemo       // chữ đọc lần trước theo vùng chụp – điểm ảnh không đổi thì khỏi OCR lại (elementread.go)
-	byID     map[string]model.Step        // node theo id (run đặt)
-	order    map[string]int               // số thứ tự hiển thị của node (model.FlowOrder) – thanh mini
-	results  map[string]*model.StepResult // kết quả lần chạy gần nhất của từng node trong vòng này
-	rv       runVars                      // bảng tra biến {{nX…}} / {{last…}} / {{vars…}}
-	counts   map[string]int               // node Đếm: số lần đã đi qua trong vòng này
-	iters    iterStack                    // lượt của các node lặp đang mở (bước 60 – StepResult.Iter)
-	lists    map[string]*listCursor       // node Lặp qua danh sách: danh sách đã nạp + phần tử kế (foreach.go)
-	stopAt   string                       // Options.StopAt
-	sim      *Simulate                    // Options.Simulate
-	pins     map[string]model.StepResult  // Options.Pins
-	seed     *Carry                       // Options.Seed
-	shotsDir string                       // Options.ShotsDir
-	reached  bool                         // đã tới StopAt
-	timedOut bool                         // dừng vì hết MaxMinutes (kết thúc bình thường)
+	onNode      func(model.StepResult)       // mỗi node chạy xong (event engine:node) – có thể nil
+	shots       map[string]image.Image       // ảnh màn hình lúc node thất bại theo tên file (nil = không chụp – runlog.go)
+	failN       int                          // số ảnh lúc lỗi đã chụp (shots còn có ảnh sau mỗi node)
+	eachShot    bool                         // chụp sau mỗi node thành công (AI xin – shots.go)
+	watchClicks bool                         // Options.WatchClicks (clickwatch.go)
+	lastClick   *clickMark                   // ảnh trước node chuột vừa chạy – node kế lỗi thì so (clickwatch.go)
+	eachKeep    []string                     // tên ảnh sau mỗi node còn giữ, cũ trước
+	eachN       int                          // số ảnh sau node đã chụp (đặt tên)
+	debug       bool                         // dừng ở node có Breakpoint (chạy từ app); không thì bỏ qua breakpoint
+	step        atomic.Bool                  // chạy từng node: dừng trước mỗi node (StepScript bật, ResumeScript tắt)
+	failed      string                       // id node làm lần chạy dừng vì lỗi (runner gửi engine:failed)
+	miss        *FindResult                  // node chờ ảnh hết giờ: chỗ giống nhất (để xem lại vì sao không thấy)
+	tpls        map[string]vision.Template   // ảnh mẫu đã giải mã theo id node
+	ocrMemo     map[model.Rect]ocrMemo       // chữ đọc lần trước theo vùng chụp – điểm ảnh không đổi thì khỏi OCR lại (elementread.go)
+	byID        map[string]model.Step        // node theo id (run đặt)
+	order       map[string]int               // số thứ tự hiển thị của node (model.FlowOrder) – thanh mini
+	results     map[string]*model.StepResult // kết quả lần chạy gần nhất của từng node trong vòng này
+	rv          runVars                      // bảng tra biến {{nX…}} / {{last…}} / {{vars…}}
+	counts      map[string]int               // node Đếm: số lần đã đi qua trong vòng này
+	iters       iterStack                    // lượt của các node lặp đang mở (bước 60 – StepResult.Iter)
+	lists       map[string]*listCursor       // node Lặp qua danh sách: danh sách đã nạp + phần tử kế (foreach.go)
+	stopAt      string                       // Options.StopAt
+	sim         *Simulate                    // Options.Simulate
+	pins        map[string]model.StepResult  // Options.Pins
+	seed        *Carry                       // Options.Seed
+	shotsDir    string                       // Options.ShotsDir
+	reached     bool                         // đã tới StopAt
+	timedOut    bool                         // dừng vì hết MaxMinutes (kết thúc bình thường)
 
 	last    model.Point // chỗ engine vừa đưa chuột tới – cho bước kéo "từ điểm trước đó"
 	hasLast bool

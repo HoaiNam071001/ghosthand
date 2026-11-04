@@ -97,9 +97,15 @@ func (e *Engine) runLoop(ctx context.Context, loop int) error {
 				loop, maxNodeRuns, strings.Join(trail, " → "))
 		}
 		e.breakBefore(s, loop)
+		prevClick := e.lastClick
+		e.lastClick = e.markClick(s)
 		res, wait := e.execNode(ctx, s, loop)
+		if res.Status != model.StatusSuccess {
+			e.lastClick = nil // node chuột lỗi (vd không thấy ảnh) chưa bấm gì
+		}
 		if res.Status == model.StatusFail {
 			e.addContext(&res)
+			e.noteUnchanged(&res, prevClick)
 			if ch := e.treeChanges(); ch != nil && res.Error != nil {
 				if res.Error.Detail == nil {
 					res.Error.Detail = map[string]any{}

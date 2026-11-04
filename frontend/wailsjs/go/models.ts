@@ -2158,6 +2158,8 @@ export namespace script {
 	    lang?: string;
 	    script?: string;
 	    dir?: string;
+	    file?: string;
+	    fileHash?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new DangerOp(source);
@@ -2173,6 +2175,8 @@ export namespace script {
 	        this.lang = source["lang"];
 	        this.script = source["script"];
 	        this.dir = source["dir"];
+	        this.file = source["file"];
+	        this.fileHash = source["fileHash"];
 	    }
 	}
 	export class EmbedResult {

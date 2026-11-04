@@ -100,6 +100,7 @@ type Server struct {
 	tpls   templates   // ảnh mẫu AI vừa khoanh (capture_template) chờ ghi vào node
 	drafts drafts      // kịch bản nháp của run_step (31c)
 	snap   snapshots   // cây phần tử AI vừa xem (số # → phần tử) và cây “trước” của screen_changes (43 A)
+	fails  failStreak  // lỗi giống hệt liên tiếp (stuck.go)
 }
 
 // instructions – client nạp sẵn khi kết nối (trước mọi tool): đủ mô hình + cú pháp gọn để viết flow đơn giản ngay, và
