@@ -111,6 +111,11 @@ Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi t
 ## Thêm – kéo node thả lên node khác để nối nhanh
 - [ ] Giữ Ctrl / Cmd, kéo node A thả lên node B → nối cổng thành công A → B, A về chỗ cũ; Option thay Ctrl → cổng thất bại; node switch giữ Ctrl + F2 → nối case thứ 2; kéo không giữ phím → chỉ dời node như cũ
 
+## 53 – MCP: annotations, nhật ký lệnh AI, chống injection · [53](phase3/53-mcp-hoc-tu-openclaw.md)
+
+- [ ] Cài đặt → AI (MCP): cho AI chạy vài lệnh (đọc, chạy kịch bản có `{{secret.x}}`) → mục *Lệnh AI gần đây* hiện giờ, tool, client, thời lượng; bấm một dòng thấy tham số, mật khẩu / token hiện `••••`; Claude Desktop / ChatGPT thấy tool đọc không hỏi quyền, tool chạy thì hỏi (tuỳ client)
+- [ ] (D) Đi tới URL một trang tải rất chậm với *Thử lại* bật: lần thử lại không tải lại trang từ đầu (trang đang tải tiếp tục)
+
 ## 52 – MCP ít token · [52](phase3/52-mcp-it-token.md)
 - [ ] Claude Desktop / Code nối MCP, nhờ tạo kịch bản có rẽ nhánh (vd chờ chữ, không thấy thì cuộn thử lại 5 lần): AI gọi `get_step_types compact=true` rồi `type=a,b,c` (không gọi bản đầy đủ), gửi cạnh bằng `flow`, `validate_script` ok, mở trên app đúng nhánh
 - [ ] Nhờ AI sửa kịch bản đó (vd đổi số lần thử, thêm node): AI `read_script` (dạng gọn) → `update_script` chỉ gửi phần đổi; kịch bản trên app giữ nguyên vị trí thẻ node
@@ -589,5 +594,3 @@ Người dùng chốt 2026-10-18: việc qua Chrome của app làm sau cùng –
 - [ ] Inspector node Click/Chờ theo phần tử: *Chọn trên màn* một nút → hiện danh sách gợi ý (duy nhất / N chỗ, bền / dễ hỏng); bấm một dòng đổi ô *Cách tìm* + *Chỗ thứ*
 - [ ] AI chạy `run_script shots: each`: node mở popup có `changes.added`; node lỗi sau đó có `error.detail.changes`
 - [ ] (fix focus click, macOS) Mở Chrome thường, để cửa sổ khác (terminal) ở trước, AI chụp màn hình rồi `run_step` click vào nút trên trang → cú click đầu ăn ngay (không phải click hai lần); chạy trong app (F8) cũng vậy
-- [ ] (53) Cài đặt → AI (MCP): cho AI chạy vài lệnh (đọc, chạy kịch bản có `{{secret.x}}`) → mục *Lệnh AI gần đây* hiện giờ, tool, client, thời lượng; bấm một dòng thấy tham số, mật khẩu / token hiện `••••`; Claude Desktop / ChatGPT thấy tool đọc không hỏi quyền, tool chạy thì hỏi (tuỳ client)
-- [ ] (53 D) Đi tới URL một trang tải rất chậm với *Thử lại* bật: lần thử lại không tải lại trang từ đầu (trang đang tải tiếp tục)

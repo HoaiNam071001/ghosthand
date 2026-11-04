@@ -1,6 +1,6 @@
 # 58. Dấu hiệu "app đang điều khiển máy"
 
-- [ ] **58. Dấu hiệu đang điều khiển** *(người dùng yêu cầu 2026-11-01: AI chạy mà không biết còn chạy không, app có đang cầm chuột không – màn hình đứng im, sợ chạm vào làm hỏng)* – người ngồi máy nhìn là biết: đang thao tác (đừng chạm), đang chờ gì, đang tạm dừng, đã xong.
+- [x] **58. Dấu hiệu đang điều khiển** *(người dùng yêu cầu 2026-11-01: AI chạy mà không biết còn chạy không, app có đang cầm chuột không – màn hình đứng im, sợ chạm vào làm hỏng)* – người ngồi máy nhìn là biết: đang thao tác (đừng chạm), đang chờ gì, đang tạm dừng, đã xong.
   - **Đã chốt (2026-11-01):** viền sáng quanh mép màn hình + thanh mini ghi rõ trạng thái; không làm huy hiệu cạnh con trỏ.
   - [x] D1. Trạng thái chạy chung (Go → event): `acting` (đang bấm / gõ / kéo – đừng chạm) | `waiting` (đang chờ ảnh / chữ / phần tử / màn hình – kèm thứ đang chờ + giây còn lại) | `paused` (người dùng đụng chuột – kèm đếm ngược tự chạy tiếp [57 B4](57-ai-chay-on-dinh.md)) | `asking` (chờ người dùng đồng ý) | `done` / `failed`; nguồn chạy (bạn / AI / hẹn giờ / CLI). Một chỗ phát cho thanh mini, viền, API SSE, `wait_run`
   - [x] D2. Viền quanh màn hình: cửa sổ native riêng (ngoài cửa sổ Wails – Wails chỉ một cửa sổ, đang là thanh mini), trong suốt, click xuyên qua, không lấy focus, trên mọi Space / app toàn màn hình (`winfloat`); màn có thao tác (nhiều màn: màn của điểm sắp bấm). Màu theo trạng thái: `acting` sáng + chạy nhẹ, `waiting` mờ, `paused` vàng, không có khi xong. macOS NSWindow trước, Windows layered window (`WS_EX_TRANSPARENT`) sau
