@@ -1,10 +1,10 @@
-// Hỏi lưu trước khi bỏ thay đổi chưa lưu (kịch bản mới, mở kịch bản khác, đóng app) – bước 21.
+// Hỏi lưu trước khi bỏ thay đổi chưa lưu (kịch bản mới, mở kịch bản khác) – bước 21.
 // Enter = Lưu, Esc = Huỷ.
 import { useEffect } from 'react';
 import { answerPending, useFile } from '../scriptFile';
 import { useEditor } from '../store';
 
-const WHY = { new: 'tạo kịch bản mới', open: 'mở kịch bản khác', recent: 'mở kịch bản khác', sample: 'mở kịch bản mẫu', import: 'nhập gói kịch bản', quit: 'đóng app' };
+const WHY = { new: 'tạo kịch bản mới', open: 'mở kịch bản khác', recent: 'mở kịch bản khác', sample: 'mở kịch bản mẫu', import: 'nhập gói kịch bản' };
 
 export default function SaveChangesDialog() {
   const { pending } = useFile();

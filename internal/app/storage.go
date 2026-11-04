@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
@@ -20,6 +21,7 @@ import (
 const (
 	scriptExt  = ".json"
 	dialogName = "Kịch bản Ghosthand"
+	closeWait  = 2 * time.Second // đóng app: chờ frontend ghi nháp tối đa
 )
 
 // ScriptFile – kịch bản vừa mở và đường dẫn file của nó. Path "" = người dùng huỷ hộp thoại.
@@ -151,12 +153,9 @@ func (a *App) SaveDraft(d store.Draft) error { return store.SaveDraft(d) }
 // LoadDraft trả bản nháp lần trước; nil nếu chưa có hoặc hỏng (bỏ qua, mở kịch bản trống).
 func (a *App) LoadDraft() *store.Draft { return store.LoadDraft() }
 
-// ClearDraft xoá bản nháp (đóng app chọn "Không lưu").
-func (a *App) ClearDraft() error { return store.ClearDraft() }
+// ---- Đóng app: ghi nháp rồi đóng ----
 
-// ---- Hỏi lưu khi đóng app ----
-
-// SetEditorState: frontend báo kịch bản đang soạn (file, có thay đổi chưa lưu) – đóng app khi chưa lưu thì hỏi trước;
+// SetEditorState: frontend báo kịch bản đang soạn (file, có thay đổi chưa lưu) – đóng app khi chưa lưu thì ghi nháp trước;
 // AI (MCP) không ghi đè kịch bản đang sửa dở.
 func (a *App) SetEditorState(path string, dirty bool) {
 	a.mu.Lock()
@@ -164,7 +163,7 @@ func (a *App) SetEditorState(path string, dirty bool) {
 	a.mu.Unlock()
 }
 
-// ConfirmQuit đóng app sau khi frontend đã hỏi (Lưu / Không lưu).
+// ConfirmQuit đóng app sau khi frontend đã ghi xong bản nháp.
 func (a *App) ConfirmQuit() {
 	a.mu.Lock()
 	a.quitting = true
@@ -172,13 +171,16 @@ func (a *App) ConfirmQuit() {
 	runtime.Quit(a.ctx)
 }
 
-// beforeClose (OnBeforeClose): còn thay đổi chưa lưu → giữ app, nhờ frontend hỏi (event app:confirmClose).
+// beforeClose (OnBeforeClose): đóng luôn, không hỏi lưu – còn thay đổi chưa lưu thì giữ app một nhịp để frontend
+// ghi nháp ngay (event app:closing → ConfirmQuit); mở lại khôi phục đúng bản đang dở. Frontend treo thì quá
+// closeWait vẫn đóng.
 func (a *App) beforeClose(ctx context.Context) (prevent bool) {
 	a.mu.Lock()
-	ask := a.dirty && !a.quitting
+	wait := a.dirty && !a.quitting
 	a.mu.Unlock()
-	if ask {
-		runtime.EventsEmit(ctx, "app:confirmClose")
+	if wait {
+		runtime.EventsEmit(ctx, "app:closing")
+		time.AfterFunc(closeWait, a.ConfirmQuit)
 	}
-	return ask
+	return wait
 }

@@ -39,8 +39,6 @@ export function CheckUpdate():Promise<update.Info>;
 
 export function ClaudeDesktopConfigPath():Promise<string>;
 
-export function ClearDraft():Promise<void>;
-
 export function ClearPin(arg1:string,arg2:string,arg3:string):Promise<void>;
 
 export function ClearRuns(arg1:string,arg2:string):Promise<void>;

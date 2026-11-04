@@ -3,7 +3,7 @@
 import { useSyncExternalStore } from 'react';
 import { EventsOn } from '../wailsjs/runtime/runtime';
 import {
-  AIScripts, ClearDraft, ConfirmQuit, ExportPack, ForgetRecent, ImportPack, LoadDraft, NewScript, OpenSample, OpenScript, OpenScriptPath, RecentScripts, SaveDraft, SaveScript, SaveScriptAs, SetEditorState, TrialScripts,
+  AIScripts, ConfirmQuit, ExportPack, ForgetRecent, ImportPack, LoadDraft, NewScript, OpenSample, OpenScript, OpenScriptPath, RecentScripts, SaveDraft, SaveScript, SaveScriptAs, SetEditorState, TrialScripts,
 } from '../wailsjs/go/app/App';
 import { model, store } from '../wailsjs/go/models';
 import { getEditor, markSaved, reloadScript, replaceScript, setNotice, subscribe } from './store';
@@ -15,9 +15,9 @@ import { Script } from './types';
 
 const DRAFT_DELAY_MS = 800;
 
-// Việc đang chờ người dùng trả lời "Lưu thay đổi?" – chạy sau khi Lưu / Không lưu.
+// Việc đang chờ người dùng trả lời "Lưu thay đổi?" – chạy sau khi Lưu / Không lưu. Đóng app không hỏi (giữ nháp).
 type Pending = { action: 'new' } | { action: 'open' } | { action: 'recent'; path: string } | { action: 'sample'; id: string; name: string }
-  | { action: 'import' } | { action: 'quit' };
+  | { action: 'import' };
 
 type FileState = {
   recent: string[]; // mở gần đây, mới nhất trước
@@ -74,13 +74,8 @@ export async function save(as = false): Promise<boolean> {
 
 // ---- Đổi kịch bản: hỏi lưu nếu có thay đổi ----
 
-// discard: đóng app chọn "Không lưu" thì bỏ luôn bản nháp – lần sau mở kịch bản trống.
-async function run(p: Pending, discard = false) {
+async function run(p: Pending) {
   try {
-    if (p.action === 'quit') {
-      if (discard) await ClearDraft().catch(() => {});
-      return ConfirmQuit();
-    }
     revision = 0;
     if (p.action === 'new') return replaceScript(fromGo(await NewScript()), null, false, 'Kịch bản mới');
     // mẫu thử (bước 33): bản sao chưa có file – Lưu sẽ hỏi chỗ lưu, mẫu gốc không đổi
@@ -93,7 +88,7 @@ async function run(p: Pending, discard = false) {
   } catch (e) {
     setFs({ error: errText(e) });
   } finally {
-    if (p.action !== 'quit') refreshRecent();
+    refreshRecent();
   }
 }
 
@@ -131,7 +126,7 @@ export async function answerPending(choice: 'save' | 'discard' | 'cancel') {
   setFs({ pending: null });
   if (!p || choice === 'cancel') return;
   if (choice === 'save' && !(await save())) return;
-  run(p, choice === 'discard');
+  run(p);
 }
 
 // ---- Kịch bản bị ghi từ ngoài app (API / AI – bước 22): nạp lại, bản đang soạn vào hoàn tác ----
@@ -204,11 +199,9 @@ async function init() {
 
 if (inWails) {
   init();
-  // Đóng app (nút ✕, Cmd+Q) khi còn thay đổi chưa lưu: Go giữ app lại và nhờ hỏi.
-  EventsOn('app:confirmClose', () => {
-    if (location.hash) setWindowMode('main');
-    setFs({ pending: { action: 'quit' } });
-  });
+  // Đóng app (nút ✕, Cmd+Q) khi còn thay đổi chưa lưu: không hỏi – ghi nháp ngay (kể cả còn chờ giãn cách) rồi
+  // đóng; mở lại khôi phục bản đang dở.
+  EventsOn('app:closing', () => flushDraft().finally(() => ConfirmQuit()));
   EventsOn('script:changed', onScriptChanged);
   // AI gọi open_in_app (MCP – bước 31); Go đã chặn khi đang dở kịch bản khác, còn lại vẫn qua hỏi lưu
   EventsOn('mcp:open', (path: string) => {

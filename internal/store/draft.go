@@ -2,7 +2,6 @@ package store
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -68,15 +67,4 @@ func loadDraft(dir string) *Draft {
 	d := raw.Draft
 	d.Script = sc
 	return &d
-}
-
-func ClearDraft() error {
-	dir, err := ConfigDir()
-	if err != nil {
-		return err
-	}
-	if err := os.Remove(filepath.Join(dir, draftFile)); err != nil && !errors.Is(err, os.ErrNotExist) {
-		return err
-	}
-	return nil
 }

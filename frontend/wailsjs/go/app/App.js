@@ -50,10 +50,6 @@ export function ClaudeDesktopConfigPath() {
   return window['go']['app']['App']['ClaudeDesktopConfigPath']();
 }
 
-export function ClearDraft() {
-  return window['go']['app']['App']['ClearDraft']();
-}
-
 export function ClearPin(arg1, arg2, arg3) {
   return window['go']['app']['App']['ClearPin'](arg1, arg2, arg3);
 }

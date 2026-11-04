@@ -4,6 +4,10 @@ Những việc **đã xong code** nhưng cần người dùng thử trong app th
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
 
+## 21 – Đóng app giữ bản đang dở (2026-11-04) · [21](phase3/21-luu-tai.md)
+
+- [ ] Sửa kịch bản (chưa lưu) rồi đóng ngay bằng ✕ / Cmd+Q (không chờ) → app đóng luôn, không hỏi; mở lại → đúng bản vừa sửa, nhãn *Chưa lưu*, báo *Đã khôi phục bản nháp chưa lưu*; Mới / Mở khác khi chưa lưu vẫn hỏi lưu
+
 ## 56 – Học từ MCP ngoài, đợt A + B1 + D1 (2026-11-04) · [56](phase3/56-hoc-tu-mcp-ngoai.md)
 
 - [ ] (C1–C2) Qua MCP: `list_scripts` có `total` / `totalPages` / `hasNextPage`, `pageIdx: 1` sang trang sau; chạy kịch bản tạm có node Tìm tất cả nhiều chỗ / Chạy lệnh in dài → output trong kết quả chỉ 20 mục + “… còn N mục”, chuỗi giữ đầu + cuối kèm “… bỏ N ký tự …”, node sau vẫn đọc đủ – *chưa thử trên app: make dev-install bị app từ chối thoát (kịch bản đang soạn chưa lưu)*

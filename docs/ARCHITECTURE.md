@@ -74,7 +74,7 @@ component ──gọi──► store/nodes|control|points|multi ──► flow/e
 ### Lưu / mở (storage.go → `store` / `script` ↔ scriptFile.ts)
 
 - File `.json` (`ScriptVersion` = 4; cũ hơn từ chối, không chuyển đổi). Mở: `store.ReadScriptFile` → `script.DecodeScript` → `checkScript` (chỉ sửa cấu trúc: ref trùng, cạnh hỏng…) – **không** `validateScript` (bản soạn dở vẫn mở được).
-- Nháp `draft.json` (kịch bản + path + dirty) – mở app nạp lại. Đóng app khi dirty: `beforeClose` chặn → event `app:confirmClose` → `SaveChangesDialog` → `ConfirmQuit`.
+- Nháp `draft.json` (kịch bản + path + dirty) – mở app nạp lại. Đóng app không hỏi lưu: khi dirty `beforeClose` giữ một nhịp → event `app:closing` → frontend ghi nháp ngay → `ConfirmQuit` (quá 2 s vẫn đóng); mở lại khôi phục bản đang dở. `SaveChangesDialog` chỉ còn cho Mới / Mở khác / Mẫu / Nhập gói.
 - Thư mục cấu hình `os.UserConfigDir()/ghosthand/`: `settings.json` (theme, mở gần đây), `draft.json`, `inputs.json` (giá trị input lần trước / preset theo kịch bản), `runs/<tên>-<hash path>/` (lịch sử chạy), `sandbox/` (trang sân thử của Mẫu thử, ghi đè mỗi lần mở mẫu).
 - **Nơi lưu** (bước 41, `store/storagedirs.go`): `Settings.Storage` (`scriptsDir`, `aiScriptsDir`, `shotsDir`; trống = mặc định `DefaultDirs` – Documents / Pictures + `Ghosthand`, Windows qua `SHGetKnownFolderPath` trong `knownfolder_windows.go`). `ScriptsDir` – hộp thoại Lưu lần đầu / Mở; `AIScriptsDir` – MCP `create_script` (trống = theo `scriptsDir`); `ShotsDir` → `session.Deps.ShotsDir` → `engine.Options.ShotsDir` (node Chụp màn hình để trống `saveDir`). Thư mục đã chọn không còn → lỗi gợi ý *Về mặc định*, không tự đổi chỗ. Cài đặt → tab Lưu trữ (`settings/StorageSettings`).
 - Mẫu thử (bước 33): `OpenSample` → `samples.Open` (qua `DecodeScript` như file) → `scriptFile.openSample` mở như kịch bản mới chưa có file (hỏi lưu nếu đang dirty).
@@ -122,7 +122,7 @@ Dừng / tạm dừng: `StopScript` (huỷ ctx), `PauseScript` / `ResumeScript` 
 | Nhóm | Method |
 |---|---|
 | Model | `NewStep(type)`, `NewScript()`, `StepTypes()`, `StepOnlyOS()` (loại node chỉ chạy trên một hệ điều hành – `model/platform.go`), `Platform()` (GOOS; modal thêm node gắn nhãn *Chỉ macOS / Windows*), `FlowGuide()` (mô tả cho AI) |
-| File | `SaveScript`, `SaveScriptAs`, `OpenScript`, `OpenScriptPath`, `RecentScripts`, `ForgetRecent` (bỏ một / cả danh sách Mở gần đây – không xoá file), `SaveDraft`, `LoadDraft`, `ClearDraft`, `SetEditorState` (file + cờ chưa lưu), `ConfirmQuit`, `AIScripts` (file AI tạo trong Mở gần đây) |
+| File | `SaveScript`, `SaveScriptAs`, `OpenScript`, `OpenScriptPath`, `RecentScripts`, `ForgetRecent` (bỏ một / cả danh sách Mở gần đây – không xoá file), `SaveDraft`, `LoadDraft`, `SetEditorState` (file + cờ chưa lưu), `ConfirmQuit`, `AIScripts` (file AI tạo trong Mở gần đây) |
 | Chạy | `ValidateScript`, `DangerCheck` (thao tác nguy hiểm + đã đồng ý chưa), `RunScript`, `RunStatus(runId)`, `StopScript`, `PauseScript`, `ResumeScript`, `StepScript`, `TestNode`, `PreviewList` (đọc thử danh sách node forEach), `PreviewText` (chạy thử node xử lý chữ) |
 | Hẹn giờ (bước 22) | `ListSchedules`, `SetSchedule`, `RemoveSchedule` |
 | Hỏi người dùng (56 D1, `askapi.go`) | `AnswerAsk(id, answer, text)` – trả lời node Hỏi người dùng (approve / deny + chữ ô nhập) |
@@ -156,7 +156,7 @@ Dừng / tạm dừng: `StopScript` (huỷ ctx), `PauseScript` / `ResumeScript` 
 | `engine:stopped` | `"f8"` \| `"corner"` | engineStore |
 | `hotkey:f8start` / `hotkey:f6` / `hotkey:error` | – / `Point` / chuỗi | runForm / store/points / engineStore |
 | `record:done` | – | store/record (gọi `FinishRecording`) |
-| `app:confirmClose` | – | scriptFile |
+| `app:closing` | – | scriptFile |
 | `run:started` / `run:ended` | `{runId, source, script, path, preset}` / `session.Status` (`stoppedBy`: f8 · corner · button · ai · api · settings) | engineStore (nguồn ngoài app → thanh mini; path khác kịch bản đang mở / kịch bản tạm → `foreign`: không tô canvas / nhật ký) |
 | `script:changed` | `{path, revision, source}` | scriptFile (nạp lại, làm mới Mở gần đây) |
 | `mcp:open` | `path` | scriptFile (AI gọi `open_in_app` → mở như Mở gần đây) |
