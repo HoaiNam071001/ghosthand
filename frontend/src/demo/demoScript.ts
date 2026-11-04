@@ -47,6 +47,11 @@ export const demoLibrary: LibraryProps = {
   ],
   active: 0,
   recent: ['Desktop\\farm-v2.json', 'scripts\\test-drag.json'],
+  trials: [
+    { path: 'ai\\thu-tim-nut-gui.json', name: 'Thử tìm nút Gửi', lastUsed: Date.now() - 3600_000 },
+    { path: 'ai\\thu-dang-nhap.json', name: 'Thử đăng nhập', lastUsed: Date.now() - 5 * 86400_000 },
+  ],
+  trialDays: 7,
   history: [
     { script: 'Nhắn tin Facebook', when: '14:32', result: 'Xong 3 vòng trong 1 phút 12 giây', ok: true },
     { script: 'Farm nhặt đồ', when: '08:00', result: 'Dừng: hết giờ chờ ảnh ở bước 3', ok: false },

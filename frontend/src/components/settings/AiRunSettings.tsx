@@ -1,5 +1,6 @@
 // Công tắc AI – mức chạy (bước 31b): chỉ soạn / hỏi trước khi chạy / tự chạy + trần phút mỗi lượt + tự chạy tiếp sau
-// khi người dùng đụng chuột (57 B4: touchResumeS 0 = mặc định, < 0 = tắt). Chỉ hiển thị;
+// khi người dùng đụng chuột (57 B4: touchResumeS 0 = mặc định, < 0 = tắt) + tự dọn kịch bản AI thử (61 M5: trialDays
+// cùng quy ước). Chỉ hiển thị;
 // McpSettings lưu. Tắt hẳn = công tắc MCP.
 import { store } from '../../../wailsjs/go/models';
 import { RunMode, runMode } from '../../aiLevel';
@@ -9,6 +10,7 @@ import { Switch } from '../Switch';
 
 const AI_MAX_MINUTES = 10; // khớp store.AIMaxMinutes
 const TOUCH_RESUME_S = 5; // khớp store.TouchResumeDefault
+const TRIAL_DAYS = 7; // khớp store.TrialDaysDefault
 
 const MODES: { id: RunMode; label: string }[] = [
   { id: 'edit', label: 'Chỉ soạn' },
@@ -46,6 +48,14 @@ export default function AiRunSettings({ mcp, onChange }: { mcp: store.MCPSetting
             </label>
           )}
         </>
+      )}
+      <label className="flex items-center justify-between gap-3 text-muted">Tự bỏ kịch bản AI tạo để thử vào Thùng rác
+        <Switch on={(mcp.trialDays ?? 0) >= 0} onChange={(on) => onChange({ trialDays: on ? 0 : -1 })} label="Tự dọn kịch bản AI thử" />
+      </label>
+      {(mcp.trialDays ?? 0) >= 0 && (
+        <label className="flex items-center justify-between gap-3 text-muted">Sau khi không mở
+          <NumInput value={mcp.trialDays || TRIAL_DAYS} min={1} unit="ngày" className="w-24" onChange={(trialDays) => onChange({ trialDays })} />
+        </label>
       )}
     </div>
   );

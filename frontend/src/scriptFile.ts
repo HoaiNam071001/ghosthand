@@ -3,7 +3,7 @@
 import { useSyncExternalStore } from 'react';
 import { EventsOn } from '../wailsjs/runtime/runtime';
 import {
-  AIScripts, ClearDraft, ConfirmQuit, ExportPack, ForgetRecent, ImportPack, LoadDraft, NewScript, OpenSample, OpenScript, OpenScriptPath, RecentScripts, SaveDraft, SaveScript, SaveScriptAs, SetEditorState,
+  AIScripts, ClearDraft, ConfirmQuit, ExportPack, ForgetRecent, ImportPack, LoadDraft, NewScript, OpenSample, OpenScript, OpenScriptPath, RecentScripts, SaveDraft, SaveScript, SaveScriptAs, SetEditorState, TrialScripts,
 } from '../wailsjs/go/app/App';
 import { model, store } from '../wailsjs/go/models';
 import { getEditor, markSaved, reloadScript, replaceScript, setNotice, subscribe } from './store';
@@ -22,12 +22,13 @@ type Pending = { action: 'new' } | { action: 'open' } | { action: 'recent'; path
 type FileState = {
   recent: string[]; // mở gần đây, mới nhất trước
   aiPaths: string[]; // trong recent: file AI tạo qua MCP (chip AI – bước 31)
+  trials: { items: store.Trial[]; days: number }; // kịch bản AI tạo để thử (61 M5) – nhóm riêng, không lẫn vào Mở gần đây
   draftAt: number | null; // lần cuối ghi bản nháp (ms)
   error: string; // lỗi lưu / mở gần nhất
   pending: Pending | null; // đang hiện hộp thoại hỏi lưu
 };
 
-let fs: FileState = { recent: [], aiPaths: [], draftAt: null, error: '', pending: null };
+let fs: FileState = { recent: [], aiPaths: [], trials: { items: [], days: 0 }, draftAt: null, error: '', pending: null };
 const listeners = new Set<() => void>();
 const setFs = (patch: Partial<FileState>) => {
   fs = { ...fs, ...patch };
@@ -46,7 +47,8 @@ const errText = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
 export const fileName = (path: string) => path.split(/[\\/]/).pop() ?? path;
 
-const refreshRecent = () => Promise.all([RecentScripts(), AIScripts()]).then(([recent, aiPaths]) => setFs({ recent, aiPaths })).catch(() => {});
+const refreshRecent = () => Promise.all([RecentScripts(), AIScripts(), TrialScripts()])
+  .then(([recent, aiPaths, trials]) => setFs({ recent, aiPaths, trials })).catch(() => {});
 
 // ---- Lưu ----
 

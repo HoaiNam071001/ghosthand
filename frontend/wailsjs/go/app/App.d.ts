@@ -247,4 +247,6 @@ export function TestMCPTool(arg1:string,arg2:string,arg3:string):Promise<Record<
 
 export function TestNode(arg1:model.Script,arg2:string):Promise<engine.NodeTest>;
 
+export function TrialScripts():Promise<app.TrialList>;
+
 export function ValidateScript(arg1:model.Script,arg2:Record<string, any>):Promise<void>;

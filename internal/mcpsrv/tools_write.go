@@ -24,6 +24,7 @@ type createIn struct {
 	Script  any    `json:"script,omitempty" jsonschema:"kịch bản {name, steps, flow?, start?, inputs?, loops?} – node chỉ cần type + trường cần, còn lại lấy mặc định; flow = cạnh dạng chữ [\"n1>n2>n3\", \"n2.fail>n4\"]; không có flow / edges thì nối các node theo thứ tự"`
 	Scripts []any  `json:"scripts,omitempty" jsonschema:"tạo nhiều kịch bản một lần (thay cho script)"`
 	Path    string `json:"path,omitempty" jsonschema:"chỗ lưu (tuỳ chọn, chỉ khi tạo một kịch bản); trống = thư mục kịch bản của AI, tên file theo name"`
+	Trial   bool   `json:"trial,omitempty" jsonschema:"chỉ thử – app tự dọn (không kèm path)"`
 }
 
 type updateIn struct {
@@ -56,7 +57,7 @@ func (s *Server) addWriteTools() {
 		"hints: selector có phần hay đổi (số tin chưa đọc…) – thay bằng fix."}, s.validate)
 	addTool(s, KindWrite, &mcp.Tool{Name: "create_script", Description: "Tạo một / nhiều kịch bản mới và lưu file (thư mục kịch bản của AI, " +
 		"hiện trong thư viện app với chip AI). Cấu trúc sai → không lưu, trả lỗi. Lưu được nhưng chưa chạy được (vd thiếu ảnh mẫu) → trả problems. " +
-		"Không tự mở trên app – gọi open_in_app."}, s.create)
+		"Không tự mở trên app – gọi open_in_app. Chỉ thử: run_script script=… / trial=true."}, s.create)
 	addTool(s, KindWrite, &mcp.Tool{Name: "update_script", Description: "Sửa một phần kịch bản theo id / ref node (không gửi lại cả file). " +
 		"Cần revision từ read_script; kịch bản đã đổi từ lúc đọc → lỗi conflict, đọc lại rồi sửa. " +
 		"Người dùng đang sửa dở kịch bản đó trên app → ghi ra bản sao (trả path mới)."}, s.update)
@@ -114,6 +115,9 @@ func (s *Server) create(_ context.Context, _ *mcp.CallToolRequest, in createIn) 
 	if in.Path != "" && len(raws) > 1 {
 		return fail(errors.New("path chỉ dùng khi tạo một kịch bản"))
 	}
+	if in.Path != "" && in.Trial { // chỉ dọn trong thư mục kịch bản của AI
+		return fail(errors.New("trial không đi với path – kịch bản thử luôn lưu ở thư mục của AI"))
+	}
 	scs := make([]model.Script, len(raws))
 	for i, raw := range raws { // kiểm tra hết trước – lỗi thì không lưu cái nào
 		sc, err := s.parseScript(raw)
@@ -123,7 +127,8 @@ func (s *Server) create(_ context.Context, _ *mcp.CallToolRequest, in createIn) 
 			}
 			return fail(err)
 		}
-		sc.Meta = &model.ScriptMeta{CreatedBy: model.CreatedByAI}
+		trial := in.Trial || in.Path == "" && trialName(sc.Name) // AI quen cờ nhưng đặt tên "Thử …" vẫn tính là thử
+		sc.Meta = &model.ScriptMeta{CreatedBy: model.CreatedByAI, Trial: trial}
 		scs[i] = sc
 	}
 	out := []created{}
@@ -146,6 +151,11 @@ func (s *Server) create(_ context.Context, _ *mcp.CallToolRequest, in createIn) 
 }
 
 // newPath – chỗ lưu kịch bản mới: path AI chọn (không ghi đè file đã có) hoặc thư mục của AI theo tên.
+// trialName – tên kịch bản AI hay đặt khi tạo để thử ("Thử …").
+func trialName(name string) bool {
+	return strings.HasPrefix(strings.ToLower(strings.TrimSpace(name)), "thử ")
+}
+
 func (s *Server) newPath(p, name string) (string, error) {
 	if p != "" {
 		path, err := s.resolvePath(p)

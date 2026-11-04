@@ -144,6 +144,7 @@ func (b mcpBackend) Run(sc model.Script, path string, values map[string]any, opt
 		return "", err
 	}
 	opt.MaxMinutes = store.CurrentSettings().MCP.Limit()
+	noteTrialUsed(sc, path)
 	id, err := b.a.sess.Start(sc, values, opt)
 	if errors.Is(err, session.ErrBusy) {
 		return "", fmt.Errorf("%w – chờ lần chạy đang diễn ra xong (wait_run) hoặc stop_run", err)

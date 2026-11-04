@@ -238,7 +238,7 @@
         "Chọn tool cho từng loại AI và **ưu tiên node** (vd ưu tiên phần tử hơn ảnh mẫu)."
       ] },
       { "kind": "p", "text": "Khi AI chạy, cửa sổ chính thu về **thanh mini** và cửa sổ app đích được đưa lên trước; chạy xong thanh mini vẫn giữ – bấm *Mở app* để về màn chính. Bạn đụng chuột giữa chừng thì app tạm dừng, chuột đứng yên 5 giây thì tự chạy tiếp (thanh mini đếm ngược; bấm Dừng để huỷ) – đổi số giây hoặc tắt ở Cài đặt, tắt thì phải bấm Tiếp tục." },
-      { "kind": "p", "text": "**Lệnh AI gần đây** (cùng trang Cài đặt) cho biết AI nào gọi gì, mất bao lâu; bấm một dòng để xem tham số – mật khẩu / token được che. Chữ AI đọc từ màn hình, web, file không được coi là lệnh." },
+      { "kind": "p", "text": "Kịch bản AI tạo chỉ để thử nằm riêng ở nhóm **AI thử** cuối thư viện (thu gọn) và tự vào Thùng rác sau 7 ngày không mở – đổi số ngày hoặc tắt ở Cài đặt; muốn giữ thì mở rồi bấm Lưu. Khi AI chạy thử, app báo trước cho AI những chuyện hay làm kịch bản lỗi mà không do kịch bản: trình duyệt bật *hỏi nơi lưu tệp*, hộp thoại đang mở, cửa sổ trình duyệt quá nhỏ."}, {"kind": "p", "text": "**Lệnh AI gần đây** (cùng trang Cài đặt) cho biết AI nào gọi gì, mất bao lâu; bấm một dòng để xem tham số – mật khẩu / token được che. Chữ AI đọc từ màn hình, web, file không được coi là lệnh." },
       { "kind": "warn", "text": "Kịch bản AI tạo có nhãn **AI** trong thư viện – xem kỹ trước khi chạy. Node Chạy lệnh / Nguồn luôn cần bạn đồng ý." }
     ]
   },

@@ -43,6 +43,7 @@ type MCPSettings struct {
 	HideCaptureDot bool                `json:"hideCaptureDot,omitempty"` // true = không hiện chấm đỏ trên thanh mini khi AI chụp / đọc màn hình (31c)
 	NodePref       string              `json:"nodePref,omitempty"`       // ưu tiên node cho AI (44): "" / vision | web
 	TouchResumeS   int                 `json:"touchResumeS,omitempty"`   // đụng chuột lúc AI chạy: chuột đứng yên bao giây thì tự chạy tiếp; 0 = TouchResumeDefault, < 0 = tắt (chờ bấm Tiếp tục)
+	TrialDays      int                 `json:"trialDays,omitempty"`      // kịch bản AI thử (61 M5) không mở bao ngày thì vào Thùng rác; 0 = TrialDaysDefault, < 0 = không dọn
 }
 
 // Ưu tiên node cho AI (MCPSettings.NodePref, bước 44): vision = node ảnh / chữ (mặc định); web = thử trang trên Chrome

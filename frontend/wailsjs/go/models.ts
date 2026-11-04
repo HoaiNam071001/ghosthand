@@ -186,6 +186,38 @@ export namespace app {
 	        this.output = source["output"];
 	    }
 	}
+	export class TrialList {
+	    items: store.Trial[];
+	    days: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new TrialList(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.items = this.convertValues(source["items"], store.Trial);
+	        this.days = source["days"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 
 }
 
@@ -1429,6 +1461,7 @@ export namespace model {
 	}
 	export class ScriptMeta {
 	    createdBy?: string;
+	    trial?: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new ScriptMeta(source);
@@ -1437,6 +1470,7 @@ export namespace model {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.createdBy = source["createdBy"];
+	        this.trial = source["trial"];
 	    }
 	}
 	export class ScriptInput {
@@ -2484,6 +2518,7 @@ export namespace store {
 	    hideCaptureDot?: boolean;
 	    nodePref?: string;
 	    touchResumeS?: number;
+	    trialDays?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new MCPSettings(source);
@@ -2499,6 +2534,7 @@ export namespace store {
 	        this.hideCaptureDot = source["hideCaptureDot"];
 	        this.nodePref = source["nodePref"];
 	        this.touchResumeS = source["touchResumeS"];
+	        this.trialDays = source["trialDays"];
 	    }
 	}
 	export class OverlaySettings {
@@ -2587,6 +2623,23 @@ export namespace store {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.scriptsDir = source["scriptsDir"];
 	        this.shotsDir = source["shotsDir"];
+	    }
+	}
+	
+	export class Trial {
+	    path: string;
+	    name: string;
+	    lastUsed: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Trial(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.path = source["path"];
+	        this.name = source["name"];
+	        this.lastUsed = source["lastUsed"];
 	    }
 	}
 

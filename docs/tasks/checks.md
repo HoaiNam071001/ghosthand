@@ -8,6 +8,10 @@ Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi t
 - [ ] Terminal: `ghosthand test --samples --level 1` → mỗi mẫu một dòng ✓ / ✗ (dòng lỗi có mã + node + lý do), dòng cuối *Qua x/y · lỗi z*, mã thoát 1 nếu có lỗi; không có dòng nào mới trong Lịch sử chạy
 - [ ] `ghosthand test <thư mục kịch bản của bạn> mau:go-chu` → chạy cả file trong thư mục (kể cả thư mục con) + mẫu; Ctrl+C hoặc F8 giữa chừng → dừng cả lượt, dòng cuối ghi *đã dừng (N kịch bản chưa chạy)*
 - [ ] AI gọi `run_batch` khi app ở mức *Hỏi trước khi chạy* → hộp hỏi *AI muốn chạy N kịch bản một lượt* liệt kê tên, hỏi đúng một lần; Từ chối → AI nhận lỗi, không chạy gì
+- [ ] Chrome bật *Hỏi vị trí lưu từng tệp* (máy dev đang bật) → AI chạy mẫu có node Chờ tải xong → kết quả `run_script` có `env` kind `downloadPrompt` kèm cách tắt; tắt trong Chrome rồi chạy lại → hết cảnh báo
+- [ ] Mở hộp thoại Lưu (Cmd+S trên trang Chrome) rồi AI gọi `check_permissions` → `env` có `dialog` *"Save" / "Lưu"*; cửa sổ Chrome thu nhỏ còn ~800×600, kịch bản Mở URL không có Chuẩn hoá trình duyệt → `env` có `smallWindow`
+- [ ] AI `create_script` với `trial=true` (hoặc tên "Thử …") → thư viện có nhóm **AI thử** (thu gọn, số lượng, mỗi dòng *7d*), file không hiện ở Mở gần đây; mở rồi Lưu (Cmd+S) → chuyển sang Mở gần đây, không còn trong AI thử
+- [ ] Cài đặt → AI (MCP): đổi *Sau khi không mở* = 1 ngày; sửa ngày file thử về 2 ngày trước (`touch -t`) → mở lại app → file vào Thùng rác, mất khỏi nhóm AI thử; tắt công tắc → không dọn
 - [ ] Node Chuẩn hoá trình duyệt: bật *Đặt vị trí + cỡ cửa sổ*, trình duyệt *Đang ở trước* → inspector hiện dòng đỏ *cần chọn trình duyệt*, thẻ có cảnh báo, bấm Chạy bị kiểm tra chặn; chọn Chrome nhưng để trống Tab → báo cần chọn tab; chọn Tab node Mở hoặc nhập tab → hết lỗi. Mẫu *Chuẩn hoá trình duyệt* vẫn chạy được
 
 ## Sửa – lỗi AI tìm thấy khi thử tay (2026-11-03) · [26](phase3/26-cua-so-ung-dung.md) · [58](phase3/58-dau-hieu-dang-dieu-khien.md) · [44](phase3/44-thu-trang-uu-tien-node.md)

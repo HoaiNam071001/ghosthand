@@ -112,7 +112,7 @@ func (s *Server) runStep(ctx context.Context, _ *mcp.CallToolRequest, in runStep
 		d.shots = append(d.shots, shot)
 		note = fmt.Sprintf("Node %s thành công, đã vào nháp %q (%d node). Tiếp: run_step node kế, hoặc draft save.", cur.Ref, name, len(d.steps))
 	}
-	res, _, err := s.report(ctx, id, sc, nil, nil)
+	res, _, err := s.report(ctx, id, sc, nil, nil, nil)
 	if err != nil || res == nil {
 		return res, nil, err
 	}

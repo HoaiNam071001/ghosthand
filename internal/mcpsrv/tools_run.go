@@ -10,6 +10,7 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
 	"ghosthand/internal/batch"
+	"ghosthand/internal/envcheck"
 	"ghosthand/internal/model"
 	"ghosthand/internal/perm"
 	"ghosthand/internal/script"
@@ -157,6 +158,7 @@ func (s *Server) start(ctx context.Context, sc model.Script, path string, inputs
 	for i, n := range opt.Nodes {
 		opt.Nodes[i] = nodeID(sc, n)
 	}
+	env := s.back.EnvWarnings(&sc) // dò trước khi chạy (chạy tiếp: hộp thoại kịch bản mở dở lúc lỗi cũng hiện ở đây)
 	id, err := s.back.Run(sc, path, inputs, opt)
 	if err != nil {
 		return fail(err)
@@ -164,7 +166,7 @@ func (s *Server) start(ctx context.Context, sc model.Script, path string, inputs
 	if path == "" {
 		s.temp.put(id, sc)
 	}
-	return s.report(ctx, id, sc, waitS, nil)
+	return s.report(ctx, id, sc, waitS, nil, env)
 }
 
 func (s *Server) waitRun(ctx context.Context, _ *mcp.CallToolRequest, in runIDIn) (*mcp.CallToolResult, any, error) {
@@ -173,7 +175,7 @@ func (s *Server) waitRun(ctx context.Context, _ *mcp.CallToolRequest, in runIDIn
 		return fail(err)
 	}
 	sc, _ := s.scriptOf(tr) // chỉ để lấy loại node – đọc lỗi thì bỏ
-	return s.report(ctx, in.RunID, sc, in.WaitS, in.Shots)
+	return s.report(ctx, in.RunID, sc, in.WaitS, in.Shots, nil)
 }
 
 func (s *Server) stopRun(_ context.Context, _ *mcp.CallToolRequest, in runIDIn) (*mcp.CallToolResult, any, error) {
@@ -183,8 +185,9 @@ func (s *Server) stopRun(_ context.Context, _ *mcp.CallToolRequest, in runIDIn) 
 	return ok(map[string]any{"stopped": s.back.Stop(in.RunID)})
 }
 
-// report chờ tối đa waitS giây rồi trả vết chạy (chữ) + ảnh (want = tên ảnh AI xin; nil = ảnh lỗi + ảnh mới nhất).
-func (s *Server) report(ctx context.Context, id string, sc model.Script, waitS *int, want []string) (*mcp.CallToolResult, any, error) {
+// report chờ tối đa waitS giây rồi trả vết chạy (chữ) + ảnh (want = tên ảnh AI xin; nil = ảnh lỗi + ảnh mới nhất) + cảnh
+// báo môi trường dò lúc bắt đầu (env).
+func (s *Server) report(ctx context.Context, id string, sc model.Script, waitS *int, want []string, env []envcheck.Warning) (*mcp.CallToolResult, any, error) {
 	wait := defaultWaitS
 	if waitS != nil {
 		wait = min(max(*waitS, 0), maxWaitS)
@@ -200,6 +203,9 @@ func (s *Server) report(ctx context.Context, id string, sc model.Script, waitS *
 	view := traceView(tr, sc, widths)
 	if miss := perm.Missing(s.back.Permissions(), perm.Needs(sc)); len(miss) > 0 {
 		view["missingPermissions"] = miss // node cần quyền macOS chưa cấp → lỗi permission; nhờ người dùng cấp (Cài đặt → Quyền)
+	}
+	if len(env) > 0 {
+		view["env"] = env // không chặn chạy – node lỗi thì xem có do môi trường không trước khi sửa kịch bản
 	}
 	res, _, err := ok(view)
 	if err != nil {

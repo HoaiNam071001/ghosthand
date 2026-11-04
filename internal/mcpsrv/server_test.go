@@ -17,6 +17,7 @@ import (
 	"ghosthand/internal/batch"
 	"ghosthand/internal/device/devicetest"
 	"ghosthand/internal/element"
+	"ghosthand/internal/envcheck"
 	"ghosthand/internal/model"
 	"ghosthand/internal/perm"
 	"ghosthand/internal/session"
@@ -48,6 +49,7 @@ type fakeBackend struct {
 	captures      int          // số lần NoteCapture
 	found         model.Step   // node FindImage nhận lần cuối
 	batch         *batch.Batch // run_batch (batch_test.go)
+	env           envcheck.Env // EnvWarnings dò (61 M3)
 }
 
 func (f *fakeBackend) Enabled() bool          { return true }
@@ -77,6 +79,9 @@ func (f *fakeBackend) Editor() Editor               { return f.editor }
 func (f *fakeBackend) ScriptsDir() (string, error)  { return f.dir, nil }
 func (f *fakeBackend) OpenInApp(path string) error  { f.opened = append(f.opened, path); return nil }
 func (f *fakeBackend) Permissions() []perm.Item     { return f.perms }
+func (f *fakeBackend) EnvWarnings(sc *model.Script) []envcheck.Warning {
+	return envcheck.Check(sc, f.env)
+}
 func (f *fakeBackend) SecretNames() []string        { return []string{"mat_khau_email"} }
 func (f *fakeBackend) MCPServers() []MCPServerEntry { return f.mcpServers }
 func (f *fakeBackend) Displays() []Display {
@@ -225,6 +230,31 @@ func TestCreateInvalid(t *testing.T) {
 	out, isErr = call(t, cs, "create_script", map[string]any{"script": map[string]any{"steps": []any{map[string]any{"type": "open"}}}})
 	if isErr || out["created"].([]any)[0].(map[string]any)["problems"] == nil {
 		t.Errorf("cấu trúc đúng nhưng chưa chạy được: lưu + trả problems: %v", out)
+	}
+}
+
+// 61 M5: kịch bản thử – cờ trial, hoặc AI đặt tên "Thử …"; trial không đi với path.
+func TestCreateTrial(t *testing.T) {
+	cs, back := connect(t)
+	wait := []any{map[string]any{"type": "wait"}}
+	isTrial := func(out map[string]any) bool {
+		sc, _, err := back.ReadScript(out["created"].([]any)[0].(map[string]any)["path"].(string))
+		return err == nil && sc.IsTrial()
+	}
+	for _, tc := range []struct {
+		args map[string]any
+		want bool
+	}{
+		{map[string]any{"script": map[string]any{"name": "Dò nút", "steps": wait}, "trial": true}, true},
+		{map[string]any{"script": map[string]any{"name": "Thử tìm nút", "steps": wait}}, true},
+		{map[string]any{"script": map[string]any{"name": "Gửi mail", "steps": wait}}, false},
+	} {
+		if out, isErr := call(t, cs, "create_script", tc.args); isErr || isTrial(out) != tc.want {
+			t.Errorf("%v: trial phải %v – %v", tc.args, tc.want, out)
+		}
+	}
+	if out, isErr := call(t, cs, "create_script", map[string]any{"script": map[string]any{"steps": wait}, "trial": true, "path": "x.json"}); !isErr {
+		t.Errorf("trial + path phải lỗi: %v", out)
 	}
 }
 

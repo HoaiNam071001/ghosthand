@@ -36,6 +36,7 @@ type ScriptEntry struct {
 	Name      string `json:"name"`
 	Steps     int    `json:"steps"`
 	CreatedBy string `json:"createdBy,omitempty"` // "ai" = AI tạo
+	Trial     bool   `json:"trial,omitempty"`     // AI tạo để thử – app tự dọn (61 M5)
 	Open      bool   `json:"open,omitempty"`      // đang mở trên app
 	Unsaved   bool   `json:"unsaved,omitempty"`   // đang mở và có thay đổi chưa lưu – update_script sẽ ghi ra bản sao
 	Error     string `json:"error,omitempty"`     // không đọc được file
@@ -91,7 +92,7 @@ func (s *Server) listScripts(_ context.Context, _ *mcp.CallToolRequest, _ struct
 		} else {
 			e.Name, e.Steps = sc.Name, len(sc.Steps)
 			if sc.Meta != nil {
-				e.CreatedBy = sc.Meta.CreatedBy
+				e.CreatedBy, e.Trial = sc.Meta.CreatedBy, sc.Meta.Trial
 			}
 		}
 		list = append(list, e)

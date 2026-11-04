@@ -222,6 +222,7 @@ export interface Group {
 export type AnchorMode = 'start';
 export interface ScriptMeta {
   createdBy?: 'ai';
+  trial?: boolean; // AI tạo để thử (61 M5) – nhóm "AI thử", tự dọn; lưu tay thì Go bỏ cờ
 }
 const scriptMatchesGo: [Same<keyof Script, keyof Fields<model.Script>>, Same<keyof ScriptMeta, keyof Fields<model.ScriptMeta>>, Same<keyof Group, keyof Fields<model.Group>>] = [true, true, true];
 void scriptMatchesGo;

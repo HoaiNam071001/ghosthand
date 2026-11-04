@@ -14,6 +14,7 @@ import (
 	"ghosthand/internal/batch"
 	"ghosthand/internal/element"
 	"ghosthand/internal/engine"
+	"ghosthand/internal/envcheck"
 	"ghosthand/internal/model"
 	"ghosthand/internal/perm"
 	"ghosthand/internal/session"
@@ -52,6 +53,8 @@ type Backend interface {
 	Permissions() []perm.Item     // quyền hệ điều hành + trạng thái (bước 48) – không bật hộp thoại
 	SecretNames() []string        // tên bí mật trong kho (bước 43 S10) – KHÔNG bao giờ có giá trị
 	MCPServers() []MCPServerEntry // MCP server ngoài + tool đã tải (bước 55 M7) – chỉ để đọc
+	// EnvWarnings – môi trường hay làm kịch bản lỗi giữa chừng (61 M3); sc nil = dò chung. Không bật hộp thoại.
+	EnvWarnings(sc *model.Script) []envcheck.Warning
 
 	// Chạy (31b): Run hỏi quyền theo công tắc AI (Cài đặt) rồi session.Start kịch bản sc (đọc từ path; path "" = kịch bản
 	// tạm AI gửi kèm – 46 B1); Wait / Trace / Stop theo runId.
@@ -108,7 +111,7 @@ Kịch bản gọn: {"name":"…","steps":[{"type":"open","target":"…"},{"type
 Tạo (ít token nhất): get_step_types compact=true (một lần: flow, biến, mỗi loại node một dòng khi nào dùng + cổng) → get_step_types type=a,b,c (chỉ các loại sẽ dùng) → validate_script tới khi ok → create_script → open_in_app. Thiếu thông tin (app / trang nào, giá trị nào đổi mỗi lần chạy → inputs) thì hỏi người dùng trước.
 Sửa: read_script (dạng gọn + revision) → update_script chỉ gửi phần đổi: steps [{ref, trường đổi}] (ref mới = thêm node), flow thêm / thay cạnh, removeEdges ["n2.fail"], removeSteps; kết quả trả flow mới để soát.
 Bền: mở thẳng URL / app, phím tắt, tìm chữ (waitImage findBy text → clickImage imageSource node) hơn toạ độ cứng; chờ thứ cần thấy thay vì wait cố định; lặp dữ liệu bằng forEach, không chép node.
-Thử – sửa (mẹo + cách đọc error.detail: get_step_types topic=debug): run_script (cả / stopAt / only; script = kịch bản tạm, không tạo file) → node lỗi có error.detail + ảnh → update_script (kịch bản tạm: gửi script sửa vào resume_run) → resume_run (chạy tiếp từ node lỗi, giữ biến). Soạn từng node thật: run_step + draft. Không đụng máy: simulate_script.
+Thử – sửa (mẹo + cách đọc error.detail: get_step_types topic=debug): run_script (cả / stopAt / only; script = kịch bản tạm, không tạo file – cần file thử: create_script trial=true) → node lỗi có error.detail + ảnh → update_script (kịch bản tạm: gửi script sửa vào resume_run) → resume_run (chạy tiếp từ node lỗi, giữ biến). Soạn từng node thật: run_step + draft. Không đụng máy: simulate_script.
 Xem màn hình: describe_screen (chữ + cửa sổ, rẻ) trước, screenshot khi cần nhìn; elements=true / marks=true → suggest_selector {mark} lấy selector bền; screen_changes start/end biết thao tác có tác dụng. Ảnh mẫu: capture_template → "tpl:N", find_image thử. get_mouse_position / list_windows.
 Trang web: get_preferences – nodePref web thì probe_page(url), verdict ok mới dùng node web; mặc định (vision) dùng node ảnh / chữ. Popup / hộp thoại đang mở: read_web_outline.
 App có thể chỉ cho soạn hoặc hỏi người dùng trước khi chạy (Cài đặt) – bị từ chối thì báo người dùng, không thử lại liên tục.

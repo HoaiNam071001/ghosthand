@@ -289,7 +289,11 @@ type Script struct {
 // ScriptMeta – thông tin về kịch bản, không ảnh hưởng lúc chạy.
 type ScriptMeta struct {
 	CreatedBy string `json:"createdBy,omitempty"` // "ai" = AI tạo qua MCP (chip AI ở thư viện)
+	Trial     bool   `json:"trial,omitempty"`     // AI tạo để thử (61 M5): nhóm "AI thử", tự vào Thùng rác; lưu tay thì bỏ cờ
 }
+
+// IsTrial – kịch bản AI tạo để thử (Meta.Trial).
+func (sc Script) IsTrial() bool { return sc.Meta != nil && sc.Meta.Trial }
 
 // CreatedByAI – giá trị ScriptMeta.CreatedBy của kịch bản AI tạo.
 const CreatedByAI = "ai"

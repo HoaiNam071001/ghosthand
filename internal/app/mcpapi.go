@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"ghosthand/internal/device"
+	"ghosthand/internal/envcheck"
 	"ghosthand/internal/mcpsrv"
 	"ghosthand/internal/model"
 	"ghosthand/internal/perm"
@@ -122,6 +123,13 @@ func (b mcpBackend) NoteCapture() {
 }
 
 func (b mcpBackend) Permissions() []perm.Item { return perm.Check(perm.System{}) }
+
+// EnvWarnings – dò môi trường trước khi chạy (61 M3): trình duyệt hỏi nơi lưu, hộp thoại lạ, cửa sổ trình duyệt nhỏ.
+func (b mcpBackend) EnvWarnings(sc *model.Script) []envcheck.Warning {
+	app, _ := store.BrowserProfile()
+	ws, _ := device.SystemWindows{}.List() // không đọc được cửa sổ thì chỉ bỏ phần dò cửa sổ
+	return envcheck.Check(sc, envcheck.Env{Windows: ws, Downloads: envcheck.DownloadPrompts(envcheck.Profiles(app), os.ReadFile)})
+}
 
 func (b mcpBackend) SecretNames() []string { return store.Secrets().Names() }
 

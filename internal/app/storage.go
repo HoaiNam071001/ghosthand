@@ -40,6 +40,7 @@ func (a *App) SaveScript(sc model.Script, path string) (ScriptFile, error) {
 		return a.SaveScriptAs(sc, "")
 	}
 	sc.Version = model.ScriptVersion
+	sc = keepTrial(sc)
 	rev, err := a.revs.Write(path, -1, func() error { return store.WriteScriptFile(path, sc) })
 	if err != nil {
 		return ScriptFile{}, fmt.Errorf("không lưu được %s: %w", filepath.Base(path), err)
@@ -126,6 +127,7 @@ func (a *App) OpenScriptPath(path string) (ScriptFile, error) {
 		return ScriptFile{}, fmt.Errorf("không mở được %s: %w", filepath.Base(path), err)
 	}
 	store.EditRecent(func(l []string) []string { return store.PushRecent(l, path) })
+	noteTrialUsed(sc, path)
 	return ScriptFile{Script: sc, Path: path, Revision: a.revs.Get(path)}, nil
 }
 

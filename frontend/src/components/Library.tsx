@@ -12,6 +12,7 @@ import { ResizeHandle, usePanelWidth } from './PanelResize';
 import Samples from './samples/Samples';
 import { AIChip, Fold, LibraryFooter, RecentItem } from './library/LibraryParts';
 import RunsDialog from './library/RunsDialog';
+import TrialsFold, { LibraryTrial } from './library/TrialsFold';
 import { LibraryRun, libraryRun, runDot } from './library/runs';
 
 export type { LibraryRun };
@@ -22,6 +23,8 @@ export type LibraryProps = {
   active: number;
   recent: string[]; // đường dẫn file, mới nhất trước
   aiRecent?: string[]; // trong recent: file AI tạo (chip AI)
+  trials?: LibraryTrial[]; // kịch bản AI tạo để thử (61 M5) – nhóm "AI thử", không có trong recent
+  trialDays?: number; // tự dọn sau bao ngày không mở; 0 = không dọn
   history: LibraryRun[];
   ready: boolean; // false: ô tìm / nút chưa hoạt động (trình duyệt – không có Go)
   onNew?: () => void;
@@ -53,18 +56,20 @@ const loadCollapsed = () => {
 export default function Library() {
   const { script, dirty, path } = useEditor();
   const sched = scheduleOf(useSchedules(), path);
-  const { recent, aiPaths } = useFile();
+  const { recent, aiPaths, trials } = useFile();
+  const trialPaths = new Set(trials.items.map((t) => t.path));
   const log = useRunLog();
   const history = log.history.map((h) => libraryRun(h, log.open && !log.live && log.summary?.id === h.id));
   const ai = script.meta?.createdBy === 'ai';
   return (
-    <LibraryView scripts={[{ name: script.name, unsaved: dirty, schedule: sched?.time, ai }]} active={0} recent={recent.filter((r) => r !== path)} aiRecent={aiPaths} history={history}
+    <LibraryView scripts={[{ name: script.name, unsaved: dirty, schedule: sched?.time, ai }]} active={0} recent={recent.filter((r) => r !== path && !trialPaths.has(r))} aiRecent={aiPaths}
+      trials={trials.items.filter((t) => t.path !== path)} trialDays={trials.days} history={history}
       ready={inWails} onNew={newScript} onOpen={openScript} onSave={() => save()} onRecent={openRecent} onForgetRecent={forgetRecent} onHistory={openRun} onExportPack={exportPack} onImportPack={importPack}
       SamplesPanel={Samples} RunsPanel={RunsDialog} />
   );
 }
 
-export function LibraryView({ scripts, active, recent, aiRecent = [], history, ready, onNew, onOpen, onSave, onRecent, onForgetRecent, onHistory, onExportPack, onImportPack, SamplesPanel, RunsPanel }: LibraryProps) {
+export function LibraryView({ scripts, active, recent, aiRecent = [], trials = [], trialDays = 0, history, ready, onNew, onOpen, onSave, onRecent, onForgetRecent, onHistory, onExportPack, onImportPack, SamplesPanel, RunsPanel }: LibraryProps) {
   const [collapsed, setCollapsed] = useState(loadCollapsed);
   const [samples, setSamples] = useState(false);
   const [runsOpen, setRunsOpen] = useState(false);
@@ -148,6 +153,8 @@ export function LibraryView({ scripts, active, recent, aiRecent = [], history, r
                 className="rounded-md px-3 py-1 text-left text-[13px] text-muted hover:bg-hover hover:text-ink">Xoá danh sách</button>
             )}
           </Fold>
+
+          <TrialsFold trials={trials.filter((t) => match(t.name))} days={trialDays} onOpen={onRecent} />
 
           <Fold title="Lịch sử chạy" storageKey="library-runs-open" summary={history.slice(0, 3).map((h, i) => <span key={h.id ?? i} className={`h-1.5 w-1.5 rounded-full ${runDot(h)}`} />)}>
             {(allRuns ? history : history.slice(0, RUNS_SHOWN)).map((h, i) => (

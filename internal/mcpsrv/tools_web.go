@@ -55,7 +55,7 @@ func (s *Server) addWebTools() {
 	addTool(s, KindRead, &mcp.Tool{Name: "get_preferences", Description: "Cài đặt của app ảnh hưởng cách soạn: nodePref (vision | web), " +
 		"mức chạy của AI (run), quyền hệ điều hành đang thiếu (missingPermissions)."}, s.getPrefs)
 	addTool(s, KindRead, &mcp.Tool{Name: "check_permissions", Description: "Quyền hệ điều hành (macOS) và trạng thái từng quyền: granted | denied | unknown | notNeeded. " +
-		"Kiểm tra không bật hộp thoại. Gọi trước khi soạn / chạy node cần quyền (chuột, phím, chụp màn hình, Chrome…) để biết quyền nào thiếu – nhờ người dùng cấp ở Cài đặt → Quyền, đừng chạy thử rồi mới biết lỗi permission."}, s.checkPerms)
+		"Kiểm tra không bật hộp thoại. env: lỗi môi trường. Gọi trước khi soạn / chạy node cần quyền (chuột, phím, chụp màn hình, Chrome…) để biết quyền nào thiếu – nhờ người dùng cấp ở Cài đặt → Quyền, đừng chạy thử rồi mới biết lỗi permission."}, s.checkPerms)
 	addTool(s, KindSettings, &mcp.Tool{Name: "set_node_preference", Description: "Đổi ưu tiên node khi soạn: vision = node ảnh / chữ (mặc định), " +
 		"web = thử trang (probe_page) trước, không captcha thì dùng node web. Đổi ngay, app báo người dùng; guide (get_step_types) theo mức mới."}, s.setPref)
 }
@@ -125,5 +125,5 @@ func webTabs(tabs []web.Tab) []web.Tab {
 }
 
 func (s *Server) checkPerms(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp.CallToolResult, any, error) {
-	return ok(map[string]any{"permissions": s.back.Permissions()})
+	return ok(map[string]any{"permissions": s.back.Permissions(), "env": s.back.EnvWarnings(nil)})
 }

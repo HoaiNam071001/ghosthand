@@ -466,6 +466,10 @@ export function TestNode(arg1, arg2) {
   return window['go']['app']['App']['TestNode'](arg1, arg2);
 }
 
+export function TrialScripts() {
+  return window['go']['app']['App']['TrialScripts']();
+}
+
 export function ValidateScript(arg1, arg2) {
   return window['go']['app']['App']['ValidateScript'](arg1, arg2);
 }

@@ -81,6 +81,7 @@ func (a *App) startup(ctx context.Context) {
 	a.stopBg = stop
 	a.startScheduler(bg)
 	a.checkUpdateAtStart(bg)
+	go a.cleanTrials()
 	winfloat.FollowActiveSpace() // macOS: màn chính hiện ở Space đang đứng
 }
 

@@ -11,6 +11,7 @@ import (
 	"ghosthand/internal/device/devicetest"
 	"ghosthand/internal/element"
 	"ghosthand/internal/engine"
+	"ghosthand/internal/envcheck"
 	"ghosthand/internal/model"
 	"ghosthand/internal/session"
 	"ghosthand/internal/vision"
@@ -206,5 +207,21 @@ func TestRunStepDraft(t *testing.T) {
 	}
 	if _, isErr := call(t, cs, "draft", map[string]any{"action": "show"}); !isErr {
 		t.Fatal("nháp đã lưu phải được bỏ")
+	}
+}
+
+// 61 M3: cảnh báo môi trường dò lúc bắt đầu chạy nằm trong kết quả run_script (không chặn chạy) + check_permissions.
+func TestRunEnvWarnings(t *testing.T) {
+	cs, back := connect(t)
+	back.env = envcheck.Env{Downloads: []string{"Google Chrome"}, Windows: []model.WindowInfo{{App: "Google Chrome", Title: "Save As"}}}
+	sc := map[string]any{"name": "Tạm", "steps": []any{map[string]any{"type": "wait", "delayAfter": 1}}}
+	out, isErr := call(t, cs, "run_script", map[string]any{"script": sc})
+	env, _ := out["env"].([]any)
+	if isErr || out["state"] != "success" || len(env) != 1 || env[0].(map[string]any)["kind"] != envcheck.KindDialog {
+		t.Fatalf("run_script phải chạy + báo hộp thoại (không báo tải – kịch bản không tải tệp): %v", out)
+	}
+	out, _ = call(t, cs, "check_permissions", nil)
+	if env, _ := out["env"].([]any); len(env) != 2 {
+		t.Errorf("check_permissions dò chung phải có 2 cảnh báo: %v", out)
 	}
 }
