@@ -12,6 +12,11 @@ describe('runTitle', () => {
     expect(runTitle({ ...w, wait: { ...w.wait, kind: 'image', what: undefined } }, 0, 0)).toBe('Đang chờ ảnh · còn 10 s');
     expect(runTitle({ ...w, wait: { ...w.wait, kind: 'delay', what: undefined, timeoutMs: 4_000 } }, 1_000, 0)).toBe('Đang nghỉ giữa các bước · còn 3 s');
   });
+  it('node Hỏi người dùng: chờ có hạn / chờ mãi (56 D1)', () => {
+    const w = { ...base, wait: { kind: 'ask' as const, what: 'Gửi?', elapsedMs: 0, timeoutMs: 60_000, best: 0 } };
+    expect(runTitle(w, 30_000, 0)).toBe('Đang chờ bạn trả lời · còn 30 s');
+    expect(runTitle({ ...w, wait: { ...w.wait, timeoutMs: 0 } }, 5_000, 0)).toBe('Đang chờ bạn trả lời');
+  });
   it('đụng chuột: đếm ngược tự chạy tiếp / tắt tự chạy', () => {
     expect(runTitle({ ...base, paused: true, pausedBy: 'touch', resumeAt: 10_000 }, 0, 6_100)).toBe('Bạn vừa đụng chuột · tự chạy tiếp sau 4 s');
     expect(runTitle({ ...base, paused: true, pausedBy: 'touch' }, 0, 0)).toBe('Bạn vừa đụng chuột – bấm ▶ để chạy tiếp');

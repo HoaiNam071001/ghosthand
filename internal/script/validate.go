@@ -69,6 +69,10 @@ func ValidateScript(sc model.Script, screen model.Rect) error {
 			if err := checkHTTPStep(i, s); err != nil {
 				return err
 			}
+		case model.StepAskUser:
+			if strings.TrimSpace(s.Message) == "" {
+				return stepErr(i, s, "message", "chưa nhập câu hỏi")
+			}
 		case model.StepWaitUntil:
 			if strings.TrimSpace(s.At) == "" {
 				return stepErr(i, s, "at", "chưa nhập giờ cần chờ")

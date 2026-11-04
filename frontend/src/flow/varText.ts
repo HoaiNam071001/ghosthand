@@ -56,6 +56,7 @@ function mapFieldText(step: Step, f: (t: string) => string): Step {
     case 'mcpTool': return { ...s, mcpArgs: s.mcpArgs && f(s.mcpArgs) };
     case 'askAI': return { ...s, aiBaseUrl: s.aiBaseUrl && f(s.aiBaseUrl), aiModel: s.aiModel && f(s.aiModel), aiKey: s.aiKey && f(s.aiKey), prompt: s.prompt && f(s.prompt), aiFallback: s.aiFallback && f(s.aiFallback), filePath: s.filePath && f(s.filePath) };
     case 'notify': return { ...s, notifyTitle: s.notifyTitle && f(s.notifyTitle), text: f(s.text) };
+    case 'askUser': return { ...s, message: s.message && f(s.message), askItems: s.askItems && f(s.askItems) };
     case 'zip': return { ...s, filePath: s.filePath && f(s.filePath), filePattern: s.filePattern && f(s.filePattern), zipTo: s.zipTo && f(s.zipTo) };
     case 'inputSource': return { ...s, inputLayout: s.inputLayout && f(s.inputLayout), inputHotkey: s.inputHotkey && f(s.inputHotkey) };
     case 'process': return { ...s, procName: s.procName && f(s.procName) };

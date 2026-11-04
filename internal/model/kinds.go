@@ -54,6 +54,7 @@ const (
 	StepNotify        = "notify"        // thông báo hệ điều hành (engine/toast.go, bước 43 S9)
 	StepAskAI         = "askAI"         // hỏi AI (chữ / ảnh màn hình → chữ hoặc JSON) – engine/askai.go, bước 31d
 	StepMCPTool       = "mcpTool"       // gọi một tool của MCP server ngoài (Cài đặt → MCP server) – engine/mcptool.go, bước 55 M3
+	StepAskUser       = "askUser"       // dừng flow hỏi người ngồi máy (thanh mini): Đồng ý / Từ chối (+ ô nhập) → approve / deny / timeout (engine/askuser.go, 56 D1)
 	StepZip           = "zip"           // nén / giải nén .zip (engine/zip.go, bước 43 S8)
 	StepProcess       = "process"       // đọc / chờ tiến trình: CPU, RAM, xuất hiện, kết thúc, hết bận (engine/process.go, bước 43 S5)
 	StepInputSource   = "inputSource"   // đọc / đổi bộ gõ – bàn phím đang dùng của hệ điều hành (engine/inputsource.go, bước 43 S6)
@@ -82,7 +83,7 @@ const (
 // StepTypes – mọi loại node app hỗ trợ (steptypes.go có mô tả cho từng loại – test kiểm tra).
 var StepTypes = []string{StepClick, StepDouble, StepHold, StepDrag, StepWait, StepText, StepKey, StepScroll, StepOpen,
 	StepWaitImage, StepClickImage, StepWaitPixel, StepWaitScreen, StepFindAll, StepOcrRead, StepScreenshot, StepClipboard, StepHTTP, StepFile, StepSystem, StepWaitUntil, StepPath, StepWindow, StepApp, StepBrowserTab, StepBrowserGo, StepBrowserNorm, StepSavePdf, StepWebWait, StepWebClick,
-	StepWebType, StepWebRead, StepWebScroll, StepWebKey, StepElementRead, StepPageText, StepReadTable, StepWaitDownload, StepElementAction, StepReadDocument, StepWaitUIEvent, StepShell, StepOSShortcut, StepSysInfo, StepProcess, StepZip, StepNotify, StepAskAI, StepMCPTool, StepPower, StepDisplay, StepInputSource, StepIf, StepSwitch, StepSwitchScreen, StepCounter, StepForEach, StepEnd, StepSetVar, StepCalc,
+	StepWebType, StepWebRead, StepWebScroll, StepWebKey, StepElementRead, StepPageText, StepReadTable, StepWaitDownload, StepElementAction, StepReadDocument, StepWaitUIEvent, StepShell, StepOSShortcut, StepSysInfo, StepProcess, StepZip, StepNotify, StepAskAI, StepMCPTool, StepAskUser, StepPower, StepDisplay, StepInputSource, StepIf, StepSwitch, StepSwitchScreen, StepCounter, StepForEach, StepEnd, StepSetVar, StepCalc,
 	StepTextMatch, StepTextSplit, StepTextClean, StepTextNumber}
 
 // HasShotArea – node có vùng chụp ShotArea / Display / ShotRect (ImageFrom khi ShotArea = node) như Chụp màn hình.

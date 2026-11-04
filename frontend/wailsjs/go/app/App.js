@@ -14,6 +14,10 @@ export function AnswerAIRun(arg1, arg2) {
   return window['go']['app']['App']['AnswerAIRun'](arg1, arg2);
 }
 
+export function AnswerAsk(arg1, arg2, arg3) {
+  return window['go']['app']['App']['AnswerAsk'](arg1, arg2, arg3);
+}
+
 export function AnswerMCP(arg1, arg2) {
   return window['go']['app']['App']['AnswerMCP'](arg1, arg2);
 }

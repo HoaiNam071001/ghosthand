@@ -38,6 +38,7 @@ type Options struct {
 	AIDefault   ai.Config                   // nhà cung cấp AI mặc định của node Hỏi AI (Cài đặt → Hỏi AI); Key còn dạng {{secret.<tên>}}
 	MCP         MCPCaller                   // node Gọi tool MCP (mcptool.go): app đặt hàm đi qua cổng quyền; nil = không gọi được
 	ShotsDir    string                      // thư mục ảnh trong Cài đặt cho node Chụp màn hình để trống saveDir ("" = Pictures/Ghosthand)
+	Ask         Asker                       // node Hỏi người dùng: hỏi người ngồi máy (app – thanh mini); nil = hẹn giờ / CLI / API, đi cổng timeout
 	WatchClicks bool                        // lượt AI: node ngay sau node chuột lỗi mà màn hình không đổi → error.detail.screenUnchanged (clickwatch.go)
 }
 
@@ -72,6 +73,7 @@ func New(in device.Input, sc model.Script, o Options) *Engine {
 	e.stopAt, e.seed, e.shotsDir, e.pins, e.sim = o.StopAt, o.Seed, o.ShotsDir, o.Pins, o.Simulate
 	e.rv.secrets, e.mask = o.Secrets, newMasker(o.Secrets)
 	e.focusClick, e.mcp, e.aiDef, e.watchClicks = o.FocusClick, o.MCP, o.AIDefault, o.WatchClicks
+	e.ask = o.Ask
 	e.pasteAuto, e.imeCheck = goruntime.GOOS == "windows", true
 	e.step.Store(o.StepMode)
 	if o.KeepShots {

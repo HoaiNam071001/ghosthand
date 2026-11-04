@@ -1381,7 +1381,7 @@
     ],
     "avoid": [
       "Báo từ xa → [[node:http]] gọi Telegram / webhook",
-      "Hộp hỏi người dùng → input lúc Chạy"
+      "Cần người bấm Đồng ý / Từ chối giữa chừng → [[node:askUser]]"
     ],
     "tips": [
       "Tiêu đề và nội dung nhận {{biến}}."
@@ -1392,6 +1392,35 @@
     ],
     "samples": [
       "thong-bao"
+    ]
+  },
+  "askUser": {
+    "tech": "Dừng flow, thanh mini nở thành thẻ hỏi (câu hỏi, danh sách mục, ô nhập tuỳ chọn, nút Đồng ý / Từ chối) kèm thông báo hệ thống; đang ở màn chính thì hiện hộp giữa màn.",
+    "accuracy": "Chắc chắn – chỉ đi tiếp khi bạn bấm, hết giờ thì đi cổng Hết giờ.",
+    "speed": "Chờ tới khi bạn trả lời (Chờ tối đa; 0 = chờ mãi).",
+    "good": [
+      "Duyệt trước việc khó hoàn tác: gửi tin / email, xoá, thanh toán",
+      "Nhập mã chỉ bạn biết giữa chừng (OTP, captcha) bằng ô nhập"
+    ],
+    "avoid": [
+      "Chạy hẹn giờ / CLI / API không có người ngồi máy – node đi thẳng cổng Hết giờ",
+      "Chỉ cần báo, không cần trả lời → [[node:notify]]",
+      "Giá trị biết trước lúc bấm Chạy → input của kịch bản"
+    ],
+    "tips": [
+      "Câu hỏi và danh sách mục nhận {{biến}} – vd danh sách email đọc được ở node trước, mỗi dòng một mục.",
+      "Chữ gõ ở ô nhập nằm ở output text, vd {{n3.output.text}}.",
+      "Lúc AI chạy: AI chỉ thấy câu hỏi (needs_input) và nhắc bạn – không trả lời thay.",
+      "Đụng chuột để trả lời không làm kịch bản tạm dừng."
+    ],
+    "fields": [
+      "**Câu hỏi** (`message`)",
+      "**Danh sách mục** (`askItems`, mỗi dòng một mục)",
+      "**Có ô nhập** (`askInput`)",
+      "**Chờ tối đa** (`timeoutMs`, 0 = chờ mãi)"
+    ],
+    "samples": [
+      "hoi-nguoi-dung"
     ]
   },
   "zip": {

@@ -31,8 +31,12 @@ func (e *Engine) Resume() bool {
 const PausedTouch = "touch"
 
 // PauseTouched tạm dừng vì người dùng đụng chuột; thanh mini / wait_run báo lý do, người dùng bấm Tiếp tục để chạy tiếp.
+// Đang chờ node Hỏi người dùng thì bỏ qua – người dùng đụng chuột chính là để trả lời (56 D1).
 func (e *Engine) PauseTouched() bool {
-	if !e.gate.pause() {
+	e.mu.Lock()
+	asking := e.prog.Ask != nil
+	e.mu.Unlock()
+	if asking || !e.gate.pause() {
 		return false
 	}
 	e.update(true, func(p *Progress) { p.PausedBy = PausedTouch })

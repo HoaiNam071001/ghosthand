@@ -23,6 +23,7 @@ import { fmtZip } from './zip';
 import { fmtAskAI } from './askAI';
 import { fmtMCPTool } from './mcpTool';
 import { fmtNotify } from './notify';
+import { fmtAskUser } from './askUser';
 import { fmtPower } from './power';
 import { fmtDisplay } from './display';
 import { fmtProcess } from './process';
@@ -56,6 +57,7 @@ export const fmtPos = (s: Step, refOf: (id: string) => string = () => '?') =>
     : s.type === 'power' ? fmtPower(s)
     : s.type === 'display' ? fmtDisplay(s)
     : s.type === 'notify' ? fmtNotify(s)
+    : s.type === 'askUser' ? fmtAskUser(s)
     : s.type === 'askAI' ? fmtAskAI(s)
     : s.type === 'mcpTool' ? fmtMCPTool(s)
     : s.type === 'zip' ? fmtZip(s)

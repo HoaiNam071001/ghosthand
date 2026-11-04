@@ -39,6 +39,7 @@ export const STEP_DEFAULTS: Partial<Record<StepType, Partial<Step>>> = {
   power: { clicks: 0, delayAfter: 0 },
   display: { clicks: 0, delayAfter: 0 },
   notify: { clicks: 0, delayAfter: 0 },
+  askUser: { clicks: 0, message: 'Chạy tiếp?', timeoutMs: 300000, delayAfter: 0 },
   askAI: { clicks: 0, timeoutMs: 60000, delayAfter: 0 },
   mcpTool: { clicks: 0, timeoutMs: 60000, delayAfter: 0 },
   zip: { clicks: 0, delayAfter: 0 },

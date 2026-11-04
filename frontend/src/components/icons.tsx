@@ -128,6 +128,7 @@ export const STEP_ICON = {
   mcpTool: 'M9 3v5M15 3v5M6 8h12v4a6 6 0 0 1-12 0zM12 18v3', // phích cắm – kết nối MCP
   askAI: 'M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z', // tia sáng – AI
   notify: 'M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7zM10 20h4', // chuông – thông báo
+  askUser: 'M5 5h14v10H10l-4 4v-4H5zM10 8.5a2 2 0 1 1 2.5 1.9c-.4.2-.5.5-.5.9M12 13h.01', // bong bóng thoại + dấu hỏi – hỏi người dùng
   zip: 'M5 3h10l4 4v14H5zM15 3v4h4M10 9h2M10 12h2M10 15h2M9 18h4', // tệp có khoá kéo – zip
   inputSource: 'M3 7h18v10H3zM7 11h.01M11 11h.01M15 11h.01M7 14h10', // bàn phím – bộ gõ
   process: 'M4 6h16v12H4zM8 14l2-3 2 2 3-4 1 2', // khung + đường tải CPU – tiến trình

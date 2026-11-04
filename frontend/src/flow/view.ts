@@ -25,6 +25,9 @@ const PORTS: Record<string, Omit<PortView, 'id'>> = {
   item: { label: 'Mỗi phần tử', kind: 'neutral' },
   yes: { label: 'Đang chạy', kind: 'neutral' },
   no: { label: 'Không chạy', kind: 'neutral' },
+  approve: { label: 'Đồng ý', kind: 'ok' },
+  deny: { label: 'Từ chối', kind: 'fail' },
+  timeout: { label: 'Hết giờ', kind: 'neutral' },
 };
 export function portView(id: string, s?: Pick<Step, 'type' | 'cases'>): PortView {
   if (id.startsWith(CASE_PREFIX)) {
@@ -211,6 +214,7 @@ function ownOutputs(s: Step): OutputField[] {
     case 'askAI': return [{ key: 'text', desc: 'câu trả lời của AI' }, { key: 'json', desc: 'JSON đã giải mã (khi chọn trả lời JSON) – đọc sâu {{n2.output.json.<trường>}}' }, { key: 'skipped', desc: 'true khi AI không dùng được và node lấy giá trị dự phòng' }];
     case 'mcpTool': return [{ key: 'text', desc: 'phần chữ tool trả về' }, { key: 'json', desc: 'JSON tool trả (structuredContent, hoặc chữ nếu là JSON) – đọc sâu {{n2.output.json.<trường>}}' }, { key: 'isError', desc: 'tool báo lỗi (node đi cổng thất bại)' }, { key: 'content', desc: 'từng phần kết quả; ảnh / âm thanh có path file tạm' }];
     case 'notify': return [{ key: 'title', desc: 'tiêu đề đã hiện' }, { key: 'text', desc: 'nội dung đã hiện' }];
+    case 'askUser': return [{ key: 'answer', desc: 'approve / deny / timeout' }, { key: 'text', desc: 'chữ bạn gõ ở ô nhập' }, { key: 'waitedMs', desc: 'thời gian chờ trả lời (ms)' }];
     case 'zip': return [
       { key: 'path', desc: 'file .zip vừa tạo / thư mục đã giải nén vào' }, { key: 'count', desc: 'số file' }, { key: 'size', desc: 'tổng dung lượng dữ liệu gốc (byte)' },
     ];

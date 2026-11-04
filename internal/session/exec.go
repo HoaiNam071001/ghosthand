@@ -51,7 +51,7 @@ func (m *Manager) exec(ctx context.Context, r *run, canDanger bool) {
 	}
 	defer closeBr()
 	eng := engine.New(in, r.sc, engine.Options{
-		Screen: m.deps.Screen(), Displays: m.deps.Displays(), Debug: st.Source == SourceUser, StepMode: r.opt.Step, FocusClick: true, KeepShots: true, ShotEach: r.opt.ShotEach, WatchClicks: st.Source == SourceAI,
+		Screen: m.deps.Screen(), Displays: m.deps.Displays(), Debug: st.Source == SourceUser, StepMode: r.opt.Step, FocusClick: true, KeepShots: true, ShotEach: r.opt.ShotEach, WatchClicks: st.Source == SourceAI, Ask: m.askerFor(st.Source),
 		Browser: br, AllowDanger: canDanger, StopAt: r.opt.StopAt, Seed: r.seed, Pins: r.opt.Pins, ShotsDir: m.deps.ShotsDir(), Secrets: r.secrets, MCP: m.deps.MCP, AIDefault: m.deps.AIDefault().Config(),
 		OnProgress: func(p engine.Progress) {
 			m.mu.Lock()
@@ -188,4 +188,12 @@ func (m *Manager) finish(r *run, err error) {
 	if m.OnEnd != nil {
 		m.OnEnd(st, r.err)
 	}
+}
+
+// askerFor – có người ngồi máy trả lời node Hỏi người dùng không: người dùng bấm Chạy, AI (người dùng thường ở cạnh).
+func (m *Manager) askerFor(source string) engine.Asker {
+	if source == SourceUser || source == SourceAI {
+		return m.deps.Ask
+	}
+	return nil
 }

@@ -27,6 +27,7 @@ import { fmtZip } from '../../flow/zip';
 import { fmtAskAI } from '../../flow/askAI';
 import { fmtMCPTool } from '../../flow/mcpTool';
 import { fmtNotify } from '../../flow/notify';
+import { fmtAskUser } from '../../flow/askUser';
 import { fmtPower } from '../../flow/power';
 import { fmtDisplay } from '../../flow/display';
 import { fmtProcess } from '../../flow/process';
@@ -64,6 +65,7 @@ function bubbleOf(s: Step): string | null {
     case 'askAI': return `✨ Hỏi AI: ${fmtAskAI(s)} – xem trước không gọi AI`;
     case 'mcpTool': return `🔌 MCP: ${fmtMCPTool(s)} – xem trước không gọi tool`;
     case 'notify': return `🔔 Thông báo: ${fmtNotify(s)} – xem trước không hiện thật`;
+    case 'askUser': return `❓ Hỏi: ${fmtAskUser(s)} – xem trước không hỏi thật`;
     case 'zip': return `🗜 ${fmtZip(s)} – xem trước không nén / giải nén thật`;
     case 'inputSource': return `⌨ Bộ gõ: ${fmtInputSource(s)} – xem trước không đổi thật`;
     case 'process': return `⚙ Tiến trình ${fmtProcess(s)} – xem trước không đọc thật`;

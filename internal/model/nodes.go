@@ -11,6 +11,9 @@ const (
 	PortItem    = "item"    // forEach: còn phần tử
 	PortYes     = "yes"     // app kiểm tra: đang chạy
 	PortNo      = "no"      // app kiểm tra: không chạy
+	PortApprove = "approve" // askUser: người dùng bấm Đồng ý
+	PortDeny    = "deny"    // askUser: người dùng bấm Từ chối
+	PortTimeout = "timeout" // askUser: hết giờ chưa ai trả lời / lượt chạy không có người (hẹn giờ, CLI, API)
 	CasePrefix  = "case:"
 )
 

@@ -11,6 +11,8 @@ import { stopRecording, useRecording, useScript } from '../store';
 import { inWails, setWindowMode } from '../windowMode';
 import { counterText, progressNode, progressSteps } from '../flow/progress';
 import { runTitle } from '../flow/runState';
+import { AskCard } from '../components/ask/AskCard';
+import { answerAsk, useUserAsk } from '../userAsk';
 
 // Số mẫu khi xem trên trình duyệt (#minibar)
 const sample: Progress = {
@@ -22,7 +24,10 @@ const CIRC = 2 * Math.PI * R;
 
 export default function MiniBar() {
   const rec = useRecording();
-  return rec ? <RecordBar since={rec.since} /> : <RunBar />;
+  const ask = useUserAsk();
+  if (rec) return <RecordBar since={rec.since} />;
+  // node Hỏi người dùng (56 D1): cửa sổ đã nở cao (askapi.go) – thẻ hỏi dưới thanh
+  return ask ? <div className="flex flex-col gap-2"><RunBar /><AskCard key={ask.id} {...ask} onAnswer={answerAsk} /></div> : <RunBar />;
 }
 
 function RecordBar({ since }: { since: number }) {
@@ -54,7 +59,7 @@ function RunBar() {
   const w = p?.wait;
   const waitNow = w ? Math.min(w.elapsedMs + (p!.paused ? 0 : Date.now() - engine.receivedAt), w.timeoutMs) : 0;
   // Vô hạn vòng: vòng tiến độ chỉ theo bước trong vòng hiện tại.
-  const progress = w ? waitNow / w.timeoutMs : !p || p.total === 0 ? 0
+  const progress = w ? (w.timeoutMs > 0 ? waitNow / w.timeoutMs : 0) : !p || p.total === 0 ? 0
     : p.loops > 0 ? ((p.loop - 1) * p.total + p.step) / (p.loops * p.total)
     : p.step / p.total;
   const cur = p?.nodeId ? steps.find((s) => s.id === p.nodeId) : undefined;

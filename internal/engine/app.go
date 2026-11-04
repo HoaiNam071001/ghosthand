@@ -50,8 +50,14 @@ func (e *Engine) appStep(ctx context.Context, s model.Step) (map[string]any, err
 	return appOutput(procs), err
 }
 
-// actionPort – cổng ra của node hành động thành công: Ứng dụng kiểm tra → yes / no theo output running, còn lại success.
+// actionPort – cổng ra của node hành động thành công: Ứng dụng kiểm tra → yes / no theo output running, Hỏi người dùng →
+// approve / deny / timeout theo output answer, còn lại success.
 func actionPort(s model.Step, out map[string]any) string {
+	if s.Type == model.StepAskUser {
+		if p, _ := out["answer"].(string); p != "" { // lỗi / Dừng: out nil – cổng không dùng
+			return p
+		}
+	}
 	if s.Type == model.StepApp && s.AppOp == model.AppCheck {
 		if out["running"] == true {
 			return model.PortYes

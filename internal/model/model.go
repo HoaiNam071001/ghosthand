@@ -200,7 +200,9 @@ type Step struct {
 	Max       int    `json:"max,omitempty"`       // counter: số lần đi cổng next tối đa
 	ListFrom  string `json:"listFrom,omitempty"`  // forEach: ListFroms – "" = chữ / biến Value | file = CSV / xlsx FilePath (+ Sheet)
 	EndStatus string `json:"endStatus,omitempty"` // end: success | fail
-	Message   string `json:"message,omitempty"`   // end: lời nhắn (fail = lời báo lỗi); nhận {{biến}}
+	Message   string `json:"message,omitempty"`   // end: lời nhắn (fail = lời báo lỗi); askUser: câu hỏi; nhận {{biến}}
+	AskItems  string `json:"askItems,omitempty"`  // askUser: danh sách mục kèm câu hỏi, mỗi dòng một mục; nhận {{biến}}
+	AskInput  bool   `json:"askInput,omitempty"`  // askUser: có ô nhập chữ (vd mã OTP) → output text
 	VarName   string `json:"varName,omitempty"`   // setVar: tên biến
 	VarOp     string `json:"varOp,omitempty"`     // setVar: set | add
 	// Xử lý chữ (bước 42 G4b, internal/textop) – chữ vào ở Value

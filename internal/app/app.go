@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"ghosthand/internal/api"
+	"ghosthand/internal/engine"
 	"ghosthand/internal/mcpclient"
 	"ghosthand/internal/mcpsrv"
 	"ghosthand/internal/model"
@@ -41,6 +42,7 @@ type App struct {
 	mcpc      *mcpclient.Manager        // app làm MCP client tới server ngoài (mcpserversapi.go)
 	quitting  bool                      // đã hỏi xong, đóng thật
 	ai        aiGate                    // hỏi quyền AI chạy (mcprun.go)
+	asks      askGate                   // node Hỏi người dùng đang chờ trả lời (askapi.go)
 	batches   batchState                // lượt chạy nhiều kịch bản (batchrun.go)
 	// app do AI mở nền (`--background`, bước 31b): khởi động ẩn, AI chạy thì chỉ hiện thanh mini
 	background bool
@@ -55,8 +57,9 @@ type App struct {
 // NewApp tạo App; background = app do AI mở nền (cờ `--background`).
 func NewApp(background bool) *App {
 	a := &App{mode: ModeMain, winDisp: -1, ovDisp: -1, hub: api.NewHub(), mcpc: &mcpclient.Manager{}, revs: store.NewRevisions(), schedRuns: map[string]model.Schedule{},
-		ai: aiGate{pending: map[string]chan string{}, allowed: newAllowList()}}
-	a.sess = session.New(a.emit, session.Deps{MCP: a.mcpCall, Stage: a.stageRun})
+		ai:   aiGate{pending: map[string]chan string{}, allowed: newAllowList()},
+		asks: askGate{pending: map[string]chan engine.AskAnswer{}}}
+	a.sess = session.New(a.emit, session.Deps{MCP: a.mcpCall, Stage: a.stageRun, Ask: a.askUser})
 	a.sess.OnEnd = a.onRunEnd
 	a.sess.OnActivity = a.onActivity
 	a.background = background

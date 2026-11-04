@@ -53,6 +53,9 @@ func (e *Engine) simStep(rs model.Step, logf func(level, format string, a ...any
 	}
 	if !forced {
 		port = model.PortSuccess
+		if ports := model.PortsOf(rs); len(ports) > 0 && !model.HasPort(rs, port) { // askUser approve, app kiểm tra yes
+			port = ports[0]
+		}
 	}
 	logf("info", "chạy thử khô – không đụng máy, cổng %s", port)
 	out = e.sim.output(rs)

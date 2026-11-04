@@ -1,0 +1,25 @@
+{
+ "meta": {
+  "name": "Hỏi người dùng – duyệt trước khi làm tiếp",
+  "description": "Kịch bản dừng hỏi bạn trên thanh mini: “Gửi 3 email nháp này?” kèm danh sách 3 địa chỉ và ô nhập ghi chú. Bấm Đồng ý → kết thúc thành công, lời kết ghi chữ bạn gõ; Từ chối → kết thúc báo “Bạn đã từ chối”; để 60 giây không trả lời → kết thúc báo hết giờ. Không gửi gì thật.",
+  "app": "Rẽ nhánh",
+  "level": 1,
+  "real": false,
+  "manual": true
+ },
+ "script": {
+  "steps": [
+   {"type": "setVar", "varName": "list", "value": "an@vidu.vn\nbinh@vidu.vn\nchi@vidu.vn"},
+   {"type": "askUser", "message": "Gửi 3 email nháp này?", "askItems": "{{vars.list}}", "askInput": true, "timeoutMs": 60000},
+   {"type": "end", "endStatus": "success", "message": "Đã đồng ý – ghi chú: “{{n2.output.text}}”"},
+   {"type": "end", "endStatus": "fail", "message": "Bạn đã từ chối"},
+   {"type": "end", "endStatus": "fail", "message": "Hết 60 giây chưa ai trả lời"}
+  ],
+  "edges": [
+   {"from": "s1", "port": "success", "to": "s2"},
+   {"from": "s2", "port": "approve", "to": "s3"},
+   {"from": "s2", "port": "deny", "to": "s4"},
+   {"from": "s2", "port": "timeout", "to": "s5"}
+  ]
+ }
+}

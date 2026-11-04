@@ -2,6 +2,7 @@
 // tạm dừng – lọc bằng ?mode=acting|waiting|paused), thử lại (25b), tên bộ giá trị input (21b).
 import { MiniBarView } from './MiniBar';
 import { RecordBarView } from '../components/minibar/RecordBar';
+import { AskCard } from '../components/ask/AskCard';
 
 const noop = () => {};
 const STATES: { note: string; mode?: 'acting' | 'waiting' | 'paused'; props: Parameters<typeof MiniBarView>[0] }[] = [
@@ -61,6 +62,11 @@ export default function DemoMiniBar() {
       {!mode && <><div className="flex flex-col gap-1.5">
         <span className="text-xs text-muted">Đang ghi macro (bước 24) – bấm Dừng ghi hoặc F9</span>
         <RecordBarView elapsed="00:07" onStop={noop} />
+      </div>
+      <div className="flex flex-col gap-2">
+        <span className="text-xs text-muted">Node Hỏi người dùng – thanh nở ra, thẻ hỏi dưới thanh (56 D1)</span>
+        <MiniBarView title="Đang chờ bạn trả lời · còn 4 phút" lines={['n2 · Hỏi người dùng', 'vòng 1 / 1   0 click   00:09']} icon="askUser" progress={0.1} paused={false} countdown={0} canPause onPause={noop} onStop={noop} />
+        <AskCard message="Gửi 3 email nháp này?" items={['an@vidu.vn', 'binh@vidu.vn', 'chi@vidu.vn']} input onAnswer={noop} />
       </div>
       <div className="flex flex-col gap-1.5">
         <span className="text-xs text-muted">Lần chạy từ AI / hẹn giờ đã xong – thanh mini giữ lại, nút Mở app (57 B2)</span>

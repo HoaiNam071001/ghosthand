@@ -77,6 +77,8 @@ func (e *Engine) runStep(ctx context.Context, s model.Step, wait int) (map[strin
 		return e.webNode(ctx, s)
 	case model.StepWebKey:
 		return e.webKey(ctx, s)
+	case model.StepAskUser:
+		return e.askUser(ctx, s)
 	case model.StepElementRead:
 		return e.elementRead(ctx, s)
 	case model.StepWaitUIEvent:

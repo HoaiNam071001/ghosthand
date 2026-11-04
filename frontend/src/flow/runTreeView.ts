@@ -42,7 +42,7 @@ export function cardText(n: TreeNode, results: StepResult[], steps: Step[], rows
     default: return { title: name, sub: `${row?.status === 'fail' ? 'Thất bại' : portName(row?.port)}${row?.next ? ` → ${row.next}` : ''}`, subFail: row?.status === 'fail', ms: r?.durationMs };
   }
 }
-const PORTS: Record<string, string> = { success: 'Thành công', fail: 'Thất bại', true: 'Đúng', false: 'Sai', item: 'Mỗi mục', done: 'Xong', next: 'Còn lượt', default: 'Khác' };
+const PORTS: Record<string, string> = { success: 'Thành công', fail: 'Thất bại', true: 'Đúng', false: 'Sai', item: 'Mỗi mục', done: 'Xong', next: 'Còn lượt', default: 'Khác', approve: 'Đồng ý', deny: 'Từ chối', timeout: 'Hết giờ' };
 export const portName = (p?: string) => (p ? PORTS[p] ?? p.replace(/^case:/, 'case ') : '');
 
 // Pill giá trị: VÀO = ô đọc biến (giá trị đã thay ở StepResult.input), RA = output được lần chạy sau dùng (không có thì 2 output đầu).

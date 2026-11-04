@@ -89,6 +89,9 @@ func traceView(tr session.Trace, sc model.Script, shotW map[string]int) map[stri
 			cur["paused"] = pausedInfo(*p, time.Now())
 		}
 		v["current"] = cur
+		if p.Ask != nil { // node Hỏi người dùng (56 D1): chỉ người ngồi máy trả lời được
+			v["status"], v["needsInput"] = "needs_input", p.Ask
+		}
 	}
 	v["next"] = nextHint(tr)
 	return v
@@ -129,6 +132,8 @@ func nextHint(tr session.Trace) string {
 		return "người dùng vừa đụng chuột nên app đã tạm dừng – chuột đứng yên thì tự chạy tiếp sau resumeInS giây; đừng chạy lại, gọi wait_run"
 	case !tr.Done() && tr.Progress != nil && tr.Progress.Paused && tr.Progress.PausedBy == engine.PausedTouch:
 		return "người dùng vừa đụng chuột nên app đã tạm dừng (nhường người dùng) – đừng chạy lại; chờ người dùng bấm Tiếp tục trên thanh mini (wait_run) hoặc hỏi người dùng / stop_run"
+	case !tr.Done() && tr.Progress != nil && tr.Progress.Ask != nil:
+		return "kịch bản đang hỏi người dùng (needsInput) trên thanh mini – báo người dùng trả lời trên máy (AI không trả lời thay), rồi wait_run"
 	case !tr.Done():
 		return "chưa xong – gọi wait_run"
 	case tr.State == session.StateFail && tr.FailedStep != "":

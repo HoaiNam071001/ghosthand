@@ -117,6 +117,9 @@ func VarFields(s *model.Step) []VarField {
 		}
 	case model.StepWaitUntil:
 		add("at", &s.At, false)
+	case model.StepAskUser:
+		add("message", &s.Message, false)
+		add("askItems", &s.AskItems, false)
 	case model.StepFile:
 		if s.FileOp != model.FileEmptyTrash {
 			add("filePath", &s.FilePath, false)

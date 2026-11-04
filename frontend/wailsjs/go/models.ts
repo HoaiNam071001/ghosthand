@@ -250,6 +250,26 @@ export namespace element {
 
 export namespace engine {
 	
+	export class AskQuestion {
+	    ref: string;
+	    message: string;
+	    items?: string[];
+	    input?: boolean;
+	    timeoutMs?: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new AskQuestion(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.ref = source["ref"];
+	        this.message = source["message"];
+	        this.items = source["items"];
+	        this.input = source["input"];
+	        this.timeoutMs = source["timeoutMs"];
+	    }
+	}
 	export class CondPart {
 	    path: number[];
 	    case?: string;
@@ -546,6 +566,7 @@ export namespace engine {
 	    break?: string;
 	    from?: FromPort;
 	    counter?: CounterLoop;
+	    ask?: AskQuestion;
 	
 	    static createFrom(source: any = {}) {
 	        return new Progress(source);
@@ -572,6 +593,7 @@ export namespace engine {
 	        this.break = source["break"];
 	        this.from = this.convertValues(source["from"], FromPort);
 	        this.counter = this.convertValues(source["counter"], CounterLoop);
+	        this.ask = this.convertValues(source["ask"], AskQuestion);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -1687,6 +1709,8 @@ export namespace model {
 	    listFrom?: string;
 	    endStatus?: string;
 	    message?: string;
+	    askItems?: string;
+	    askInput?: boolean;
 	    varName?: string;
 	    varOp?: string;
 	    pattern?: string;
@@ -1874,6 +1898,8 @@ export namespace model {
 	        this.listFrom = source["listFrom"];
 	        this.endStatus = source["endStatus"];
 	        this.message = source["message"];
+	        this.askItems = source["askItems"];
+	        this.askInput = source["askInput"];
 	        this.varName = source["varName"];
 	        this.varOp = source["varOp"];
 	        this.pattern = source["pattern"];

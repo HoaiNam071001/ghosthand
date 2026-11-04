@@ -1,4 +1,4 @@
-// Hoạt hoạ nhóm luồng: Nếu, Switch, lặp, đếm, kết thúc (bước 47).
+// Hoạt hoạ nhóm luồng: Nếu, Switch, lặp, đếm, kết thúc (bước 47), hỏi người dùng (56 D1).
 import { Arr, Chip, Move, Scenes, Show, Stage, T, Tick, Tween } from './parts';
 
 const node = (x: number, y: number, label: string, w = 46) => (
@@ -50,6 +50,18 @@ export const flow: Scenes = {
       <T x={90} y={110} anchor="middle" s={8} cls="fill-muted">đã đi qua</T>
       <Show to={0.85}><Chip x={150} y={40} w={64} label="Còn lượt" cls="fill-surface stroke-ok" /><Arr x1={124} y1={64} x2={148} y2={47} cls="stroke-ok" /></Show>
       <Show from={0.85}><Chip x={150} y={80} w={64} label="Hết lượt" cls="fill-surface stroke-danger" /><Arr x1={124} y1={64} x2={148} y2={87} cls="stroke-danger" /></Show>
+    </Stage>
+  ),
+  askUser: () => (
+    <Stage>
+      <rect x={14} y={26} width="120" height="76" rx="8" className="fill-surface stroke-line-strong" />
+      <T x={24} y={44} s={9} cls="fill-ink">Gửi 3 email?</T>
+      <rect x={24} y={52} width="100" height="14" rx="3" className="fill-soft" />
+      <rect x={30} y={80} width="44" height="16" rx="4" className="fill-surface stroke-line-strong" /><T x={52} y={91} anchor="middle" s={7}>Từ chối</T>
+      <rect x={80} y={80} width="46" height="16" rx="4" className="fill-accent" /><T x={103} y={91} anchor="middle" s={7} cls="fill-on-accent">Đồng ý</T>
+      <Move pts={[[0, 200, 120], [0.35, 104, 90], [0.5, 104, 90]]}><path d="M0 0l0 13 4-4 3 6 2-1-3-6 5 0z" className="fill-ink stroke-surface" /></Move>
+      <Show from={0.5}><Arr x1={138} y1={64} x2={168} y2={64} cls="stroke-ok" />{node(198, 64, 'Gửi', 44)}</Show>
+      <Tick x={222} y={52} from={0.6} />
     </Stage>
   ),
   end: () => (

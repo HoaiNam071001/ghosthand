@@ -4,8 +4,11 @@ Những việc **đã xong code** nhưng cần người dùng thử trong app th
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
 
-## 56 – Học từ MCP ngoài, đợt A + B1 (2026-11-04) · [56](phase3/56-hoc-tu-mcp-ngoai.md)
+## 56 – Học từ MCP ngoài, đợt A + B1 + D1 (2026-11-04) · [56](phase3/56-hoc-tu-mcp-ngoai.md)
 
+- [ ] (D1) Mẫu thử *Hỏi người dùng – duyệt trước khi làm tiếp* → Chạy: thanh mini nở ra, có thẻ hỏi (câu hỏi, 3 email, ô nhập đang nhận phím) + thông báo hệ thống; gõ ghi chú rồi Enter → kết thúc thành công, lời kết có chữ vừa gõ; chạy lại bấm Từ chối (hoặc Esc) → báo “Bạn đã từ chối”; thanh mini thu lại sau khi trả lời
+- [ ] (D1) Thêm node *Hỏi người dùng* từ bảng thêm node (nhóm Rẽ nhánh): thẻ có 3 cổng Đồng ý / Từ chối / Hết giờ, inspector có Câu hỏi, Danh sách mục, Có ô nhập, Chờ tối đa; hoạt hoạ trong bảng thêm node; theme sáng + tối của thẻ hỏi (`#demo-minibar`)
+- [ ] (D1) Hẹn giờ một kịch bản có node Hỏi người dùng → đi thẳng cổng Hết giờ (không có ai trả lời); lượt AI chạy: rê chuột lên thẻ để trả lời không làm kịch bản tạm dừng – *AI thử macOS 2026-11-04 (46bf435-dirty): wait_run trả status needs_input + câu hỏi; thẻ hiện đúng dưới thanh mini; để 25 s → cổng timeout (waitedMs 25001), thanh mini thu lại*
 - [x] (B1) Mẫu thử *Web: hộp thoại JS (confirm)* → Chạy: n3 tự bấm OK, lời kết ghi “Đã tự bấm OK hộp “Xoá mục này?””; đổi *Hộp thoại JS* của n3 về *Báo lỗi* → n3 lỗi `web_dialog` ngay kèm chữ trong hộp – *AI thử macOS 2026-11-04 (`TestRealSamples`): accept qua (n3 4 ms, dialogText đúng); Báo lỗi → web_dialog sau 1 ms*
 - [ ] (B1) Inspector node web: ô *Hộp thoại JS* (Báo lỗi / Bấm OK / Bấm Huỷ) hiện dưới *Tìm trong*, chữ giải thích đổi theo lựa chọn; thử *Bấm Huỷ* trên mẫu (đổi n3 chờ chữ ĐÃ HUỶ)
 - [ ] (A1) Cài đặt → AI mức *Hỏi trước khi chạy*: AI chạy một kịch bản → bấm *Cho phép đến khi đóng app* → AI chạy lại không hỏi; AI `update_script` rồi chạy → hỏi lại, hộp ghi *Kịch bản đã đổi từ lần cho phép trước*; chỉ kéo node trên canvas / lưu tay không đổi gì khác → không hỏi lại. Kịch bản tạm (`run_script script=…`) cho phép đến khi đóng app → gửi lại đúng nội dung không hỏi

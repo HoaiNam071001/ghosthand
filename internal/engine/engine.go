@@ -50,6 +50,7 @@ type Progress struct {
 	Break     string        `json:"break,omitempty"`    // đang dừng trước node NodeID vì debug: breakpoint | step
 	From      *FromPort     `json:"from,omitempty"`     // node vừa chạy xong + cổng đi ra tới node này (nil: node đầu vòng)
 	Counter   *CounterLoop  `json:"counter,omitempty"`  // node Đếm / Lặp qua danh sách gần nhất còn lượt – đang ở trong vòng lặp của nó
+	Ask       *AskQuestion  `json:"ask,omitempty"`      // node Hỏi người dùng đang chờ trả lời (askuser.go)
 }
 
 // FromPort – node trước + cổng ra đã đi (thanh mini: "n2 · thất bại → n5").
@@ -111,6 +112,7 @@ type Engine struct {
 	watchClicks bool                         // Options.WatchClicks (clickwatch.go)
 	lastClick   *clickMark                   // ảnh trước node chuột vừa chạy – node kế lỗi thì so (clickwatch.go)
 	dialogText  string                       // chữ hộp thoại JS node web vừa tự đóng (webdialog.go)
+	ask         Asker                        // Options.Ask (askuser.go) – nil = không có người trả lời
 	eachKeep    []string                     // tên ảnh sau mỗi node còn giữ, cũ trước
 	eachN       int                          // số ảnh sau node đã chụp (đặt tên)
 	debug       bool                         // dừng ở node có Breakpoint (chạy từ app); không thì bỏ qua breakpoint

@@ -50,6 +50,7 @@ import ZipFields from './stepform/ZipFields';
 import AskAIFields from './stepform/AskAIFields';
 import MCPToolFields from './stepform/MCPToolFields';
 import NotifyFields from './stepform/NotifyFields';
+import AskUserFields from './stepform/AskUserFields';
 import PowerFields from './stepform/PowerFields';
 import DisplayFields from './stepform/DisplayFields';
 import SysInfoFields from './stepform/SysInfoFields';
@@ -189,6 +190,7 @@ function TypeBody({ step: s, setPoint }: { step: Step; setPoint: (i: number, p: 
       {s.type === 'power' && <PowerFields step={s} />}
       {s.type === 'display' && <DisplayFields step={s} />}
       {s.type === 'notify' && <NotifyFields step={s} />}
+      {s.type === 'askUser' && <AskUserFields step={s} />}
       {s.type === 'askAI' && <AskAIFields step={s} />}
       {s.type === 'mcpTool' && <MCPToolFields step={s} />}
       {s.type === 'zip' && <ZipFields step={s} />}

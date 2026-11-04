@@ -90,6 +90,7 @@ export const GROUPS: PaletteGroup[] = [
       { icon: 'switch', label: 'Switch theo giá trị', info: NODE_INFO.switch, key: 'switch', keywords: 'switch case gia tri bien', run: () => addControl('switch') },
       { icon: 'forEach', label: 'Lặp qua danh sách', info: NODE_INFO.forEach, key: 'forEach', keywords: 'foreach lap qua danh sach moi phan tu dong csv excel xlsx mang json loop list', run: () => addControl('forEach') },
       { icon: 'counter', label: 'Đếm', info: NODE_INFO.counter, key: 'counter', keywords: 'counter lap loop dem gioi han so lan thu', run: () => addControl('counter') },
+      { icon: 'askUser', label: 'Hỏi người dùng', info: NODE_INFO.askUser, key: 'askUser', keywords: 'hoi nguoi dung xac nhan duyet dong y tu choi approve confirm otp nhap ma cho phep tam dung', type: 'askUser', run: () => addStep('askUser') },
       { icon: 'end', label: 'Kết thúc', info: NODE_INFO.end, key: 'end', keywords: 'end stop dung ket thuc', run: () => addControl('end') },
     ],
   },

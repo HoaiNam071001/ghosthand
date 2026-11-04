@@ -100,6 +100,8 @@ func PortsOf(s Step) []string {
 		return []string{}
 	case StepSetVar, StepCalc, StepTextSplit, StepTextClean:
 		return []string{PortSuccess}
+	case StepAskUser:
+		return []string{PortApprove, PortDeny, PortTimeout}
 	case StepApp:
 		if s.AppOp == AppCheck {
 			return []string{PortYes, PortNo}

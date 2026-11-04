@@ -50,7 +50,7 @@ const resultMatchesGo: Same<keyof StepResult, keyof Fields<model.StepResult>> = 
 void edgeMatchesGo, resultMatchesGo;
 
 export type ActionType = 'click' | 'double' | 'hold' | 'drag' | 'wait' | 'type' | 'key' | 'scroll' | 'open' | 'waitImage' | 'clickImage' | 'waitPixel' | 'waitScreen' | 'ocrRead' | 'findAll' | 'screenshot' | 'clipboard' | 'http' | 'file' | 'system' | 'window' | 'app' | 'browserTab' | 'browserGo' | 'browserNorm' | 'savePdf' | 'waitUntil' | 'path'
-  | 'webWait' | 'webClick' | 'webType' | 'webRead' | 'webScroll' | 'webKey' | 'elementRead' | 'pageText' | 'readTable' | 'waitDownload' | 'shell' | 'osShortcut' | 'sysInfo' | 'process' | 'inputSource' | 'zip' | 'notify' | 'askAI' | 'mcpTool' | 'power' | 'display' | 'elementAction' | 'readDocument' | 'waitUIEvent';
+  | 'webWait' | 'webClick' | 'webType' | 'webRead' | 'webScroll' | 'webKey' | 'elementRead' | 'pageText' | 'readTable' | 'waitDownload' | 'shell' | 'osShortcut' | 'sysInfo' | 'process' | 'inputSource' | 'zip' | 'notify' | 'askAI' | 'mcpTool' | 'askUser' | 'power' | 'display' | 'elementAction' | 'readDocument' | 'waitUIEvent';
 // Node điều khiển (bước 20 F3, internal/engine/nodes.go): chỉ chọn cổng ra, inspector riêng (components/flow/nodes/ControlFields)
 export type ControlType = 'if' | 'switch' | 'switchScreen' | 'counter' | 'forEach' | 'end' | 'setVar' | 'calc' | TextType;
 export type StepType = ActionType | ControlType;
@@ -180,7 +180,9 @@ export interface Step extends AdvancedFields, TextFields {
   max?: number; // counter: số lần đi cổng next tối đa
   listFrom?: '' | 'file'; // forEach: '' = chữ / biến (mảng JSON hoặc mỗi dòng một phần tử) | file = CSV / xlsx filePath
   endStatus?: 'success' | 'fail'; // end
-  message?: string; // end: lời nhắn / lời báo lỗi
+  message?: string; // end: lời nhắn / lời báo lỗi; askUser: câu hỏi
+  askItems?: string; // askUser: danh sách mục kèm câu hỏi, mỗi dòng một mục (nhận biến)
+  askInput?: boolean; // askUser: có ô nhập chữ → output text
   varName?: string; // setVar
   varOp?: 'set' | 'add'; // setVar
 }
@@ -294,6 +296,7 @@ export const STEP_LABEL: Record<StepType, string> = {
   notify: 'Thông báo hệ thống',
   askAI: 'Hỏi AI',
   mcpTool: 'Gọi tool MCP',
+  askUser: 'Hỏi người dùng',
   power: 'Nguồn',
   display: 'Màn hình / âm thanh',
   elementAction: 'Thao tác phần tử',

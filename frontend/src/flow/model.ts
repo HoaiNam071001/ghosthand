@@ -19,6 +19,7 @@ export function portsOf(s: PortShape): string[] {
     case 'counter': return ['next', 'done'];
     case 'forEach': return ['item', 'done'];
     case 'end': return [];
+    case 'askUser': return ['approve', 'deny', 'timeout'];
     case 'setVar': case 'calc': case 'textSplit': case 'textClean': return [PORT_SUCCESS];
     case 'app': if (!s.appOp) return ['yes', 'no'];
     default: return [PORT_SUCCESS, PORT_FAIL];

@@ -4,6 +4,7 @@ import (
 	"image"
 	"maps"
 	"slices"
+	"strings"
 	"testing"
 	"time"
 
@@ -68,5 +69,19 @@ func TestPausedInfo(t *testing.T) {
 	}
 	if got := pausedInfo(engine.Progress{Paused: true, Break: "step"}, now); got["by"] != "debug" {
 		t.Errorf("debug: %v", got)
+	}
+}
+
+// Node Hỏi người dùng đang chờ (56 D1): wait_run trả needs_input + câu hỏi, next nhắc AI báo người dùng.
+func TestTraceNeedsInput(t *testing.T) {
+	var tr session.Trace
+	tr.RunID, tr.State = "1", session.StateRunning
+	tr.Progress = &engine.Progress{Ref: "n2", Ask: &engine.AskQuestion{Ref: "n2", Message: "Gửi 3 email?"}}
+	v := traceView(tr, model.Script{}, nil)
+	if v["status"] != "needs_input" || v["needsInput"].(*engine.AskQuestion).Message != "Gửi 3 email?" {
+		t.Fatalf("view %v", v)
+	}
+	if !strings.Contains(v["next"].(string), "needsInput") {
+		t.Errorf("next: %v", v["next"])
 	}
 }

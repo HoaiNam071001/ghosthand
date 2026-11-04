@@ -74,6 +74,8 @@ func NewStep(stepType string) (Step, error) {
 		s.URL, s.TimeoutMs, s.DelayAfter = "https://", 15000, 300
 	case StepWaitUntil:
 		s.At, s.DelayAfter = "12:00:00", 0
+	case StepAskUser:
+		s.Message, s.TimeoutMs, s.DelayAfter = "Chạy tiếp?", 300000, 0
 	case StepPath:
 		s.Points, s.DragMs, s.Clicks = []Point{{}, {X: 200}, {X: 200, Y: 150}}, 1500, 1
 	case StepHTTP:

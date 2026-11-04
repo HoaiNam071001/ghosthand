@@ -49,6 +49,9 @@ type Deps struct {
 	MCP engine.MCPCaller
 	// AIDefault – nhà cung cấp AI mặc định của node Hỏi AI (Cài đặt → Hỏi AI), đọc lúc bắt đầu mỗi phiên; nil = settings.
 	AIDefault func() store.AISettings
+	// Ask – node Hỏi người dùng (56 D1): hỏi người ngồi máy (thanh mini). Chỉ lượt người dùng bấm Chạy / AI – hẹn giờ,
+	// CLI, API không có người nên node đi cổng timeout. nil = không hỏi được (test).
+	Ask engine.Asker
 }
 
 func (d Deps) withDefaults() Deps {

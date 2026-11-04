@@ -15,6 +15,7 @@ import DangerConfirmDialog from '../components/DangerConfirmDialog';
 import PermConfirmDialog from '../components/PermConfirmDialog';
 import { watchPerms } from '../store/permStore';
 import AIRunDialog from '../components/AIRunDialog';
+import UserAskDialog from '../components/ask/UserAskDialog';
 import MCPAskDialog from '../components/MCPAskDialog';
 import TitleBar from '../components/TitleBar';
 import Library from '../components/Library';
@@ -106,6 +107,7 @@ export default function MainScreen() {
       <DangerConfirmDialog />
       <PermConfirmDialog />
       <AIRunDialog />
+      <UserAskDialog />
       <MCPAskDialog />
       {runForm.open && (
         <RunDialog scriptName={script.name} inputs={inputViews(script)} sections={runSections(script)}
