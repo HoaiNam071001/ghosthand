@@ -41,7 +41,8 @@ type Step struct {
 	WebEnter  bool     `json:"webEnter,omitempty"`  // webType: bấm Enter sau khi gõ
 	// webType: không kiểm tra ô nhận focus sau khi click (ô tuỳ biến – picker, editor – focus vào phần tử khác ô nhập)
 	SkipFocusCheck bool   `json:"skipFocusCheck,omitempty"`
-	WebScope       string `json:"webScope,omitempty"` // node web: WebScopes – "" = cả trang | dialog = chỉ trong hộp thoại đang mở trên cùng
+	WebScope       string `json:"webScope,omitempty"`  // node web: WebScopes – "" = cả trang | dialog = chỉ trong hộp thoại đang mở trên cùng
+	WebDialog      string `json:"webDialog,omitempty"` // node web: WebDialogs – hộp thoại JS đang mở: "" = báo lỗi web_dialog | accept | dismiss
 	// webWait / webClick / webType / webScroll: chạy nền (D4b) – bấm / gõ / lăn qua CDP, không đụng chuột / phím thật,
 	// không đưa Chrome lên trước (cửa sổ bị che / thu nhỏ vẫn chạy); output x, y… theo toạ độ trong trang
 	WebBackground bool   `json:"webBackground,omitempty"`

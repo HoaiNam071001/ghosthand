@@ -73,18 +73,10 @@ func (e *Engine) runStep(ctx context.Context, s model.Step, wait int) (map[strin
 		return h.output(), nil
 	case model.StepClickImage:
 		return e.clickImage(ctx, s)
-	case model.StepWebWait:
-		return e.webWait(ctx, s)
-	case model.StepWebClick:
-		return e.webClick(ctx, s)
-	case model.StepWebType:
-		return e.webType(ctx, s)
-	case model.StepWebRead:
-		return e.webRead(ctx, s)
+	case model.StepWebWait, model.StepWebClick, model.StepWebType, model.StepWebRead, model.StepWebScroll:
+		return e.webNode(ctx, s)
 	case model.StepWebKey:
 		return e.webKey(ctx, s)
-	case model.StepWebScroll:
-		return e.webScroll(ctx, s)
 	case model.StepElementRead:
 		return e.elementRead(ctx, s)
 	case model.StepWaitUIEvent:

@@ -24,7 +24,7 @@ export const CAN_FAIL: StepType[] = ['waitImage', 'clickImage', 'waitPixel', 'wa
 // Cạnh: node from đi ra cổng port thì chạy node to. Mỗi cổng tối đa một cạnh. Khớp Edge trong model.go.
 export interface Edge { id: string; from: string; port: string; to: string }
 export type StepStatus = 'success' | 'fail' | 'skipped' | 'cancelled';
-export type ErrorCode = 'not_found' | 'timeout' | 'permission' | 'invalid_input' | 'cancelled' | 'end' | 'browser' | 'http_status' | 'network' | 'exit_code' | 'window_mismatch' | 'internal';
+export type ErrorCode = 'not_found' | 'timeout' | 'permission' | 'invalid_input' | 'cancelled' | 'end' | 'browser' | 'http_status' | 'network' | 'exit_code' | 'window_mismatch' | 'web_dialog' | 'internal';
 // Lượt thứ index (từ 1) của node lặp nodeId – khớp IterRef trong flow.go.
 export interface IterRef { nodeId: string; index: number }
 // Kết quả một lần chạy node (event engine:node) – khớp StepResult trong flow.go.
@@ -129,6 +129,7 @@ export interface Step extends AdvancedFields, TextFields {
   webEnter?: boolean; // webType: Enter sau khi gõ
   skipFocusCheck?: boolean; // webType: không kiểm tra ô nhận focus sau khi click (ô tuỳ biến)
   webScope?: 'dialog'; // node web: chỉ tìm trong hộp thoại đang mở trên cùng (bỏ trống = cả trang)
+  webDialog?: 'accept' | 'dismiss'; // node web gặp hộp thoại JS đang mở: bỏ trống = lỗi web_dialog ngay | tự bấm OK / Huỷ (56 B1)
   webBackground?: boolean; // webWait / webClick / webType / webScroll: chạy nền qua CDP, không đụng chuột / phím thật (flow/web.ts canBackground)
   readFrom?: ReadFrom; // webRead: bỏ trống = chữ hiển thị
   attr?: string; // webRead readFrom attr: tên thuộc tính

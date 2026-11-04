@@ -75,6 +75,10 @@ func errDetail(err error) map[string]any {
 	if errors.As(err, &late) {
 		return late.detail
 	}
+	var dialog *dialogErr
+	if errors.As(err, &dialog) {
+		return map[string]any{"dialog": dialog.d}
+	}
 	return nil
 }
 

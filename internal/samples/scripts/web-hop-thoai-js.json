@@ -1,0 +1,18 @@
+{
+ "meta": {
+  "name": "Web: hộp thoại JS (confirm)",
+  "description": "Bấm XOÁ MỤC trên trang Hộp thoại JS (Chrome của app) → trang mở hộp confirm thật. Node Chờ phần tử đặt Hộp thoại JS = Chấp nhận nên tự bấm OK rồi thấy chữ ĐÃ XOÁ, output dialogText = “Xoá mục này?”. Đúng: kết thúc thành công. Thử đổi Hộp thoại JS của n3 về Báo lỗi → n3 lỗi web_dialog ngay (không chờ hết giờ) kèm chữ trong hộp.",
+  "app": "Web (DOM)",
+  "level": 2,
+  "page": "js-dialog.html",
+  "real": false
+ },
+ "script": {
+  "steps": [
+   {"type": "open", "target": "{{sandbox}}/js-dialog.html", "webBrowser": true, "delayAfter": 500},
+   {"type": "webClick", "selectors": ["role=button[name=\"XOÁ MỤC\"]"], "timeoutMs": 5000, "intervalMs": 200, "delayAfter": 300},
+   {"type": "webWait", "selectors": ["text=ĐÃ XOÁ"], "webDialog": "accept", "timeoutMs": 5000, "intervalMs": 200},
+   {"type": "end", "endStatus": "success", "message": "Đã tự bấm OK hộp “{{n3.output.dialogText}}”"}
+  ]
+ }
+}

@@ -307,6 +307,7 @@ func errCode(err error) string {
 	var late *timeoutErr
 	var exit *exitErr
 	var mismatch *windowMismatchErr
+	var dialog *dialogErr
 	switch {
 	case errors.As(err, &nf), errors.Is(err, browser.ErrTabGone):
 		return model.ErrNotFound
@@ -326,6 +327,8 @@ func errCode(err error) string {
 		return model.ErrMCP
 	case errors.As(err, &mismatch):
 		return model.ErrWindowMismatch
+	case errors.As(err, &dialog):
+		return model.ErrWebDialog
 	case errors.As(err, &exit):
 		return model.ErrExitCode
 	case errors.As(err, &late):

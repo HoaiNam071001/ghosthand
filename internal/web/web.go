@@ -48,6 +48,7 @@ type Query struct {
 	Wheel      bool   // cùng Scroll: ngoài khung nhìn thì không nhảy mà trả Found.Wheel để lăn chuột thật (bước 36)
 	// Background: chạy nền – không đưa tab lên trước, không đo toạ độ bằng chuột; Found.Rect theo toạ độ trong trang
 	Background bool
+	Dialog     string // model.WebDialogs: hộp thoại JS đang mở – "" báo ngay (Found.Dialog) | accept | dismiss tự đóng rồi tìm tiếp
 }
 
 // Found – kết quả một lần tìm.
@@ -68,6 +69,8 @@ type Found struct {
 	NoDialog bool       // Query.Scope dialog nhưng trang không có hộp thoại đang mở
 	Value    string     // Query.Read: giá trị đọc được
 	Wheel    *Wheel     // Query.Wheel và phần tử ngoài khung nhìn: khung cần lăn (OK = false, Rect là khung phần tử)
+	Dialog   *Dialog    // trang đang mở hộp thoại JS, Query.Dialog "" – chưa tìm (OK = false)
+	Handled  *Dialog    // hộp thoại JS đã tự đóng theo Query.Dialog trước khi tìm
 }
 
 // Wheel – chỗ lăn chuột để phần tử vào khung nhìn: At giữa phần thấy được của khung cuộn (toạ độ màn hình), hướng

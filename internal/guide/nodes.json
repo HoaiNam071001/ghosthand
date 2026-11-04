@@ -1077,15 +1077,18 @@
     ],
     "tips": [
       "Selector thử bằng *Thử tìm*, lấy bằng *Chọn phần tử trên trang*.",
-      "Nhãn có phần hay đổi (\"Messenger, 1 unread\", \"Hộp thư (3)\") → chỉ ghi phần cố định, không nháy kép: aria=Messenger. Chép từ DevTools thì aria-label=… cũng được."
+      "Nhãn có phần hay đổi (\"Messenger, 1 unread\", \"Hộp thư (3)\") → chỉ ghi phần cố định, không nháy kép: aria=Messenger. Chép từ DevTools thì aria-label=… cũng được.",
+      "Trang mở hộp alert / confirm / prompt: mặc định node lỗi `web_dialog` ngay kèm chữ trong hộp; muốn đi tiếp thì đặt **Hộp thoại JS** (webDialog) *Bấm OK* / *Bấm Huỷ* – chữ trong hộp ở output `dialogText`."
     ],
     "fields": [
       "**Tìm theo** – chữ / aria / role / label / css / xpath",
       "**Hiện / biến mất**",
-      "**Phạm vi** – cả trang hoặc hộp thoại"
+      "**Phạm vi** – cả trang hoặc hộp thoại",
+      "**Hộp thoại JS**"
     ],
     "samples": [
-      "web-bam-nut-chay"
+      "web-bam-nut-chay",
+      "web-hop-thoai-js"
     ]
   },
   "webClick": {
@@ -1100,15 +1103,18 @@
       "Trang cần đăng nhập thường → [[node:clickElement]]"
     ],
     "tips": [
-      "Nhiều phần tử trùng chữ: đặt *Chỗ thứ N* hoặc giới hạn trong hộp thoại."
+      "Nhiều phần tử trùng chữ: đặt *Chỗ thứ N* hoặc giới hạn trong hộp thoại.",
+      "Trang mở hộp alert / confirm / prompt: mặc định node lỗi `web_dialog` ngay kèm chữ trong hộp; muốn đi tiếp thì đặt **Hộp thoại JS** (webDialog) *Bấm OK* / *Bấm Huỷ* – chữ trong hộp ở output `dialogText`."
     ],
     "fields": [
       "**Tìm theo**",
       "**Chỗ thứ N**",
-      "**Phạm vi**"
+      "**Phạm vi**",
+      "**Hộp thoại JS**"
     ],
     "samples": [
-      "web-hop-thoai-form"
+      "web-hop-thoai-form",
+      "web-hop-thoai-js"
     ]
   },
   "webType": {
@@ -1123,12 +1129,14 @@
     ],
     "tips": [
       "Bật xoá chữ cũ trước khi gõ.",
-      "Ô khó nhập: thử [[node:webKey]]."
+      "Ô khó nhập: thử [[node:webKey]].",
+      "Trang mở hộp alert / confirm / prompt: mặc định node lỗi `web_dialog` ngay kèm chữ trong hộp; muốn đi tiếp thì đặt **Hộp thoại JS** (webDialog) *Bấm OK* / *Bấm Huỷ* – chữ trong hộp ở output `dialogText`."
     ],
     "fields": [
       "**Ô nhập**",
       "**Chữ** – nhận {{biến}}",
-      "**Xoá chữ cũ**"
+      "**Xoá chữ cũ**",
+      "**Hộp thoại JS**"
     ],
     "samples": [
       "web-dang-nhap"
@@ -1146,11 +1154,13 @@
     ],
     "tips": [
       "Đọc thuộc tính như href, src, value.",
-      "Nối [[node:textNumber]] để lấy số."
+      "Nối [[node:textNumber]] để lấy số.",
+      "Trang mở hộp alert / confirm / prompt: mặc định node lỗi `web_dialog` ngay kèm chữ trong hộp; muốn đi tiếp thì đặt **Hộp thoại JS** (webDialog) *Bấm OK* / *Bấm Huỷ* – chữ trong hộp ở output `dialogText`."
     ],
     "fields": [
       "**Tìm theo**",
-      "**Đọc** – chữ / giá trị / thuộc tính"
+      "**Đọc** – chữ / giá trị / thuộc tính",
+      "**Hộp thoại JS**"
     ],
     "samples": [
       "web-lich-su-don"
@@ -1188,11 +1198,13 @@
       "Cuộn app ngoài → [[node:scroll]]"
     ],
     "tips": [
-      "Cuộn trong khung riêng: chọn khung đó, không cuộn cả trang."
+      "Cuộn trong khung riêng: chọn khung đó, không cuộn cả trang.",
+      "Trang mở hộp alert / confirm / prompt: mặc định node lỗi `web_dialog` ngay kèm chữ trong hộp; muốn đi tiếp thì đặt **Hộp thoại JS** (webDialog) *Bấm OK* / *Bấm Huỷ* – chữ trong hộp ở output `dialogText`."
     ],
     "fields": [
       "**Kiểu cuộn** – tới phần tử / trong khung / tới khi thấy",
-      "**Giới hạn lần**"
+      "**Giới hạn lần**",
+      "**Hộp thoại JS**"
     ],
     "samples": [
       "web-feed-cuon",

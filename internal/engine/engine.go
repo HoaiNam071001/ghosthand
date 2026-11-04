@@ -110,6 +110,7 @@ type Engine struct {
 	eachShot    bool                         // chụp sau mỗi node thành công (AI xin – shots.go)
 	watchClicks bool                         // Options.WatchClicks (clickwatch.go)
 	lastClick   *clickMark                   // ảnh trước node chuột vừa chạy – node kế lỗi thì so (clickwatch.go)
+	dialogText  string                       // chữ hộp thoại JS node web vừa tự đóng (webdialog.go)
 	eachKeep    []string                     // tên ảnh sau mỗi node còn giữ, cũ trước
 	eachN       int                          // số ảnh sau node đã chụp (đặt tên)
 	debug       bool                         // dừng ở node có Breakpoint (chạy từ app); không thì bỏ qua breakpoint

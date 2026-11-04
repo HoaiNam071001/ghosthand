@@ -109,6 +109,9 @@ func checkWebFields(s *model.Step) error {
 	if !slices.Contains(model.TypeModes, s.TypeMode) {
 		return fmt.Errorf("cách nhập chữ không hợp lệ: %q (trống = tự chọn | keys | paste)", s.TypeMode)
 	}
+	if !slices.Contains(model.WebDialogs, s.WebDialog) {
+		return fmt.Errorf("webDialog không hợp lệ: %q (trống = báo lỗi | accept | dismiss)", s.WebDialog)
+	}
 	if !slices.Contains(model.WebScopes, s.WebScope) {
 		return fmt.Errorf("phạm vi tìm không hợp lệ: %q (trống = cả trang | dialog)", s.WebScope)
 	}

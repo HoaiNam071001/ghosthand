@@ -42,6 +42,7 @@ type tabConn struct {
 	cancel   context.CancelFunc
 	cal      *calibration // nil = chưa đo / phải đo lại
 	focusEmu bool         // đã bật giả lập focus (chạy nền)
+	dialogs  *dialogWatch // hộp thoại JS đang mở (dialog.go)
 }
 
 // NewChrome – profile: thư mục profile riêng của app; move: di chuột thật (đo toạ độ).
@@ -160,7 +161,8 @@ func (c *Chrome) tab(id string, alive []tabInfo) (*tabConn, error) {
 		cancel()
 		return nil, err
 	}
-	t := &tabConn{id: id, ctx: ctx, cancel: cancel}
+	t := &tabConn{id: id, ctx: ctx, cancel: cancel, dialogs: newDialogWatch()}
+	t.dialogs.listen(ctx)
 	c.tabs[id] = t
 	return t, nil
 }
@@ -193,6 +195,28 @@ func (c *Chrome) Find(ctx context.Context, q Query) (Found, error) {
 	if err != nil {
 		return Found{}, err
 	}
+	var handled *Dialog
+	for try := 0; ; try++ {
+		d, done, err := gateDialog(ctx, t, q)
+		if err != nil || done {
+			return Found{Selector: -1, Tab: ti.URL, Dialog: d}, err
+		}
+		if d != nil {
+			handled = d
+		}
+		wctx, stop := t.dialogs.watch(ctx) // hộp mở giữa chừng: lệnh JS treo – huỷ ngay rồi xét lại
+		f, err := c.findIn(wctx, t, ti, q)
+		stop()
+		if err != nil && ctx.Err() == nil && t.dialogs.current() != nil && try < 3 {
+			continue
+		}
+		f.Handled = handled
+		return f, err
+	}
+}
+
+// findIn – một lần tìm trên tab t (đã kiểm hộp thoại JS).
+func (c *Chrome) findIn(ctx context.Context, t *tabConn, ti tabInfo, q Query) (Found, error) {
 	r, err := runFind(ctx, t.ctx, q)
 	if err != nil {
 		return Found{}, err

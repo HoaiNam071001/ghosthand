@@ -37,6 +37,7 @@ const (
 	ErrBrowser        = "browser"         // không nối được trình duyệt (Chrome của app chưa mở / mất kết nối) – bước 25d
 	ErrExitCode       = "exit_code"       // lệnh (node Chạy lệnh) thoát với mã ≠ 0 (output stdout / stderr / exitCode vẫn có)
 	ErrWindowMismatch = "window_mismatch" // node chuột / phím đặt onlyInWindow nhưng cửa sổ đích mất hoặc không ở trước – chưa thao tác gì
+	ErrWebDialog      = "web_dialog"      // trang đang mở hộp thoại JS (alert / confirm / prompt) – node web đặt webDialog "" (56 B1)
 	ErrInternal       = "internal"
 )
 

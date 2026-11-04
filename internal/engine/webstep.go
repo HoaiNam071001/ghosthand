@@ -21,7 +21,7 @@ var errNoBrowserOpt = &web.BrowserError{Msg: "lần chạy này không điều k
 // khi bị che, tab lên trước – chạy nền thì không đưa lên).
 func webQuery(s model.Step, sels []string, click bool) (web.Query, []string, error) {
 	q := web.Query{Tab: s.Tab, Scroll: click, Wheel: click && !s.WebBackground, Background: s.WebBackground, Scope: s.WebScope,
-		Occurrence: s.Occurrence}
+		Occurrence: s.Occurrence, Dialog: s.WebDialog}
 	var lines []string
 	for _, line := range sels {
 		if strings.TrimSpace(line) == "" {
@@ -119,6 +119,9 @@ const maxNotches = 20
 func (e *Engine) webTryOnce(ctx context.Context, s model.Step, q web.Query, aim bool) (webTry, error) {
 	f, err := e.browser.Find(ctx, q)
 	if err != nil {
+		return webTry{}, err
+	}
+	if err := e.noteDialog(f); err != nil {
 		return webTry{}, err
 	}
 	t := webTry{Found: f}

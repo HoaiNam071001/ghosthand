@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><link rel="stylesheet" href="sandbox.css">
+<style>
+  main { display: grid; place-items: center; gap: 18px; padding: 40px; }
+  #result { font-size: 32px; font-weight: 700; min-height: 44px; }
+</style></head>
+<body>
+<main>
+  <div class="card" style="text-align:center">
+    <p style="font-size:20px">Nút đỏ hỏi bằng hộp <code>confirm</code>, nút xanh báo bằng <code>alert</code> – trang đứng hẳn tới khi hộp đóng.</p>
+    <button class="btn danger" id="del">XOÁ MỤC</button>
+    <button class="btn" id="warn">BÁO LỖI</button>
+  </div>
+  <div id="result">CHƯA LÀM GÌ</div>
+</main>
+<script src="sandbox.js"></script>
+<script>
+  // Hộp thoại JS thật (không phải div giả) – node web có webDialog accept thì kết quả ghi ĐÃ XOÁ, dismiss → ĐÃ HUỶ.
+  sb.header('Hộp thoại JS');
+  const result = document.getElementById('result');
+  document.getElementById('del').onclick = () => {
+    setTimeout(() => { result.textContent = confirm('Xoá mục này?') ? 'ĐÃ XOÁ' : 'ĐÃ HUỶ'; }, 50);
+  };
+  document.getElementById('warn').onclick = () => setTimeout(() => { alert('Phiên đăng nhập đã hết'); result.textContent = 'ĐÃ BÁO'; }, 50);
+</script>
+</body></html>

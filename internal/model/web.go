@@ -27,6 +27,15 @@ const WebScopeDialog = "dialog" // chỉ trong hộp thoại đang mở trên c�
 
 var WebScopes = []string{"", WebScopeDialog}
 
+// Node web gặp hộp thoại JS (alert / confirm / prompt) đang mở (Step.WebDialog, bước 56 B1).
+const (
+	WebDialogAccept  = "accept"  // bấm OK (prompt để trống) rồi làm tiếp
+	WebDialogDismiss = "dismiss" // bấm Huỷ rồi làm tiếp
+)
+
+// WebDialogs – "" = báo lỗi web_dialog ngay (không chờ hết giờ).
+var WebDialogs = []string{"", WebDialogAccept, WebDialogDismiss}
+
 type Selector struct {
 	By    string `json:"by"`
 	Value string `json:"value"`
