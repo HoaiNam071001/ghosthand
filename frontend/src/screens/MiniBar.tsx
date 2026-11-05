@@ -1,6 +1,7 @@
 // Thanh mini khi đang chạy (design v2, artboard MiniBar) – cửa sổ nhỏ always-on-top, 540×96 (window.go)
 import { useEffect, useReducer, useState } from 'react';
 import { PauseScript, ResumeScript, StepScript, StopScript } from '../../wailsjs/go/app/App';
+import { Quit } from '../../wailsjs/runtime/runtime';
 import { AiLevel } from '../aiLevel';
 import { Pause, Play, Stop, StepIcon, StepIconName, StepOver } from '../components/icons';
 import { AiChip, AiLevelRow } from '../components/minibar/AiChip';
@@ -84,7 +85,7 @@ function RunBar() {
         `vòng ${p?.loop ?? 0} / ${p && p.loops > 0 ? p.loops : '∞'}   ${p?.clicks ?? 0} click   ${fmtElapsed(elapsed)}`,
         ...(engine.preset ? [`bộ giá trị: ${engine.preset}`] : [])]}
       canPause={running && !counting} onPause={() => (paused ? ResumeScript() : PauseScript())} onStop={stop}
-      onStep={paused && p?.break ? () => StepScript() : undefined} ai={ai} capturing={capturing} idle={!running} />
+      onStep={paused && p?.break ? () => StepScript() : undefined} onClose={inWails ? Quit : undefined} ai={ai} capturing={capturing} idle={!running} />
   );
 }
 
@@ -94,9 +95,9 @@ function RunBar() {
 // capturing: AI vừa chụp / đọc màn hình – chấm đỏ cạnh tiêu đề.
 // ai: lượt do AI chạy – chip mức AI cạnh tiêu đề, bấm thì hàng chọn mức thay cho các dòng chữ.
 // idle: không chạy (lần chạy từ ngoài đã xong, thanh mini giữ lại) – nút Dừng thành Mở app.
-export function MiniBarView({ title, lines, icon, progress, paused, countdown, canPause, onPause, onStop, onStep, ai, aiOpen = false, capturing = false, idle = false }: {
+export function MiniBarView({ title, lines, icon, progress, paused, countdown, canPause, onPause, onStop, onStep, onClose, ai, aiOpen = false, capturing = false, idle = false }: {
   title: string; lines: string[]; icon: StepIconName; progress: number; paused: boolean; countdown: number;
-  canPause: boolean; onPause: () => void; onStop: () => void; onStep?: () => void;
+  canPause: boolean; onPause: () => void; onStop: () => void; onStep?: () => void; onClose?: () => void;
   ai?: { level: AiLevel; onLevel: (l: AiLevel) => void }; aiOpen?: boolean; capturing?: boolean; idle?: boolean;
 }) {
   const counting = countdown > 0;
@@ -138,7 +139,13 @@ export function MiniBarView({ title, lines, icon, progress, paused, countdown, c
         {paused ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}
       </button>
       {idle ? (
-        <button onClick={onStop} className="flex h-11 items-center rounded-[9px] border border-line bg-surface px-3.5 font-semibold hover:bg-hover">Mở app</button>
+        <>
+          <button onClick={onStop} className="flex h-11 items-center rounded-[9px] border border-line bg-surface px-3.5 font-semibold hover:bg-hover">Mở app</button>
+          <button aria-label="Đóng" title="Đóng Ghosthand" onClick={onClose}
+            className="grid h-11 w-11 flex-none place-items-center rounded-[9px] text-muted hover:bg-hover hover:text-ink">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden><path d="M2 2l10 10M12 2L2 12" /></svg>
+          </button>
+        </>
       ) : (
         <button onClick={onStop} className="btn-danger-soft flex h-11 items-center gap-2 rounded-[9px] px-3.5 font-semibold">
           <Stop className="h-2.5 w-2.5" />Dừng <span className="font-mono text-[11px] font-normal opacity-75">F8</span>
