@@ -35,17 +35,25 @@ const (
 
 // AIAsk – nội dung hộp hỏi "AI muốn chạy kịch bản" (event ai:ask).
 type AIAsk struct {
-	ID      string   `json:"id"`
-	Script  string   `json:"script"`
-	Path    string   `json:"path"`
-	Steps   int      `json:"steps"`
-	From    string   `json:"from,omitempty"`    // ref node bắt đầu
-	StopAt  string   `json:"stopAt,omitempty"`  // ref node dừng
-	Nodes   []string `json:"nodes,omitempty"`   // ref cụm node
-	Resume  bool     `json:"resume,omitempty"`  // chạy tiếp với kết quả lần trước
-	Batch   []string `json:"batch,omitempty"`   // run_batch (61 M2): tên các kịch bản của lượt – hỏi một lần cả lượt
-	Changed bool     `json:"changed,omitempty"` // file đã đổi nội dung từ lần cho phép trước (56 A1)
-	hash    string   // runHash – rỗng (run_batch) = không nhớ được quyền
+	ID      string       `json:"id"`
+	Script  string       `json:"script"`
+	Path    string       `json:"path"`
+	Steps   int          `json:"steps"`
+	From    string       `json:"from,omitempty"`    // ref node bắt đầu
+	StopAt  string       `json:"stopAt,omitempty"`  // ref node dừng
+	Nodes   []string     `json:"nodes,omitempty"`   // ref cụm node
+	Resume  bool         `json:"resume,omitempty"`  // chạy tiếp với kết quả lần trước
+	Batch   []string     `json:"batch,omitempty"`   // run_batch (61 M2): tên các kịch bản của lượt – hỏi một lần cả lượt
+	Changed bool         `json:"changed,omitempty"` // file đã đổi nội dung từ lần cho phép trước (56 A1)
+	Update  *AIUpdateAsk `json:"update,omitempty"`  // update_app install (59 U5) – hỏi cài bản mới thay vì chạy kịch bản
+	hash    string       // runHash – rỗng (run_batch, update_app) = không nhớ được quyền
+}
+
+// AIUpdateAsk – bản đang chạy → bản sẽ cài (hộp hỏi update_app).
+type AIUpdateAsk struct {
+	Current string `json:"current"`
+	Latest  string `json:"latest"`
+	Notes   string `json:"notes,omitempty"`
 }
 
 // aiGate – các câu hỏi đang chờ + kịch bản đã cho phép đến khi đóng app.

@@ -7,9 +7,9 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 > Hook đầu phiên chèn nguyên mục này cho AI – giữ ngắn (≤ ~1500 ký tự, `check-docs.py` cảnh báo): mỗi dòng một ý, chi tiết để ở file bước / `log.md`. Cập nhật mỗi khi xong / bắt đầu một bước.
 
 - **Đang làm:** [56](phase3/56-hoc-tu-mcp-ngoai.md) học từ MCP ngoài – A + B1 + C1–C2 + D1 xong code (đủ *Xong khi*); còn B2–B4, C3, D1b–D3 làm theo nhu cầu.
-- **Xong code, chờ kiểm tra tay:** 56 A + B1 + C1–C2 + D1, 61, 59 (còn U5), 58, 57, 55, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 40 (còn I2b), 39, 38, 37, 36, 35, 34, 31a–d, 28, 26, 25d, 24, 22 – xem bảng *Tổng quan* + [checks.md](checks.md).
-- **Tiếp theo:** 59 U5 `update_app`; 57 đợt 3 khi cần; chờ người dùng chốt: 40 I2b, 33 (`examples/` cũ), 30 UI chọn 4 điểm mốc. Chưa làm: 54, 56. Hoãn: 17 (Windows), 18b.
-- **Cập nhật lần cuối:** 2026-11-04 (56 C1–C2: `list_scripts` chia trang, output gửi AI cắt đầu + cuối / 20 mục).
+- **Xong code, chờ kiểm tra tay:** 59, 56 A + B1 + C1–C2 + D1, 61, 58, 57, 55, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 40, 39, 38, 37, 36, 35, 34, 31a–d, 28, 26, 25d, 24, 22 – xem bảng *Tổng quan* + [checks.md](checks.md).
+- **Tiếp theo:** 57 đợt 3 khi cần; chờ người dùng chốt: 33 (`examples/` cũ), 30 UI chọn 4 điểm mốc. Chưa làm: 54, 56. Hoãn: 17 (Windows), 18b.
+- **Cập nhật lần cuối:** 2026-11-08 (59 U5: MCP `update_app` – AI kiểm / cài Release, hỏi quyền theo mức AI; 40 bỏ I2b, đóng bước).
 
 ## Tính năng của hệ thống
 
@@ -36,7 +36,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🟡 | Học từ MCP ngoài | **Đợt A xong code:** quyền AI theo nội dung, file script của Chạy lệnh, chặn AI thử mãi; **B1:** hộp thoại JS trên web; **C1–C2:** chia trang / cắt output MCP; **D1:** node Hỏi người dùng giữa flow; còn xuất gói lỗi, mẫu Zalo / Telegram | [56](phase3/56-hoc-tu-mcp-ngoai.md) |
 | 🧪 | AI chạy ổn định | Nhận đúng cửa sổ đang ở trước, chạy tiếp giữ focus app đích, AI chạy thì thu về thanh mini, Mở URL đưa trình duyệt lên, đụng chuột tự chạy tiếp sau 5 s, lỗi phần tử gọn hơn | [57](phase3/57-ai-chay-on-dinh.md) |
 | 🧪 | Dấu hiệu đang điều khiển | Viền sáng quanh màn hình macOS + Windows (không lọt vào ảnh chụp) + thanh mini ghi rõ đang thao tác / đang chờ gì / tạm dừng | [58](phase3/58-dau-hieu-dang-dieu-khien.md) |
-| 🟡 | AI tự cập nhật + test | Bản dev cài đè + mở lại một lệnh, `app_info`, proxy MCP sống qua lần mở lại, skill test sau khi sửa – **còn** tool `update_app` (U5) | [59](phase3/59-ai-tu-cap-nhat-va-test.md) |
+| 🧪 | AI tự cập nhật + test | Bản dev cài đè + mở lại một lệnh, `app_info`, proxy MCP sống qua lần mở lại, skill test sau khi sửa, tool `update_app` cài Release (hỏi quyền theo mức AI) | [59](phase3/59-ai-tu-cap-nhat-va-test.md) |
 | ✅ | Dữ liệu qua node | Thẻ node Gọn / Đầy đủ có VÀO / RA, kéo output sang input để nối (chỉ tới node chạy sau), thẻ gọn toả cổng khi rê; chi tiết Panel / Modal / Popover; Lịch sử chạy dạng cây node, rê thẻ xem giá trị vào / ra, đường dữ liệu + truy ngược | [60](phase3/60-du-lieu-qua-node.md) |
 | 🧪 | Dùng AI gọn hơn | Trạng thái đầu phiên ngắn, `ghosthand test` chạy nhiều kịch bản ra bảng gọn, kiểm tra môi trường trước khi chạy, `browserNorm` bắt buộc chọn đích, tự dọn kịch bản thử của AI | [61](phase3/61-dung-ai-gon.md) |
 
@@ -50,7 +50,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | ✅ | Chờ, cuộn, mở URL / app | Cuộn theo nấc tại điểm / tại chuột; mở bằng app chỉ định | [23](phase3/23-cuon-mo-url.md) |
 | 🧪 | Chờ ảnh / click theo ảnh / chờ màu pixel | Khoanh ảnh mẫu, Thử tìm, khác tỷ lệ Retina vẫn tìm được, mọi màn hình | [25](phase3/25-cho-anh.md) |
 | 🧪 | Chờ chữ / click theo chữ (OCR) | Đọc chữ trên màn hình, bỏ dấu, chỗ thứ N – macOS (Vision); Windows (Windows.Media.Ocr, không có tiếng Việt → so không dấu, chịu lệch nhẹ) | [25e](phase3/25e-ocr.md) |
-| 🟡 | Đọc chữ tiếng Việt trên Windows, tìm ảnh bền hơn | Tesseract `vie` (kèm sẵn trong exe) làm mặc định trên Windows; tìm ảnh so cạnh (đổi theme vẫn thấy), mặt nạ, kiểm tra màu | [40](phase3/40-nhan-dang.md) |
+| 🧪 | Đọc chữ tiếng Việt trên Windows, tìm ảnh bền hơn | Tesseract `vie` (kèm sẵn trong exe) làm mặc định trên Windows; tìm ảnh so cạnh (đổi theme vẫn thấy), mặt nạ, kiểm tra màu | [40](phase3/40-nhan-dang.md) |
 | ✅ | Thử lại khi thất bại | Thử lại N lần, nghỉ giữa các lần, hết lượt đi cổng Thất bại | [25b](phase3/25b-khi-that-bai.md), [20](phase3/20-flow.md) |
 | 🧪 | Thao tác giống người | Chuột đi đường cong có tăng / giảm tốc, nhịp gõ / click / cuộn tự nhiên – bật sẵn mức vừa | [34](phase3/34-giong-nguoi.md) |
 | 🧪 | Chụp màn hình, clipboard, HTTP | Đợt 1 node nâng cao: chụp màn / vùng ra file, đọc / ghi clipboard, gọi API | [35](phase3/35-node-nang-cao.md) |
@@ -122,7 +122,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 > Bảng tự sinh – sau khi tick chạy `python3 scripts/tasks-index.py`. Bấm tên bước để mở file chi tiết.
 
 <!-- index:start -->
-**62 / 71 bước xong code** · 🧪 **[292 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
+**64 / 71 bước xong code** · 🧪 **[294 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
 
 ### Phase 3 – Design v2 & tự động hoá (theo thứ tự làm)
 
@@ -167,12 +167,12 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🟡 đang làm | [56. Học từ MCP ngoài](phase3/56-hoc-tu-mcp-ngoai.md) | 7 / 14 | [7 việc](checks.md) |
 | 🟡 đang làm | [57. AI chạy ổn định](phase3/57-ai-chay-on-dinh.md) | 7 / 10 | [3 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [58. Dấu hiệu đang điều khiển](phase3/58-dau-hieu-dang-dieu-khien.md) | 8 / 8 | [7 việc](checks.md) |
-| 🟡 đang làm | [59. AI tự cập nhật + test](phase3/59-ai-tu-cap-nhat-va-test.md) | 6 / 7 | [1 việc](checks.md) |
+| 🧪 chờ kiểm tra tay | [59. AI tự cập nhật + test](phase3/59-ai-tu-cap-nhat-va-test.md) | 7 / 7 | [3 việc](checks.md) |
 | ✅ xong | [60. Dữ liệu qua node](phase3/60-du-lieu-qua-node.md) | 11 / 11 |  |
 | 🧪 chờ kiểm tra tay | [61. Dùng AI gọn hơn](phase3/61-dung-ai-gon.md) | 5 / 5 | [8 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | 12 / 12 | [10 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | 43 / 43 | [22 việc](checks.md) |
-| 🟡 đang làm | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | 11 / 12 |  |
+| ✅ xong | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | 12 / 12 |  |
 | 🧪 chờ kiểm tra tay | [39. Gom kịch bản: nhóm node, nhúng kịch bản khác](phase3/39-gom-kich-ban.md) | 2 / 2 | [6 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [24. Ghi macro](phase3/24-ghi-macro.md) | 1 / 1 | [3 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [28. Mở rộng](phase3/28-mo-rong.md) | 5 / 5 | [3 việc](checks.md) |

@@ -4,6 +4,10 @@ Những việc **đã xong code** nhưng cần người dùng thử trong app th
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
 
+## 59 U5 – AI cập nhật app qua Release (2026-11-08) · [59](phase3/59-ai-tu-cap-nhat-va-test.md)
+- [ ] Cài bản Release cũ hơn bản mới nhất, Cài đặt → MCP mức *Hỏi trước khi chạy* → bảo AI "cập nhật app" → hộp hỏi *AI muốn cập nhật Ghosthand lên vX* (v cũ → v mới, ghi chú); *Từ chối* → AI báo bị từ chối, không thử lại; *Cập nhật* → app tải, thoát, mở lại bản mới; AI gọi `app_info` ra đúng version, phiên MCP vẫn dùng tiếp. Xem hộp hỏi cả theme sáng + tối
+- [ ] Mức *Chỉ soạn* → `update_app install` bị từ chối, không hiện hộp; có kịch bản chưa lưu → báo "lưu lại rồi cập nhật" **trước** khi hỏi; bản dev tự build → báo dùng `make dev-install`
+
 ## 21 – Đóng app giữ bản đang dở (2026-11-04) · [21](phase3/21-luu-tai.md)
 
 - [ ] Sửa kịch bản (chưa lưu) rồi đóng ngay bằng ✕ / Cmd+Q (không chờ) → app đóng luôn, không hỏi; mở lại → đúng bản vừa sửa, nhãn *Chưa lưu*, báo *Đã khôi phục bản nháp chưa lưu*; Mới / Mở khác khi chưa lưu vẫn hỏi lưu

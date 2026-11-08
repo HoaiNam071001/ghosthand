@@ -20,9 +20,10 @@ import (
 
 // updateState – bản mới hỏi được lần gần nhất (InstallUpdate chỉ tin cái này, không nhận link từ frontend) + cờ đang cài.
 type updateState struct {
-	mu   sync.Mutex
-	info update.Info
-	busy bool
+	mu      sync.Mutex
+	info    update.Info
+	busy    bool
+	lastErr string // lần cài nền gần nhất (update_app install) lỗi – app vẫn bản cũ
 }
 
 func (u *updateState) set(i update.Info) { u.mu.Lock(); u.info = i; u.mu.Unlock() }
@@ -85,6 +86,17 @@ type updateProgress struct {
 // InstallUpdate tải bản mới (kiểm sha256), cài và mở lại app (nút Cập nhật ngay). Không làm khi đang chạy kịch bản hoặc
 // còn thay đổi chưa lưu; lỗi ở bước tải / chép trả về ngay, app vẫn chạy bản cũ.
 func (a *App) InstallUpdate() error {
+	file, sum, err := a.beginUpdate()
+	if err != nil {
+		return err
+	}
+	defer a.endUpdate(nil)
+	return a.runUpdate(file, sum)
+}
+
+// beginUpdate kiểm điều kiện cài (đã hỏi được bản mới, không đang cài, thoát được lúc này) và chọn file cho máy này;
+// nil lỗi = đã giữ cờ busy – gọi endUpdate khi xong.
+func (a *App) beginUpdate() (file, sum update.Asset, err error) {
 	a.upd.mu.Lock()
 	info, busy := a.upd.info, a.upd.busy
 	if !busy && info.Newer {
@@ -93,19 +105,31 @@ func (a *App) InstallUpdate() error {
 	a.upd.mu.Unlock()
 	switch {
 	case busy:
-		return fmt.Errorf("đang cập nhật")
+		return file, sum, fmt.Errorf("đang cập nhật")
 	case !info.Newer:
-		return fmt.Errorf("chưa có bản mới – bấm Kiểm tra bản mới trước")
+		return file, sum, fmt.Errorf("chưa có bản mới – bấm Kiểm tra bản mới trước")
 	}
-	defer func() { a.upd.mu.Lock(); a.upd.busy = false; a.upd.mu.Unlock() }()
-
-	if err := a.quitBlocker("cập nhật"); err != nil {
-		return err
+	if err = a.quitBlocker("cập nhật"); err == nil {
+		file, sum, err = update.PickAsset(info.Assets, runtime.GOOS, update.Installed())
 	}
-	file, sum, err := update.PickAsset(info.Assets, runtime.GOOS, update.Installed())
 	if err != nil {
-		return err
+		a.endUpdate(nil)
 	}
+	return file, sum, err
+}
+
+// endUpdate bỏ cờ busy; err khác nil (cài nền của update_app lỗi) giữ lại cho lần update_app check sau báo AI.
+func (a *App) endUpdate(err error) {
+	a.upd.mu.Lock()
+	a.upd.busy = false
+	if err != nil {
+		a.upd.lastErr = err.Error()
+	}
+	a.upd.mu.Unlock()
+}
+
+// runUpdate tải + cài + thoát để script nền mở bản mới.
+func (a *App) runUpdate(file, sum update.Asset) error {
 	dir := filepath.Join(os.TempDir(), "ghosthand-update")
 	os.RemoveAll(dir)
 	path, err := update.Download(context.Background(), file, sum, dir, func(done, total int64) {

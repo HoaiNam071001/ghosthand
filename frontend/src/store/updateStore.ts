@@ -53,4 +53,8 @@ export async function installUpdate() {
   }
 }
 
-if (inWails) EventsOn('update:progress', (p: Progress) => set({ progress: p }));
+if (inWails) {
+  EventsOn('update:progress', (p: Progress) => set({ progress: p }));
+  // AI cài qua update_app (59 U5) – cài chạy nền ở Go, lỗi về qua event (app vẫn bản cũ)
+  EventsOn('update:error', (msg: string) => set({ progress: null, error: msg }));
+}

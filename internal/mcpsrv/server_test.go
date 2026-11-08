@@ -50,6 +50,9 @@ type fakeBackend struct {
 	found         model.Step   // node FindImage nhận lần cuối
 	batch         *batch.Batch // run_batch (batch_test.go)
 	env           envcheck.Env // EnvWarnings dò (61 M3)
+	updateErr     string       // update_app check trả lastError (59 U5)
+	updateDeny    bool
+	installs      int
 }
 
 func (f *fakeBackend) Enabled() bool          { return true }

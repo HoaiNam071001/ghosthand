@@ -18,6 +18,8 @@ var hintOverrides = map[string]mcp.ToolAnnotations{
 	"probe_page": {DestructiveHint: ptr(false), OpenWorldHint: ptr(true)},
 	// ghi đè nội dung kịch bản có sẵn (có kiểm tra revision)
 	"update_script": {DestructiveHint: ptr(true), OpenWorldHint: ptr(false)},
+	// tải Release từ GitHub, cài đè app rồi mở lại
+	"update_app": {DestructiveHint: ptr(true), OpenWorldHint: ptr(true)},
 }
 
 // annotationsFor – annotations mặc định theo nhóm, ghi đè theo tên tool.

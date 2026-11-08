@@ -334,7 +334,8 @@
       { "kind": "list", "items": [
         "App tự hỏi có bản mới khoảng 5 giây sau khi mở; bấm **Kiểm tra bản mới** để hỏi lại.",
         "**Cập nhật ngay**: tải, kiểm tra sha256, cài đè rồi mở lại. macOS giữ nguyên quyền đã cấp.",
-        "Không cập nhật khi đang chạy kịch bản hoặc kịch bản chưa lưu."
+        "Không cập nhật khi đang chạy kịch bản hoặc kịch bản chưa lưu.",
+        "AI cũng cập nhật được (tool MCP `update_app`) theo mức AI ở Cài đặt → MCP: *Chỉ soạn* thì từ chối, *Hỏi trước khi chạy* thì hiện hộp hỏi, *Tự chạy* thì cài luôn."
       ] }
     ]
   }

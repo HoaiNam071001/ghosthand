@@ -88,6 +88,11 @@ type Backend interface {
 	// TabShot – screenshot webTab (46 B4): ảnh khung nhìn một tab Chrome của app qua CDP (không bật trình duyệt).
 	TabShot(ctx context.Context, tab string) (web.TabShot, error)
 	SetNodePref(p string) error
+
+	// Cập nhật app (59 U5): CheckUpdate hỏi Release mới nhất; InstallUpdate hỏi quyền theo mức AI rồi tải + cài ở nền,
+	// trả bản sẽ cài (app thoát + mở lại ngay sau đó).
+	CheckUpdate(ctx context.Context) (UpdateStatus, error)
+	InstallUpdate(ctx context.Context) (string, error)
 }
 
 // Server – MCP server + nhật ký lệnh AI đã gọi.
@@ -133,6 +138,7 @@ func New(back Backend) *Server {
 	s.addSimulateTools()
 	s.addDraftTools()
 	s.addWebTools()
+	s.addUpdateTools()
 	s.addDocs()
 	return s
 }
