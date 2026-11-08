@@ -28,7 +28,17 @@ type fakeBrowser struct {
 	bg      []string // thao tác chạy nền đã gửi
 	err     error
 	outline web.Outline
+	effect  web.Effect // Settle trả (56 B2)
+	marks   []string   // Mark đã gọi: "tab lastFind"
+	markErr error
 }
+
+func (b *fakeBrowser) Mark(_ context.Context, tab string, lastFind bool) (web.Mark, error) {
+	b.marks = append(b.marks, fmt.Sprintf("%s %v", tab, lastFind))
+	return web.Mark{Tab: "t1"}, b.markErr
+}
+
+func (b *fakeBrowser) Settle(context.Context, web.Mark) (web.Effect, error) { return b.effect, nil }
 
 func (b *fakeBrowser) PageOutline(context.Context, string) (web.Outline, error) {
 	return b.outline, nil

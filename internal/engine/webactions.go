@@ -45,6 +45,10 @@ func (e *Engine) webType(ctx context.Context, s model.Step) (map[string]any, err
 	if err := e.gate.wait(ctx); err != nil {
 		return nil, err
 	}
+	mark, err := e.webMark(ctx, s.Tab, true)
+	if err != nil {
+		return nil, err
+	}
 	if err := e.webPress(ctx, s, f.at, "left", 1); err != nil {
 		return nil, err
 	}
@@ -63,7 +67,7 @@ func (e *Engine) webType(ctx context.Context, s model.Step) (map[string]any, err
 	}
 	out := webOutput(f.Found, lines)
 	out["text"], out["clickX"], out["clickY"] = s.Text, f.at.X, f.at.Y
-	return out, nil
+	return out, e.webSettle(ctx, mark, out)
 }
 
 // webKeys – phần gõ của webType vào ô đã focus: phím thật, hoặc chèn chữ qua CDP khi chạy nền.

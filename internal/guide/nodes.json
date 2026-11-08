@@ -1103,6 +1103,7 @@
       "Trang cần đăng nhập thường → [[node:clickElement]]"
     ],
     "tips": [
+      "Bấm xong node chờ trang yên (tối đa 3 s) rồi mới đi tiếp; output `navigated` (đã sang trang / đổi URL), `url`, `popup` (URL tab mới mở) – nối [[node:if]] để rẽ nhánh khi bấm mà trang không đổi.",
       "Nhiều phần tử trùng chữ: đặt *Chỗ thứ N* hoặc giới hạn trong hộp thoại.",
       "Trang mở hộp alert / confirm / prompt: mặc định node lỗi `web_dialog` ngay kèm chữ trong hộp; muốn đi tiếp thì đặt **Hộp thoại JS** (webDialog) *Bấm OK* / *Bấm Huỷ* – chữ trong hộp ở output `dialogText`."
     ],
@@ -1128,6 +1129,7 @@
       "App ngoài trình duyệt → [[node:type]] hoặc [[node:elementAction]]"
     ],
     "tips": [
+      "Gõ xong node chờ trang yên như [[node:webClick]]; output `navigated`, `url`, `popup` (vd Enter gửi form sang trang khác).",
       "Bật xoá chữ cũ trước khi gõ.",
       "Ô khó nhập: thử [[node:webKey]].",
       "Trang mở hộp alert / confirm / prompt: mặc định node lỗi `web_dialog` ngay kèm chữ trong hộp; muốn đi tiếp thì đặt **Hộp thoại JS** (webDialog) *Bấm OK* / *Bấm Huỷ* – chữ trong hộp ở output `dialogText`."
@@ -1177,7 +1179,8 @@
       "Phím tắt hệ điều hành → [[node:key]]"
     ],
     "tips": [
-      "Dùng khi bấm nút không ăn nhưng Enter thì ăn."
+      "Dùng khi bấm nút không ăn nhưng Enter thì ăn.",
+      "Bấm xong chờ trang yên như [[node:webClick]]; output `navigated`, `url`, `popup`."
     ],
     "fields": [
       "**Phím / tổ hợp**"

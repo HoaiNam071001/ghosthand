@@ -6,10 +6,10 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 
 > Hook đầu phiên chèn nguyên mục này cho AI – giữ ngắn (≤ ~1500 ký tự, `check-docs.py` cảnh báo): mỗi dòng một ý, chi tiết để ở file bước / `log.md`. Cập nhật mỗi khi xong / bắt đầu một bước.
 
-- **Đang làm:** [56](phase3/56-hoc-tu-mcp-ngoai.md) học từ MCP ngoài – A + B1 + C1–C2 + D1 xong code (đủ *Xong khi*); còn B2–B4, C3, D1b–D3 làm theo nhu cầu.
-- **Xong code, chờ kiểm tra tay:** 33, 59, 56 A + B1 + C1–C2 + D1, 61, 58, 57, 55, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 40, 39, 38, 37, 36, 35, 34, 31a–d, 28, 26, 25d, 24, 22 – xem bảng *Tổng quan* + [checks.md](checks.md).
+- **Đang làm:** [56](phase3/56-hoc-tu-mcp-ngoai.md) học từ MCP ngoài – A + B1–B2 + C1–C2 + D1 xong code (đủ *Xong khi*); còn B3–B4, C3, D1b–D3 làm theo nhu cầu.
+- **Xong code, chờ kiểm tra tay:** 33, 59, 56 A + B1–B2 + C1–C2 + D1, 61, 58, 57, 55, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 40, 39, 38, 37, 36, 35, 34, 31a–d, 28, 26, 25d, 24, 22 – xem bảng *Tổng quan* + [checks.md](checks.md).
 - **Tiếp theo:** chờ người dùng chốt: 30 UI chọn 4 điểm mốc. Chưa làm: 54, 56. Hoãn: 17 (Windows), 18b.
-- **Cập nhật lần cuối:** 2026-11-08 (33: xoá `examples/` cũ, node Mở `file://…?query` trên Windows giữ query – đóng bước 33).
+- **Cập nhật lần cuối:** 2026-11-08 (56 B2: node web chờ trang yên sau click / gõ / phím, output `navigated` / `url` / `popup`).
 
 ## Tính năng của hệ thống
 
@@ -33,7 +33,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 | Ghi macro | Ghi click / kéo / gõ phím thành node, F9 dừng | [24](phase3/24-ghi-macro.md) |
 | ⬜ | Đồng bộ cloud | Đăng nhập Google, đồng bộ kịch bản + ảnh mẫu + cài đặt + bí mật (mã hoá phía máy) lên Drive; xung đột thì hỏi; backend MCP | [54](phase3/54-dong-bo-cloud.md) |
 | 🧪 | MCP client + node tuỳ chỉnh | Kết nối MCP server khác (stdio / từ xa / thư viện gợi ý), gọi tool như node, lưu tool thành node của tôi; hỏi quyền theo server + tool | [55](phase3/55-mcp-client-node-tuy-chinh.md) |
-| 🟡 | Học từ MCP ngoài | **Đợt A xong code:** quyền AI theo nội dung, file script của Chạy lệnh, chặn AI thử mãi; **B1:** hộp thoại JS trên web; **C1–C2:** chia trang / cắt output MCP; **D1:** node Hỏi người dùng giữa flow; còn xuất gói lỗi, mẫu Zalo / Telegram | [56](phase3/56-hoc-tu-mcp-ngoai.md) |
+| 🟡 | Học từ MCP ngoài | **Đợt A xong code:** quyền AI theo nội dung, file script của Chạy lệnh, chặn AI thử mãi; **B1:** hộp thoại JS trên web; **B2:** chờ trang yên sau thao tác web, biết đã sang trang / mở tab; **C1–C2:** chia trang / cắt output MCP; **D1:** node Hỏi người dùng giữa flow; còn xuất gói lỗi, mẫu Zalo / Telegram | [56](phase3/56-hoc-tu-mcp-ngoai.md) |
 | 🧪 | AI chạy ổn định | Nhận đúng cửa sổ đang ở trước, chạy tiếp giữ focus app đích, AI chạy thì thu về thanh mini, Mở URL đưa trình duyệt lên, đụng chuột tự chạy tiếp sau 5 s, lỗi phần tử gọn hơn | [57](phase3/57-ai-chay-on-dinh.md) |
 | 🧪 | Dấu hiệu đang điều khiển | Viền sáng quanh màn hình macOS + Windows (không lọt vào ảnh chụp) + thanh mini ghi rõ đang thao tác / đang chờ gì / tạm dừng | [58](phase3/58-dau-hieu-dang-dieu-khien.md) |
 | 🧪 | AI tự cập nhật + test | Bản dev cài đè + mở lại một lệnh, `app_info`, proxy MCP sống qua lần mở lại, skill test sau khi sửa, tool `update_app` cài Release (hỏi quyền theo mức AI) | [59](phase3/59-ai-tu-cap-nhat-va-test.md) |
@@ -164,7 +164,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 chờ kiểm tra tay | [53. MCP: annotations, nhật ký lệnh AI, chống prompt injection](phase3/53-mcp-hoc-tu-openclaw.md) | 6 / 6 | [2 việc](checks.md) |
 | ⬜ chưa làm | [54. Đồng bộ cloud](phase3/54-dong-bo-cloud.md) | 0 / 11 |  |
 | 🧪 chờ kiểm tra tay | [55. MCP client + node tuỳ chỉnh](phase3/55-mcp-client-node-tuy-chinh.md) | 10 / 10 | [6 việc](checks.md) |
-| 🟡 đang làm | [56. Học từ MCP ngoài](phase3/56-hoc-tu-mcp-ngoai.md) | 7 / 14 | [7 việc](checks.md) |
+| 🟡 đang làm | [56. Học từ MCP ngoài](phase3/56-hoc-tu-mcp-ngoai.md) | 8 / 14 | [9 việc](checks.md) |
 | 🟡 đang làm | [57. AI chạy ổn định](phase3/57-ai-chay-on-dinh.md) | 7 / 10 | [3 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [58. Dấu hiệu đang điều khiển](phase3/58-dau-hieu-dang-dieu-khien.md) | 8 / 8 | [7 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [59. AI tự cập nhật + test](phase3/59-ai-tu-cap-nhat-va-test.md) | 7 / 7 | [3 việc](checks.md) |

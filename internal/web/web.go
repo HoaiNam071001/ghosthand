@@ -31,6 +31,10 @@ type Browser interface {
 	Keys(ctx context.Context, tab string, keys, mods []string, sequence bool) (string, error)
 	// PageOutline – cây rút gọn của tab (outline.go): node web không thấy phần tử thì gửi đoạn gần giống cho AI (31b).
 	PageOutline(ctx context.Context, tab string) (Outline, error)
+	// Mark / Settle (56 B2): đánh dấu tab trước click / gõ / phím (lastFind = tab của lần Find gần nhất, không thì tab
+	// như Keys), sau thao tác chờ trang yên rồi báo điều hướng / tab mới (settle.go).
+	Mark(ctx context.Context, tab string, lastFind bool) (Mark, error)
+	Settle(ctx context.Context, m Mark) (Effect, error)
 	Close()
 }
 

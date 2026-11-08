@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><link rel="stylesheet" href="sandbox.css">
+<style>
+  main { display: grid; place-items: center; gap: 18px; padding: 40px; }
+  .row { font-size: 20px; padding: 6px 12px; border-bottom: 1px solid var(--line); }
+  a.btn { text-decoration: none; display: inline-block; }
+</style></head>
+<body>
+<main>
+  <div class="card" style="text-align:center">
+    <div id="title" class="big" style="font-size:40px">TRANG CHÍNH</div>
+    <p style="font-size:20px">TẢI THÊM thêm 5 dòng chậm dần, MỞ TAB MỚI mở thêm tab, SANG TRANG ĐƠN chuyển hẳn sang trang khác.</p>
+    <button class="btn" id="more">TẢI THÊM</button>
+    <button class="btn" id="pop">MỞ TAB MỚI</button>
+    <a class="btn" id="go" href="dieu-huong.html?p=don">SANG TRANG ĐƠN</a>
+  </div>
+  <div id="list"></div>
+</main>
+<script src="sandbox.js"></script>
+<script>
+  // Node web chờ trang yên sau khi bấm (56 B2): kịch bản mẫu đọc số dòng ngay sau TẢI THÊM phải ra đủ 5.
+  const p = new URLSearchParams(location.search).get('p');
+  sb.header(p === 'don' ? 'Điều hướng – trang Đơn' : p === 'tab' ? 'Điều hướng – tab mới' : 'Điều hướng');
+  if (p) document.getElementById('title').textContent = p === 'don' ? 'TRANG ĐƠN' : 'TAB MỚI';
+  document.getElementById('more').onclick = () => {
+    let i = 0;
+    const add = () => {
+      const d = document.createElement('div');
+      d.className = 'row';
+      d.textContent = 'Dòng ' + (i + 1);
+      document.getElementById('list').append(d);
+      if (++i < 5) setTimeout(add, 40 + i * 20);
+    };
+    setTimeout(add, 60);
+  };
+  document.getElementById('pop').onclick = () => window.open('dieu-huong.html?p=tab');
+</script>
+</body></html>

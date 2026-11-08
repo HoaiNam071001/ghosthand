@@ -1,0 +1,31 @@
+{
+ "meta": {
+  "name": "Web: chờ trang yên, biết đã sang trang / mở tab",
+  "description": "Trang Điều hướng (Chrome của app): bấm TẢI THÊM rồi đọc ngay số dòng – node bấm đã chờ trang yên nên ra đủ 5; MỞ TAB MỚI → output popup có URL tab mới; SANG TRANG ĐƠN → output navigated = true, url là trang Đơn. Đúng: kết thúc thành công kèm URL tab mới.",
+  "app": "Web (DOM)",
+  "level": 2,
+  "page": "dieu-huong.html",
+  "real": false
+ },
+ "script": {
+  "steps": [
+   {"type": "open", "target": "{{sandbox}}/dieu-huong.html", "webBrowser": true, "delayAfter": 500},
+   {"type": "webClick", "selectors": ["role=button[name=\"TẢI THÊM\"]"], "timeoutMs": 5000, "intervalMs": 200},
+   {"type": "webRead", "selectors": ["css=.row"], "timeoutMs": 5000, "intervalMs": 200},
+   {"type": "webClick", "selectors": ["role=button[name=\"MỞ TAB MỚI\"]"], "timeoutMs": 5000, "intervalMs": 200, "delayAfter": 300},
+   {"type": "webClick", "selectors": ["role=link[name=\"SANG TRANG ĐƠN\"]"], "timeoutMs": 5000, "intervalMs": 200},
+   {"type": "if", "cond": {"kind": "value", "left": "{{n3.output.count}} {{n2.output.navigated}} {{n5.output.navigated}}", "op": "eq", "right": "5 false true"}},
+   {"type": "end", "endStatus": "success", "message": "Đủ 5 dòng · tab mới {{n4.output.popup}} · sang {{n5.output.url}}"},
+   {"type": "end", "endStatus": "fail", "message": "Số dòng / đã sang trang (tải thêm, sang trang đơn): {{n3.output.count}} {{n2.output.navigated}} {{n5.output.navigated}} – cần 5 false true"}
+  ],
+  "edges": [
+   {"from": "s1", "port": "success", "to": "s2"},
+   {"from": "s2", "port": "success", "to": "s3"},
+   {"from": "s3", "port": "success", "to": "s4"},
+   {"from": "s4", "port": "success", "to": "s5"},
+   {"from": "s5", "port": "success", "to": "s6"},
+   {"from": "s6", "port": "true", "to": "s7"},
+   {"from": "s6", "port": "false", "to": "s8"}
+  ]
+ }
+}

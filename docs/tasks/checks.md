@@ -4,6 +4,10 @@ Những việc **đã xong code** nhưng cần người dùng thử trong app th
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
 
+## 56 B2 – web: chờ trang yên, navigated / url / popup (2026-11-08) · [56](phase3/56-hoc-tu-mcp-ngoai.md)
+- [ ] Mẫu thử *Web: chờ trang yên, biết đã sang trang / mở tab* trong app → kết thúc thành công “Đủ 5 dòng · tab mới … · sang …?p=don”; inspector node Click phần tử web / Gõ vào ô web / Phím trên trang web gợi ý biến `navigated`, `url`, `popup` – *AI đã chạy mẫu này + 11 mẫu web khác qua test Chrome thật trên Windows (GHOSTHAND_REAL), chưa thử trong app*
+- [ ] macOS: chạy lại các mẫu web (`GHOSTHAND_REAL=1 go test ./internal/samples/ -run TestRealSamples`) – node web nào chậm hơn rõ rệt sau khi bấm (> 1 s mỗi click trên trang thường) thì báo
+
 ## 33 – Mẫu thử: bỏ examples/, mở file:// giữ query (2026-11-08) · [33](phase3/33-mau-thu.md)
 - [ ] macOS: node Mở `file:///…/signal.html?ms=60000` (không chọn app) → trang nhận query (đợi đủ 60 s mới hiện tín hiệu); mất query thì báo để sửa như Windows
 - [x] Windows: node Mở `file:///…/q.html?ms=777` không chọn app → Chrome mặc định mở đúng `?ms=777` – *AI thử Windows 2026-11-08 (trước khi sửa: query rỗng)*

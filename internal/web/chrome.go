@@ -43,6 +43,7 @@ type tabConn struct {
 	cal      *calibration // nil = chưa đo / phải đo lại
 	focusEmu bool         // đã bật giả lập focus (chạy nền)
 	dialogs  *dialogWatch // hộp thoại JS đang mở (dialog.go)
+	nav      *navWatch    // khung chính đang tải (effect.go)
 }
 
 // NewChrome – profile: thư mục profile riêng của app; move: di chuột thật (đo toạ độ).
@@ -161,8 +162,9 @@ func (c *Chrome) tab(id string, alive []tabInfo) (*tabConn, error) {
 		cancel()
 		return nil, err
 	}
-	t := &tabConn{id: id, ctx: ctx, cancel: cancel, dialogs: newDialogWatch()}
+	t := &tabConn{id: id, ctx: ctx, cancel: cancel, dialogs: newDialogWatch(), nav: &navWatch{}}
 	t.dialogs.listen(ctx)
+	t.nav.listen(ctx, id)
 	c.tabs[id] = t
 	return t, nil
 }

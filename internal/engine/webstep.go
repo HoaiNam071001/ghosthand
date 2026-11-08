@@ -211,9 +211,15 @@ func (e *Engine) webClick(ctx context.Context, s model.Step) (map[string]any, er
 	}
 	out := webOutput(f.Found, lines)
 	n := max(s.Clicks, 1)
+	var mark *web.Mark
 	for i := 0; i < n; i++ {
 		if err := e.gate.wait(ctx); err != nil {
 			return nil, err
+		}
+		if i == 0 {
+			if mark, err = e.webMark(ctx, s.Tab, true); err != nil {
+				return nil, err
+			}
 		}
 		at := f.at
 		if i > 0 {
@@ -229,7 +235,7 @@ func (e *Engine) webClick(ctx context.Context, s model.Step) (map[string]any, er
 			}
 		}
 	}
-	return out, nil
+	return out, e.webSettle(ctx, mark, out)
 }
 
 // webPress – một lần bấm của node web: chuột thật, hoặc qua CDP khi chạy nền (nth = lần bấm thứ mấy – double-click).
