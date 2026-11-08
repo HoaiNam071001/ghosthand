@@ -1,6 +1,7 @@
 package element
 
 import (
+	"slices"
 	"sort"
 
 	"ghosthand/internal/model"
@@ -23,18 +24,35 @@ type RoleCount struct {
 	Count int    `json:"count"`
 }
 
-const dumpMax = 150 // số phần tử liệt kê tối đa – đủ nhìn, không phình kết quả chạy
+// dumpMax – số phần tử liệt kê tối đa: AI đọc mỗi lần lỗi nên giữ gọn (57 C1, trước là 150 ≈ 200 dòng); cần đủ cây thì
+// describe_screen elements=true.
+const dumpMax = 30
 
-// Dump – tối đa dumpMax phần tử đầu (thứ tự đọc) có tên hoặc giá trị, cùng bảng đếm theo vai trò của cả cây.
+// Dump – tối đa dumpMax phần tử có tên hoặc giá trị, cùng bảng đếm theo vai trò của cả cây. Chọn theo tầng: cùng vai
+// trò với role= trong q → bấm / gõ được → còn lại; trả theo thứ tự đọc (UI thụt theo độ sâu).
 // Cây trống / chỉ có khung cửa sổ = app không mở cây accessibility (web trong Chrome cần bật hỗ trợ).
-func Dump(nodes []Node) ([]Read, []RoleCount) {
-	var list []Read
+func Dump(nodes []Node, q Query) ([]Read, []RoleCount) {
 	count := map[string]int{}
-	for _, n := range nodes {
+	tiers := [3][]int{}
+	for i, n := range nodes {
 		count[n.Raw]++
-		if len(list) >= dumpMax || n.Name() == "" && n.Value == "" {
+		if n.Name() == "" && n.Value == "" {
 			continue
 		}
+		t := 2
+		if slices.ContainsFunc(q.Selectors, func(s model.Selector) bool { return s.By == model.SelRole && s.Value == n.Role }) {
+			t = 0
+		} else if n.Interactive() {
+			t = 1
+		}
+		tiers[t] = append(tiers[t], i)
+	}
+	pick := slices.Concat(tiers[0], tiers[1], tiers[2])
+	pick = pick[:min(len(pick), dumpMax)]
+	slices.Sort(pick)
+	list := make([]Read, 0, len(pick))
+	for _, i := range pick {
+		n := nodes[i]
 		list = append(list, Read{Raw: n.Raw, Role: n.Role, Name: clip(n.Name()), Value: clip(n.Value), Depth: n.Depth, Box: n.Box})
 	}
 	roles := make([]RoleCount, 0, len(count))

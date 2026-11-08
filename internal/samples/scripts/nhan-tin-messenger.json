@@ -1,0 +1,39 @@
+{
+ "meta": {
+  "name": "Messenger – nhắn tin cho một người",
+  "description": "Mở thẳng hội thoại trên messenger.com (trình duyệt thường đã đăng nhập), chờ ô soạn tin qua cây phần tử, bấm vào, gõ nội dung, Enter, rồi chờ chữ “Sent” / “Đã gửi” để chắc tin đã đi. Đúng: tin hiện trong hội thoại, thanh mini báo Thành công.",
+  "app": "Web thật",
+  "level": 2,
+  "page": "https://www.messenger.com",
+  "real": true,
+  "manual": true,
+  "prep": "Đăng nhập messenger.com trên trình duyệt mặc định trước. Người nhận = phần cuối URL hội thoại (messenger.com/t/<người nhận>: tên người dùng hoặc số id). Facebook đổi nhãn ô soạn thì sửa selectors của node chờ ô soạn."
+ },
+ "script": {
+  "steps": [
+   { "type": "open", "target": "https://www.messenger.com/t/{{nguoiNhan}}", "delayAfter": 3000 },
+   { "type": "waitImage", "findBy": "element", "selectors": ["role=textbox[name=\"Message\"]", "role=textbox[name=\"Write to\"]", "role=textbox[name=\"Nhắn tin\"]", "role=textbox[name=\"Viết cho\"]"], "timeoutMs": 15000 },
+   { "type": "clickImage", "imageSource": "node", "imageFrom": "s2", "delayAfter": 300 },
+   { "type": "type", "text": "{{noiDung}}", "delayAfter": 300 },
+   { "type": "key", "keys": ["enter"], "delayAfter": 500 },
+   { "type": "waitImage", "findBy": "element", "selectors": ["text=\"Sent\"", "text=\"Đã gửi\""], "timeoutMs": 10000 },
+   { "type": "end", "endStatus": "success", "message": "Đã gửi “{{noiDung}}” cho {{nguoiNhan}}" },
+   { "type": "end", "endStatus": "fail", "message": "Không thấy ô soạn tin – chưa đăng nhập messenger.com, người nhận sai, hoặc Facebook đổi nhãn ô soạn (xem chi tiết lỗi: near)" },
+   { "type": "end", "endStatus": "fail", "message": "Đã gõ + Enter nhưng không thấy “Sent” / “Đã gửi” – xem ảnh lúc lỗi: tin còn trong ô soạn hay bị chặn" }
+  ],
+  "edges": [
+   { "from": "s1", "port": "success", "to": "s2" },
+   { "from": "s2", "port": "success", "to": "s3" },
+   { "from": "s2", "port": "fail", "to": "s8" },
+   { "from": "s3", "port": "success", "to": "s4" },
+   { "from": "s4", "port": "success", "to": "s5" },
+   { "from": "s5", "port": "success", "to": "s6" },
+   { "from": "s6", "port": "success", "to": "s7" },
+   { "from": "s6", "port": "fail", "to": "s9" }
+  ],
+  "inputs": [
+   { "key": "nguoiNhan", "label": "Người nhận (phần cuối URL messenger.com/t/…)", "type": "text", "default": "" },
+   { "key": "noiDung", "label": "Nội dung tin", "type": "text", "default": "hi" }
+  ]
+ }
+}

@@ -4,6 +4,10 @@ Những việc **đã xong code** nhưng cần người dùng thử trong app th
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
 
+## 57 đợt 3 – lỗi phần tử gọn, selector dự phòng, mẫu Messenger (2026-11-08) · [57](phase3/57-ai-chay-on-dinh.md)
+- [ ] Mẫu thử *Messenger – nhắn tin cho một người* (đã đăng nhập messenger.com trên trình duyệt mặc định): nhập người nhận = chính mình, nội dung "hi" → Chạy một lần là gửi xong, kết thúc ở chờ "Sent" / "Đã gửi"; nhãn ô soạn khác 4 nhãn đã ghi → lỗi n2, chi tiết lỗi *near* có ô soạn đứng đầu (không phải thanh địa chỉ), danh sách đã đọc ≤ 30 dòng
+- [ ] Qua MCP: `describe_screen elements=true` trên Messenger → `suggest_selector {mark}` ô soạn có `fallback` `role=textbox` + occurrence
+
 ## 59 U5 – AI cập nhật app qua Release (2026-11-08) · [59](phase3/59-ai-tu-cap-nhat-va-test.md)
 - [ ] Cài bản Release cũ hơn bản mới nhất, Cài đặt → MCP mức *Hỏi trước khi chạy* → bảo AI "cập nhật app" → hộp hỏi *AI muốn cập nhật Ghosthand lên vX* (v cũ → v mới, ghi chú); *Từ chối* → AI báo bị từ chối, không thử lại; *Cập nhật* → app tải, thoát, mở lại bản mới; AI gọi `app_info` ra đúng version, phiên MCP vẫn dùng tiếp. Xem hộp hỏi cả theme sáng + tối
 - [ ] Mức *Chỉ soạn* → `update_app install` bị từ chối, không hiện hộp; có kịch bản chưa lưu → báo "lưu lại rồi cập nhật" **trước** khi hỏi; bản dev tự build → báo dùng `make dev-install`

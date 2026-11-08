@@ -21,3 +21,25 @@ func TestNearMatches(t *testing.T) {
 		t.Errorf("sai vai trò, không tên → không ứng viên: %+v", got)
 	}
 }
+
+// 57 C1: role=textbox[name=Message] trên Messenger – ô soạn "Write to" trong trang đứng trước thanh địa chỉ của
+// Chrome (cùng vai trò, tên đều không giống) và ô bị kẹp ngoài khung cuộn.
+func TestNearMatchesSameRoleInDocument(t *testing.T) {
+	nodes := []Node{
+		{Role: "window", Title: "Messenger", Box: box(0, 0, 1200, 900)},
+		{Role: "textbox", Desc: "Address and search bar", Value: "facebook.com/messages", Box: box(100, 40, 800, 30)},
+		{Role: "document", Box: box(0, 80, 1200, 820)},
+		{Role: "textbox", Placeholder: "Search Messenger", Box: box(10, 600, 300, 1)},
+		{Role: "button", Title: "Message", Box: box(400, 100, 80, 30)},
+		{Role: "textbox", Desc: "Write to Nam", Box: box(400, 820, 600, 40)},
+	}
+	got := NearMatches(nodes, Query{Selectors: []model.Selector{sel(t, `role=textbox[name="Message"]`)}}, 8)
+	names := []string{}
+	for _, n := range got {
+		names = append(names, n.Name)
+	}
+	if len(got) != 4 || got[0].Name != "Write to Nam" || got[1].Name != "Address and search bar" || !got[2].Hidden ||
+		got[3].Role != "button" {
+		t.Fatalf("thứ tự = %q (%+v)", names, got)
+	}
+}

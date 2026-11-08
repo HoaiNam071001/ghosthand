@@ -168,6 +168,10 @@ func (s *Server) suggestSelector(_ context.Context, _ *mcp.CallToolRequest, in s
 	sg := element.Suggest(nodes, idx)
 	n := nodes[idx]
 	out := map[string]any{"element": element.Item{Role: n.Role, Name: n.Name(), Box: n.Box}.Line(), "elementApp": app, "suggestions": sg}
+	if fb := element.Fallback(sg); fb != nil { // occurrence chung cả node → không ghép vào selectors của dòng đầu được
+		out["fallback"] = map[string]any{"selector": fb.Selector, "occurrence": fb.Occurrence,
+			"use": "không dựa vào chữ: nối cổng fail của node sang node cùng loại dùng dòng này + occurrence này"}
+	}
 	if len(sg) == 0 {
 		out["note"] = "phần tử không có chữ / nhãn / vai trò để viết selector – dùng clickImage theo ảnh hoặc toạ độ"
 	}

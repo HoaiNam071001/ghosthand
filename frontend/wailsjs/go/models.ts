@@ -230,6 +230,7 @@ export namespace element {
 	    unique: boolean;
 	    stability: string;
 	    note?: string;
+	    textFree?: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new Suggestion(source);
@@ -243,6 +244,7 @@ export namespace element {
 	        this.unique = source["unique"];
 	        this.stability = source["stability"];
 	        this.note = source["note"];
+	        this.textFree = source["textFree"];
 	    }
 	}
 

@@ -129,3 +129,21 @@ func TestWebMissDetailPageCheck(t *testing.T) {
 		t.Errorf("chưa thử trang mà vẫn có pageCheck: %s", d)
 	}
 }
+
+// budgetElementMiss – byte chi tiết lỗi "không thấy phần tử" AI đọc qua wait_run với cây lớn (57 C1: trước ~25 KB).
+const budgetElementMiss = 6000
+
+func TestElementMissBudget(t *testing.T) {
+	nodes := page(elemBox(10, 20, 80, 30))
+	for i := range 2000 {
+		nodes = append(nodes, element.Node{Role: element.RoleText, Raw: "AXStaticText", Value: "Một dòng chữ khá dài trong trang số " + string(rune('a'+i%26)), Box: elemBox(0, i, 300, 20), Depth: 3})
+	}
+	e := newEngine(&devicetest.FakeInput{}, model.Script{}, nil)
+	e.elems = &devicetest.FakeElements{Frames: [][]element.Node{nodes}}
+	_, err := e.findImage(context.Background(), elementStep(model.StepWaitImage, func(s *model.Step) {
+		s.Selectors, s.TimeoutMs = []string{`role=textbox[name="Message"]`}, 5
+	}))
+	if d := detailJSON(t, err); len(d) > budgetElementMiss {
+		t.Errorf("detail %d byte > %d", len(d), budgetElementMiss)
+	}
+}

@@ -34,6 +34,10 @@ func TestDescribeElementsAndSuggest(t *testing.T) {
 	if isErr || first["selector"] != `text="Lưu"` || first["unique"] != true {
 		t.Fatalf("suggest = %v", sg)
 	}
+	// 57 C2: dòng đầu dựa vào chữ → kèm dòng chỉ theo vai trò
+	if fb, _ := sg["fallback"].(map[string]any); fb["selector"] != "role=button" || fb["occurrence"] != float64(1) {
+		t.Fatalf("fallback = %v", sg["fallback"])
+	}
 	dup, _ := call(t, cs, "suggest_selector", map[string]any{"mark": 4})
 	if f := dup["suggestions"].([]any)[0].(map[string]any); f["unique"] == true || f["occurrence"] != float64(2) {
 		t.Fatalf("dup = %v", dup)

@@ -134,7 +134,7 @@ func textMiss(want string, read []vision.TextLine, area model.Rect) map[string]a
 }
 
 func elementMiss(selectors []string, nodes []element.Node, r element.Result, q element.Query) map[string]any {
-	dump, roles := element.Dump(nodes)
+	dump, roles := element.Dump(nodes, q)
 	d := map[string]any{"kind": "element", "selectors": selectors, "read": len(nodes), "count": r.Count,
 		"near": element.NearMatches(nodes, q, nearMax), "dump": dump, "roles": roles}
 	if fix := nameFix(selectors, nodes); fix != "" {

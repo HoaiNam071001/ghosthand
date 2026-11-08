@@ -11,11 +11,12 @@ import (
 // Suggestion – một selector ứng viên cho một phần tử (bước 43 A4), đã thử trên cây hiện tại.
 type Suggestion struct {
 	Selector   string `json:"selector"`
-	Occurrence int    `json:"occurrence"`     // chỗ thứ mấy (1 = chỗ đầu) – ghi vào trường occurrence của node
-	Matches    int    `json:"matches"`        // số phần tử khớp selector này trên màn hiện tại
-	Unique     bool   `json:"unique"`         // chỉ một phần tử khớp – không cần occurrence
-	Stability  string `json:"stability"`      // good | fair | poor
-	Note       string `json:"note,omitempty"` // vì sao xếp vậy
+	Occurrence int    `json:"occurrence"`         // chỗ thứ mấy (1 = chỗ đầu) – ghi vào trường occurrence của node
+	Matches    int    `json:"matches"`            // số phần tử khớp selector này trên màn hiện tại
+	Unique     bool   `json:"unique"`             // chỉ một phần tử khớp – không cần occurrence
+	Stability  string `json:"stability"`          // good | fair | poor
+	Note       string `json:"note,omitempty"`     // vì sao xếp vậy
+	TextFree   bool   `json:"textFree,omitempty"` // chỉ theo vai trò (role=…) – nhãn đổi theo ngôn ngữ / bản app vẫn tìm được
 	rank       int
 }
 
@@ -35,7 +36,11 @@ func Suggest(nodes []Node, i int) []Suggestion {
 		n := len(match(nodes, s, Query{}))
 		sg := Suggestion{Selector: line, Occurrence: k, Matches: n, Unique: n == 1, rank: rankOf(line)}
 		_, volatile := model.StableSelector(line)
+		sg.TextFree = sg.rank == rankRole
 		switch {
+		case sg.TextFree:
+			sg.Stability = map[bool]string{true: "fair", false: "poor"}[n == 1]
+			sg.Note = fmt.Sprintf("không dựa vào chữ (đổi ngôn ngữ vẫn chạy); %d chỗ cùng vai trò – occurrence %d", n, k)
 		case volatile:
 			sg.rank = rankVolatile
 			sg.Stability = "poor"
@@ -79,8 +84,25 @@ func candidates(n Node) []string {
 	return model.StableFirst(lines)
 }
 
-// rankVolatile – selector có giá trị hay đổi: xếp sau mọi loại khác.
-const rankVolatile = 4
+// Fallback – dòng không dựa vào chữ (role=…) khi dòng đầu dựa vào chữ / nhãn (57 C2: nhãn "Write to" đổi theo ngôn
+// ngữ / bản Facebook); nil khi dòng đầu đã không dựa vào chữ hoặc không có dòng như vậy.
+func Fallback(sg []Suggestion) *Suggestion {
+	if len(sg) == 0 || sg[0].TextFree {
+		return nil
+	}
+	for i := range sg {
+		if sg[i].TextFree {
+			return &sg[i]
+		}
+	}
+	return nil
+}
+
+// rankRole – selector chỉ theo vai trò; rankVolatile – selector có giá trị hay đổi: xếp sau mọi loại khác.
+const (
+	rankRole     = 3
+	rankVolatile = 4
+)
 
 // rankOf – độ bền theo loại selector: aria 0, chữ 1, vai trò + tên 2, vai trò 3.
 func rankOf(line string) int {
@@ -92,5 +114,5 @@ func rankOf(line string) int {
 	case strings.Contains(line, "[name="):
 		return 2
 	}
-	return 3
+	return rankRole
 }
