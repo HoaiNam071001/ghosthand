@@ -85,6 +85,9 @@ func openCommand(goos, target, app string) (string, []string) {
 	case "windows":
 		// PowerShell Start-Process thay cho "cmd /c start": cmd hiểu & trong URL (?a=1&b=2) là nối lệnh.
 		cmd := "Start-Process -FilePath " + psQuote(target)
+		if app == "" && fileURLWithQuery(target) {
+			cmd = defaultBrowserPS(target)
+		}
 		if app != "" {
 			if w, ok := windowsApps[strings.ToLower(app)]; ok {
 				app = w
@@ -97,6 +100,22 @@ func openCommand(goos, target, app string) (string, []string) {
 		return app, []string{target}
 	}
 	return "xdg-open", []string{target}
+}
+
+// fileURLWithQuery – file://…?… / #…: Windows mở file:// theo app gán cho .html (đường dẫn file) nên mất phần sau ?
+// (thử 2026-11-08: location.search rỗng); đưa URL làm đối số cho trình duyệt thì giữ.
+func fileURLWithQuery(target string) bool {
+	return strings.HasPrefix(strings.ToLower(target), "file:") && strings.ContainsAny(target, "?#")
+}
+
+// defaultBrowserPS – lệnh PowerShell mở url bằng trình duyệt mặc định (ProgId của http → exe trong shell\open\command);
+// không đọc được registry thì mở như thường.
+func defaultBrowserPS(url string) string {
+	return "$u=" + psQuote(url) + "; try { " +
+		`$p=(Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice' -ErrorAction Stop).ProgId; ` +
+		`$c=(Get-ItemProperty ('Registry::HKEY_CLASSES_ROOT\'+$p+'\shell\open\command') -ErrorAction Stop).'(default)'; ` +
+		`if ($c -match '^\s*"([^"]+)"' -or $c -match '^\s*(\S+)') { Start-Process -FilePath $Matches[1] -ArgumentList ('"'+$u+'"'); exit } ` +
+		"} catch {}; Start-Process -FilePath $u"
 }
 
 // psQuote: chuỗi PowerShell trong nháy đơn (' viết thành ”).

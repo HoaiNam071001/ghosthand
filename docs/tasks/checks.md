@@ -4,6 +4,10 @@ Những việc **đã xong code** nhưng cần người dùng thử trong app th
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
 
+## 33 – Mẫu thử: bỏ examples/, mở file:// giữ query (2026-11-08) · [33](phase3/33-mau-thu.md)
+- [ ] macOS: node Mở `file:///…/signal.html?ms=60000` (không chọn app) → trang nhận query (đợi đủ 60 s mới hiện tín hiệu); mất query thì báo để sửa như Windows
+- [x] Windows: node Mở `file:///…/q.html?ms=777` không chọn app → Chrome mặc định mở đúng `?ms=777` – *AI thử Windows 2026-11-08 (trước khi sửa: query rỗng)*
+
 ## 57 đợt 3 – lỗi phần tử gọn, selector dự phòng, mẫu Messenger (2026-11-08) · [57](phase3/57-ai-chay-on-dinh.md)
 - [ ] Mẫu thử *Messenger – nhắn tin cho một người* (đã đăng nhập messenger.com trên trình duyệt mặc định): nhập người nhận = chính mình, nội dung "hi" → Chạy một lần là gửi xong, kết thúc ở chờ "Sent" / "Đã gửi"; nhãn ô soạn khác 4 nhãn đã ghi → lỗi n2, chi tiết lỗi *near* có ô soạn đứng đầu (không phải thanh địa chỉ), danh sách đã đọc ≤ 30 dòng
 - [ ] Qua MCP: `describe_screen elements=true` trên Messenger → `suggest_selector {mark}` ô soạn có `fallback` `role=textbox` + occurrence
@@ -533,14 +537,14 @@ Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi t
 
 ## 20 F5 – Lúc chạy, nhật ký, lịch sử, debug · [phase3/20-flow.md](phase3/20-flow.md)
 
-- [ ] Chạy ví dụ Facebook (`examples/thu-node-dieu-khien.json`): về màn chính thấy bảng Nhật ký, đường đã đi sáng, ×n trên node lặp; bấm dòng chọn node; node lỗi có ảnh màn hình
+- [ ] Chạy Mẫu thử *Feed – cuộn tìm bài rồi thả tim* (lặp + Đếm + Nếu): về màn chính thấy bảng Nhật ký, đường đã đi sáng, ×n trên node lặp; bấm dòng chọn node; node lỗi có ảnh màn hình
 - [x] Node Kết thúc thành công có lời nhắn → "Xong: …" ở thanh trạng thái – *AI thử macOS 2026-11-03: thanh trạng thái “Xong: Đã chọn các món ≤ 30.000 đ trong 6 món”*
 - [ ] Lịch sử chạy trong thư viện: chạy vài lần, mở lại lần cũ; mở kịch bản khác thì danh sách đổi theo
 - [ ] Debug: đặt Điểm dừng ở một node → Chạy dừng trước node đó (thanh mini), F10 / nút chạy từng node, Tiếp tục; *Từ node này*; *Từng node*
 
 ## 20 F3 – Node điều khiển · [phase3/20-flow.md](phase3/20-flow.md)
 
-- [ ] ví dụ Facebook bằng Switch theo màn hình + Đếm + Kết thúc; Nếu thấy ảnh (khoanh ảnh mẫu cho điều kiện), màu (chọn điểm, Lấy màu); Thử node vẽ khung trên overlay – file thử `examples/thu-node-dieu-khien.json`
+- [ ] Mẫu thử *Switch theo màn hình* (Switch theo màn hình + Đếm + Kết thúc), *Nếu có quảng cáo thì đóng* (Nếu); Nếu thấy ảnh (khoanh ảnh mẫu cho điều kiện), màu (chọn điểm, Lấy màu); Thử node vẽ khung trên overlay
 - [ ] Lời nhắn node Kết thúc thất bại hiện ở "Lỗi lần chạy trước" (thanh trạng thái), node đó được chọn trên canvas
 
 ## 20 F4b – Canvas trong app · [phase3/20-flow.md](phase3/20-flow.md)

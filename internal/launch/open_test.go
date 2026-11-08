@@ -3,6 +3,7 @@ package launch
 import (
 	"reflect"
 	"runtime"
+	"strings"
 	"testing"
 )
 
@@ -21,6 +22,14 @@ func TestOpenCommand(t *testing.T) {
 		{"windows", "a.vn", "Google Chrome", "powershell", []string{"-NoProfile", "-NonInteractive", "-Command", `Start-Process -FilePath 'chrome' -ArgumentList '"https://a.vn"'`}},
 		{"windows", `C:\Program Files\O'Brien\x.exe`, "", "powershell", []string{"-NoProfile", "-NonInteractive", "-Command", `Start-Process -FilePath 'C:\Program Files\O''Brien\x.exe'`}},
 		{"linux", "a.vn", "", "xdg-open", []string{"https://a.vn"}},
+	}
+	// file:// có query → qua trình duyệt mặc định (giữ ?…); không query → như thường
+	if _, args := openCommand("windows", "file:///C:/a/q.html?ms=1", ""); !strings.Contains(args[3], "UserChoice") ||
+		!strings.HasPrefix(args[3], "$u='file:///C:/a/q.html?ms=1';") {
+		t.Errorf("file:// có query: %q", args[3])
+	}
+	if _, args := openCommand("windows", "file:///C:/a/q.html", ""); strings.Contains(args[3], "UserChoice") {
+		t.Errorf("file:// không query không cần tìm trình duyệt: %q", args[3])
 	}
 	for _, c := range cases {
 		name, args := openCommand(c.goos, c.target, c.app)

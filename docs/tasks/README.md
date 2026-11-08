@@ -7,9 +7,9 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 > Hook đầu phiên chèn nguyên mục này cho AI – giữ ngắn (≤ ~1500 ký tự, `check-docs.py` cảnh báo): mỗi dòng một ý, chi tiết để ở file bước / `log.md`. Cập nhật mỗi khi xong / bắt đầu một bước.
 
 - **Đang làm:** [56](phase3/56-hoc-tu-mcp-ngoai.md) học từ MCP ngoài – A + B1 + C1–C2 + D1 xong code (đủ *Xong khi*); còn B2–B4, C3, D1b–D3 làm theo nhu cầu.
-- **Xong code, chờ kiểm tra tay:** 59, 56 A + B1 + C1–C2 + D1, 61, 58, 57, 55, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 40, 39, 38, 37, 36, 35, 34, 31a–d, 28, 26, 25d, 24, 22 – xem bảng *Tổng quan* + [checks.md](checks.md).
-- **Tiếp theo:** chờ người dùng chốt: 33 (`examples/` cũ), 30 UI chọn 4 điểm mốc. Chưa làm: 54, 56. Hoãn: 17 (Windows), 18b.
-- **Cập nhật lần cuối:** 2026-11-08 (57 đợt 3: lỗi không thấy phần tử gọn + xếp đúng, `suggest_selector` có `fallback`, mẫu Messenger – đóng bước 57).
+- **Xong code, chờ kiểm tra tay:** 33, 59, 56 A + B1 + C1–C2 + D1, 61, 58, 57, 55, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 40, 39, 38, 37, 36, 35, 34, 31a–d, 28, 26, 25d, 24, 22 – xem bảng *Tổng quan* + [checks.md](checks.md).
+- **Tiếp theo:** chờ người dùng chốt: 30 UI chọn 4 điểm mốc. Chưa làm: 54, 56. Hoãn: 17 (Windows), 18b.
+- **Cập nhật lần cuối:** 2026-11-08 (33: xoá `examples/` cũ, node Mở `file://…?query` trên Windows giữ query – đóng bước 33).
 
 ## Tính năng của hệ thống
 

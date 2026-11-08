@@ -41,4 +41,4 @@ description: Thêm một loại node mới vào flow (vd focus cửa sổ, web D
 
 ## Xong
 
-`python3 scripts/check-docs.py` (bắt thiếu nhãn / icon / mô tả), `go test ./...`, `npm run build && npm test`, thêm ví dụ vào `examples/` nếu hữu ích, rồi `wrap-up`. Thêm dòng loại node vào bảng cổng ở `docs/ARCHITECTURE.md` §2 nếu cổng mới.
+`python3 scripts/check-docs.py` (bắt thiếu nhãn / icon / mô tả), `go test ./...`, `npm run build && npm test`, thêm Mẫu thử cho node vào `internal/samples/scripts/`, rồi `wrap-up`. Thêm dòng loại node vào bảng cổng ở `docs/ARCHITECTURE.md` §2 nếu cổng mới.
