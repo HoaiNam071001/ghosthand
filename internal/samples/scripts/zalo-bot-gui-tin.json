@@ -1,0 +1,37 @@
+{
+ "meta": {
+  "name": "Zalo Bot – gửi tin qua bot chính thức",
+  "description": "Gửi một tin tới người dùng Zalo bằng Zalo Bot API chính thức (node HTTP, không đụng chuột / bàn phím) – không dùng tài khoản Zalo cá nhân. Token bot lấy từ bí mật – không nằm trong file kịch bản. Đúng: tin hiện trong cuộc trò chuyện với bot, lời kết thúc ghi mã tin; token / chat id sai thì kết thúc thất bại kèm phản hồi của Zalo.",
+  "app": "API",
+  "level": 2,
+  "page": "https://bot.zapps.me/docs/apis/sendMessage/",
+  "real": true,
+  "manual": true,
+  "prep": "Tạo bot ở Zalo Bot Manager (bot.zapps.me) lấy token → Cài đặt → Bí mật: thêm zalo_bot_token. Nhắn bot một tin rồi gọi getUpdates (https://bot-api.zaloplatforms.com/bot<token>/getUpdates), lấy chat id của tin đó điền vào ô Chat id khi chạy."
+ },
+ "script": {
+  "steps": [
+   {
+    "type": "http",
+    "method": "POST",
+    "url": "https://bot-api.zaloplatforms.com/bot{{secret.zalo_bot_token}}/sendMessage",
+    "bodyType": "json",
+    "body": "{\n  \"chat_id\": \"{{chat_id}}\",\n  \"text\": \"{{noi_dung}}\"\n}",
+    "timeoutMs": 15000
+   },
+   { "type": "if", "cond": { "kind": "value", "left": "{{n1.output.json.ok}}", "op": "eq", "right": "true" } },
+   { "type": "end", "endStatus": "success", "message": "Đã gửi tin Zalo, mã tin {{n1.output.json.result.message_id}}" },
+   { "type": "end", "endStatus": "fail", "message": "Zalo không nhận tin (HTTP {{n1.output.status}}): {{n1.output.body}}" }
+  ],
+  "edges": [
+   { "from": "s1", "port": "success", "to": "s2" },
+   { "from": "s1", "port": "fail", "to": "s4" },
+   { "from": "s2", "port": "true", "to": "s3" },
+   { "from": "s2", "port": "false", "to": "s4" }
+  ],
+  "inputs": [
+   { "key": "chat_id", "label": "Chat id", "type": "text", "default": "" },
+   { "key": "noi_dung", "label": "Nội dung", "type": "text", "default": "Xin chào từ Ghosthand" }
+  ]
+ }
+}

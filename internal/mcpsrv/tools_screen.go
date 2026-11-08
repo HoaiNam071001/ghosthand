@@ -31,9 +31,10 @@ type areaIn struct {
 
 type shotIn struct {
 	areaIn
-	Marks  bool   `json:"marks,omitempty" jsonschema:"vẽ số #1, #2… lên từng phần tử bấm / gõ được trong ảnh (đọc qua Accessibility) + trả danh sách; sau đó suggest_selector {mark} để lấy selector bền"`
+	Marks  bool   `json:"marks,omitempty" jsonschema:"đánh số #N lên phần tử bấm / gõ được (Accessibility) + trả danh sách; rồi suggest_selector {mark} lấy selector bền"`
 	App    string `json:"app,omitempty" jsonschema:"với marks: tên app / bundle id cần đọc phần tử (bỏ trống = cửa sổ của window, hoặc app trên cùng)"`
-	WebTab string `json:"webTab,omitempty" jsonschema:"chụp riêng một tab của Chrome của app qua trình duyệt (id tab từ probe_page / read_web_outline, hoặc chuỗi trong URL; \"active\" = tab đang hiện) – đúng tab kể cả khi Chrome bị che; bỏ qua window / vùng"`
+	Cursor bool   `json:"cursor,omitempty" jsonschema:"vẽ dấu chuột"`
+	WebTab string `json:"webTab,omitempty" jsonschema:"chụp riêng một tab của Chrome của app qua trình duyệt (id tab từ probe_page / read_web_outline, hoặc chuỗi trong URL; \"active\" = tab đang hiện); bỏ qua window / vùng"`
 }
 
 type textLine struct {
@@ -95,6 +96,15 @@ func (s *Server) screenshot(ctx context.Context, _ *mcp.CallToolRequest, in shot
 			return fail(err)
 		}
 		img = shown
+	}
+	if in.Cursor {
+		x, y := s.back.MousePosition()
+		cur := map[string]any{"x": x, "y": y}
+		var inside bool
+		if img, inside = vision.DrawCursor(img, r, x, y); !inside {
+			cur["outside"] = true // chuột ngoài vùng chụp – không vẽ
+		}
+		out["cursor"] = cur
 	}
 	c, w := pngContent(img)
 	if c == nil {

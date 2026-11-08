@@ -1,11 +1,11 @@
 // Hộp thoại Lịch sử chạy (thư viện → "Xem tất cả"): trái mọi lần chạy đã lưu, phải nhật ký của lần đang chọn (bấm
 // dòng xem output / lỗi / ảnh lúc lỗi ngay trong hộp thoại). "Xem trên flow" mới đóng hộp thoại, mở bảng Nhật ký và
-// tô đường đã đi trên canvas. Xoá lần đang chọn / xoá hết (bước 41 – RunsDelete).
+// tô đường đã đi trên canvas. Xoá lần đang chọn / xoá hết (bước 41 – RunsDelete). Xuất gói lỗi (56 D2).
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import RunLog from '../flow/RunLog';
-import { deleteRuns, fetchRun, openRun, RunSummary, runShotUrl, useRunLog } from '../../runStore';
+import { deleteRuns, exportRunBundle, fetchRun, openRun, RunSummary, runShotUrl, useRunLog } from '../../runStore';
 import { errorText } from '../../engineStore';
-import { useEditor } from '../../store';
+import { setNotice, useEditor } from '../../store';
 import { nodeViews } from '../../flow/view';
 import { runHead, runRows } from '../../flow/run';
 import type { StepResult } from '../../types';
@@ -44,6 +44,9 @@ export default function RunsDialog({ onClose }: { onClose: () => void }) {
     const next = id && history[history.findIndex((h) => h.id === id) + 1]?.id; // xoá xong chọn lần cũ hơn kế đó
     deleteRuns(id).then(() => { setSel(next || ''); setError(''); }).catch((e) => setError(errorText(e)));
   };
+  const exportBundle = () => {
+    exportRunBundle(sel).then((p) => { if (p) { setError(''); setNotice(`Đã xuất gói lỗi ${p}`); } }).catch((e) => setError(errorText(e)));
+  };
   const view = () => {
     onClose();
     openRun(sel);
@@ -59,6 +62,8 @@ export default function RunsDialog({ onClose }: { onClose: () => void }) {
             {error && <div className="text-[13px] text-danger-text">{error}</div>}
           </div>
           <Segmented label="Kiểu xem lần chạy" value={as} onChange={setAs} options={[{ id: 'tree', label: 'Cây' }, { id: 'list', label: 'Danh sách' }]} />
+          <button disabled={!sel} onClick={exportBundle} className="h-8 rounded-control border border-line px-2.5 text-[13px] enabled:hover:bg-hover disabled:opacity-50"
+            title="Một file .zip để gửi báo lỗi: kịch bản, kết quả từng node, ảnh lúc lỗi, phiên bản app / hệ điều hành – bí mật được che">Xuất gói lỗi…</button>
           <RunsDelete count={history.length} canDelete={!!sel} onDelete={() => remove(sel)} onClear={() => remove('')} />
           <button disabled={!run} onClick={view} className="btn-primary h-8 rounded-control px-3 text-[13px] font-semibold disabled:opacity-50"
             title="Đóng hộp thoại, mở nhật ký dưới canvas và tô đường đã đi">Xem trên flow</button>

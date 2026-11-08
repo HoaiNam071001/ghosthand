@@ -63,6 +63,8 @@ export function EmbedScriptFile(arg1:model.Script):Promise<script.EmbedResult>;
 
 export function ExportPack(arg1:model.Script):Promise<pack.Result>;
 
+export function ExportRunBundle(arg1:model.Script,arg2:string,arg3:string):Promise<string>;
+
 export function FindElement(arg1:model.Script,arg2:string):Promise<engine.WebFindResult>;
 
 export function FindImage(arg1:model.Script,arg2:string):Promise<engine.FindResult>;

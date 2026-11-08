@@ -49,6 +49,7 @@ const debugTips = `Thử – sửa (chạy thật trên máy người dùng):
 - Thao tác có hậu quả (gửi tin, lưu, đặt hàng): node sau nó chờ dấu hiệu đã xong (chữ "Sent" / "Đã gửi", thông báo đã lưu) – không có thì lần chạy "thành công" mà việc chưa xảy ra. Đang thử: shots "each" + changes của node đó cho biết thao tác có tác dụng chưa.
 - App / trang có cây phần tử (describe_screen elements=true ra danh sách): ưu tiên elementAction / findBy element hơn tìm chữ / ảnh – không phụ thuộc theme, zoom; nhãn hay đổi theo ngôn ngữ thì thêm selectors nhiều thứ tiếng hoặc dùng fallback của suggest_selector.
 - Output dài trong kết quả bị cắt ("… bỏ N ký tự …", "… còn N mục"): node sau vẫn nhận đủ qua {{nX.output.…}} – cần xem phần bỏ thì cho node sau lọc / đọc (textMatch, setVar).
+- Trang cần đăng nhập (node web gặp trang đăng nhập, captcha, "xác minh bạn là người"): KHÔNG cho node tự điền mật khẩu (webType / type {{secret.…}} vào ô mật khẩu) – trang dễ chặn bot, khoá tài khoản. Nhờ người dùng tự đăng nhập một lần trong Chrome của app (nút Đăng nhập ở node web, xong bấm Xong) – phiên được giữ cho các lần chạy sau; rồi chạy lại.
 - Bị từ chối quyền chạy / Cài đặt chỉ cho soạn: báo người dùng, không gọi lại liên tục.`
 
 // guide – nội dung get_step_types / ghosthand://guide.

@@ -1,6 +1,6 @@
 // Công tắc AI – mức chạy (bước 31b): chỉ soạn / hỏi trước khi chạy / tự chạy + trần phút mỗi lượt + tự chạy tiếp sau
 // khi người dùng đụng chuột (57 B4: touchResumeS 0 = mặc định, < 0 = tắt) + tự dọn kịch bản AI thử (61 M5: trialDays
-// cùng quy ước). Chỉ hiển thị;
+// cùng quy ước) + gửi ảnh cho AI (56 C3: noImages). Chỉ hiển thị;
 // McpSettings lưu. Tắt hẳn = công tắc MCP.
 import { store } from '../../../wailsjs/go/models';
 import { RunMode, runMode } from '../../aiLevel';
@@ -33,6 +33,9 @@ export default function AiRunSettings({ mcp, onChange }: { mcp: store.MCPSetting
       <span className="text-xs text-muted">{HINT[mode]}</span>
       <label className="flex items-center justify-between gap-3 text-muted">Chấm đỏ trên thanh mini khi AI chụp / đọc màn hình
         <Switch on={!mcp.hideCaptureDot} onChange={(on) => onChange({ hideCaptureDot: !on })} label="Chấm đỏ khi AI chụp màn hình" />
+      </label>
+      <label className="flex items-center justify-between gap-3 text-muted">Gửi ảnh màn hình cho AI (tắt nếu AI không xem được ảnh – đỡ tốn token)
+        <Switch on={!mcp.noImages} onChange={(on) => onChange({ noImages: !on })} label="Gửi ảnh cho AI" />
       </label>
       {mode !== 'edit' && (
         <>

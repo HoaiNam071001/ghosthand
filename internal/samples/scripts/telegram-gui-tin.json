@@ -1,0 +1,37 @@
+{
+ "meta": {
+  "name": "Telegram – gửi tin qua bot",
+  "description": "Gửi một tin tới chat Telegram bằng Bot API chính thức (node HTTP, không đụng chuột / bàn phím). Token bot lấy từ bí mật – không nằm trong file kịch bản. Đúng: tin hiện trong chat Telegram, lời kết thúc ghi mã tin; token / chat id sai thì kết thúc thất bại kèm lý do Telegram trả về.",
+  "app": "API",
+  "level": 2,
+  "page": "https://core.telegram.org/bots/api#sendmessage",
+  "real": true,
+  "manual": true,
+  "prep": "Telegram: nhắn @BotFather /newbot lấy token → Cài đặt → Bí mật: thêm telegram_bot_token. Nhắn bot một tin rồi mở https://api.telegram.org/bot<token>/getUpdates, lấy message.chat.id điền vào ô Chat id khi chạy."
+ },
+ "script": {
+  "steps": [
+   {
+    "type": "http",
+    "method": "POST",
+    "url": "https://api.telegram.org/bot{{secret.telegram_bot_token}}/sendMessage",
+    "bodyType": "json",
+    "body": "{\n  \"chat_id\": \"{{chat_id}}\",\n  \"text\": \"{{noi_dung}}\"\n}",
+    "timeoutMs": 15000
+   },
+   { "type": "if", "cond": { "kind": "value", "left": "{{n1.output.json.ok}}", "op": "eq", "right": "true" } },
+   { "type": "end", "endStatus": "success", "message": "Đã gửi tin Telegram, mã tin {{n1.output.json.result.message_id}}" },
+   { "type": "end", "endStatus": "fail", "message": "Telegram không nhận tin (HTTP {{n1.output.status}}): {{n1.output.json.description}}" }
+  ],
+  "edges": [
+   { "from": "s1", "port": "success", "to": "s2" },
+   { "from": "s1", "port": "fail", "to": "s4" },
+   { "from": "s2", "port": "true", "to": "s3" },
+   { "from": "s2", "port": "false", "to": "s4" }
+  ],
+  "inputs": [
+   { "key": "chat_id", "label": "Chat id", "type": "text", "default": "" },
+   { "key": "noi_dung", "label": "Nội dung", "type": "text", "default": "Xin chào từ Ghosthand" }
+  ]
+ }
+}

@@ -127,7 +127,7 @@ func New(back Backend) *Server {
 	s := &Server{back: back, log: &CallLog{}}
 	s.mcp = mcp.NewServer(&mcp.Implementation{Name: "ghosthand", Title: "Ghosthand", Version: "1.0"},
 		&mcp.ServerOptions{Instructions: instructions})
-	s.mcp.AddReceivingMiddleware(s.log.middleware, s.accessMiddleware)
+	s.mcp.AddReceivingMiddleware(s.log.middleware, s.accessMiddleware, s.imagesMiddleware)
 	s.addReadTools()
 	s.addElementTools()
 	s.addWriteTools()

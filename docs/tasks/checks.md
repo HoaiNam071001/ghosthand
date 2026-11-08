@@ -4,6 +4,13 @@ Những việc **đã xong code** nhưng cần người dùng thử trong app th
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
 
+## 56 B4 · C3 · D2 · D3 – đăng nhập, ảnh cho AI, gói lỗi, mẫu Telegram / Zalo (2026-11-08) · [56](phase3/56-hoc-tu-mcp-ngoai.md)
+- [ ] (C3) Cài đặt → AI: tắt *Gửi ảnh màn hình cho AI* → nhờ AI chụp màn hình: AI chỉ nhận chữ + dòng “Ảnh đã bỏ…” (không lỗi tool); bật lại → có ảnh
+- [ ] (C3) Qua MCP: `screenshot cursor=true` → chữ thập đỏ đúng chỗ chuột, kết quả có `cursor {x, y}`; thử trên màn phụ và Windows có scale 125–150 %; chuột ngoài vùng → `outside: true`, không vẽ
+- [ ] (D2) Lịch sử chạy → chọn một lần lỗi có ảnh → *Xuất gói lỗi…* → lưu .zip → mở thấy `info.json` (phiên bản app + hệ điều hành), `run.json`, `script.json`, `shots/`; kịch bản dùng bí mật thì giá trị chỉ còn ••••; Huỷ hộp Lưu thì không báo gì
+- [ ] (D3) Mẫu *Telegram – gửi tin qua bot* / *Zalo Bot – gửi tin qua bot chính thức* với token thật (Cài đặt → Bí mật) + chat id → tin tới nơi, lời kết có mã tin; token sai → kết thúc thất bại kèm lý do, token không hiện trong nhật ký
+- [ ] (B4) Hướng dẫn → *Chọn cách tìm*: khối cảnh báo trang cần đăng nhập hiện đúng, đọc được ở theme sáng / tối
+
 ## 56 B3 – MCP: tham số find khi đọc cây trang / phần tử (2026-11-08) · [56](phase3/56-hoc-tu-mcp-ngoai.md)
 - [ ] Cài bản mới, mở một trang lớn trên Chrome của app, nhờ AI tìm một nút (vd "Thanh toán") → AI gọi `read_web_outline find` ra vài dòng kèm vùng bao ngoài (hộp thoại / form), không đọc cả cây; `find: "/^Gửi$/"` chỉ đúng nút tên Gửi
 - [ ] `describe_screen elements=true find=…` trên một app (Zalo / Cài đặt hệ thống) → dòng có `⊂ window "…" › …`; `suggest_selector {mark: 1}` ra đúng phần tử của dòng #1 đã lọc – *AI đã test bằng thiết bị giả + Chrome thật (outline), chưa thử qua MCP trên app*

@@ -2553,6 +2553,7 @@ export namespace store {
 	    nodePref?: string;
 	    touchResumeS?: number;
 	    trialDays?: number;
+	    noImages?: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new MCPSettings(source);
@@ -2569,6 +2570,7 @@ export namespace store {
 	        this.nodePref = source["nodePref"];
 	        this.touchResumeS = source["touchResumeS"];
 	        this.trialDays = source["trialDays"];
+	        this.noImages = source["noImages"];
 	    }
 	}
 	export class OverlaySettings {
@@ -2749,6 +2751,7 @@ export namespace web {
 	    rect: model.Rect;
 	    inView: boolean;
 	    depth: number;
+	    region?: boolean;
 	    level?: number;
 	    value?: string;
 	    secret?: boolean;
@@ -2770,6 +2773,7 @@ export namespace web {
 	        this.rect = this.convertValues(source["rect"], model.Rect);
 	        this.inView = source["inView"];
 	        this.depth = source["depth"];
+	        this.region = source["region"];
 	        this.level = source["level"];
 	        this.value = source["value"];
 	        this.secret = source["secret"];

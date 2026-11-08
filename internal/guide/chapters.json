@@ -82,6 +82,7 @@
         "Mọi thứ cố định, cửa sổ đã đặt đúng chỗ bằng [[node:window]]? → toạ độ ([[node:click]]) – nhanh nhất.",
         "Chỉ cần **biết đã xong chưa** (trang tải, hiệu ứng dừng)? → [[node:waitScreen]] thay vì [[node:wait]] cố định."
       ] },
+      { "kind": "warn", "text": "Trang cần đăng nhập: **đừng để node tự điền mật khẩu** (gõ `{{secret.…}}` vào ô mật khẩu) – nhiều trang nhận ra máy gõ, bật captcha hoặc khoá tài khoản. Bấm **Đăng nhập** ở node web, tự đăng nhập một lần trong Chrome của app rồi bấm *Xong* – phiên được giữ cho các lần chạy sau." },
       { "kind": "tip", "text": "Ghép cách: [[node:waitText]] tìm dòng *Đăng nhập* rồi [[node:clickImage]] chọn *Chỗ node trước thấy* – không phải tìm lại hai lần." },
       { "kind": "tip", "text": "Mở đầu kịch bản bền cho app desktop: [[node:app]] kiểm tra app đang chạy → chưa thì [[node:open]] + chờ mở xong → [[node:window]] đặt vị trí + cỡ. Sau đó toạ độ và ảnh mẫu không còn lệch giữa các lần chạy." },
       { "kind": "sample", "sample": "phan-tu-doc-gia", "text": "Đọc giá trên trang bằng phần tử Accessibility – không OCR, không chụp ảnh mẫu." },
@@ -221,6 +222,7 @@
         ["`end`", "Node Kết thúc thất bại", "Do chính kịch bản báo – đọc lời nhắn"],
         ["`cancelled`", "Bạn dừng giữa chừng", "–"]
       ] },
+      { "kind": "tip", "text": "Cần nhờ người khác xem lỗi? Chọn lần chạy rồi bấm **Xuất gói lỗi…**: một file .zip gồm kịch bản đang mở, kết quả từng node, ảnh lúc lỗi và phiên bản app / hệ điều hành. Giá trị bí mật (tab Bí mật) và input tên kiểu mật khẩu được thay bằng ••••, nhưng ảnh màn hình vẫn là ảnh thật – xem lại trước khi gửi." },
       { "kind": "tip", "text": "Xoá lịch sử cũ hoặc đổi nơi lưu ở [[chapter:settings-storage]]." }
     ]
   },
@@ -304,7 +306,7 @@
     "title": "AI (MCP)",
     "summary": "Bật MCP, mức chạy của AI, tool, ưu tiên node, lệnh AI gần đây.",
     "blocks": [
-      { "kind": "p", "text": "Công tắc MCP, mức chạy của AI, chọn tool cho từng loại AI, ưu tiên node, cấu hình mẫu cho Claude Desktop và nhật ký các lệnh AI vừa gọi. Cách dùng: [[chapter:ai-mcp]]." }
+      { "kind": "p", "text": "Công tắc MCP, mức chạy của AI, chọn tool cho từng loại AI, ưu tiên node, cấu hình mẫu cho Claude Desktop và nhật ký các lệnh AI vừa gọi. *Gửi ảnh màn hình cho AI*: tắt khi AI bạn dùng không xem được ảnh – app bỏ mọi ảnh (chụp màn hình, ảnh lúc node lỗi) khỏi kết quả gửi AI, AI đọc màn hình bằng chữ, đỡ tốn token. Cách dùng: [[chapter:ai-mcp]]." }
     ]
   },
   {

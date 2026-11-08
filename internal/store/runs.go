@@ -32,16 +32,21 @@ func RunsDir(base, name, path string) string {
 		key = "unsaved:" + name
 	}
 	h := sha1.Sum([]byte(key))
-	slug := strings.Map(func(r rune) rune {
+	return filepath.Join(base, "runs", slug(name)+"-"+hex.EncodeToString(h[:4]))
+}
+
+// slug – tên kịch bản thành tên file: chữ thường, ký tự khác chữ / số thành -, tối đa 40 ký tự.
+func slug(name string) string {
+	s := strings.Map(func(r rune) rune {
 		if unicode.IsLetter(r) || unicode.IsDigit(r) {
 			return unicode.ToLower(r)
 		}
 		return '-'
 	}, name)
-	if s := []rune(strings.Trim(slug, "-")); len(s) > 40 {
-		slug = string(s[:40])
+	if r := []rune(strings.Trim(s, "-")); len(r) > 40 {
+		s = string(r[:40])
 	}
-	return filepath.Join(base, "runs", strings.Trim(slug, "-")+"-"+hex.EncodeToString(h[:4]))
+	return strings.Trim(s, "-")
 }
 
 // NewRunID – id theo giờ bắt đầu (sắp theo tên = theo thời gian).

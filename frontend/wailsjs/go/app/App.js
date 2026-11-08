@@ -98,6 +98,10 @@ export function ExportPack(arg1) {
   return window['go']['app']['App']['ExportPack'](arg1);
 }
 
+export function ExportRunBundle(arg1, arg2, arg3) {
+  return window['go']['app']['App']['ExportRunBundle'](arg1, arg2, arg3);
+}
+
 export function FindElement(arg1, arg2) {
   return window['go']['app']['App']['FindElement'](arg1, arg2);
 }
