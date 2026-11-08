@@ -42,6 +42,7 @@ type OutlineItem struct {
 	Rect     model.Rect `json:"rect"`   // toạ độ client của trang chính (CSS px) – chưa đổi sang màn hình
 	InView   bool       `json:"inView"` // tâm trong vùng nhìn thấy (không cần cuộn)
 	Depth    int        `json:"depth"`  // số vùng (nav / main / form / dialog…) bao ngoài
+	Region   bool       `json:"region,omitempty"` // chính nó là vùng – dòng sau có Depth + 1 nằm trong nó
 	Level    int        `json:"level,omitempty"`
 	Value    string     `json:"value,omitempty"`
 	Secret   bool       `json:"secret,omitempty"`   // ô mật khẩu – không đọc giá trị
@@ -76,17 +77,29 @@ func (c *Chrome) PageOutline(ctx context.Context, tab string) (Outline, error) {
 }
 
 // ReadOutline – cho AI (read_web_outline): tab lọc theo tab (id tab hoặc URL / tiêu đề chứa); rỗng = tab đang hiện.
-// onlyDialog: chỉ phần tử trong hộp thoại đang mở trên cùng. Không bật trình duyệt nếu chưa mở.
-func (c *Chrome) ReadOutline(ctx context.Context, tab string, onlyDialog bool) (Outline, error) {
+// onlyDialog: chỉ phần tử trong hộp thoại đang mở trên cùng. all: không cắt ở maxOutline (AI lọc bằng find – 56 B3,
+// tối đa MaxOutlineAll). Không bật trình duyệt nếu chưa mở.
+func (c *Chrome) ReadOutline(ctx context.Context, tab string, onlyDialog, all bool) (Outline, error) {
 	t, _, err := c.activeTabFor(ctx, tab)
 	if err != nil {
 		return Outline{}, err
 	}
-	return outlineOf(ctx, t, onlyDialog)
+	max := maxOutline
+	if all {
+		max = MaxOutlineAll
+	}
+	return outlineMax(ctx, t, onlyDialog, max)
 }
 
+// MaxOutlineAll – trần số dòng khi đọc cả trang để lọc (trang cực lớn vẫn không treo).
+const MaxOutlineAll = 5000
+
 func outlineOf(ctx context.Context, t *tabConn, onlyDialog bool) (Outline, error) {
-	r, err := evalJS[outlineResult](ctx, t.ctx, "đọc cấu trúc trang", pageJS(outlineJS, strconv.Itoa(maxOutline), strconv.FormatBool(onlyDialog)))
+	return outlineMax(ctx, t, onlyDialog, maxOutline)
+}
+
+func outlineMax(ctx context.Context, t *tabConn, onlyDialog bool, max int) (Outline, error) {
+	r, err := evalJS[outlineResult](ctx, t.ctx, "đọc cấu trúc trang", pageJS(outlineJS, strconv.Itoa(max), strconv.FormatBool(onlyDialog)))
 	if err != nil {
 		return Outline{}, err
 	}

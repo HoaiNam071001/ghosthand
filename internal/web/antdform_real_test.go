@@ -157,7 +157,7 @@ func TestRealCheckPageFollowsPopup(t *testing.T) {
 	if pc.Tab == "" || !seen {
 		t.Errorf("tab %q không có trong tabs %+v", pc.Tab, pc.Tabs)
 	}
-	if o, err := c.ReadOutline(ctx, pc.Tab, false); err != nil || o.Tab != pc.Tab {
+	if o, err := c.ReadOutline(ctx, pc.Tab, false, false); err != nil || o.Tab != pc.Tab {
 		t.Errorf("ghim theo id %q → %q, %v", pc.Tab, o.Tab, err)
 	}
 }
@@ -165,11 +165,11 @@ func TestRealCheckPageFollowsPopup(t *testing.T) {
 // read_web_outline: dialog = chỉ ô trong hộp thoại (không lẫn ô lọc của lưới), tab ghim được theo id.
 func TestRealReadOutlineDialog(t *testing.T) {
 	c, ctx, _ := antdChrome(t)
-	all, err := c.ReadOutline(ctx, "", false)
+	all, err := c.ReadOutline(ctx, "", false, false)
 	if err != nil {
 		t.Fatal(err)
 	}
-	dlg, err := c.ReadOutline(ctx, all.Tab, true)
+	dlg, err := c.ReadOutline(ctx, all.Tab, true, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -179,6 +179,23 @@ func TestRealReadOutlineDialog(t *testing.T) {
 	}
 	if !strings.Contains(dlg.Text(), `Mã nhân viên`) || !strings.Contains(dlg.Text(), "Lưu") {
 		t.Errorf("thiếu ô / nút trong hộp thoại:\n%s", dlg.Text())
+	}
+	// 56 B3: đọc cả trang (all) – dòng vùng có Region, dòng trong vùng sâu hơn một bậc
+	full, err := c.ReadOutline(ctx, all.Tab, false, true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	regions := 0
+	for i, it := range full.Items {
+		if it.Region {
+			regions++
+			if it.Role == "dialog" && (i+1 >= len(full.Items) || full.Items[i+1].Depth != it.Depth+1) {
+				t.Errorf("dòng sau hộp thoại không nằm trong nó: %+v", full.Items[i:min(i+2, len(full.Items))])
+			}
+		}
+	}
+	if regions == 0 || len(full.Items) != full.Total {
+		t.Errorf("all: %d vùng, %d / %d dòng", regions, len(full.Items), full.Total)
 	}
 }
 

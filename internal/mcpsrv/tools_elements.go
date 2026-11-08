@@ -11,6 +11,7 @@ import (
 
 	"ghosthand/internal/element"
 	"ghosthand/internal/model"
+	"ghosthand/internal/textop"
 	"ghosthand/internal/vision"
 )
 
@@ -56,11 +57,12 @@ func (s *Server) appFor(window, app string) string {
 	return ""
 }
 
-// readItems đọc cây của app, rút gọn, lọc theo vùng (nil = không lọc), đánh số lại 1.. và nhớ làm lần xem gần nhất.
-func (s *Server) readItems(app string, area *model.Rect, o element.OutlineOpts) ([]element.Item, int, error) {
+// readItems đọc cây của app, rút gọn, lọc theo vùng (nil = không lọc) và find (nil = không lọc – 56 B3: lọc trước khi
+// đánh số để suggest_selector {mark} trỏ đúng), đánh số lại 1.. và nhớ làm lần xem gần nhất.
+func (s *Server) readItems(app string, area *model.Rect, o element.OutlineOpts, find textop.Finder) ([]element.Item, []element.Node, int, error) {
 	nodes, err := s.back.Elements(app)
 	if err != nil {
-		return nil, 0, err
+		return nil, nil, 0, err
 	}
 	max := o.Max
 	if max <= 0 {
@@ -71,7 +73,7 @@ func (s *Server) readItems(app string, area *model.Rect, o element.OutlineOpts) 
 	var items []element.Item
 	omitted := 0
 	for _, it := range all {
-		if area != nil && !centerIn(it.Box, *area) {
+		if area != nil && !centerIn(it.Box, *area) || find != nil && !find(it.Name, it.Value) {
 			continue
 		}
 		if len(items) >= max {
@@ -84,7 +86,7 @@ func (s *Server) readItems(app string, area *model.Rect, o element.OutlineOpts) 
 	s.snap.mu.Lock()
 	s.snap.app, s.snap.nodes, s.snap.items = app, nodes, items
 	s.snap.mu.Unlock()
-	return items, omitted, nil
+	return items, nodes, omitted, nil
 }
 
 func centerIn(b, a model.Rect) bool {
@@ -99,15 +101,26 @@ func (s *Server) describeElements(in describeIn, r model.Rect) (*mcp.CallToolRes
 		area = &r
 	}
 	app := s.appFor(in.Window, in.App)
-	items, omitted, err := s.readItems(app, area, element.OutlineOpts{Max: in.Max, InteractiveOnly: in.InteractiveOnly})
+	find, err := textop.NewFinder(in.Find)
+	if err != nil {
+		return fail(err)
+	}
+	items, nodes, omitted, err := s.readItems(app, area, element.OutlineOpts{Max: in.Max, InteractiveOnly: in.InteractiveOnly}, find)
 	if err != nil {
 		return fail(fmt.Errorf("%w – describe_screen không elements để đọc bằng OCR", err))
 	}
 	lines := make([]string, len(items))
 	for i, it := range items {
-		lines[i] = it.Line()
+		if lines[i] = it.Line(); find != nil {
+			if p := elementPath(nodes, it.Index); p != "" {
+				lines[i] += "  ⊂ " + p
+			}
+		}
 	}
 	out := map[string]any{"app": app, "elements": lines, "next": "suggest_selector {mark: N} để lấy selector bền cho #N"}
+	if find != nil && len(items) == 0 {
+		out["hint"] = "không phần tử nào có tên / giá trị khớp find – thử chữ ngắn hơn, hoặc bỏ find"
+	}
 	if omitted > 0 {
 		out["omittedElements"] = omitted
 	}
@@ -119,7 +132,7 @@ func (s *Server) describeElements(in describeIn, r model.Rect) (*mcp.CallToolRes
 
 // markImage – screenshot marks:true: vẽ số lên phần tử bấm / gõ được trong vùng r, ghi danh sách vào out.
 func (s *Server) markImage(img image.Image, r model.Rect, in areaIn, app string, out map[string]any) (image.Image, error) {
-	items, omitted, err := s.readItems(s.appFor(in.Window, app), &r, element.OutlineOpts{InteractiveOnly: true})
+	items, _, omitted, err := s.readItems(s.appFor(in.Window, app), &r, element.OutlineOpts{InteractiveOnly: true}, nil)
 	if err != nil {
 		return nil, err
 	}

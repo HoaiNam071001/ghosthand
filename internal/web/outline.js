@@ -78,7 +78,7 @@
       const { box, inView: center } = place(el);
       // vùng lớn: tâm thường nằm ngoài khung nhìn – tính là trong khi có phần chồng lên khung nhìn
       const inView = BOXES.has(role) ? box.x < innerWidth && box.y < innerHeight && box.x + box.w > 0 && box.y + box.h > 0 : center;
-      items.push(Object.assign({ role, name: name.slice(0, 80), sel, depth: d, inView,
+      items.push(Object.assign({ role, name: name.slice(0, 80), sel, depth: d, inView, region: BOXES.has(role),
         x: Math.round(box.x), y: Math.round(box.y), w: Math.round(box.w), h: Math.round(box.h) }, stateOf(el, role)));
     }
   }

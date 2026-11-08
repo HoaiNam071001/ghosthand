@@ -4,6 +4,10 @@ Những việc **đã xong code** nhưng cần người dùng thử trong app th
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
 
+## 56 B3 – MCP: tham số find khi đọc cây trang / phần tử (2026-11-08) · [56](phase3/56-hoc-tu-mcp-ngoai.md)
+- [ ] Cài bản mới, mở một trang lớn trên Chrome của app, nhờ AI tìm một nút (vd "Thanh toán") → AI gọi `read_web_outline find` ra vài dòng kèm vùng bao ngoài (hộp thoại / form), không đọc cả cây; `find: "/^Gửi$/"` chỉ đúng nút tên Gửi
+- [ ] `describe_screen elements=true find=…` trên một app (Zalo / Cài đặt hệ thống) → dòng có `⊂ window "…" › …`; `suggest_selector {mark: 1}` ra đúng phần tử của dòng #1 đã lọc – *AI đã test bằng thiết bị giả + Chrome thật (outline), chưa thử qua MCP trên app*
+
 ## 56 B2 – web: chờ trang yên, navigated / url / popup (2026-11-08) · [56](phase3/56-hoc-tu-mcp-ngoai.md)
 - [ ] Mẫu thử *Web: chờ trang yên, biết đã sang trang / mở tab* trong app → kết thúc thành công “Đủ 5 dòng · tab mới … · sang …?p=don”; inspector node Click phần tử web / Gõ vào ô web / Phím trên trang web gợi ý biến `navigated`, `url`, `popup` – *AI đã chạy mẫu này + 11 mẫu web khác qua test Chrome thật trên Windows (GHOSTHAND_REAL), chưa thử trong app*
 - [ ] macOS: chạy lại các mẫu web (`GHOSTHAND_REAL=1 go test ./internal/samples/ -run TestRealSamples`) – node web nào chậm hơn rõ rệt sau khi bấm (> 1 s mỗi click trên trang thường) thì báo

@@ -36,7 +36,7 @@ const tips = `Viết kịch bản bền:
 
 // debugTips – vòng thử – sửa, đọc lỗi node (get_step_types topic=debug; bản đầy đủ).
 const debugTips = `Thử – sửa (chạy thật trên máy người dùng):
-- Chưa biết màn hình có gì: describe_screen (chữ + khung + cửa sổ) trước, screenshot khi cần nhìn bố cục. Chọn nút / ô trong app: describe_screen elements=true hoặc screenshot marks=true cho số #N → suggest_selector {mark: N} trả selector bền (unique trước) để ghi vào selectors / occurrence / elementApp, thay cho toạ độ. Biết thao tác có tác dụng chưa: screen_changes start → làm → end.
+- Chưa biết màn hình có gì: describe_screen (chữ + khung + cửa sổ) trước, screenshot khi cần nhìn bố cục. Chọn nút / ô trong app: describe_screen elements=true hoặc screenshot marks=true cho số #N → suggest_selector {mark: N} trả selector bền (unique trước) để ghi vào selectors / occurrence / elementApp, thay cho toạ độ. Cây lớn: thêm find: "chữ" (bỏ dấu / /regex/) chỉ lấy phần tử khớp. Biết thao tác có tác dụng chưa: screen_changes start → làm → end.
 - Thử nhanh một vài thao tác / dò cách tìm: run_script với script (kịch bản tạm) – không tạo file, không ghi lịch sử; sửa thì gửi bản sửa vào resume_run. Chỉ create_script khi người dùng muốn giữ kịch bản.
 - Sau khi sửa engine / nhiều kịch bản: run_batch (thư mục, mau:<id>, samples) thay vì run_script từng cái – chỉ dòng lỗi có chi tiết; xem lỗi kỹ bằng wait_run runId của dòng đó.
 - Kịch bản dài: run_script với stopAt chạy từng đoạn, xem output từng node rồi resume_run from node kế để chạy tiếp – không chạy lại đoạn đã đúng.

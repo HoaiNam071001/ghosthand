@@ -43,6 +43,7 @@ type fakeBackend struct {
 	lastOpt       session.Options // Run gần nhất (46 B1)
 	outlineTab    string
 	outlineDialog bool
+	outlineAll    bool
 	probed        string
 	elems         []element.Node // Elements trả (43 A)
 	elemReads     int
@@ -61,8 +62,8 @@ func (f *fakeBackend) CheckPage(_ context.Context, u string) (web.PageCheck, err
 	f.probed = u
 	return f.page, nil
 }
-func (f *fakeBackend) ReadOutline(_ context.Context, tab string, dialog bool) (web.Outline, []web.Tab, error) {
-	f.outlineTab, f.outlineDialog = tab, dialog
+func (f *fakeBackend) ReadOutline(_ context.Context, tab string, dialog, all bool) (web.Outline, []web.Tab, error) {
+	f.outlineTab, f.outlineDialog, f.outlineAll = tab, dialog, all
 	return f.outline, f.tabs, nil
 }
 func (f *fakeBackend) TabShot(_ context.Context, tab string) (web.TabShot, error) {

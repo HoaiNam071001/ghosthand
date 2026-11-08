@@ -182,14 +182,14 @@ func (b mcpBackend) CheckPage(ctx context.Context, url string) (web.PageCheck, e
 
 // SetNodePref – AI đổi ưu tiên node: lưu ngay, báo người dùng (thông báo nhỏ + Cài đặt cập nhật nếu đang mở).
 // ReadOutline – chỉ đọc tab đang mở, không bật trình duyệt: không đụng máy nên mọi mức AI đều dùng được.
-func (b mcpBackend) ReadOutline(ctx context.Context, tab string, onlyDialog bool) (web.Outline, []web.Tab, error) {
+func (b mcpBackend) ReadOutline(ctx context.Context, tab string, onlyDialog, all bool) (web.Outline, []web.Tab, error) {
 	c, err := b.a.browser()
 	if err != nil {
 		return web.Outline{}, nil, err
 	}
 	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
-	o, err := c.ReadOutline(ctx, tab, onlyDialog)
+	o, err := c.ReadOutline(ctx, tab, onlyDialog, all)
 	if errors.Is(err, web.ErrNoBrowser) {
 		return web.Outline{}, nil, errors.New("Chrome của app chưa mở – dùng probe_page(url) hoặc node open (webBrowser) để mở trang trước")
 	}

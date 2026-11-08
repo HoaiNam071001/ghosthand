@@ -83,8 +83,8 @@ type Backend interface {
 	// SetNodePref lưu + báo người dùng.
 	MCP() store.MCPSettings
 	CheckPage(ctx context.Context, url string) (web.PageCheck, error)
-	// ReadOutline – read_web_outline: cây rút gọn của tab (id / URL / tiêu đề; rỗng = tab đang hiện) + các tab đang mở
-	ReadOutline(ctx context.Context, tab string, onlyDialog bool) (web.Outline, []web.Tab, error)
+	// ReadOutline – read_web_outline: cây rút gọn của tab (id / URL / tiêu đề; rỗng = tab đang hiện; all = không cắt – lọc find) + các tab đang mở
+	ReadOutline(ctx context.Context, tab string, onlyDialog, all bool) (web.Outline, []web.Tab, error)
 	// TabShot – screenshot webTab (46 B4): ảnh khung nhìn một tab Chrome của app qua CDP (không bật trình duyệt).
 	TabShot(ctx context.Context, tab string) (web.TabShot, error)
 	SetNodePref(p string) error

@@ -174,4 +174,5 @@ type describeIn struct {
 	App             string `json:"app,omitempty" jsonschema:"với elements: tên app / bundle id (bỏ trống = cửa sổ của window, hoặc app trên cùng)"`
 	InteractiveOnly bool   `json:"interactiveOnly,omitempty" jsonschema:"với elements: chỉ nút / ô nhập / liên kết… bấm gõ được"`
 	Max             int    `json:"max,omitempty" jsonschema:"với elements: số dòng tối đa (mặc định 120)"`
+	Find            string `json:"find,omitempty" jsonschema:"với elements: như find của read_web_outline"`
 }

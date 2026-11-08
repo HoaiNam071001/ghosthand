@@ -9,6 +9,7 @@ import (
 
 	"ghosthand/internal/perm"
 	"ghosthand/internal/store"
+	"ghosthand/internal/textop"
 	"ghosthand/internal/web"
 )
 
@@ -19,7 +20,7 @@ import (
 var nodePrefTips = map[string]string{
 	store.NodePrefWeb: `Ưu tiên node web (Cài đặt / set_node_preference): việc trên trang web → probe_page(url) trước.
 - verdict ok: node open (webBrowser true – Chrome của app) + webWait / webClick / webType / webRead / webScroll / webKey (phím qua Chrome của app – không rơi vào app khác), selector lấy từ outline (sel) – chính xác hơn tìm chữ / ảnh.
-- Trang đã mở và đang thao tác dở (hộp thoại, popup): read_web_outline(dialog: true) lấy selector thật của ô / nút trong hộp thoại, thay vì đoán rồi chạy thử.
+- Trang đã mở và đang thao tác dở (hộp thoại, popup): read_web_outline(dialog: true) lấy selector thật của ô / nút trong hộp thoại, thay vì đoán rồi chạy thử. Trang lớn, chỉ cần vài nút: find: "Gửi" (hoặc /regex/) – chỉ dòng khớp + vùng bao ngoài.
 - Nhiều tab (cùng URL, popup): probe_page / read_web_outline trả tab (id) + tabs – đặt tab = id cho node web khi chạy thử để không nhầm tab; kịch bản lưu lại thì đổi tab sang chuỗi trong URL (id đổi khi Chrome của app mở lại).
 - Form trong hộp thoại: node web đặt webScope "dialog" (bỏ ô cùng tên ở trang phía sau); ô theo nhãn: label="Ngày sinh" (cả nhãn antd không gắn for); nhiều chỗ khớp: occurrence N. Ô tuỳ biến (chọn ngày, editor) báo "không nhận focus" dù đã vào đúng ô → webType skipFocusCheck true.
 - loading (trang tải lâu): chờ vài giây rồi probe_page không url (dò lại tab, không tải lại) – tối đa 2–3 lần, vẫn loading thì screenshot xem trang rồi quyết.
@@ -36,6 +37,7 @@ type probeIn struct {
 type outlineIn struct {
 	Tab    string `json:"tab,omitempty" jsonschema:"id tab (lấy từ tabs của lần gọi trước) hoặc chuỗi có trong URL / tiêu đề tab; bỏ trống = tab đang hiện"`
 	Dialog bool   `json:"dialog,omitempty" jsonschema:"true = chỉ phần tử trong hộp thoại (role=dialog) đang mở trên cùng – form sửa / tạo mới"`
+	Find   string `json:"find,omitempty" jsonschema:"chỉ dòng tên / giá trị chứa chữ (bỏ dấu) hoặc /regex/ + vùng ngoài"`
 }
 
 type prefIn struct {
@@ -48,10 +50,10 @@ func (s *Server) addWebTools() {
 		"loading (trang tải lâu, chưa hiện gì), useWeb, signs (dấu hiệu), elements, outline (≤ 40 phần tử kèm selector sel dùng được cho node web), tab (id tab đã dò), tabs (tab đang mở kèm id). " +
 		"Gọi trước khi soạn node web cho một trang. Không truyền url = dò lại tab đang mở, không tải lại: verdict loading hoặc loaded false " +
 		"→ chờ vài giây rồi gọi lại không url (hoặc screenshot để xem trang)."}, s.probePage)
-	addTool(s, KindRead, &mcp.Tool{Name: "read_web_outline", Description: "Đọc cấu trúc trang của tab đang điều khiển trên Chrome của app (không bật trình duyệt, không đụng chuột / phím): " +
-		"outline = từng dòng vai trò \"tên\" = giá trị [trạng thái] selector  – chép selector vào node web; tab = id tab đã đọc; tabs = mọi tab đang mở " +
-		"(id, title, url; đứng đầu = đang dùng) – truyền id vào tab để đọc / ghim tab khác; dialog true = chỉ hộp thoại đang mở (form antd). " +
-		"Khác probe_page: không mở trang, không dò captcha – dùng khi trang đã mở và đang thao tác dở (popup, hộp thoại)."}, s.readWebOutline)
+	addTool(s, KindRead, &mcp.Tool{Name: "read_web_outline", Description: "Đọc cấu trúc trang của tab trên Chrome của app (chỉ đọc, không bật trình duyệt): " +
+		"outline = từng dòng vai trò \"tên\" = giá trị [trạng thái] selector – chép vào node web; tab = id tab đã đọc; tabs = các tab " +
+		"(id, title, url; đầu = đang dùng) – id truyền vào tab để đọc tab khác; dialog true = chỉ hộp thoại đang mở. " +
+		"Khác probe_page: không mở trang / dò captcha – cho trang đang dở (popup, hộp thoại)."}, s.readWebOutline)
 	addTool(s, KindRead, &mcp.Tool{Name: "get_preferences", Description: "Cài đặt của app ảnh hưởng cách soạn: nodePref (vision | web), " +
 		"mức chạy của AI (run), quyền hệ điều hành đang thiếu (missingPermissions)."}, s.getPrefs)
 	addTool(s, KindRead, &mcp.Tool{Name: "check_permissions", Description: "Quyền hệ điều hành (macOS) và trạng thái từng quyền: granted | denied | unknown | notNeeded. " +
@@ -100,18 +102,31 @@ func (s *Server) setPref(_ context.Context, _ *mcp.CallToolRequest, in prefIn) (
 }
 
 func (s *Server) readWebOutline(ctx context.Context, _ *mcp.CallToolRequest, in outlineIn) (*mcp.CallToolResult, any, error) {
-	o, tabs, err := s.back.ReadOutline(ctx, strings.TrimSpace(in.Tab), in.Dialog)
+	find, err := textop.NewFinder(in.Find)
+	if err != nil {
+		return fail(err)
+	}
+	o, tabs, err := s.back.ReadOutline(ctx, strings.TrimSpace(in.Tab), in.Dialog, find != nil)
 	if err != nil {
 		return fail(err)
 	}
 	if !isWebURL(o.URL) { // tab file:// / chrome:// – không đưa nội dung cho AI (như probe_page)
 		return fail(errors.New("tab đang đọc không phải trang http:// / https:// – chọn tab khác bằng tab (id) hoặc mở trang bằng probe_page"))
 	}
-	return ok(map[string]any{
-		"url": o.URL, "title": o.Title, "tab": o.Tab, "tabs": webTabs(tabs), "dialogs": o.Dialogs,
-		"total": o.Total, "outline": o.Text(),
-	})
+	out := map[string]any{"url": o.URL, "title": o.Title, "tab": o.Tab, "tabs": webTabs(tabs), "dialogs": o.Dialogs}
+	if find != nil {
+		var matched int
+		if o, matched = findOutline(o, find, maxFindLines); matched == 0 {
+			out["hint"] = "không dòng nào có tên / giá trị khớp find – thử chữ ngắn hơn, hoặc bỏ find để đọc cả cây"
+		}
+		out["matches"] = matched
+	}
+	out["total"], out["outline"] = o.Total, o.Text()
+	return ok(out)
 }
+
+// maxFindLines – số dòng tối đa khi lọc bằng find (dòng khớp + vùng bao ngoài).
+const maxFindLines = 80
 
 // webTabs – chỉ tab http(s): tab file:// / chrome:// của người dùng không lộ cho AI.
 func webTabs(tabs []web.Tab) []web.Tab {
