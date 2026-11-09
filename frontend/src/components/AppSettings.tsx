@@ -1,5 +1,5 @@
 // Cài đặt app (nút bánh răng trên thanh tiêu đề), chia tab: Lưu trữ – thư mục kịch bản / ảnh (bước 41, settings/StorageSettings), Màn hình – cạnh đặt thanh overlay (bước 49) + viền lúc đang chạy (58 D5, settings/OverlaySettings),
-// Bí mật – kho mật khẩu / token (bước 43 S10, settings/SecretsSettings), Quyền – quyền hệ điều hành (bước 48, settings/PermSettings), API – dòng lệnh + API local (bước 22, settings/ApiSettings), AI qua MCP (bước 31, settings/McpSettings), MCP server – server ngoài node Gọi tool MCP dùng (bước 55, settings/McpServersSettings), Giới thiệu – phiên bản + kiểm tra bản mới (settings/AboutSettings).
+// Bí mật – kho mật khẩu / token (bước 43 S10, settings/SecretsSettings), Quyền – quyền hệ điều hành (bước 48, settings/PermSettings), API – dòng lệnh + API local (bước 22, settings/ApiSettings), AI qua MCP (bước 31, settings/McpSettings), MCP server – server ngoài node Gọi tool MCP dùng (bước 55, settings/McpServersSettings), Đồng bộ – Google Drive (bước 54, settings/SyncSettings), Giới thiệu – phiên bản + kiểm tra bản mới (settings/AboutSettings).
 import { useEffect, useState } from 'react';
 import {
   GetSettings, OpenFolder, PickFolder, SetAPISettings, SetMCPSettings, SetOverlaySettings, SetStorageSettings, StorageDefaults,
@@ -21,11 +21,12 @@ import McpSettings from './settings/McpSettings';
 import OverlaySettings from './settings/OverlaySettings';
 import PermSettings from './settings/PermSettings';
 import SecretsSettings from './settings/SecretsSettings';
+import SyncSettings from './settings/SyncSettings';
 import StorageSettings, { StorageKey } from './settings/StorageSettings';
 import Segmented from './Segmented';
 
 type Tab = SettingsTab;
-const TABS: { id: Tab; label: string }[] = [{ id: 'storage', label: 'Lưu trữ' }, { id: 'overlay', label: 'Màn hình' }, { id: 'secrets', label: 'Bí mật' }, { id: 'perms', label: 'Quyền' }, { id: 'api', label: 'API' }, { id: 'mcp', label: 'AI (MCP)' }, { id: 'askai', label: 'Hỏi AI' }, { id: 'servers', label: 'MCP server' }, { id: 'about', label: 'Giới thiệu' }];
+const TABS: { id: Tab; label: string }[] = [{ id: 'storage', label: 'Lưu trữ' }, { id: 'overlay', label: 'Màn hình' }, { id: 'secrets', label: 'Bí mật' }, { id: 'perms', label: 'Quyền' }, { id: 'api', label: 'API' }, { id: 'mcp', label: 'AI (MCP)' }, { id: 'askai', label: 'Hỏi AI' }, { id: 'servers', label: 'MCP server' }, { id: 'sync', label: 'Đồng bộ' }, { id: 'about', label: 'Giới thiệu' }];
 
 export default function AppSettings() {
   const [open, setOpen] = useState(false);
@@ -116,6 +117,7 @@ export default function AppSettings() {
             {tab === 'mcp' && <McpSettings mcp={settings.mcp} onChange={saveMcp} />}
             {tab === 'askai' && <AskAISettings onError={setError} />}
             {tab === 'servers' && <McpServersSettings onError={setError} />}
+            {tab === 'sync' && <SyncSettings />}
             {tab === 'about' && <AboutSettings version={upd.version} info={upd.info} busy={upd.busy} error={upd.error} progress={upd.progress} onCheck={checkUpdate} onOpen={openReleasePage} onInstall={installUpdate} />}
             {error && <span className="text-danger-text">{error}</span>}
           </div>

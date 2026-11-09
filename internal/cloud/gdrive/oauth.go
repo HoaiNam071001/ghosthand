@@ -317,3 +317,6 @@ func randomString(n int) string {
 	}
 	return base64.RawURLEncoding.EncodeToString(b)[:n]
 }
+
+// HasClient – bản build / môi trường này có khoá đăng nhập Google không (giao diện ẩn nút đăng nhập nếu không).
+func HasClient() bool { return Config{}.withDefaults().ClientID != "" }

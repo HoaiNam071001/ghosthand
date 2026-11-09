@@ -154,6 +154,77 @@ export namespace app {
 		    return a;
 		}
 	}
+	export class SyncSummary {
+	    pushed: number;
+	    pulled: number;
+	    deleted: number;
+	    kept?: string[];
+	    pulls?: string[];
+	
+	    static createFrom(source: any = {}) {
+	        return new SyncSummary(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.pushed = source["pushed"];
+	        this.pulled = source["pulled"];
+	        this.deleted = source["deleted"];
+	        this.kept = source["kept"];
+	        this.pulls = source["pulls"];
+	    }
+	}
+	export class SyncStatus {
+	    hasClient: boolean;
+	    loggedIn: boolean;
+	    running: boolean;
+	    lastAt?: string;
+	    lastError?: string;
+	    summary: SyncSummary;
+	    conflicts?: string[];
+	    missing?: string[];
+	    held?: string[];
+	    hasPassphrase: boolean;
+	    device: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new SyncStatus(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.hasClient = source["hasClient"];
+	        this.loggedIn = source["loggedIn"];
+	        this.running = source["running"];
+	        this.lastAt = source["lastAt"];
+	        this.lastError = source["lastError"];
+	        this.summary = this.convertValues(source["summary"], SyncSummary);
+	        this.conflicts = source["conflicts"];
+	        this.missing = source["missing"];
+	        this.held = source["held"];
+	        this.hasPassphrase = source["hasPassphrase"];
+	        this.device = source["device"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
 	export class TemplateShot {
 	    png: string;
 	    scale: number;
@@ -2587,6 +2658,30 @@ export namespace store {
 	        this.border = source["border"];
 	    }
 	}
+	export class SyncSettings {
+	    scripts?: boolean;
+	    settings?: boolean;
+	    secrets?: boolean;
+	    onOpen?: boolean;
+	    onSave?: boolean;
+	    intervalMin?: number;
+	    device?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new SyncSettings(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.scripts = source["scripts"];
+	        this.settings = source["settings"];
+	        this.secrets = source["secrets"];
+	        this.onOpen = source["onOpen"];
+	        this.onSave = source["onSave"];
+	        this.intervalMin = source["intervalMin"];
+	        this.device = source["device"];
+	    }
+	}
 	export class StorageSettings {
 	    scriptsDir?: string;
 	    aiScriptsDir?: string;
@@ -2612,6 +2707,7 @@ export namespace store {
 	    overlay: OverlaySettings;
 	    ai: AISettings;
 	    mcpServers?: MCPServer[];
+	    sync: SyncSettings;
 	
 	    static createFrom(source: any = {}) {
 	        return new Settings(source);
@@ -2627,6 +2723,7 @@ export namespace store {
 	        this.overlay = this.convertValues(source["overlay"], OverlaySettings);
 	        this.ai = this.convertValues(source["ai"], AISettings);
 	        this.mcpServers = this.convertValues(source["mcpServers"], MCPServer);
+	        this.sync = this.convertValues(source["sync"], SyncSettings);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -2661,6 +2758,7 @@ export namespace store {
 	        this.shotsDir = source["shotsDir"];
 	    }
 	}
+	
 	
 	export class Trial {
 	    path: string;

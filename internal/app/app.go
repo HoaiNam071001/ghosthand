@@ -52,6 +52,9 @@ type App struct {
 	pickCancel context.CancelFunc // huỷ lần Chọn phần tử đang chờ
 
 	upd updateState // bản mới đã hỏi được + đang cập nhật (updateapi.go)
+
+	cloudsync syncState // đồng bộ cloud (syncrun.go)
+	syncg     syncGate  // hỏi xung đột khi đồng bộ (syncgate.go)
 }
 
 // NewApp tạo App; background = app do AI mở nền (cờ `--background`).
@@ -83,6 +86,7 @@ func (a *App) startup(ctx context.Context) {
 	bg, stop := context.WithCancel(ctx)
 	a.stopBg = stop
 	a.startScheduler(bg)
+	a.startAutoSync(bg)
 	a.checkUpdateAtStart(bg)
 	go a.cleanTrials()
 	winfloat.FollowActiveSpace() // macOS: màn chính hiện ở Space đang đứng

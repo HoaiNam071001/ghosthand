@@ -48,6 +48,7 @@ func (a *App) SaveScript(sc model.Script, path string) (ScriptFile, error) {
 		return ScriptFile{}, fmt.Errorf("không lưu được %s: %w", filepath.Base(path), err)
 	}
 	store.EditRecent(func(l []string) []string { return store.PushRecent(l, path) })
+	a.syncSoon()
 	return ScriptFile{Script: sc, Path: path, Revision: rev}, nil
 }
 

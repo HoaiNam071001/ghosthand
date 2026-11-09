@@ -9,7 +9,7 @@ import (
 // Mỗi trường của các struct cài đặt phải được phân loại mang đi / riêng máy; và ngược lại không có mục thừa.
 func TestSyncPolicyCoversEveryField(t *testing.T) {
 	seen := map[string]bool{}
-	for _, v := range []any{Settings{}, OverlaySettings{}, AISettings{}, MCPSettings{}} {
+	for _, v := range []any{Settings{}, OverlaySettings{}, AISettings{}, MCPSettings{}, SyncSettings{}} {
 		typ := reflect.TypeOf(v)
 		for i := 0; i < typ.NumField(); i++ {
 			key := typ.Name() + "." + typ.Field(i).Name

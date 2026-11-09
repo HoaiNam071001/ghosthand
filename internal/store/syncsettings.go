@@ -39,7 +39,9 @@ type PortableMCP struct {
 // Trường cha có con mang đi một phần (MCP) ghi true ở cha và liệt kê từng con.
 var syncPolicy = map[string]bool{
 	"Settings.Theme": true, "Settings.Recent": false, "Settings.API": false, "Settings.MCP": true,
-	"Settings.Storage": false, "Settings.Overlay": true, "Settings.AI": true, "Settings.MCPServers": false,
+	"Settings.Storage": false, "Settings.Overlay": true, "Settings.AI": true, "Settings.MCPServers": false, "Settings.Sync": false,
+	"SyncSettings.Scripts": false, "SyncSettings.Settings": false, "SyncSettings.Secrets": false,
+	"SyncSettings.OnOpen": false, "SyncSettings.OnSave": false, "SyncSettings.IntervalMin": false, "SyncSettings.Device": false,
 
 	"OverlaySettings.Toolbar": true, "OverlaySettings.Border": true,
 	"AISettings.Kind": true, "AISettings.BaseURL": false, "AISettings.Model": true, "AISettings.Key": true,

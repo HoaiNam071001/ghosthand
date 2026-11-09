@@ -17,6 +17,7 @@ import { watchPerms } from '../store/permStore';
 import AIRunDialog from '../components/AIRunDialog';
 import UserAskDialog from '../components/ask/UserAskDialog';
 import MCPAskDialog from '../components/MCPAskDialog';
+import { SyncChipHost, SyncConflictHost, useSyncPulled } from '../components/sync/SyncHosts';
 import TitleBar from '../components/TitleBar';
 import Library from '../components/Library';
 import FlowEditor from '../components/flow/FlowEditor';
@@ -32,6 +33,7 @@ const modKey = isMac ? '⌘' : 'Ctrl+';
 const clock = (ms: number) => new Date(ms).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
 export default function MainScreen() {
+  useSyncPulled();
   const { script, selected, notice, dirty, path, countdown: editorCountdown } = useEditor();
   const { draftAt, error: fileError } = useFile();
   const { steps } = script;
@@ -101,6 +103,7 @@ export default function MainScreen() {
         {stopReason && <span>{STOP_REASON[stopReason] ?? stopReason}</span>}
         {fileError && <span className="text-danger-text">{fileError}</span>}
         {notice && <span className="text-accent-text">{notice}</span>}
+        <SyncChipHost />
         {draftAt && dirty && <span title="Bản nháp lưu trên máy – mở lại app vẫn còn">Bản nháp tự lưu lúc <span className="font-mono">{clock(draftAt)}</span></span>}
       </StatusBar>
       <SaveChangesDialog />
@@ -109,6 +112,7 @@ export default function MainScreen() {
       <AIRunDialog />
       <UserAskDialog />
       <MCPAskDialog />
+      <SyncConflictHost />
       {runForm.open && (
         <RunDialog scriptName={script.name} inputs={inputViews(script)} sections={runSections(script)}
           presets={runForm.memory.presets ?? []} initialValues={runForm.memory.last} initialPreset={runForm.memory.lastPreset} initialRemember={!!runForm.memory.autoRun}

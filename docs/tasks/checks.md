@@ -639,3 +639,16 @@ Người dùng chốt 2026-10-18: việc qua Chrome của app làm sau cùng –
 - [ ] Inspector node Click/Chờ theo phần tử: *Chọn trên màn* một nút → hiện danh sách gợi ý (duy nhất / N chỗ, bền / dễ hỏng); bấm một dòng đổi ô *Cách tìm* + *Chỗ thứ*
 - [ ] AI chạy `run_script shots: each`: node mở popup có `changes.added`; node lỗi sau đó có `error.detail.changes`
 - [ ] (fix focus click, macOS) Mở Chrome thường, để cửa sổ khác (terminal) ở trước, AI chụp màn hình rồi `run_step` click vào nút trên trang → cú click đầu ăn ngay (không phải click hai lần); chạy trong app (F8) cũng vậy
+
+### 54 C – Đồng bộ cloud (Google Drive) · [phase3/54-dong-bo-cloud.md](phase3/54-dong-bo-cloud.md)
+
+- [ ] Cài đặt → **Đồng bộ** (cần build có khoá Google hoặc đặt `GHOSTHAND_GOOGLE_CLIENT_ID/SECRET`): *Đăng nhập Google* mở trình duyệt, xong về app thấy "Đã đăng nhập"; chấm *Đồng bộ* hiện ở thanh dưới, bấm mở đúng tab
+- [ ] *Đồng bộ ngay* lần đầu: thư mục `Ghosthand` xuất hiện trong Drive với `scripts/…`, `settings.json`, `manifest.json`; mở bản app thứ hai (hoặc máy khác, kể cả macOS ↔ Windows) → kịch bản + ảnh mẫu về đủ, node ảnh/CSV chạy được (đường dẫn viết lại đúng)
+- [ ] Sửa cùng một kịch bản ở hai máy rồi đồng bộ: hộp xung đột hiện giờ sửa + tên máy; thử cả ba nút (*Giữ bản máy này* / *Lấy bản cloud* / *Giữ cả hai* → có thêm `tên (máy khác).json`); *Để sau* / Esc không đổi gì và hỏi lại lần sau
+- [ ] Xoá một kịch bản ở máy A → đồng bộ cả hai máy: máy B đưa vào Thùng rác (khôi phục được); ảnh mẫu/tệp đi kèm không bị xoá
+- [ ] Kịch bản đang mở có chấm "chưa lưu" mà bản cloud mới hơn: đồng bộ không đè (chấm vàng + dòng "đang soạn dở"); lưu xong đồng bộ lại thì nhận
+- [ ] Tự đồng bộ: bật *Khi mở app*, *Sau khi lưu* (lưu → ~5 giây sau đẩy), *Theo chu kỳ* (đặt 5 phút) đều chạy; gặp xung đột thì không bật hộp, chấm chuyển vàng "N xung đột chờ bạn chọn"
+- [ ] Bí mật: bật công tắc *Bí mật* khi chưa có cụm mật khẩu → phải đặt (≥ 8 ký tự, nhập lại, tick hiểu rủi ro); sau đồng bộ file `secrets.enc` trên Drive là JSON bản mã (không thấy giá trị); máy thứ hai nhập **đúng** cụm mật khẩu → bí mật về, `{{secret.tên}}` chạy; nhập **sai** → báo "không mở được kho bí mật trên cloud", kho máy giữ nguyên; *Đổi cụm mật khẩu* → máy kia phải nhập cụm mới
+- [ ] Ngắt mạng giữa lúc đồng bộ → báo lỗi, bật mạng bấm lại thì làm tiếp (không đẩy lại những file đã lên); thu hồi quyền ở myaccount.google.com → báo cần đăng nhập lại, dữ liệu trên máy còn nguyên
+- [ ] *Đăng xuất* rồi đăng nhập tài khoản Google khác: không xoá kịch bản nào ở máy (file trùng bỏ qua, file khác nhau hỏi)
+- [ ] `#demo-sync` (cả `?theme=dark`, `?state=conflict`, `?ask=1`): bố cục không vỡ ở 2 theme

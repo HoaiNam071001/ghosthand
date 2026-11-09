@@ -22,6 +22,10 @@ export function AnswerMCP(arg1, arg2) {
   return window['go']['app']['App']['AnswerMCP'](arg1, arg2);
 }
 
+export function AnswerSyncConflict(arg1, arg2) {
+  return window['go']['app']['App']['AnswerSyncConflict'](arg1, arg2);
+}
+
 export function AppVersion() {
   return window['go']['app']['App']['AppVersion']();
 }
@@ -56,6 +60,10 @@ export function ClearPin(arg1, arg2, arg3) {
 
 export function ClearRuns(arg1, arg2) {
   return window['go']['app']['App']['ClearRuns'](arg1, arg2);
+}
+
+export function ClearSyncPassphrase() {
+  return window['go']['app']['App']['ClearSyncPassphrase']();
 }
 
 export function ConfirmQuit() {
@@ -144,6 +152,10 @@ export function GetRun(arg1, arg2, arg3) {
 
 export function GetSettings() {
   return window['go']['app']['App']['GetSettings']();
+}
+
+export function GetSyncSettings() {
+  return window['go']['app']['App']['GetSyncSettings']();
 }
 
 export function ImportPack() {
@@ -422,6 +434,14 @@ export function SetStorageSettings(arg1) {
   return window['go']['app']['App']['SetStorageSettings'](arg1);
 }
 
+export function SetSyncPassphrase(arg1, arg2) {
+  return window['go']['app']['App']['SetSyncPassphrase'](arg1, arg2);
+}
+
+export function SetSyncSettings(arg1) {
+  return window['go']['app']['App']['SetSyncSettings'](arg1);
+}
+
 export function SetTheme(arg1) {
   return window['go']['app']['App']['SetTheme'](arg1);
 }
@@ -460,6 +480,22 @@ export function StopScript() {
 
 export function StorageDefaults() {
   return window['go']['app']['App']['StorageDefaults']();
+}
+
+export function SyncLogin() {
+  return window['go']['app']['App']['SyncLogin']();
+}
+
+export function SyncLogout() {
+  return window['go']['app']['App']['SyncLogout']();
+}
+
+export function SyncNow() {
+  return window['go']['app']['App']['SyncNow']();
+}
+
+export function SyncStatus() {
+  return window['go']['app']['App']['SyncStatus']();
 }
 
 export function TestMCPTool(arg1, arg2, arg3) {

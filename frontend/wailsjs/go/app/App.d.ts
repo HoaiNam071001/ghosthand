@@ -25,6 +25,8 @@ export function AnswerAsk(arg1:string,arg2:string,arg3:string):Promise<void>;
 
 export function AnswerMCP(arg1:string,arg2:string):Promise<void>;
 
+export function AnswerSyncConflict(arg1:string,arg2:string):Promise<void>;
+
 export function AppVersion():Promise<string>;
 
 export function BrowserStatus():Promise<web.Status>;
@@ -42,6 +44,8 @@ export function ClaudeDesktopConfigPath():Promise<string>;
 export function ClearPin(arg1:string,arg2:string,arg3:string):Promise<void>;
 
 export function ClearRuns(arg1:string,arg2:string):Promise<void>;
+
+export function ClearSyncPassphrase():Promise<void>;
 
 export function ConfirmQuit():Promise<void>;
 
@@ -86,6 +90,8 @@ export function GetPins(arg1:string,arg2:string):Promise<Record<string, model.St
 export function GetRun(arg1:string,arg2:string,arg3:string):Promise<model.RunRecord>;
 
 export function GetSettings():Promise<store.Settings>;
+
+export function GetSyncSettings():Promise<store.SyncSettings>;
 
 export function ImportPack():Promise<app.ScriptFile>;
 
@@ -225,6 +231,10 @@ export function SetSecret(arg1:string,arg2:string):Promise<void>;
 
 export function SetStorageSettings(arg1:store.StorageSettings):Promise<void>;
 
+export function SetSyncPassphrase(arg1:string,arg2:boolean):Promise<void>;
+
+export function SetSyncSettings(arg1:store.SyncSettings):Promise<void>;
+
 export function SetTheme(arg1:string):Promise<void>;
 
 export function SetWindowMode(arg1:string):Promise<void>;
@@ -244,6 +254,14 @@ export function StopRecording():Promise<void>;
 export function StopScript():Promise<void>;
 
 export function StorageDefaults():Promise<store.StorageDefaults>;
+
+export function SyncLogin():Promise<void>;
+
+export function SyncLogout():Promise<void>;
+
+export function SyncNow():Promise<void>;
+
+export function SyncStatus():Promise<app.SyncStatus>;
 
 export function TestMCPTool(arg1:string,arg2:string,arg3:string):Promise<Record<string, any>>;
 

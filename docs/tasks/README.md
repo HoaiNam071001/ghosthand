@@ -8,7 +8,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 
 - **Đang làm:** [56](phase3/56-hoc-tu-mcp-ngoai.md) học từ MCP ngoài – xong code mọi mục, chỉ còn D1b (trả lời từ điện thoại – để sau).
 - **Xong code, chờ kiểm tra tay:** 33, 59, 56 A–D (trừ D1b), 61, 58, 57, 55, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 40, 39, 38, 37, 36, 35, 34, 31a–d, 28, 26, 25d, 24, 22 – xem bảng *Tổng quan* + [checks.md](checks.md).
-- **Tiếp theo:** chờ người dùng chốt: 30 UI chọn 4 điểm mốc. Đang làm dở: 54 (xong C0–C3 C5 C6; còn UI C4, C7, C8–C10). Hoãn: 17 (Windows), 18b.
+- **Tiếp theo:** 54 C9 (backend MCP) + C10 (`sync_status`). Đang làm dở: 54 (xong C0–C8; còn C9, C10). Hoãn: 17 (Windows), 18b.
 - **Cập nhật lần cuối:** 2026-11-08 (56 B4 · C3 · D2 · D3: mẹo đăng nhập, tắt ảnh cho AI + dấu chuột, xuất gói lỗi, mẫu Telegram / Zalo Bot).
 
 ## Tính năng của hệ thống
@@ -26,7 +26,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | ✅ | Hoàn tác / làm lại | Cmd/Ctrl+Z, Cmd/Ctrl+Shift+Z cho mọi thay đổi | [30](phase3/30-sua-nhieu-diem.md) |
 | ✅ | Chọn vùng / toàn màn hình, đặt điểm | Overlay: click hoặc F6, kéo marker, chọn lại điểm, xem riêng một node | [10–13](phase1-mvp.md), [19c](phase2.md) |
 | ✅ | Neo điểm theo cạnh vùng | Điểm bám góc / cạnh / giữa / % – đổi cỡ vùng không lệch | [29](phase3/29-neo-diem.md) |
-| 🟡 | Sửa nhiều điểm cùng lúc | Di chuyển, co giãn, xoay, xiên, căn, lật, ánh xạ khi đổi vùng – **còn** ánh xạ theo 4 điểm mốc | [30](phase3/30-sua-nhieu-diem.md) |
+| 🧪 | Sửa nhiều điểm cùng lúc | Di chuyển, co giãn, xoay, xiên, căn, lật, ánh xạ khi đổi vùng, ánh xạ theo 4 điểm mốc | [30](phase3/30-sua-nhieu-diem.md) |
 | ✅ | Input của kịch bản | Ghim trường làm input, `{{biến}}` trong ô chữ, form Chạy, preset, nhớ giá trị lần trước | [21b](phase3/21b-input.md) |
 | ✅ | Lưu / mở kịch bản | File `.json`, mở gần đây, nháp tự lưu, đóng app giữ bản đang dở | [21](phase3/21-luu-tai.md) |
 | ✅ | Nơi lưu + xoá lịch sử | Cài đặt chọn thư mục kịch bản (tay / AI) + ảnh chụp, Documents / Pictures đúng cả khi Windows dùng OneDrive; xoá từng mục / tất cả lịch sử chạy và Mở gần đây | [41](phase3/41-noi-luu-lich-su.md) |
@@ -162,7 +162,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 chờ kiểm tra tay | [51. Hướng dẫn sử dụng](phase3/51-huong-dan.md) | 16 / 16 | [2 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [52. MCP ít token](phase3/52-mcp-it-token.md) | 6 / 6 | [2 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [53. MCP: annotations, nhật ký lệnh AI, chống prompt injection](phase3/53-mcp-hoc-tu-openclaw.md) | 6 / 6 | [2 việc](checks.md) |
-| 🔄 đang làm | [54. Đồng bộ cloud](phase3/54-dong-bo-cloud.md) | 6 / 11 |  |
+| 🔄 đang làm | [54. Đồng bộ cloud](phase3/54-dong-bo-cloud.md) | 9 / 11 |  |
 | 🧪 chờ kiểm tra tay | [55. MCP client + node tuỳ chỉnh](phase3/55-mcp-client-node-tuy-chinh.md) | 10 / 10 | [6 việc](checks.md) |
 | 🟡 đang làm | [56. Học từ MCP ngoài](phase3/56-hoc-tu-mcp-ngoai.md) | 9 / 14 | [11 việc](checks.md) |
 | 🟡 đang làm | [57. AI chạy ổn định](phase3/57-ai-chay-on-dinh.md) | 7 / 10 | [3 việc](checks.md) |

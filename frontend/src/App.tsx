@@ -12,8 +12,9 @@ import DemoGuide from './screens/DemoGuide';
 import DemoMcp from './screens/DemoMcp';
 import DemoData from './screens/DemoData';
 import DemoRunTree from './screens/DemoRunTree';
+import DemoSync from './screens/DemoSync';
 
-// Chọn màn theo hash URL (#preview, #overlay, #minibar, #demo, #demo-overlay, #demo-minibar, #demo-flow, #demo-illus, #demo-guide, #demo-mcp, #demo-data, #demo-runtree). setWindowMode() (windowMode.ts) đổi
+// Chọn màn theo hash URL (#preview, #overlay, #minibar, #demo, #demo-overlay, #demo-minibar, #demo-flow, #demo-illus, #demo-guide, #demo-mcp, #demo-data, #demo-runtree, #demo-sync). setWindowMode() (windowMode.ts) đổi
 // kích thước cửa sổ bên Go rồi đổi hash; trên trình duyệt đổi hash tay để xem từng màn.
 const screens: Record<string, ComponentType> = {
     main: MainScreen,
@@ -30,6 +31,7 @@ const screens: Record<string, ComponentType> = {
     'demo-mcp': DemoMcp, // tab MCP server + form đối số tool (bước 55)
     'demo-data': DemoData, // dữ liệu giữa node: thẻ Gọn / Đầy đủ, kéo nối (bước 60)
     'demo-runtree': DemoRunTree, // Lịch sử chạy dạng cây (bước 60)
+    'demo-sync': DemoSync, // Cài đặt → Đồng bộ + hộp xung đột (bước 54)
 };
 
 function App() {

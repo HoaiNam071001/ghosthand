@@ -328,6 +328,32 @@
     ]
   },
   {
+    "id": "settings-sync",
+    "group": "Cài đặt",
+    "title": "Đồng bộ",
+    "summary": "Giữ kịch bản, ảnh mẫu, cài đặt (và bí mật) giống nhau giữa các máy qua Google Drive.",
+    "blocks": [
+      { "kind": "p", "text": "Đăng nhập Google một lần, app đẩy / kéo qua thư mục **Ghosthand** trong Drive của bạn. App chỉ thấy thư mục và file do chính nó tạo (quyền `drive.file`), không đọc được phần còn lại của Drive. Mật khẩu Google nhập ở trình duyệt, app không thấy; có thể **Đăng xuất** bất cứ lúc nào để thu hồi quyền." },
+      { "kind": "h", "text": "Đồng bộ những gì" },
+      { "kind": "list", "items": [
+        "**Kịch bản** – file `.json` trong thư mục kịch bản, kèm ảnh mẫu và tệp đi kèm (CSV, ảnh…). Đường dẫn tuyệt đối trên máy này được ghi lại dạng tương đối; máy kia đặt tệp vào thư mục kịch bản của nó và tự viết lại đường dẫn.",
+        "**Cài đặt** – chỉ phần mang đi được: giao diện, viền lúc chạy, ưu tiên node, nhà cung cấp AI (key chỉ là tên bí mật). **Không** mang thư mục lưu, cổng / token API, MCP server ngoài, và mọi quyền của AI (bật MCP, mức chạy, tool bị tắt) – cloud bị chiếm cũng không nới được quyền của AI trên máy bạn.",
+        "**Bí mật** – tắt mặc định. Bật thì phải đặt **cụm mật khẩu**; bí mật được mã hoá trên máy bạn rồi mới lên Drive, Google và app không đọc được. Máy mới nhập đúng cụm mật khẩu để lấy về. **Quên cụm mật khẩu = mất bản trên cloud** (bí mật trên các máy vẫn còn). Cụm mật khẩu cất trong Keychain / Credential Manager, không vào file nào."
+      ] },
+      { "kind": "h", "text": "Khi hai máy cùng sửa" },
+      { "kind": "p", "text": "App **không bao giờ tự ghi đè**. Bấm **Đồng bộ ngay** và gặp xung đột thì hiện hộp hỏi, kèm giờ sửa và tên máy hai bên: **Giữ bản máy này**, **Lấy bản cloud**, hoặc **Giữ cả hai** (bản cloud lưu thành `tên (máy khác).json`). Chưa chọn thì để nguyên và hỏi lại lần sau. Kịch bản đang mở có thay đổi chưa lưu thì không bị kéo đè – lưu xong đồng bộ lại." },
+      { "kind": "h", "text": "Tự đồng bộ" },
+      { "kind": "p", "text": "Bật khi mở app, sau khi lưu kịch bản, hoặc theo chu kỳ (5 phút – 24 giờ). Lượt tự động không bật hộp hỏi: gặp xung đột nó dừng ở đó, chấm **Đồng bộ** trên thanh dưới chuyển vàng, chờ bạn bấm **Đồng bộ ngay**." },
+      { "kind": "h", "text": "Lưu ý" },
+      { "kind": "list", "items": [
+        "Xoá một kịch bản ở máy này, lần đồng bộ sau sẽ xoá nó trên cloud và các máy khác (vào Thùng rác của máy đó, khôi phục được). Tệp đi kèm không bao giờ bị xoá tự động.",
+        "Đăng nhập tài khoản Google khác thì mọi file được coi là mới: file giống nhau bỏ qua, file khác nhau sẽ hỏi.",
+        "Thu hồi quyền ở tài khoản Google, hoặc phiên hết hạn: app báo **cần đăng nhập lại**, dữ liệu trên máy giữ nguyên.",
+        "AI (MCP) không có đường nào bật đồng bộ, đăng nhập hay giải bí mật – chỉ bạn làm được ở màn này."
+      ] }
+    ]
+  },
+  {
     "id": "settings-about",
     "group": "Cài đặt",
     "title": "Giới thiệu",
