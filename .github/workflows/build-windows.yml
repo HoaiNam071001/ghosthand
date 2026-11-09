@@ -35,7 +35,10 @@ jobs:
           CGO_ENABLED: '1'
           CC: x86_64-w64-mingw32-gcc
           CXX: x86_64-w64-mingw32-g++
-        run: wails build -platform windows/amd64 -skipbindings -trimpath -ldflags "-s -w -X ghosthand/internal/update.Version=$(git describe --tags --abbrev=0 2>/dev/null | sed s/^v// || echo dev)"
+          # khoá OAuth Google (bước 54): đặt secret CLIENT_ID + CLIENT_SECRET ở Settings → Secrets → Actions; thiếu = bản build không có Đồng bộ
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        run: wails build -platform windows/amd64 -skipbindings -trimpath -ldflags "-s -w -X ghosthand/internal/update.Version=$(git describe --tags --abbrev=0 2>/dev/null | sed s/^v// || echo dev) $(bash scripts/oauth-ldflags.sh)"
       - uses: actions/upload-artifact@v4
         with:
           name: ghosthand-windows-${{ github.sha }}

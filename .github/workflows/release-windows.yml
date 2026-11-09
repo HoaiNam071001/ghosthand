@@ -38,11 +38,13 @@ jobs:
           CGO_ENABLED: '1'
           CC: x86_64-w64-mingw32-gcc
           CXX: x86_64-w64-mingw32-g++
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
         run: |
           VER="${TAG#v}"
           jq --arg v "$VER" '. + {info: {productName: "Ghosthand", companyName: "Ghosthand", productVersion: $v}}' wails.json > wails.tmp && mv wails.tmp wails.json
           wails build -platform windows/amd64 -skipbindings -trimpath -nsis \
-            -ldflags "-s -w -X ghosthand/internal/update.Version=$VER"
+            -ldflags "-s -w -X ghosthand/internal/update.Version=$VER $(bash scripts/oauth-ldflags.sh)"
       - name: Đóng gói + đính vào Release
         run: |
           VER="${TAG#v}"

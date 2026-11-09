@@ -7,6 +7,6 @@ cd "$(dirname "$0")/.."
 V="${1:-dev}"
 bash scripts/fetch-tesseract.sh
 NSIS=""; command -v makensis >/dev/null && [[ "$V" != dev ]] && NSIS="-nsis"
-wails build $NSIS -ldflags "-X ghosthand/internal/update.Version=$V"
+wails build $NSIS -ldflags "-X ghosthand/internal/update.Version=$V $(scripts/oauth-ldflags.sh)"
 cd build/bin && rm -f "Ghosthand-$V-portable.zip" && 7z a "Ghosthand-$V-portable.zip" ghosthand.exe >/dev/null && cd ../..
 echo "Xong: build/bin/ghosthand.exe + build/bin/Ghosthand-$V-portable.zip"

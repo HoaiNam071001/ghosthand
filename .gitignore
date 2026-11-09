@@ -6,3 +6,6 @@ frontend/dist
 internal/device/tess/tess.zip
 /ghosthand
 /ghosthand
+
+# khoá OAuth Google (bước 54) – không commit
+.env

@@ -31,7 +31,7 @@ COMMIT="$(git rev-parse --short HEAD)$(git diff --quiet HEAD -- . ':!frontend/wa
 BUILT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 export PATH="$PATH:$HOME/go/bin"
 U=ghosthand/internal/update
-wails build -ldflags "-X $U.Version=$VERSION -X $U.Commit=$COMMIT -X $U.BuiltAt=$BUILT"
+wails build -ldflags "-X $U.Version=$VERSION -X $U.Commit=$COMMIT -X $U.BuiltAt=$BUILT $(scripts/oauth-ldflags.sh)"
 codesign --force --deep --sign "$CERT" --identifier "$BUNDLE_ID" "$APP"
 codesign --verify --deep --strict "$APP"
 echo "Chữ ký:"; codesign -dr - "$APP" 2>&1 | grep designated
