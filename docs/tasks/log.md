@@ -352,3 +352,4 @@
 - **2026-11-09** – 54 C4 · C7 · C8: tab Cài đặt → Đồng bộ (đăng nhập Google, 3 công tắc phạm vi, tự đồng bộ mở app / sau khi lưu / chu kỳ, tên máy), hộp hỏi xung đột 3 lựa chọn, chấm trạng thái thanh dưới, mã hoá bí mật phía máy (scrypt + AES-GCM, nonce xác định), `cloud.Multi` ghép kịch bản + cài đặt + bí mật; màn `#demo-sync`, chương Hướng dẫn `settings-sync`. Còn C9 (backend MCP), C10 (`sync_status`).
 - **2026-11-09** – Bước 54 C9 C10: backend MCP cho đồng bộ cloud (`cloud/mcpmap` + `cloud/mcpcloud`, chọn nơi đồng bộ ở Cài đặt → Đồng bộ, mẫu Filesystem, lượt tự động chỉ chạy khi tool đã được "luôn cho") + tool `sync_status` chỉ đọc. go vet/test, npm build/test OK; chưa thử tay với MCP server thật.
 - **2026-11-09** – Bước 54 C11: chốt không thêm hẹn giờ đồng bộ riêng (trùng "Theo chu kỳ" ở C8). Bước 54 xong code, chờ thử tay (checks.md).
+- **2026-11-09** – Bước 56 D1b (trả lời từ điện thoại) bỏ theo người dùng; bước 56 xong code.
