@@ -170,9 +170,10 @@ function barTop(frame: Rect) {
   return bottom - BAR_BOTTOM_GAP - BAR_H;
 }
 
-export function TransformBar({ points, tf, setTf, frame }: {
+export function TransformBar({ points, tf, setTf, frame, onQuad }: {
   points: Map<string, Point>; // điểm đang chọn (toạ độ màn hình hiện tại)
   tf: TfParams; setTf: (t: TfParams) => void;
+  onQuad: () => void; // vào chế độ ánh xạ 4 mốc
   frame: Rect; // khung biến đổi (toạ độ cửa sổ) – thanh tránh đè lên
 }) {
   const ps = [...points.values()];
@@ -245,6 +246,8 @@ export function TransformBar({ points, tf, setTf, frame }: {
         </div>
       </div>
       <span className="h-8 w-px self-end bg-white/16" />
+      <button onClick={onQuad} disabled={ps.length < 2} title="Kéo 4 góc khung tới 4 vị trí mới (phối cảnh)"
+        className="h-8 self-end rounded-md px-2.5 text-[13px] enabled:hover:bg-white/10 disabled:opacity-30">4 mốc</button>
       <div className="flex gap-1.5">
         <button onClick={() => setTf(NO_TF)} disabled={!dirty} className="h-8 rounded-md px-2.5 text-[13px] enabled:hover:bg-white/10 disabled:opacity-40">Bỏ</button>
         <button onClick={applyTf} disabled={!dirty} className="btn-primary h-8 rounded-md px-3 text-[13px] font-semibold disabled:opacity-50">

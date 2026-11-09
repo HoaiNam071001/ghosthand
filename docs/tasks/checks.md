@@ -578,6 +578,7 @@ Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi t
 ## 30 – Sửa nhiều điểm · [phase3/30-sua-nhieu-diem.md](phase3/30-sua-nhieu-diem.md)
 
 - [ ] Chọn 5 điểm, co giãn 150%, xoay 10°, xiên, lật → overlay và lần chạy thật khớp; hoàn tác / làm lại
+- [ ] Chọn ≥ 2 điểm → thanh số bấm *4 mốc*: hiện 4 núm đánh số 1–4 ở góc khung; kéo từng núm → điểm xem trước biến dạng phối cảnh theo; Enter áp dụng (Ctrl+Z quay lại), Esc thoát không ghi; đổi lựa chọn thì tự thoát
 
 ## 17 – Đa màn hình (macOS) · [phase1-mvp.md](phase1-mvp.md)
 

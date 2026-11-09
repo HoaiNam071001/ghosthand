@@ -7,7 +7,8 @@ import {
   regionMapping, RegionMapMode, selectedScreenPoints, selectStep, setDragMode, setFocusLock, setMulti, setRegion,
   setRegionMapped, startPick, transformedSteps, useEditor,
 } from '../store';
-import { frameRect, MapDialog, modKeyName, paramsPreview, TransformBar, TransformFrame, useTransformGesture } from '../components/TransformTool';
+import { QuadBar, QuadHandles, useQuadMode } from '../components/QuadTool';
+import { frameRect,MapDialog, modKeyName, paramsPreview, TransformBar, TransformFrame, useTransformGesture } from '../components/TransformTool';
 import { bbox, NO_TF, TfParams } from '../transform';
 import { Point, Rect } from '../types';
 import { inWails, OverlayTool, overlayFocus, overlayTool, setWindowMode } from '../windowMode';
@@ -86,6 +87,7 @@ export default function OverlayScreen() {
   const { cap, setCap, capRef } = capture;
   const stroke = useStroke();
   const gesture = useTransformGesture(toScreenFromClient);
+  const quad = useQuadMode(toScreenFromClient);
   const gestureRef = useRef(gesture);
   gestureRef.current = gesture;
 
@@ -97,6 +99,7 @@ export default function OverlayScreen() {
 
   useEffect(() => setDragMode(tool === 'drag'), [tool]);
   useEffect(() => setTf(NO_TF), [multi.join(), tool]); // đổi lựa chọn → bỏ số đang nhập dở trên thanh biến đổi
+  useEffect(() => quad.exit(), [multi.join(), tool]); // đổi lựa chọn → thoát chế độ 4 mốc
   // Chọn lại xong bằng F6 (không qua onClick) → tắt trạng thái "đang chọn lại".
   useEffect(() => {
     if (repickRef.current && pickingStep() === null) setRepicking(false);
@@ -208,7 +211,7 @@ export default function OverlayScreen() {
   const liveRegion = regionDrag && shown && shown.w >= MIN_REGION && shown.h >= MIN_REGION ? toScreenRect(shown) : shownRegion;
   // Xem trước bằng đúng logic ghi thật: chờ đổi vùng → điểm theo cách đang chọn; đang kéo khung / nhập số → điểm sau biến đổi.
   const selScreen = selectedScreenPoints();
-  const liveMat = tool === 'select' && !pending ? gesture.live ?? paramsPreview(tf, [...selScreen.values()]) : null;
+  const liveMat = tool === 'select' && !pending ? quad.quad ? quad.live : gesture.live ?? paramsPreview(tf, [...selScreen.values()]) : null;
   const view = pending ? regionMapping(pending.to, mapMode) : liveMat ? transformedSteps(liveMat) : { steps, outside: 0 };
   const ends = endpoints({ ...script, steps: view.steps }, liveRegion);
   const markers = buildMarkers(view.steps, ends, toClient, pointKey, moving?.moved ? moving : null, cursor);
@@ -262,7 +265,8 @@ export default function OverlayScreen() {
       <JitterBoxes markers={markers} scale={{ x: 1 / map.kx, y: 1 / map.ky }} focus={focus} />
 
       {/* Chọn nhiều: khung biến đổi quanh các điểm đã chọn (theo vị trí đang xem trước) + khung kéo chọn */}
-      {tool === 'select' && !pending && selBox && (
+      {tool === 'select' && !pending && quad.quad && <QuadHandles dst={quad.quad.dst} toClient={toClient} grab={quad.grab} />}
+      {tool === 'select' && !pending && !quad.quad && selBox && (
         <TransformFrame box={selBox} toClient={toClient} bad={view.outside > 0} single={selPoints.length < 2 || (selBox.w < 1 && selBox.h < 1)}
           begin={(e, kind, _box, fx, fy) => gesture.begin(e, kind, bbox([...selScreen.values()]), fx, fy)} />
       )}
@@ -292,8 +296,9 @@ export default function OverlayScreen() {
         tool={tool} setTool={setTool} fullRegion={isFull ? null : { label: fullRegion ? 'Toàn màn này' : 'Toàn màn hình', onClick: () => requestRegion(fullRegion) }}
         displays={displays} onPickDisplay={pickDisplay} apps={apps.choices} onOpenApps={apps.load} onPickApp={apps.focus} />
 
-      {tool === 'select' && !pending && selScreen.size > 0 && <TransformBar points={selScreen} tf={tf} setTf={setTf}
-        frame={frameRect(bbox([...selScreen.values()]), toClient)} />}
+      {tool === 'select' && !pending && quad.quad && <QuadBar dirty={!!quad.live} onApply={quad.apply} onExit={quad.exit} />}
+      {tool === 'select' && !pending && !quad.quad && selScreen.size > 0 && <TransformBar points={selScreen} tf={tf} setTf={setTf}
+        onQuad={() => quad.enter([...selScreen.values()])} frame={frameRect(bbox([...selScreen.values()]), toClient)} />}
       {pending && (
         <MapDialog from={boundsOf(region)} to={boundsOf(pending.to)} target={pending.to} mode={mapMode} setMode={setMapMode}
           onApply={() => { setRegionMapped(pending.to, mapMode); setPending(null); }}
