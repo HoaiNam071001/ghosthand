@@ -6,10 +6,10 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 
 > Hook đầu phiên chèn nguyên mục này cho AI – giữ ngắn (≤ ~1500 ký tự, `check-docs.py` cảnh báo): mỗi dòng một ý, chi tiết để ở file bước / `log.md`. Cập nhật mỗi khi xong / bắt đầu một bước.
 
-- **Đang làm:** 54 đồng bộ cloud – xong C0–C10 (chờ thử tay), còn C11 (đồng bộ theo lịch, cần quyết định). Còn lại bước 56: D1b (để sau).
-- **Xong code, chờ kiểm tra tay:** 33, 59, 56 A–D (trừ D1b), 61, 58, 57, 55, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 40, 39, 38, 37, 36, 35, 34, 31a–d, 28, 26, 25d, 24, 22 – xem bảng *Tổng quan* + [checks.md](checks.md).
+- **Đang làm:** không có bước dở (còn 56 D1b – trả lời từ điện thoại, để sau).
+- **Xong code, chờ kiểm tra tay:** 54, 33, 59, 56 A–D (trừ D1b), 61, 58, 57, 55, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 40, 39, 38, 37, 36, 35, 34, 31a–d, 28, 26, 25d, 24, 22 – xem bảng *Tổng quan* + [checks.md](checks.md).
 - **Tiếp theo:** chưa chọn – xem bảng *Tổng quan*. Hoãn: 17 (Windows), 18b.
-- **Cập nhật lần cuối:** 2026-11-09 (54 C9 · C10: đồng bộ cloud qua MCP server + tool `sync_status` chỉ đọc).
+- **Cập nhật lần cuối:** 2026-11-09 (54 xong code: C11 chốt dùng "Theo chu kỳ" có sẵn, không thêm hẹn giờ riêng).
 
 ## Tính năng của hệ thống
 
@@ -162,7 +162,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 chờ kiểm tra tay | [51. Hướng dẫn sử dụng](phase3/51-huong-dan.md) | 16 / 16 | [2 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [52. MCP ít token](phase3/52-mcp-it-token.md) | 6 / 6 | [2 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [53. MCP: annotations, nhật ký lệnh AI, chống prompt injection](phase3/53-mcp-hoc-tu-openclaw.md) | 6 / 6 | [2 việc](checks.md) |
-| 🔄 đang làm | [54. Đồng bộ cloud](phase3/54-dong-bo-cloud.md) | 11 / 12 |  |
+| 🧪 chờ kiểm tra tay | [54. Đồng bộ cloud](phase3/54-dong-bo-cloud.md) | 12 / 12 | [14](checks.md) |
 | 🧪 chờ kiểm tra tay | [55. MCP client + node tuỳ chỉnh](phase3/55-mcp-client-node-tuy-chinh.md) | 10 / 10 | [6 việc](checks.md) |
 | 🟡 đang làm | [56. Học từ MCP ngoài](phase3/56-hoc-tu-mcp-ngoai.md) | 9 / 14 | [11 việc](checks.md) |
 | 🟡 đang làm | [57. AI chạy ổn định](phase3/57-ai-chay-on-dinh.md) | 7 / 10 | [3 việc](checks.md) |
