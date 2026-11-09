@@ -18,7 +18,10 @@ const (
 
 func (a *App) autoSyncReady() (store.SyncSettings, bool) {
 	cfg := store.CurrentSettings().Sync
-	return cfg, cfg.Any() && a.cloudAuth().LoggedIn(context.Background())
+	if !cfg.Any() || !a.syncConnected(cfg) {
+		return cfg, false
+	}
+	return cfg, !cfg.UsesMCP() || a.mcpSyncPreapproved(cfg) // MCP: lượt tự động không bật hộp hỏi quyền
 }
 
 func (a *App) startAutoSync(ctx context.Context) {

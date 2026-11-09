@@ -4,6 +4,7 @@ import { clockText, summaryText, syncTone, TONE_CLASS } from '../../sync/text';
 import type { SyncStatus } from '../../sync/types';
 import Select from '../Select';
 import { Switch } from '../Switch';
+import SyncRemoteBox, { RemoteBoxProps } from './SyncRemoteBox';
 import SyncSecretsBox, { SecretsBoxProps } from './SyncSecretsBox';
 
 export type SyncCfg = { scripts: boolean; settings: boolean; secrets: boolean; onOpen: boolean; onSave: boolean; intervalMin: number; device: string };
@@ -22,6 +23,7 @@ export type SyncPanelProps = {
   onNow: () => void;
   onCfg: (patch: Partial<SyncCfg>) => void;
   secrets: Omit<SecretsBoxProps, 'enabled' | 'onToggle'>;
+  remote: RemoteBoxProps;
 };
 
 function Row({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
@@ -33,7 +35,9 @@ function Row({ label, hint, children }: { label: string; hint?: string; children
   );
 }
 
-export default function SyncPanel({ status, cfg, busy, error, onLogin, onLogout, onNow, onCfg, secrets }: SyncPanelProps) {
+export default function SyncPanel({ status, cfg, busy, error, onLogin, onLogout, onNow, onCfg, secrets, remote }: SyncPanelProps) {
+  const mcp = status.backend === 'mcp';
+  const pending = remote.backend !== (mcp ? 'mcp' : 'gdrive'); // đang soạn nơi khác, chưa lưu
   const tone = syncTone(status);
   const sum = summaryText(status.summary);
   const intervals = INTERVALS.includes(cfg.intervalMin) ? INTERVALS : [...INTERVALS, cfg.intervalMin].sort((a, b) => a - b);
@@ -41,24 +45,29 @@ export default function SyncPanel({ status, cfg, busy, error, onLogin, onLogout,
     <>
       <span className="font-semibold">Đồng bộ</span>
       <span className="text-xs text-muted">
-        Giữ kịch bản, ảnh mẫu, cài đặt (và bí mật, nếu bạn bật) giống nhau giữa các máy qua Google Drive. App chỉ thấy thư mục <b>Ghosthand</b> nó tạo trong Drive của bạn.
+        Giữ kịch bản, ảnh mẫu, cài đặt (và bí mật, nếu bạn bật) giống nhau giữa các máy qua Google Drive (app chỉ thấy thư mục <b>Ghosthand</b> nó tạo) hoặc một MCP server bạn chọn.
         Hai máy cùng sửa một thứ thì app <b>hỏi bạn</b>, không bao giờ tự ghi đè.
       </span>
 
-      <div className="flex flex-col gap-2 rounded-control border border-line bg-soft p-3">
-        {!status.hasClient
+      <SyncRemoteBox {...remote} />
+
+      {pending && <span className="text-xs text-muted">Chưa lưu: bấm <b>Lưu và kiểm tra</b> để chuyển nơi đồng bộ.</span>}
+      {!pending && <div className="flex flex-col gap-2 rounded-control border border-line bg-soft p-3">
+        {!status.hasClient && !mcp
           ? <span className="text-muted">Bản app này chưa kèm khoá đăng nhập Google nên chưa dùng được đồng bộ.</span>
           : !status.loggedIn
-            ? <Row label="Google Drive" hint="Mở trình duyệt để đăng nhập; app không thấy mật khẩu Google của bạn.">
-              <button onClick={onLogin} disabled={busy} className="btn-primary flex-none rounded-control px-3 py-1.5 disabled:opacity-50">{busy ? 'Đang chờ đăng nhập…' : 'Đăng nhập Google'}</button>
-            </Row>
+            ? mcp
+              ? <span className="text-muted">Chọn MCP server đang bật và lưu để bắt đầu đồng bộ.</span>
+              : <Row label="Google Drive" hint="Mở trình duyệt để đăng nhập; app không thấy mật khẩu Google của bạn.">
+                <button onClick={onLogin} disabled={busy} className="btn-primary flex-none rounded-control px-3 py-1.5 disabled:opacity-50">{busy ? 'Đang chờ đăng nhập…' : 'Đăng nhập Google'}</button>
+              </Row>
             : <>
               <div className={`flex items-center gap-2 ${TONE_CLASS[tone.tone]}`}>
                 <span className={`h-[7px] w-[7px] flex-none rounded-full bg-current ${tone.tone === 'busy' ? 'animate-pulse' : ''}`} />
                 <span className="font-semibold">{tone.text}</span>
                 <span className="ml-auto flex gap-2">
                   <button onClick={onNow} disabled={status.running} className="btn-primary rounded-control px-3 py-1.5 disabled:opacity-50">Đồng bộ ngay</button>
-                  <button onClick={onLogout} className="rounded-control border border-line bg-surface px-3 py-1.5 hover:bg-hover">Đăng xuất</button>
+                  {!mcp && <button onClick={onLogout} className="rounded-control border border-line bg-surface px-3 py-1.5 hover:bg-hover">Đăng xuất</button>}
                 </span>
               </div>
               {sum && <span className="text-xs text-muted">Lượt gần nhất: {sum}</span>}
@@ -68,10 +77,10 @@ export default function SyncPanel({ status, cfg, busy, error, onLogin, onLogout,
               )}
               {!!status.held?.length && <span className="text-xs text-muted">Kịch bản đang soạn dở được giữ nguyên; lưu rồi đồng bộ lại để nhận bản mới.</span>}
             </>}
-        {error && <span className="text-xs text-danger-text">{error}</span>}
-      </div>
+      </div>}
+      {error && <span className="text-xs text-danger-text">{error}</span>}
 
-      {status.loggedIn && (
+      {status.loggedIn && !pending && (
         <>
           <span className="text-muted">Đồng bộ những gì</span>
           <Row label="Kịch bản" hint="Kèm ảnh mẫu và tệp đi kèm (CSV, ảnh…)"><Switch on={cfg.scripts} onChange={(v) => onCfg({ scripts: v })} label="Đồng bộ kịch bản" /></Row>

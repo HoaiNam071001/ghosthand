@@ -640,7 +640,7 @@ Người dùng chốt 2026-10-18: việc qua Chrome của app làm sau cùng –
 - [ ] AI chạy `run_script shots: each`: node mở popup có `changes.added`; node lỗi sau đó có `error.detail.changes`
 - [ ] (fix focus click, macOS) Mở Chrome thường, để cửa sổ khác (terminal) ở trước, AI chụp màn hình rồi `run_step` click vào nút trên trang → cú click đầu ăn ngay (không phải click hai lần); chạy trong app (F8) cũng vậy
 
-### 54 C – Đồng bộ cloud (Google Drive) · [phase3/54-dong-bo-cloud.md](phase3/54-dong-bo-cloud.md)
+### 54 C – Đồng bộ cloud (Google Drive / MCP server) · [phase3/54-dong-bo-cloud.md](phase3/54-dong-bo-cloud.md)
 
 - [ ] Cài đặt → **Đồng bộ** (cần build có khoá Google hoặc đặt `GHOSTHAND_GOOGLE_CLIENT_ID/SECRET`): *Đăng nhập Google* mở trình duyệt, xong về app thấy "Đã đăng nhập"; chấm *Đồng bộ* hiện ở thanh dưới, bấm mở đúng tab
 - [ ] *Đồng bộ ngay* lần đầu: thư mục `Ghosthand` xuất hiện trong Drive với `scripts/…`, `settings.json`, `manifest.json`; mở bản app thứ hai (hoặc máy khác, kể cả macOS ↔ Windows) → kịch bản + ảnh mẫu về đủ, node ảnh/CSV chạy được (đường dẫn viết lại đúng)
@@ -652,3 +652,7 @@ Người dùng chốt 2026-10-18: việc qua Chrome của app làm sau cùng –
 - [ ] Ngắt mạng giữa lúc đồng bộ → báo lỗi, bật mạng bấm lại thì làm tiếp (không đẩy lại những file đã lên); thu hồi quyền ở myaccount.google.com → báo cần đăng nhập lại, dữ liệu trên máy còn nguyên
 - [ ] *Đăng xuất* rồi đăng nhập tài khoản Google khác: không xoá kịch bản nào ở máy (file trùng bỏ qua, file khác nhau hỏi)
 - [ ] `#demo-sync` (cả `?theme=dark`, `?state=conflict`, `?ask=1`): bố cục không vỡ ở 2 theme
+- [ ] (C9) Nơi đồng bộ **MCP server**: Cài đặt → MCP server thêm *Filesystem* (Thư viện) với thư mục là một thư mục Google Drive/OneDrive đã cài trên máy; Cài đặt → Đồng bộ chọn *MCP server* → chọn server, mẫu *Filesystem*, điền thư mục gốc (vd `<thư mục Drive>/Ghosthand`) → *Lưu và kiểm tra* báo "server có đủ tool" (chọn tool không có → báo đúng tên tool thiếu); *Đồng bộ ngay* hỏi duyệt server rồi từng tool ghi (chọn *luôn cho*); file trong thư mục là base64 nên **không đọc được bằng mắt** – bình thường; máy thứ hai cùng cấu hình kéo về đủ kịch bản + ảnh mẫu
+- [ ] (C9) Tự đồng bộ qua MCP: chưa cho "luôn cho" tool ghi thì lượt tự động **không** bật hộp hỏi (chấm báo chưa kết nối/không chạy); sau khi bấm *Đồng bộ ngay* và chọn *luôn cho* thì lượt tự động chạy; đổi thư mục gốc / server → lần đồng bộ sau coi như kho mới (file giống nhau bỏ qua, khác nhau hỏi), không xoá gì ở máy; chuyển về *Google Drive* lưu ngay
+- [ ] (C10) AI gọi `sync_status` thấy `on/backend/loggedIn/lastAt/failed/conflicts`, không thấy tên máy hay đường dẫn; không có tool nào khác về đồng bộ trong `tools/list`
+- [ ] `#demo-sync?backend=mcp` (cả `?theme=dark`): form ánh xạ không vỡ ở 2 theme, hẹp cửa sổ không tràn

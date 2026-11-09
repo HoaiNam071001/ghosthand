@@ -2,6 +2,7 @@ package store
 
 import (
 	"fmt"
+	"ghosthand/internal/cloud/mcpmap"
 	"os"
 	"strings"
 )
@@ -9,13 +10,15 @@ import (
 // SyncSettings – cấu hình đồng bộ cloud của RIÊNG máy này (bước 54 C8): bật phần nào, khi nào tự đồng bộ.
 // Mỗi máy tự chọn nên không mang đi (syncsettings.go).
 type SyncSettings struct {
-	Scripts     bool   `json:"scripts,omitempty"`     // kịch bản + tệp đi kèm
-	Settings    bool   `json:"settings,omitempty"`    // cài đặt mang đi được
-	Secrets     bool   `json:"secrets,omitempty"`     // kho bí mật (bản mã) – tắt mặc định
-	OnOpen      bool   `json:"onOpen,omitempty"`      // đồng bộ khi mở app
-	OnSave      bool   `json:"onSave,omitempty"`      // đồng bộ sau khi lưu kịch bản
-	IntervalMin int    `json:"intervalMin,omitempty"` // đồng bộ mỗi N phút; 0 = tắt
-	Device      string `json:"device,omitempty"`      // tên máy hiện cho máy khác thấy ("" = tên máy tính)
+	Scripts     bool           `json:"scripts,omitempty"`     // kịch bản + tệp đi kèm
+	Settings    bool           `json:"settings,omitempty"`    // cài đặt mang đi được
+	Secrets     bool           `json:"secrets,omitempty"`     // kho bí mật (bản mã) – tắt mặc định
+	OnOpen      bool           `json:"onOpen,omitempty"`      // đồng bộ khi mở app
+	OnSave      bool           `json:"onSave,omitempty"`      // đồng bộ sau khi lưu kịch bản
+	IntervalMin int            `json:"intervalMin,omitempty"` // đồng bộ mỗi N phút; 0 = tắt
+	Device      string         `json:"device,omitempty"`      // tên máy hiện cho máy khác thấy ("" = tên máy tính)
+	Backend     string         `json:"backend,omitempty"`     // "" | gdrive = Google Drive; mcp = MCP server do người dùng khai (54 C9)
+	MCP         mcpmap.Mapping `json:"mcp,omitempty"`         // ánh xạ tool khi Backend = mcp
 }
 
 const (
@@ -44,6 +47,13 @@ func (s SyncSettings) Check() error {
 	}
 	if len([]rune(s.Device)) > 40 || strings.ContainsAny(s.Device, `/\:*?"<>|()`+"\n\r") {
 		return fmt.Errorf("tên máy tối đa 40 ký tự, không có các ký tự / \\ : * ? \" < > | ( )")
+	}
+	switch s.Backend {
+	case "", SyncBackendDrive:
+	case SyncBackendMCP:
+		return s.MCP.Check()
+	default:
+		return fmt.Errorf("nơi đồng bộ %q không hỗ trợ (gdrive / mcp)", s.Backend)
 	}
 	return nil
 }
@@ -78,3 +88,12 @@ func ImportPortable(data []byte) error {
 	}
 	return saveSettings(dir, s)
 }
+
+// Backend (SyncSettings.Backend).
+const (
+	SyncBackendDrive = "gdrive"
+	SyncBackendMCP   = "mcp"
+)
+
+// UsesMCP – đồng bộ qua MCP server thay vì Google Drive.
+func (s SyncSettings) UsesMCP() bool { return s.Backend == SyncBackendMCP }

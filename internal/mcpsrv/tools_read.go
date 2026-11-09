@@ -66,6 +66,7 @@ func (s *Server) addReadTools() {
 	addTool(s, KindRead, &mcp.Tool{Name: "list_mcp_servers", Description: "MCP server ngoài người dùng đã thêm (Cài đặt → MCP server): id, state (ok | error | idle | off), " +
 		"tool (tên, readOnly, args – bắt buộc có *). Dùng cho node mcpTool: mcpServer = id, mcpTool = tên tool, mcpArgs = JSON theo args. " +
 		"Chưa có server cần dùng thì bảo người dùng thêm ở Cài đặt – AI không thêm / sửa server."}, s.listMCPServers)
+	addTool(s, KindRead, &mcp.Tool{Name: "sync_status", Description: "Đồng bộ cloud, chỉ xem (cờ + số đếm). Bật / đăng nhập: người dùng làm ở Cài đặt."}, s.syncStatus)
 	addTool(s, KindRead, &mcp.Tool{Name: "get_screen_info", Description: "Các màn hình: khung (x, y, w, h) theo hệ toạ độ chuột = hệ của kịch bản, tỷ lệ DPI, màn chính."}, s.screenInfo)
 	addTool(s, KindRead, &mcp.Tool{Name: "app_info", Description: "Bản app đang chạy (version, commit): kiểm bản vừa cài đã lên."}, s.appInfo)
 }

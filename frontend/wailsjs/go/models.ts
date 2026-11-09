@@ -186,6 +186,7 @@ export namespace app {
 	    held?: string[];
 	    hasPassphrase: boolean;
 	    device: string;
+	    backend?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new SyncStatus(source);
@@ -204,6 +205,7 @@ export namespace app {
 	        this.held = source["held"];
 	        this.hasPassphrase = source["hasPassphrase"];
 	        this.device = source["device"];
+	        this.backend = source["backend"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -860,6 +862,73 @@ export namespace mcplib {
 	        this.thirdParty = source["thirdParty"];
 	        this.available = source["available"];
 	        this.installHint = source["installHint"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+
+}
+
+export namespace mcpmap {
+	
+	export class Mapping {
+	    server: string;
+	    root: string;
+	    readTool: string;
+	    writeTool: string;
+	    deleteTool?: string;
+	    mkdirTool?: string;
+	    pathArg: string;
+	    contentArg: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Mapping(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.server = source["server"];
+	        this.root = source["root"];
+	        this.readTool = source["readTool"];
+	        this.writeTool = source["writeTool"];
+	        this.deleteTool = source["deleteTool"];
+	        this.mkdirTool = source["mkdirTool"];
+	        this.pathArg = source["pathArg"];
+	        this.contentArg = source["contentArg"];
+	    }
+	}
+	export class Preset {
+	    ID: string;
+	    Name: string;
+	    Desc: string;
+	    Mapping: Mapping;
+	
+	    static createFrom(source: any = {}) {
+	        return new Preset(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.ID = source["ID"];
+	        this.Name = source["Name"];
+	        this.Desc = source["Desc"];
+	        this.Mapping = this.convertValues(source["Mapping"], Mapping);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -2666,6 +2735,8 @@ export namespace store {
 	    onSave?: boolean;
 	    intervalMin?: number;
 	    device?: string;
+	    backend?: string;
+	    mcp?: mcpmap.Mapping;
 	
 	    static createFrom(source: any = {}) {
 	        return new SyncSettings(source);
@@ -2680,7 +2751,27 @@ export namespace store {
 	        this.onSave = source["onSave"];
 	        this.intervalMin = source["intervalMin"];
 	        this.device = source["device"];
+	        this.backend = source["backend"];
+	        this.mcp = this.convertValues(source["mcp"], mcpmap.Mapping);
 	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class StorageSettings {
 	    scriptsDir?: string;

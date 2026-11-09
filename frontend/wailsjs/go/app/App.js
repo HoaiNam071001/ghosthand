@@ -46,6 +46,10 @@ export function CheckPage(arg1) {
   return window['go']['app']['App']['CheckPage'](arg1);
 }
 
+export function CheckSyncMCP(arg1) {
+  return window['go']['app']['App']['CheckSyncMCP'](arg1);
+}
+
 export function CheckUpdate() {
   return window['go']['app']['App']['CheckUpdate']();
 }
@@ -488,6 +492,10 @@ export function SyncLogin() {
 
 export function SyncLogout() {
   return window['go']['app']['App']['SyncLogout']();
+}
+
+export function SyncMCPPresets() {
+  return window['go']['app']['App']['SyncMCPPresets']();
 }
 
 export function SyncNow() {

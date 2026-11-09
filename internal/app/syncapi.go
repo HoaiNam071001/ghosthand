@@ -10,7 +10,6 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
 	"ghosthand/internal/cloud"
-	"ghosthand/internal/cloud/gdrive"
 	"ghosthand/internal/secrets"
 	"ghosthand/internal/store"
 )
@@ -64,8 +63,12 @@ func (a *App) SetSyncSettings(c store.SyncSettings) error {
 	if c.Secrets && syncPassphrase() == "" {
 		return cloud.ErrNoPassphrase
 	}
+	old := store.CurrentSettings().Sync
 	if err := store.SetSync(c); err != nil {
 		return err
+	}
+	if !sameRemote(old, c) {
+		resetSyncState()
 	}
 	a.emitSyncStatus()
 	return nil
@@ -101,12 +104,13 @@ const minPassphraseLen = 8
 
 // verifyPassphrase: có bản mã trên cloud thì pass phải mở được; chưa đăng nhập / chưa có bản mã thì bỏ qua.
 func (a *App) verifyPassphrase(pass string) error {
-	if pass == "" || !a.cloudAuth().LoggedIn(context.Background()) {
+	cfg := store.CurrentSettings().Sync
+	if pass == "" || !a.syncConnected(cfg) {
 		return nil
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
-	blob, _, err := (&gdrive.Drive{Auth: a.cloudAuth()}).Get(ctx, cloud.SecretsPath)
+	blob, _, err := a.syncRemote(cfg).Get(ctx, cloud.SecretsPath)
 	if errors.Is(err, cloud.ErrNotFound) {
 		return nil
 	}

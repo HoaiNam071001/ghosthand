@@ -16,7 +16,7 @@ export function clockText(iso: string | undefined, now: Date = new Date()): stri
 
 /** Trạng thái tóm tắt cho chấm trên thanh dưới + dòng trạng thái ở Cài đặt. */
 export function syncTone(s: SyncStatus): { tone: SyncTone; text: string } {
-  if (!s.loggedIn) return { tone: 'off', text: 'Chưa đăng nhập' };
+  if (!s.loggedIn) return { tone: 'off', text: s.backend === 'mcp' ? 'Chưa kết nối MCP server' : 'Chưa đăng nhập' };
   if (s.running) return { tone: 'busy', text: 'Đang đồng bộ…' };
   if (s.lastError) return { tone: 'error', text: 'Đồng bộ lỗi' };
   const n = s.conflicts?.length ?? 0;

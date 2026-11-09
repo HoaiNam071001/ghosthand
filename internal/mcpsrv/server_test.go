@@ -31,6 +31,7 @@ type fakeBackend struct {
 	revs          *store.Revisions
 	recent        []string
 	mcpServers    []MCPServerEntry
+	sync          SyncInfo
 	editor        Editor
 	opened        []string
 	sess          *session.Manager // phiên chạy thật, thiết bị giả (runBackend trong run_test.go)
@@ -88,6 +89,7 @@ func (f *fakeBackend) EnvWarnings(sc *model.Script) []envcheck.Warning {
 }
 func (f *fakeBackend) SecretNames() []string        { return []string{"mat_khau_email"} }
 func (f *fakeBackend) MCPServers() []MCPServerEntry { return f.mcpServers }
+func (f *fakeBackend) SyncInfo() SyncInfo           { return f.sync }
 func (f *fakeBackend) Displays() []Display {
 	return []Display{{Rect: model.Rect{W: 1920, H: 1080}, Scale: 1, Main: true}}
 }

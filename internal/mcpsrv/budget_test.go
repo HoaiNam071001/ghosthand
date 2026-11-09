@@ -14,7 +14,7 @@ import (
 // chỗ vừa thêm (hoặc dời sang type=… / topic=debug) trước khi nâng ngưỡng. Xem skill add-node-type.
 const (
 	budgetInstructions = 3200
-	budgetToolsList    = 31700 // 61 M2: +run_batch (~1 KB, đã viết gọn); 59 U5: +update_app (~0,4 KB)
+	budgetToolsList    = 32000 // 61 M2: +run_batch (~1 KB, đã viết gọn); 59 U5: +update_app (~0,4 KB); 54 C10: +sync_status (~0,25 KB)
 	budgetCompactGuide = 26000
 	budgetNodeLine     = 330 // một dòng "type: dùng khi…" trong bản gọn (steptypes_use.go)
 	budgetTypeDoc      = 3600

@@ -221,3 +221,20 @@ func (b mcpBackend) SetNodePref(p string) error {
 	b.a.emit("mcp:nodePref", p)
 	return nil
 }
+
+// SyncInfo – sync_status (54 C10): chỉ cờ và số đếm, không tên máy / tên file / lời báo lỗi.
+func (b mcpBackend) SyncInfo() mcpsrv.SyncInfo {
+	cfg := store.CurrentSettings().Sync
+	st := b.a.SyncStatus()
+	info := mcpsrv.SyncInfo{
+		On: cfg.Any(), LoggedIn: st.LoggedIn, Running: st.Running, LastAt: st.LastAt, Failed: st.LastError != "",
+		Conflicts: len(st.Conflicts), Missing: len(st.Missing), Held: len(st.Held),
+	}
+	if info.On {
+		info.Backend = store.SyncBackendDrive
+		if cfg.UsesMCP() {
+			info.Backend = store.SyncBackendMCP
+		}
+	}
+	return info
+}

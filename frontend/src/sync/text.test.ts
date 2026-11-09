@@ -6,6 +6,7 @@ const on = { ...EMPTY_STATUS, loggedIn: true };
 
 describe('syncTone', () => {
   it('chưa đăng nhập', () => expect(syncTone(EMPTY_STATUS).tone).toBe('off'));
+  it('MCP chưa kết nối nói rõ là server', () => expect(syncTone({ ...EMPTY_STATUS, backend: 'mcp' }).text).toContain('MCP'));
   it('đang chạy ưu tiên hơn lỗi cũ', () => expect(syncTone({ ...on, running: true, lastError: 'x' }).tone).toBe('busy'));
   it('lỗi', () => expect(syncTone({ ...on, lastError: 'mất mạng' }).tone).toBe('error'));
   it('xung đột báo số', () => expect(syncTone({ ...on, conflicts: ['a', 'b'] })).toEqual({ tone: 'warn', text: '2 xung đột chờ bạn chọn' }));

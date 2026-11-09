@@ -331,7 +331,7 @@
     "id": "settings-sync",
     "group": "Cài đặt",
     "title": "Đồng bộ",
-    "summary": "Giữ kịch bản, ảnh mẫu, cài đặt (và bí mật) giống nhau giữa các máy qua Google Drive.",
+    "summary": "Giữ kịch bản, ảnh mẫu, cài đặt (và bí mật) giống nhau giữa các máy qua Google Drive hoặc một MCP server.",
     "blocks": [
       { "kind": "p", "text": "Đăng nhập Google một lần, app đẩy / kéo qua thư mục **Ghosthand** trong Drive của bạn. App chỉ thấy thư mục và file do chính nó tạo (quyền `drive.file`), không đọc được phần còn lại của Drive. Mật khẩu Google nhập ở trình duyệt, app không thấy; có thể **Đăng xuất** bất cứ lúc nào để thu hồi quyền." },
       { "kind": "h", "text": "Đồng bộ những gì" },
@@ -340,6 +340,8 @@
         "**Cài đặt** – chỉ phần mang đi được: giao diện, viền lúc chạy, ưu tiên node, nhà cung cấp AI (key chỉ là tên bí mật). **Không** mang thư mục lưu, cổng / token API, MCP server ngoài, và mọi quyền của AI (bật MCP, mức chạy, tool bị tắt) – cloud bị chiếm cũng không nới được quyền của AI trên máy bạn.",
         "**Bí mật** – tắt mặc định. Bật thì phải đặt **cụm mật khẩu**; bí mật được mã hoá trên máy bạn rồi mới lên Drive, Google và app không đọc được. Máy mới nhập đúng cụm mật khẩu để lấy về. **Quên cụm mật khẩu = mất bản trên cloud** (bí mật trên các máy vẫn còn). Cụm mật khẩu cất trong Keychain / Credential Manager, không vào file nào."
       ] },
+      { "kind": "h", "text": "Đồng bộ qua MCP server" },
+      { "kind": "p", "text": "Thay cho Google Drive, chọn **MCP server** ở đầu màn này: dùng một server đã thêm ở Cài đặt → MCP server làm kho. Khai thư mục gốc trên server, tên tool đọc / ghi (xoá, tạo thư mục là tuỳ chọn) và tên đối số đường dẫn / nội dung, hoặc chọn mẫu **Filesystem** rồi trỏ thư mục gốc vào thư mục Google Drive / OneDrive / Dropbox đã cài trên máy. Nội dung file gửi dạng base64 nên ảnh mẫu và bản mã vẫn đi được. Bấm **Lưu và kiểm tra** để app nối thử và báo tool nào server thiếu. Toàn bộ dữ liệu đồng bộ đi qua server đó – chỉ chọn server bạn tin. Lần đầu app hỏi duyệt server và từng tool ghi; chọn **luôn cho tool này** thì lượt tự động mới chạy không cần hỏi. Server không có tool xoá thì file đã xoá còn nằm lại trên server nhưng app không dùng nữa." },
       { "kind": "h", "text": "Khi hai máy cùng sửa" },
       { "kind": "p", "text": "App **không bao giờ tự ghi đè**. Bấm **Đồng bộ ngay** và gặp xung đột thì hiện hộp hỏi, kèm giờ sửa và tên máy hai bên: **Giữ bản máy này**, **Lấy bản cloud**, hoặc **Giữ cả hai** (bản cloud lưu thành `tên (máy khác).json`). Chưa chọn thì để nguyên và hỏi lại lần sau. Kịch bản đang mở có thay đổi chưa lưu thì không bị kéo đè – lưu xong đồng bộ lại." },
       { "kind": "h", "text": "Tự đồng bộ" },
@@ -349,7 +351,7 @@
         "Xoá một kịch bản ở máy này, lần đồng bộ sau sẽ xoá nó trên cloud và các máy khác (vào Thùng rác của máy đó, khôi phục được). Tệp đi kèm không bao giờ bị xoá tự động.",
         "Đăng nhập tài khoản Google khác thì mọi file được coi là mới: file giống nhau bỏ qua, file khác nhau sẽ hỏi.",
         "Thu hồi quyền ở tài khoản Google, hoặc phiên hết hạn: app báo **cần đăng nhập lại**, dữ liệu trên máy giữ nguyên.",
-        "AI (MCP) không có đường nào bật đồng bộ, đăng nhập hay giải bí mật – chỉ bạn làm được ở màn này."
+        "AI (MCP) chỉ xem được trạng thái qua `sync_status` (bật chưa, lần cuối, có xung đột không – không tên máy, tên file hay lỗi chi tiết). AI không có đường nào bật đồng bộ, đăng nhập, chọn kho hay giải bí mật – chỉ bạn làm được ở màn này."
       ] }
     ]
   },

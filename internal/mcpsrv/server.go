@@ -53,6 +53,7 @@ type Backend interface {
 	Permissions() []perm.Item     // quyền hệ điều hành + trạng thái (bước 48) – không bật hộp thoại
 	SecretNames() []string        // tên bí mật trong kho (bước 43 S10) – KHÔNG bao giờ có giá trị
 	MCPServers() []MCPServerEntry // MCP server ngoài + tool đã tải (bước 55 M7) – chỉ để đọc
+	SyncInfo() SyncInfo           // trạng thái đồng bộ cloud (bước 54 C10) – chỉ cờ / số đếm, không đổi được gì
 	// EnvWarnings – môi trường hay làm kịch bản lỗi giữa chừng (61 M3); sc nil = dò chung. Không bật hộp thoại.
 	EnvWarnings(sc *model.Script) []envcheck.Warning
 

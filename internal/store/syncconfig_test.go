@@ -42,3 +42,17 @@ func TestApplyPortableKeepsSyncConfig(t *testing.T) {
 		t.Fatalf("theme %q, sync %+v", got.Theme, got.Sync)
 	}
 }
+
+func TestSyncCheckBackend(t *testing.T) {
+	if err := (SyncSettings{Backend: "dropbox"}).Check(); err == nil {
+		t.Error("nơi đồng bộ lạ phải bị từ chối")
+	}
+	if err := (SyncSettings{Backend: SyncBackendMCP}).Check(); err == nil {
+		t.Error("backend mcp thiếu ánh xạ phải bị từ chối")
+	}
+	ok := SyncSettings{Backend: SyncBackendMCP}
+	ok.MCP.Server, ok.MCP.Root, ok.MCP.ReadTool, ok.MCP.WriteTool, ok.MCP.PathArg, ok.MCP.ContentArg = "fs", "/x", "r", "w", "path", "content"
+	if err := ok.Check(); err != nil || !ok.UsesMCP() {
+		t.Errorf("ánh xạ đủ phải hợp lệ: %v", err)
+	}
+}

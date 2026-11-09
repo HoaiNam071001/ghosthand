@@ -69,6 +69,7 @@ type SyncStatus struct {
 	Held          []string    `json:"held,omitempty"`      // hoãn vì đang soạn dở
 	HasPassphrase bool        `json:"hasPassphrase"`
 	Device        string      `json:"device"`
+	Backend       string      `json:"backend,omitempty"` // "" | gdrive | mcp
 }
 
 func (a *App) cloudAuth() *gdrive.Auth {
@@ -114,7 +115,7 @@ func saveSalt(salt []byte) {
 func (a *App) SyncStatus() SyncStatus {
 	cfg := store.CurrentSettings().Sync
 	st := SyncStatus{
-		HasClient: gdrive.HasClient(), LoggedIn: a.cloudAuth().LoggedIn(context.Background()),
+		HasClient: cfg.UsesMCP() || gdrive.HasClient(), LoggedIn: a.syncConnected(cfg), Backend: cfg.Backend,
 		HasPassphrase: syncPassphrase() != "", Device: cfg.DeviceName(),
 	}
 	s := &a.cloudsync
@@ -157,7 +158,7 @@ func (a *App) buildSyncer(ctx context.Context, interactive bool) (*cloud.Syncer,
 	if err != nil {
 		return nil, nil, err
 	}
-	remote := &gdrive.Drive{Auth: a.cloudAuth()}
+	remote := a.syncRemote(cfg)
 	lib := &cloud.Library{Root: root, Trash: device.SystemTrash{}}
 	multi := &cloud.Multi{}
 	if cfg.Scripts {
@@ -229,10 +230,11 @@ func (a *App) prepareSecrets(ctx context.Context, remote cloud.Provider, sl *clo
 
 // SyncNow đồng bộ ngay (người dùng bấm): chạy nền, kết quả qua event sync:status + sync:done. Đang chạy thì thôi.
 func (a *App) SyncNow() error {
-	if !a.cloudAuth().LoggedIn(context.Background()) {
-		return gdrive.ErrNeedLogin
+	cfg := store.CurrentSettings().Sync
+	if !a.syncConnected(cfg) {
+		return a.notConnectedErr(cfg)
 	}
-	if !store.CurrentSettings().Sync.Any() {
+	if !cfg.Any() {
 		return errors.New("chưa bật phần nào để đồng bộ")
 	}
 	go a.runSync(true)

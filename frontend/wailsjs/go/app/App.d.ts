@@ -3,6 +3,7 @@
 import {web} from '../models';
 import {model} from '../models';
 import {app} from '../models';
+import {mcpmap} from '../models';
 import {update} from '../models';
 import {script} from '../models';
 import {pack} from '../models';
@@ -36,6 +37,8 @@ export function CancelPick():Promise<void>;
 export function CaptureTemplate(arg1:model.Rect):Promise<app.TemplateShot>;
 
 export function CheckPage(arg1:string):Promise<web.PageCheck>;
+
+export function CheckSyncMCP(arg1:mcpmap.Mapping):Promise<Array<string>>;
 
 export function CheckUpdate():Promise<update.Info>;
 
@@ -258,6 +261,8 @@ export function StorageDefaults():Promise<store.StorageDefaults>;
 export function SyncLogin():Promise<void>;
 
 export function SyncLogout():Promise<void>;
+
+export function SyncMCPPresets():Promise<Array<mcpmap.Preset>>;
 
 export function SyncNow():Promise<void>;
 
