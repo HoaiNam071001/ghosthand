@@ -8,7 +8,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 
 - **Đang làm:** [56](phase3/56-hoc-tu-mcp-ngoai.md) học từ MCP ngoài – xong code mọi mục, chỉ còn D1b (trả lời từ điện thoại – để sau).
 - **Xong code, chờ kiểm tra tay:** 33, 59, 56 A–D (trừ D1b), 61, 58, 57, 55, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 40, 39, 38, 37, 36, 35, 34, 31a–d, 28, 26, 25d, 24, 22 – xem bảng *Tổng quan* + [checks.md](checks.md).
-- **Tiếp theo:** chờ người dùng chốt: 30 UI chọn 4 điểm mốc. Chưa làm: 54. Hoãn: 17 (Windows), 18b.
+- **Tiếp theo:** chờ người dùng chốt: 30 UI chọn 4 điểm mốc. Đang làm dở: 54 (xong C0 C3 C5 C6; C1 C2 cần OAuth client ID). Hoãn: 17 (Windows), 18b.
 - **Cập nhật lần cuối:** 2026-11-08 (56 B4 · C3 · D2 · D3: mẹo đăng nhập, tắt ảnh cho AI + dấu chuột, xuất gói lỗi, mẫu Telegram / Zalo Bot).
 
 ## Tính năng của hệ thống
@@ -31,7 +31,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | ✅ | Lưu / mở kịch bản | File `.json`, mở gần đây, nháp tự lưu, đóng app giữ bản đang dở | [21](phase3/21-luu-tai.md) |
 | ✅ | Nơi lưu + xoá lịch sử | Cài đặt chọn thư mục kịch bản (tay / AI) + ảnh chụp, Documents / Pictures đúng cả khi Windows dùng OneDrive; xoá từng mục / tất cả lịch sử chạy và Mở gần đây | [41](phase3/41-noi-luu-lich-su.md) |
 | 🧪 | Ghi macro | Ghi click / kéo / gõ phím thành node, F9 dừng | [24](phase3/24-ghi-macro.md) |
-| ⬜ | Đồng bộ cloud | Đăng nhập Google, đồng bộ kịch bản + ảnh mẫu + cài đặt + bí mật (mã hoá phía máy) lên Drive; xung đột thì hỏi; backend MCP | [54](phase3/54-dong-bo-cloud.md) |
+| 🔄 | Đồng bộ cloud | Đăng nhập Google, đồng bộ kịch bản + ảnh mẫu + cài đặt + bí mật (mã hoá phía máy) lên Drive; xung đột thì hỏi; backend MCP | [54](phase3/54-dong-bo-cloud.md) |
 | 🧪 | MCP client + node tuỳ chỉnh | Kết nối MCP server khác (stdio / từ xa / thư viện gợi ý), gọi tool như node, lưu tool thành node của tôi; hỏi quyền theo server + tool | [55](phase3/55-mcp-client-node-tuy-chinh.md) |
 | 🟡 | Học từ MCP ngoài | **Đợt A xong code:** quyền AI theo nội dung, file script của Chạy lệnh, chặn AI thử mãi; **B1:** hộp thoại JS trên web; **B2:** chờ trang yên sau thao tác web, biết đã sang trang / mở tab; **B3:** AI lọc cây trang / phần tử bằng find; **B4:** mẹo đăng nhập tay; **C1–C3:** chia trang / cắt output MCP, tắt ảnh cho AI, dấu chuột trên ảnh; **D1:** node Hỏi người dùng giữa flow; **D2–D3:** xuất gói lỗi, mẫu Telegram / Zalo Bot; còn trả lời từ điện thoại (để sau) | [56](phase3/56-hoc-tu-mcp-ngoai.md) |
 | 🧪 | AI chạy ổn định | Nhận đúng cửa sổ đang ở trước, chạy tiếp giữ focus app đích, AI chạy thì thu về thanh mini, Mở URL đưa trình duyệt lên, đụng chuột tự chạy tiếp sau 5 s, lỗi phần tử gọn hơn | [57](phase3/57-ai-chay-on-dinh.md) |
@@ -162,7 +162,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 chờ kiểm tra tay | [51. Hướng dẫn sử dụng](phase3/51-huong-dan.md) | 16 / 16 | [2 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [52. MCP ít token](phase3/52-mcp-it-token.md) | 6 / 6 | [2 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [53. MCP: annotations, nhật ký lệnh AI, chống prompt injection](phase3/53-mcp-hoc-tu-openclaw.md) | 6 / 6 | [2 việc](checks.md) |
-| ⬜ chưa làm | [54. Đồng bộ cloud](phase3/54-dong-bo-cloud.md) | 0 / 11 |  |
+| 🔄 đang làm | [54. Đồng bộ cloud](phase3/54-dong-bo-cloud.md) | 4 / 11 |  |
 | 🧪 chờ kiểm tra tay | [55. MCP client + node tuỳ chỉnh](phase3/55-mcp-client-node-tuy-chinh.md) | 10 / 10 | [6 việc](checks.md) |
 | 🟡 đang làm | [56. Học từ MCP ngoài](phase3/56-hoc-tu-mcp-ngoai.md) | 9 / 14 | [11 việc](checks.md) |
 | 🟡 đang làm | [57. AI chạy ổn định](phase3/57-ai-chay-on-dinh.md) | 7 / 10 | [3 việc](checks.md) |

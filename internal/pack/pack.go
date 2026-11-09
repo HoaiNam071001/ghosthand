@@ -31,8 +31,8 @@ type Result struct {
 	Missing []string `json:"missing"` // xuất: đường dẫn node trỏ tới mà không đọc được (node đó cần chọn lại file sau khi nhập)
 }
 
-// inputFile – node đọc file FilePath từ máy (cần đóng gói).
-func inputFile(s model.Step) bool {
+// InputFile – node đọc file FilePath từ máy (cần đóng gói).
+func InputFile(s model.Step) bool {
 	switch s.Type {
 	case model.StepForEach:
 		return s.ListFrom == model.ListFile
@@ -55,7 +55,7 @@ func Export(sc model.Script, dest string) (Result, error) {
 	used := map[string]bool{}
 	for i, s := range out.Steps {
 		p := strings.TrimSpace(s.FilePath)
-		if !inputFile(s) || p == "" || strings.Contains(p, "{{") {
+		if !InputFile(s) || p == "" || strings.Contains(p, "{{") {
 			continue
 		}
 		src, err := script.UserPath(p)
