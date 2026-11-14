@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { aiLevel, levelLabel, nodePref, nodePrefLabel, runMode, withLevel } from './aiLevel';
+import { aiLevel, levelLabel, runMode, withLevel } from './aiLevel';
 
 describe('aiLevel', () => {
   it('đọc mức từ cài đặt MCP', () => {
@@ -14,13 +14,4 @@ describe('aiLevel', () => {
     expect(withLevel({ ...m, enabled: false }, 'edit')).toEqual({ enabled: true, run: 'edit', maxMinutes: 5 });
     expect(levelLabel('ask')).toBe('Hỏi');
   });
-});
-
-describe('nodePref', () => {
-  it('trống / lạ = ảnh / chữ', () => {
-    expect(nodePref({})).toBe('vision');
-    expect(nodePref({ nodePref: 'dom' })).toBe('vision');
-    expect(nodePref({ nodePref: 'web' })).toBe('web');
-  });
-  it('nhãn', () => expect(nodePrefLabel('web')).toBe('Trình duyệt app'));
 });

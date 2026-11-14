@@ -237,7 +237,7 @@
         "Bật MCP ở **Cài đặt → AI (MCP)**.",
         "Bấm *Thêm vào Claude Desktop* hoặc chép cấu hình mẫu vào AI bạn dùng (dạng lệnh `ghosthand --mcp` hoặc địa chỉ HTTP).",
         "Chọn **mức chạy** của AI: *Chỉ soạn*, *Hỏi trước khi chạy* hay *Tự chạy*. Ở mức hỏi, *Cho phép đến khi đóng app* chỉ áp cho đúng nội dung bạn vừa duyệt – AI sửa kịch bản rồi chạy thì app hỏi lại.",
-        "Chọn tool cho từng loại AI và **ưu tiên node** (vd ưu tiên phần tử hơn ảnh mẫu)."
+        "Chọn tool cho từng loại AI. AI mặc định soạn bằng node tìm ảnh / chữ trên màn hình; muốn dùng node trình duyệt (web) thì nói với AI."
       ] },
       { "kind": "p", "text": "Khi AI chạy, cửa sổ chính thu về **thanh mini** và cửa sổ app đích được đưa lên trước; chạy xong thanh mini vẫn giữ – bấm *Mở app* để về màn chính. Bạn đụng chuột giữa chừng thì app tạm dừng, chuột đứng yên 5 giây thì tự chạy tiếp (thanh mini đếm ngược; bấm Dừng để huỷ) – đổi số giây hoặc tắt ở Cài đặt, tắt thì phải bấm Tiếp tục." },
       { "kind": "p", "text": "Kịch bản AI tạo chỉ để thử nằm riêng ở nhóm **AI thử** cuối thư viện (thu gọn) và tự vào Thùng rác sau 7 ngày không mở – đổi số ngày hoặc tắt ở Cài đặt; muốn giữ thì mở rồi bấm Lưu. Khi AI chạy thử, app báo trước cho AI những chuyện hay làm kịch bản lỗi mà không do kịch bản: trình duyệt bật *hỏi nơi lưu tệp*, hộp thoại đang mở, cửa sổ trình duyệt quá nhỏ."}, {"kind": "p", "text": "**Lệnh AI gần đây** (cùng trang Cài đặt) cho biết AI nào gọi gì, mất bao lâu; bấm một dòng để xem tham số – mật khẩu / token được che. Chữ AI đọc từ màn hình, web, file không được coi là lệnh." },
@@ -304,9 +304,9 @@
     "id": "settings-mcp",
     "group": "Cài đặt",
     "title": "AI (MCP)",
-    "summary": "Bật MCP, mức chạy của AI, tool, ưu tiên node, lệnh AI gần đây.",
+    "summary": "Bật MCP, mức chạy của AI, tool, lệnh AI gần đây.",
     "blocks": [
-      { "kind": "p", "text": "Công tắc MCP, mức chạy của AI, chọn tool cho từng loại AI, ưu tiên node, cấu hình mẫu cho Claude Desktop và nhật ký các lệnh AI vừa gọi. *Gửi ảnh màn hình cho AI*: tắt khi AI bạn dùng không xem được ảnh – app bỏ mọi ảnh (chụp màn hình, ảnh lúc node lỗi) khỏi kết quả gửi AI, AI đọc màn hình bằng chữ, đỡ tốn token. Cách dùng: [[chapter:ai-mcp]]." }
+      { "kind": "p", "text": "Công tắc MCP, mức chạy của AI, chọn tool cho từng loại AI, cấu hình mẫu cho Claude Desktop và nhật ký các lệnh AI vừa gọi. *Gửi ảnh màn hình cho AI*: tắt khi AI bạn dùng không xem được ảnh – app bỏ mọi ảnh (chụp màn hình, ảnh lúc node lỗi) khỏi kết quả gửi AI, AI đọc màn hình bằng chữ, đỡ tốn token. Cách dùng: [[chapter:ai-mcp]]." }
     ]
   },
   {
@@ -337,7 +337,7 @@
       { "kind": "h", "text": "Đồng bộ những gì" },
       { "kind": "list", "items": [
         "**Kịch bản** – file `.json` trong thư mục kịch bản, kèm ảnh mẫu và tệp đi kèm (CSV, ảnh…). Đường dẫn tuyệt đối trên máy này được ghi lại dạng tương đối; máy kia đặt tệp vào thư mục kịch bản của nó và tự viết lại đường dẫn.",
-        "**Cài đặt** – chỉ phần mang đi được: giao diện, viền lúc chạy, ưu tiên node, nhà cung cấp AI (key chỉ là tên bí mật). **Không** mang thư mục lưu, cổng / token API, MCP server ngoài, và mọi quyền của AI (bật MCP, mức chạy, tool bị tắt) – cloud bị chiếm cũng không nới được quyền của AI trên máy bạn.",
+        "**Cài đặt** – chỉ phần mang đi được: giao diện, viền lúc chạy, nhà cung cấp AI (key chỉ là tên bí mật). **Không** mang thư mục lưu, cổng / token API, MCP server ngoài, và mọi quyền của AI (bật MCP, mức chạy, tool bị tắt) – cloud bị chiếm cũng không nới được quyền của AI trên máy bạn.",
         "**Bí mật** – tắt mặc định. Bật thì phải đặt **cụm mật khẩu**; bí mật được mã hoá trên máy bạn rồi mới lên Drive, Google và app không đọc được. Máy mới nhập đúng cụm mật khẩu để lấy về. **Quên cụm mật khẩu = mất bản trên cloud** (bí mật trên các máy vẫn còn). Cụm mật khẩu cất trong Keychain / Credential Manager, không vào file nào."
       ] },
       { "kind": "h", "text": "Đồng bộ qua MCP server" },

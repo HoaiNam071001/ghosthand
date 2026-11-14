@@ -34,7 +34,7 @@ func TestPortableLeavesMachineFieldsBehind(t *testing.T) {
 	s.API = APISettings{Enabled: true, Port: 4000, Token: "TOKEN-BI-MAT"}
 	s.Storage = StorageSettings{ScriptsDir: `D:\rieng`}
 	s.MCPServers = []MCPServer{{Name: "x", Command: "calc.exe"}}
-	s.MCP = MCPSettings{Enabled: true, Run: AIRunAuto, MaxMinutes: 99, OffTools: []string{"run_script"}, NodePref: NodePrefWeb}
+	s.MCP = MCPSettings{Enabled: true, Run: AIRunAuto, MaxMinutes: 99, OffTools: []string{"run_script"}, TouchResumeS: 9}
 	s.AI = AISettings{Kind: "openai", BaseURL: "https://rieng.local", Model: "m", Key: "{{secret.k}}"}
 	b, err := s.EncodePortable()
 	if err != nil {
@@ -46,7 +46,7 @@ func TestPortableLeavesMachineFieldsBehind(t *testing.T) {
 			t.Errorf("rò rỉ %q ra cloud:\n%s", leak, out)
 		}
 	}
-	for _, want := range []string{`"dark"`, "web", "{{secret.k}}"} {
+	for _, want := range []string{`"dark"`, `"touchResumeS": 9`, "{{secret.k}}"} {
 		if !strings.Contains(out, want) {
 			t.Errorf("thiếu %q trong cài đặt mang đi", want)
 		}
@@ -56,7 +56,7 @@ func TestPortableLeavesMachineFieldsBehind(t *testing.T) {
 func TestApplyPortableKeepsMachineFields(t *testing.T) {
 	src := defaultSettings()
 	src.Theme = ThemeLight
-	src.MCP.NodePref = NodePrefWeb
+	src.MCP.TouchResumeS = 9
 	src.AI = AISettings{Kind: "openai", Model: "gpt", Key: "{{secret.k}}"}
 	data, _ := src.EncodePortable()
 
@@ -69,7 +69,7 @@ func TestApplyPortableKeepsMachineFields(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got.Theme != ThemeLight || got.MCP.NodePref != NodePrefWeb || got.AI.Model != "gpt" {
+	if got.Theme != ThemeLight || got.MCP.TouchResumeS != 9 || got.AI.Model != "gpt" {
 		t.Errorf("chưa nhận phần mang đi: %+v", got)
 	}
 	if got.API.Token != "T" || got.MCP.Enabled || got.MCP.Run != AIRunEdit || len(got.MCP.OffTools) != 1 || got.AI.BaseURL != "https://cua-toi" {

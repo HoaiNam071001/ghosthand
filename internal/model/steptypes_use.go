@@ -63,7 +63,7 @@ var stepTypeUses = map[string]TypeUse{
 	StepSavePdf:       {grpBrowser, "In tab trình duyệt thường ra file PDF (hộp in Chrome → Lưu dưới dạng PDF). Lưu cả trang bằng ảnh chụp thì screenshot."},
 	StepWaitUntil:     {grpWait, "Chờ tới đúng giờ (đặt hẹn, canh mở bán, kịch bản chạy hằng ngày với ifPassed tomorrow)."},
 	StepPath:          {grpMouse, "Vẽ nét liền qua nhiều điểm hoặc hình tròn / chữ nhật / sao (vẽ, ký, game). Kéo thẳng hai điểm → drag."},
-	StepWebWait:       {grpWeb, "Chờ phần tử trang web hiện / mất theo selector. Chỉ dùng khi probe_page báo ok và nodePref là web; ngược lại dùng waitImage theo chữ."},
+	StepWebWait:       {grpWeb, "Chờ phần tử trang web hiện / mất theo selector. Chỉ khi người dùng xin node web và probe_page báo ok; ngược lại dùng waitImage theo chữ."},
 	StepWebClick:      {grpWeb, "Click phần tử trang web theo selector (webBackground = chạy nền không đụng chuột). Cần probe_page ok."},
 	StepWebType:       {grpWeb, "Gõ vào ô nhập trên trang web (xoá cũ, Enter). Cần probe_page ok."},
 	StepWebRead:       {grpWeb, "Đọc chữ / giá trị / thuộc tính phần tử web vào biến. Chrome thường đã đăng nhập → elementRead / pageText."},

@@ -7,7 +7,7 @@ import { Switch } from '../Switch';
 import { clearOverride, clientChoices, hasOverride, offFor, setToolOn } from './toolAccess';
 
 const KIND: Record<string, string> = {
-  read: 'chỉ đọc', write: 'sửa kịch bản', run: 'chạy trên máy', screen: 'nhìn màn hình', app: 'mở trong app', settings: 'đổi cài đặt',
+  read: 'chỉ đọc', write: 'sửa kịch bản', run: 'chạy trên máy', screen: 'nhìn màn hình', app: 'mở trong app',
 };
 const DEFAULT = '';
 

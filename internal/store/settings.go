@@ -43,41 +43,9 @@ type MCPSettings struct {
 	OffTools       []string            `json:"offTools,omitempty"`       // tool tắt mặc định cho mọi AI (31b2)
 	Clients        map[string][]string `json:"clients,omitempty"`        // tên loại AI → danh sách tool tắt riêng (thay hẳn mặc định)
 	HideCaptureDot bool                `json:"hideCaptureDot,omitempty"` // true = không hiện chấm đỏ trên thanh mini khi AI chụp / đọc màn hình (31c)
-	NodePref       string              `json:"nodePref,omitempty"`       // ưu tiên node cho AI (44): "" / vision | web
 	TouchResumeS   int                 `json:"touchResumeS,omitempty"`   // đụng chuột lúc AI chạy: chuột đứng yên bao giây thì tự chạy tiếp; 0 = TouchResumeDefault, < 0 = tắt (chờ bấm Tiếp tục)
 	TrialDays      int                 `json:"trialDays,omitempty"`      // kịch bản AI thử (61 M5) không mở bao ngày thì vào Thùng rác; 0 = TrialDaysDefault, < 0 = không dọn
 	NoImages       bool                `json:"noImages,omitempty"`       // true = không gửi ảnh cho AI (client không xem ảnh – bỏ ảnh ở screenshot, ảnh lỗi…; 56 C3)
-}
-
-// Ưu tiên node cho AI (MCPSettings.NodePref, bước 44): vision = node ảnh / chữ (mặc định); web = thử trang trên Chrome
-// của app trước, không captcha thì dùng node web.
-const (
-	NodePrefVision = "vision"
-	NodePrefWeb    = "web"
-)
-
-// NodePreference – ưu tiên đã chuẩn hoá ("" / lạ → vision).
-func (m MCPSettings) NodePreference() string {
-	if m.NodePref == NodePrefWeb {
-		return NodePrefWeb
-	}
-	return NodePrefVision
-}
-
-// SetNodePref đổi riêng ưu tiên node (AI gọi qua MCP – không đè phần cài đặt MCP khác).
-func SetNodePref(p string) error {
-	if p != NodePrefVision && p != NodePrefWeb {
-		return fmt.Errorf("ưu tiên node không hợp lệ: %q (vision | web)", p)
-	}
-	settingsMu.Lock()
-	defer settingsMu.Unlock()
-	dir, err := ConfigDir()
-	if err != nil {
-		return err
-	}
-	s := loadSettings(dir)
-	s.MCP.NodePref = p
-	return saveSettings(dir, s)
 }
 
 // Mức chạy của AI (MCPSettings.Run).

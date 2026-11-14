@@ -2690,7 +2690,6 @@ export namespace store {
 	    offTools?: string[];
 	    clients?: Record<string, Array<string>>;
 	    hideCaptureDot?: boolean;
-	    nodePref?: string;
 	    touchResumeS?: number;
 	    trialDays?: number;
 	    noImages?: boolean;
@@ -2707,7 +2706,6 @@ export namespace store {
 	        this.offTools = source["offTools"];
 	        this.clients = source["clients"];
 	        this.hideCaptureDot = source["hideCaptureDot"];
-	        this.nodePref = source["nodePref"];
 	        this.touchResumeS = source["touchResumeS"];
 	        this.trialDays = source["trialDays"];
 	        this.noImages = source["noImages"];

@@ -28,11 +28,10 @@ type PortableAI struct {
 
 // PortableMCP – phần cài đặt MCP không ảnh hưởng quyền của AI.
 type PortableMCP struct {
-	HideCaptureDot bool   `json:"hideCaptureDot,omitempty"`
-	NodePref       string `json:"nodePref,omitempty"`
-	TouchResumeS   int    `json:"touchResumeS,omitempty"`
-	TrialDays      int    `json:"trialDays,omitempty"`
-	NoImages       bool   `json:"noImages,omitempty"`
+	HideCaptureDot bool `json:"hideCaptureDot,omitempty"`
+	TouchResumeS   int  `json:"touchResumeS,omitempty"`
+	TrialDays      int  `json:"trialDays,omitempty"`
+	NoImages       bool `json:"noImages,omitempty"`
 }
 
 // syncPolicy – mọi trường (Kiểu.Trường) của các struct cài đặt: true = mang đi, false = riêng máy.
@@ -48,7 +47,7 @@ var syncPolicy = map[string]bool{
 
 	"MCPSettings.Enabled": false, "MCPSettings.Run": false, "MCPSettings.MaxMinutes": false,
 	"MCPSettings.OffTools": false, "MCPSettings.Clients": false,
-	"MCPSettings.HideCaptureDot": true, "MCPSettings.NodePref": true, "MCPSettings.TouchResumeS": true,
+	"MCPSettings.HideCaptureDot": true, "MCPSettings.TouchResumeS": true,
 	"MCPSettings.TrialDays": true, "MCPSettings.NoImages": true,
 }
 
@@ -56,7 +55,7 @@ var syncPolicy = map[string]bool{
 func (s Settings) Portable() PortableSettings {
 	return PortableSettings{
 		Theme: s.Theme, Overlay: s.Overlay, AI: PortableAI{s.AI.Kind, s.AI.Model, s.AI.Key},
-		MCP: PortableMCP{s.MCP.HideCaptureDot, s.MCP.NodePref, s.MCP.TouchResumeS, s.MCP.TrialDays, s.MCP.NoImages},
+		MCP: PortableMCP{s.MCP.HideCaptureDot, s.MCP.TouchResumeS, s.MCP.TrialDays, s.MCP.NoImages},
 	}
 }
 
@@ -80,7 +79,7 @@ func (s Settings) ApplyPortable(data []byte) (Settings, error) {
 		return s, fmt.Errorf("cài đặt AI trên cloud không hợp lệ: %w", err)
 	}
 	s.Theme, s.Overlay, s.AI = p.Theme, p.Overlay, newAI
-	s.MCP.HideCaptureDot, s.MCP.NodePref, s.MCP.TouchResumeS = p.MCP.HideCaptureDot, p.MCP.NodePref, p.MCP.TouchResumeS
+	s.MCP.HideCaptureDot, s.MCP.TouchResumeS = p.MCP.HideCaptureDot, p.MCP.TouchResumeS
 	s.MCP.TrialDays, s.MCP.NoImages = p.MCP.TrialDays, p.MCP.NoImages
 	return s, nil
 }

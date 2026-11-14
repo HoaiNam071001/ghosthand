@@ -84,7 +84,7 @@ export default function SyncPanel({ status, cfg, busy, error, onLogin, onLogout,
         <>
           <span className="text-muted">Đồng bộ những gì</span>
           <Row label="Kịch bản" hint="Kèm ảnh mẫu và tệp đi kèm (CSV, ảnh…)"><Switch on={cfg.scripts} onChange={(v) => onCfg({ scripts: v })} label="Đồng bộ kịch bản" /></Row>
-          <Row label="Cài đặt" hint="Giao diện, viền chạy, ưu tiên node… Không gồm thư mục lưu, cổng API, quyền của AI."><Switch on={cfg.settings} onChange={(v) => onCfg({ settings: v })} label="Đồng bộ cài đặt" /></Row>
+          <Row label="Cài đặt" hint="Giao diện, viền chạy, nhà cung cấp AI… Không gồm thư mục lưu, cổng API, quyền của AI."><Switch on={cfg.settings} onChange={(v) => onCfg({ settings: v })} label="Đồng bộ cài đặt" /></Row>
           <SyncSecretsBox enabled={cfg.secrets} onToggle={(v) => onCfg({ secrets: v })} {...secrets} />
 
           <span className="mt-1 text-muted">Khi nào tự đồng bộ</span>

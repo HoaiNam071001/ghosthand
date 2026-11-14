@@ -1,4 +1,4 @@
-// Cài đặt – AI qua MCP (bước 31): bật / tắt, mức chạy (31b – AiRunSettings), ưu tiên node (44 – NodePrefSettings), thêm vào Claude Desktop (hỏi trước khi ghi file của Claude), đoạn cấu
+// Cài đặt – AI qua MCP (bước 31): bật / tắt, mức chạy (31b – AiRunSettings), thêm vào Claude Desktop (hỏi trước khi ghi file của Claude), đoạn cấu
 // hình mẫu cho từng client AI, các lệnh AI đã gọi gần đây.
 import { useEffect, useState } from 'react';
 import { AddToClaudeDesktop, ClaudeDesktopConfigPath, MCPClients, MCPLog, MCPSeenClients, MCPTools } from '../../../wailsjs/go/app/App';
@@ -8,7 +8,6 @@ import Select from '../Select';
 import { selectBox } from '../stepform/shared';
 import { Switch } from '../Switch';
 import AiRunSettings from './AiRunSettings';
-import NodePrefSettings from './NodePrefSettings';
 import McpCallLog from './McpCallLog';
 import McpTools from './McpTools';
 import { CopyButton, SettingCode } from './parts';
@@ -49,7 +48,6 @@ export default function McpSettings({ mcp, onChange }: { mcp: store.MCPSettings;
       {enabled && (
         <>
           <AiRunSettings mcp={mcp} onChange={onChange} />
-          <NodePrefSettings mcp={mcp} onChange={onChange} />
           <McpTools mcp={mcp} tools={tools} seen={seen} client={toolClient} onClient={setToolClient} onChange={onChange} />
           {confirm ? (
             <div className="flex flex-col gap-1.5 rounded-control bg-soft p-2 text-xs">

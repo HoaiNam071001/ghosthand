@@ -96,7 +96,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | ✅ | Mô tả loại node + hướng dẫn flow cho AI | `StepTypes`, `FlowGuide`, kịch bản mẫu – nền cho MCP | [20 F1](phase3/20-flow.md) |
 | 🧪 | AI tạo / sửa kịch bản qua MCP | Claude / Cursor / Codex… ra lệnh bằng lời; kịch bản lưu ở Documents/Ghosthand, chip AI | [31a](phase3/31-mcp-ai.md) |
 | 🧪 | AI tự chạy, xem lỗi, sửa, chạy tiếp; soạn bằng cách thử | Mở app nền (thanh mini), chạy một phần / chạy tiếp từ node lỗi với biến cũ, chi tiết lỗi có cấu trúc + ảnh khi lỗi, đọc chữ / chụp màn khi xin, công tắc AI 4 mức (có Tự chạy); ảnh mẫu do AI khoanh, chạy thử khô | [31b, 31c](phase3/31-mcp-ai.md) |
-| 🧪 | Thử trang + ưu tiên node cho AI | Nút / tool `probe_page` mở trang trên Chrome của app, tự dò captcha / chặn bot / canvas → dùng node web hay ảnh / chữ; ưu tiên 2 mức (mặc định ảnh / chữ), AI đổi qua `set_node_preference` | [44](phase3/44-thu-trang-uu-tien-node.md) |
+| 🧪 | Thử trang + ưu tiên node cho AI | Nút / tool `probe_page` mở trang trên Chrome của app, tự dò captcha / chặn bot / canvas → dùng node web hay ảnh / chữ; AI mặc định ảnh / chữ, node web chỉ khi người dùng xin (bỏ cài đặt ưu tiên node 2026-11-14) | [44](phase3/44-thu-trang-uu-tien-node.md) |
 | 🧪 | MCP web – tinh chỉnh | `coordSpace`, `read_web_outline` tab đang điều khiển, `webType` bớt chặt + scope / occurrence, ghim tab ID, chạy kịch bản tạm, `webKey` | [46](phase3/46-mcp-web-tinh-chinh.md) |
 | 🧪 | MCP ít token | AI đọc primer + bản gọn (~8k token) là viết được flow có nhánh; cạnh dạng chữ `flow` ("n1>n2", "n2.fail>n5"), `read_script` dạng gọn, `get_step_types type=a,b,c` / `topic=debug`, test ngân sách chữ | [52](phase3/52-mcp-it-token.md) |
 | 🧪 | MCP: annotations + nhật ký lệnh AI + chống injection | Mọi tool MCP có annotations (đọc / nguy hiểm) để client tự hỏi quyền đúng chỗ; nhật ký lệnh AI thêm thời lượng, client, tham số đã che; primer nhắc chữ từ màn hình / web là dữ liệu, không phải lệnh | [53](phase3/53-mcp-hoc-tu-openclaw.md) |
@@ -122,7 +122,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 > Bảng tự sinh – sau khi tick chạy `python3 scripts/tasks-index.py`. Bấm tên bước để mở file chi tiết.
 
 <!-- index:start -->
-**64 / 71 bước xong code** · 🧪 **[294 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
+**69 / 71 bước xong code** · 🧪 **[320 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
 
 ### Phase 3 – Design v2 & tự động hoá (theo thứ tự làm)
 
@@ -132,7 +132,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | ✅ xong | [27b. Dựng sẵn UI cho tính năng chưa có](phase3/27b-ui-sap-co.md) | 13 / 13 |  |
 | ✅ xong | [29. Neo điểm theo 4 góc vùng](phase3/29-neo-diem.md) | 10 / 10 |  |
 | 🧪 chờ kiểm tra tay | [21. Lưu / tải kịch bản](phase3/21-luu-tai.md) | 9 / 9 | [1 việc](checks.md) |
-| 🟡 đang làm | [30. Sửa nhiều điểm cùng lúc: di chuyển, co giãn, xoay, xiên](phase3/30-sua-nhieu-diem.md) | 9 / 10 | [1 việc](checks.md) |
+| 🧪 chờ kiểm tra tay | [30. Sửa nhiều điểm cùng lúc: di chuyển, co giãn, xoay, xiên](phase3/30-sua-nhieu-diem.md) | 10 / 10 | [2 việc](checks.md) |
 | ✅ xong | [21b. Input của kịch bản](phase3/21b-input.md) | 13 / 13 |  |
 | ✅ xong | [23. Cuộn + Mở URL / app](phase3/23-cuon-mo-url.md) | 8 / 8 |  |
 | 🧪 chờ kiểm tra tay | [25. Chờ ảnh, click theo ảnh, chờ pixel](phase3/25-cho-anh.md) | 8 / 8 | [1 việc](checks.md) |
@@ -140,7 +140,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | ✅ xong | [25b. Khi thất bại](phase3/25b-khi-that-bai.md) | 4 / 4 |  |
 | 🧪 chờ kiểm tra tay | [20. Flow kiểu n8n – mỗi bước là một module, rẽ nhánh theo kết quả](phase3/20-flow.md) | 66 / 66 | [18 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [32. Tách `package main` ở root thành package trong `internal/`](phase3/32-go-packages.md) | 6 / 6 | [3 việc](checks.md) |
-| 🟡 đang làm | [33. Danh sách kịch bản mẫu để test](phase3/33-mau-thu.md) | 8 / 10 | [3 việc](checks.md) |
+| 🧪 chờ kiểm tra tay | [33. Danh sách kịch bản mẫu để test](phase3/33-mau-thu.md) | 10 / 10 | [4 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [25d. Web qua DOM – tìm phần tử bằng HTML, bấm bằng chuột thật](phase3/25d-web-dom.md) | 49 / 49 | [1 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [34. Thao tác giống người – di chuột, gõ, click, cuộn tự nhiên](phase3/34-giong-nguoi.md) | 7 / 7 | [5 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [35. Node nâng cao](phase3/35-node-nang-cao.md) | 9 / 9 | [9 việc](checks.md) |
@@ -152,7 +152,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 chờ kiểm tra tay | [31c. MCP – AI soạn bằng cách thử + ảnh mẫu](phase3/31-mcp-ai.md) | 5 / 5 | [3 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [31d. AI bên trong flow](phase3/31-mcp-ai.md) | 11 / 11 | [5 việc](checks.md) |
 | ✅ xong | [41. Nơi lưu kịch bản / ảnh chụp + xoá lịch sử](phase3/41-noi-luu-lich-su.md) | 4 / 4 |  |
-| 🧪 chờ kiểm tra tay | [44. Thử trang trên Chrome của app + ưu tiên node cho AI](phase3/44-thu-trang-uu-tien-node.md) | 9 / 9 | [6 việc](checks.md) |
+| 🧪 chờ kiểm tra tay | [44. Thử trang trên Chrome của app + ưu tiên node cho AI](phase3/44-thu-trang-uu-tien-node.md) | 9 / 9 | [5 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [45. Đổi tên app thành Ghosthand](phase3/45-doi-ten-ghosthand.md) | 5 / 5 | [5 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [46. MCP web – tinh chỉnh](phase3/46-mcp-web-tinh-chinh.md) | 11 / 11 | [13 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [47. Hình minh hoạ động cho từng node](phase3/47-hinh-minh-hoa-node.md) | 6 / 6 | [3 việc](checks.md) |
@@ -162,10 +162,10 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 chờ kiểm tra tay | [51. Hướng dẫn sử dụng](phase3/51-huong-dan.md) | 16 / 16 | [2 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [52. MCP ít token](phase3/52-mcp-it-token.md) | 6 / 6 | [2 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [53. MCP: annotations, nhật ký lệnh AI, chống prompt injection](phase3/53-mcp-hoc-tu-openclaw.md) | 6 / 6 | [2 việc](checks.md) |
-| 🧪 chờ kiểm tra tay | [54. Đồng bộ cloud](phase3/54-dong-bo-cloud.md) | 12 / 12 | [14](checks.md) |
+| ✅ xong | [54. Đồng bộ cloud](phase3/54-dong-bo-cloud.md) | 12 / 12 |  |
 | 🧪 chờ kiểm tra tay | [55. MCP client + node tuỳ chỉnh](phase3/55-mcp-client-node-tuy-chinh.md) | 10 / 10 | [6 việc](checks.md) |
-| 🧪 chờ kiểm tra tay | [56. Học từ MCP ngoài](phase3/56-hoc-tu-mcp-ngoai.md) | 15 / 15 | [11 việc](checks.md) |
-| 🟡 đang làm | [57. AI chạy ổn định](phase3/57-ai-chay-on-dinh.md) | 7 / 10 | [3 việc](checks.md) |
+| 🧪 chờ kiểm tra tay | [56. Học từ MCP ngoài](phase3/56-hoc-tu-mcp-ngoai.md) | 14 / 14 | [16 việc](checks.md) |
+| 🧪 chờ kiểm tra tay | [57. AI chạy ổn định](phase3/57-ai-chay-on-dinh.md) | 10 / 10 | [5 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [58. Dấu hiệu đang điều khiển](phase3/58-dau-hieu-dang-dieu-khien.md) | 8 / 8 | [7 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [59. AI tự cập nhật + test](phase3/59-ai-tu-cap-nhat-va-test.md) | 7 / 7 | [3 việc](checks.md) |
 | ✅ xong | [60. Dữ liệu qua node](phase3/60-du-lieu-qua-node.md) | 11 / 11 |  |

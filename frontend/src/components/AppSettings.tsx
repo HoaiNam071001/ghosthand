@@ -56,12 +56,9 @@ export default function AppSettings() {
   useEffect(() => { if (open && tab === 'about') loadVersion(); }, [open, tab]);
   useEffect(() => {
     if (!open) return;
-    // AI đổi ưu tiên node lúc đang mở Cài đặt (44) – cập nhật để lần lưu sau không ghi đè bằng giá trị cũ
-    const off = EventsOn('mcp:nodePref', (nodePref: string) =>
-      setSettings((s) => s && store.Settings.createFrom({ ...s, mcp: { ...s.mcp, nodePref } })));
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
     window.addEventListener('keydown', onKey);
-    return () => { off(); window.removeEventListener('keydown', onKey); };
+    return () => { window.removeEventListener('keydown', onKey); };
   }, [open]);
   const saveApi = (patch: Partial<store.APISettings>) => {
     if (!settings) return;

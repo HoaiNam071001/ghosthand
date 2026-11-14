@@ -59,14 +59,11 @@ type guide struct {
 	Debug      string    `json:"debug"`
 	StepTypes  []typeDoc `json:"stepTypes"`
 	CommonOuts []string  `json:"commonOutputs"`
-	NodePref   string    `json:"nodePref"`     // ưu tiên node hiện tại (44)
-	NodeTips   string    `json:"nodePrefTips"` // cách chọn node web / ảnh·chữ theo nodePref
+	WebTips    string    `json:"webTips"` // node web – chỉ khi người dùng xin (44)
 }
 
-// guideDoc – pref: ưu tiên node hiện tại (store.MCPSettings.NodePreference).
-func guideDoc(pref string) guide {
-	return guide{FlowGuideDoc: model.Guide(), Tips: tips, Debug: debugTips, StepTypes: stepTypeDocs(), CommonOuts: model.CommonOutputs,
-		NodePref: pref, NodeTips: nodePrefTips[pref]}
+func guideDoc() guide {
+	return guide{FlowGuideDoc: model.Guide(), Tips: tips, Debug: debugTips, StepTypes: stepTypeDocs(), CommonOuts: model.CommonOutputs, WebTips: webTips}
 }
 
 // typeDoc – StepTypeDoc kèm gợi ý chọn node (nhóm + khi nào dùng).
@@ -81,17 +78,14 @@ func withUse(d model.StepTypeDoc) typeDoc { return typeDoc{d, model.UseOf(d.Type
 // đủ để chọn node + viết flow mà ~1/3 token bản đầy đủ. Chi tiết lấy bằng get_step_types type=… / topic=debug.
 type compactGuide struct {
 	model.FlowGuideDoc
-	Tips     string `json:"tips"`
-	Pick     string `json:"pick"`
-	Nodes    string `json:"nodes"`
-	NodePref string `json:"nodePref"`
-	NodeTips string `json:"nodePrefTips"`
-	Note     string `json:"note"`
+	Tips  string `json:"tips"`
+	Pick  string `json:"pick"`
+	Nodes string `json:"nodes"`
+	Note  string `json:"note"`
 }
 
 func toCompact(g guide) compactGuide {
 	return compactGuide{FlowGuideDoc: g.FlowGuideDoc, Tips: g.Tips, Pick: model.Pick, Nodes: nodeLines(g.StepTypes),
-		NodePref: g.NodePref, NodeTips: g.NodeTips,
 		Note: "Trường, ví dụ JSON, output: get_step_types type=<tên> (nhiều loại: type=a,b,c). Thử – sửa, đọc error.detail: get_step_types topic=debug."}
 }
 
@@ -206,7 +200,7 @@ func (s *Server) addDocs() {
 			})
 	}
 	res("ghosthand://guide", "guide", "Hướng dẫn viết kịch bản: flow, biến, từng loại node, mẹo viết bền", "application/json",
-		func() (any, error) { return guideDoc(s.back.MCP().NodePreference()), nil })
+		func() (any, error) { return guideDoc(), nil })
 	res("ghosthand://manual", "manual", "Sách hướng dẫn Ghosthand cho người dùng: chương chung + công nghệ / tốc độ từng node (chi tiết: get_node_guide)", "application/json",
 		func() (any, error) {
 			g, err := manual.Load()

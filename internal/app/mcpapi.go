@@ -180,7 +180,6 @@ func (b mcpBackend) CheckPage(ctx context.Context, url string) (web.PageCheck, e
 	return b.a.checkPage(ctx, url)
 }
 
-// SetNodePref – AI đổi ưu tiên node: lưu ngay, báo người dùng (thông báo nhỏ + Cài đặt cập nhật nếu đang mở).
 // ReadOutline – chỉ đọc tab đang mở, không bật trình duyệt: không đụng máy nên mọi mức AI đều dùng được.
 func (b mcpBackend) ReadOutline(ctx context.Context, tab string, onlyDialog, all bool) (web.Outline, []web.Tab, error) {
 	c, err := b.a.browser()
@@ -212,14 +211,6 @@ func (b mcpBackend) TabShot(ctx context.Context, tab string) (web.TabShot, error
 		return web.TabShot{}, errors.New("Chrome của app chưa mở – dùng probe_page(url) hoặc node open (webBrowser) để mở trang trước")
 	}
 	return sh, err
-}
-
-func (b mcpBackend) SetNodePref(p string) error {
-	if err := store.SetNodePref(p); err != nil {
-		return err
-	}
-	b.a.emit("mcp:nodePref", p)
-	return nil
 }
 
 // SyncInfo – sync_status (54 C10): chỉ cờ và số đếm, không tên máy / tên file / lời báo lỗi.

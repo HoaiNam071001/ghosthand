@@ -8,27 +8,22 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
 	"ghosthand/internal/perm"
-	"ghosthand/internal/store"
 	"ghosthand/internal/textop"
 	"ghosthand/internal/web"
 )
 
-// Thử trang + ưu tiên node (bước 44): probe_page mở trang trên Chrome của app, dò captcha / chặn bot / canvas → AI
-// biết trang dùng được node web không; ưu tiên node (ảnh / chữ mặc định | web) AI đọc / đổi tự do, guide đổi theo.
+// Thử trang (bước 44): probe_page mở trang trên Chrome của app, dò captcha / chặn bot / canvas → AI biết trang dùng
+// được node web không. AI mặc định dùng node ảnh / chữ; node web chỉ khi người dùng xin (bỏ cài đặt ưu tiên node).
 
-// nodePrefTips – mục thêm vào guide theo ưu tiên node hiện tại.
-var nodePrefTips = map[string]string{
-	store.NodePrefWeb: `Ưu tiên node web (Cài đặt / set_node_preference): việc trên trang web → probe_page(url) trước.
+// webTips – cách dùng node web khi người dùng xin (get_step_types topic=web + bản đầy đủ).
+const webTips = `Node web chỉ khi người dùng xin (mặc định node ảnh / chữ: open trình duyệt thường + tìm chữ / ảnh trên màn hình). Việc trên trang web → probe_page(url) trước.
 - verdict ok: node open (webBrowser true – Chrome của app) + webWait / webClick / webType / webRead / webScroll / webKey (phím qua Chrome của app – không rơi vào app khác), selector lấy từ outline (sel) – chính xác hơn tìm chữ / ảnh.
 - Trang đã mở và đang thao tác dở (hộp thoại, popup): read_web_outline(dialog: true) lấy selector thật của ô / nút trong hộp thoại, thay vì đoán rồi chạy thử. Trang lớn, chỉ cần vài nút: find: "Gửi" (hoặc /regex/) – chỉ dòng khớp + vùng bao ngoài.
 - Nhiều tab (cùng URL, popup): probe_page / read_web_outline trả tab (id) + tabs – đặt tab = id cho node web khi chạy thử để không nhầm tab; kịch bản lưu lại thì đổi tab sang chuỗi trong URL (id đổi khi Chrome của app mở lại).
 - Form trong hộp thoại: node web đặt webScope "dialog" (bỏ ô cùng tên ở trang phía sau); ô theo nhãn: label="Ngày sinh" (cả nhãn antd không gắn for); nhiều chỗ khớp: occurrence N. Ô tuỳ biến (chọn ngày, editor) báo "không nhận focus" dù đã vào đúng ô → webType skipFocusCheck true.
 - loading (trang tải lâu): chờ vài giây rồi probe_page không url (dò lại tab, không tải lại) – tối đa 2–3 lần, vẫn loading thì screenshot xem trang rồi quyết.
 - captcha / blocked / canvas / empty: dùng node ảnh / chữ (open bằng trình duyệt thường, waitImage / clickImage findBy "text") và nói người dùng lý do (signs).
-- Trang cần đăng nhập: không tự gõ mật khẩu trong Chrome của app – nhờ người dùng bấm Đăng nhập ở node web (mở như Chrome thường), đăng nhập rồi bấm Xong; hoặc dùng trình duyệt thường + node ảnh / chữ.`,
-	store.NodePrefVision: `Ưu tiên node ảnh / chữ (mặc định): trang web cũng làm bằng node open (trình duyệt thường) + tìm chữ / ảnh trên màn hình.
-- Chỉ dùng node web khi người dùng xin hoặc sau khi đổi ưu tiên (set_node_preference "web"); muốn biết trang có dùng được node web không → probe_page(url).`,
-}
+- Trang cần đăng nhập: không tự gõ mật khẩu trong Chrome của app – nhờ người dùng bấm Đăng nhập ở node web (mở như Chrome thường), đăng nhập rồi bấm Xong; hoặc dùng trình duyệt thường + node ảnh / chữ.`
 
 type probeIn struct {
 	URL string `json:"url,omitempty" jsonschema:"trang cần thử (https://… hoặc tên miền); bỏ trống = dò lại tab đang mở, không tải lại"`
@@ -38,10 +33,6 @@ type outlineIn struct {
 	Tab    string `json:"tab,omitempty" jsonschema:"id tab (lấy từ tabs của lần gọi trước) hoặc chuỗi có trong URL / tiêu đề tab; bỏ trống = tab đang hiện"`
 	Dialog bool   `json:"dialog,omitempty" jsonschema:"true = chỉ phần tử trong hộp thoại (role=dialog) đang mở trên cùng – form sửa / tạo mới"`
 	Find   string `json:"find,omitempty" jsonschema:"chỉ dòng tên / giá trị chứa chữ (bỏ dấu) hoặc /regex/ + vùng ngoài"`
-}
-
-type prefIn struct {
-	Pref string `json:"pref" jsonschema:"vision (node ảnh / chữ – mặc định) | web (thử trang trên Chrome của app trước, không captcha thì dùng node web)"`
 }
 
 func (s *Server) addWebTools() {
@@ -54,12 +45,10 @@ func (s *Server) addWebTools() {
 		"outline = từng dòng vai trò \"tên\" = giá trị [trạng thái] selector – chép vào node web; tab = id tab đã đọc; tabs = các tab " +
 		"(id, title, url; đầu = đang dùng) – id truyền vào tab để đọc tab khác; dialog true = chỉ hộp thoại đang mở. " +
 		"Khác probe_page: không mở trang / dò captcha – cho trang đang dở (popup, hộp thoại)."}, s.readWebOutline)
-	addTool(s, KindRead, &mcp.Tool{Name: "get_preferences", Description: "Cài đặt của app ảnh hưởng cách soạn: nodePref (vision | web), " +
+	addTool(s, KindRead, &mcp.Tool{Name: "get_preferences", Description: "Cài đặt của app ảnh hưởng cách soạn: " +
 		"mức chạy của AI (run), quyền hệ điều hành đang thiếu (missingPermissions)."}, s.getPrefs)
 	addTool(s, KindRead, &mcp.Tool{Name: "check_permissions", Description: "Quyền hệ điều hành (macOS) và trạng thái từng quyền: granted | denied | unknown | notNeeded. " +
 		"Kiểm tra không bật hộp thoại. env: lỗi môi trường. Gọi trước khi soạn / chạy node cần quyền (chuột, phím, chụp màn hình, Chrome…) để biết quyền nào thiếu – nhờ người dùng cấp ở Cài đặt → Quyền, đừng chạy thử rồi mới biết lỗi permission."}, s.checkPerms)
-	addTool(s, KindSettings, &mcp.Tool{Name: "set_node_preference", Description: "Đổi ưu tiên node khi soạn: vision = node ảnh / chữ (mặc định), " +
-		"web = thử trang (probe_page) trước, không captcha thì dùng node web. Đổi ngay, app báo người dùng; guide (get_step_types) theo mức mới."}, s.setPref)
 }
 
 func (s *Server) probePage(ctx context.Context, _ *mcp.CallToolRequest, in probeIn) (*mcp.CallToolResult, any, error) {
@@ -90,15 +79,7 @@ func isWebURL(u string) bool {
 
 func (s *Server) getPrefs(_ context.Context, _ *mcp.CallToolRequest, _ struct{}) (*mcp.CallToolResult, any, error) {
 	m := s.back.MCP()
-	return ok(map[string]any{"nodePref": m.NodePreference(), "run": m.RunMode(), "missingPermissions": perm.DeniedOf(s.back.Permissions())})
-}
-
-func (s *Server) setPref(_ context.Context, _ *mcp.CallToolRequest, in prefIn) (*mcp.CallToolResult, any, error) {
-	p := strings.ToLower(strings.TrimSpace(in.Pref))
-	if err := s.back.SetNodePref(p); err != nil {
-		return fail(err)
-	}
-	return ok(map[string]any{"nodePref": p, "tips": nodePrefTips[p]})
+	return ok(map[string]any{"run": m.RunMode(), "missingPermissions": perm.DeniedOf(s.back.Permissions())})
 }
 
 func (s *Server) readWebOutline(ctx context.Context, _ *mcp.CallToolRequest, in outlineIn) (*mcp.CallToolResult, any, error) {

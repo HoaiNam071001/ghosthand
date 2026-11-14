@@ -3,7 +3,6 @@ package mcpsrv
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"image"
 	"os"
@@ -70,13 +69,6 @@ func (f *fakeBackend) ReadOutline(_ context.Context, tab string, dialog, all boo
 func (f *fakeBackend) TabShot(_ context.Context, tab string) (web.TabShot, error) {
 	f.outlineTab = tab
 	return web.TabShot{Image: image.NewRGBA(image.Rect(0, 0, 2400, 1200)), Tab: "AB12", URL: f.outline.URL, CSSWidth: 1200}, nil
-}
-func (f *fakeBackend) SetNodePref(p string) error {
-	if p != store.NodePrefVision && p != store.NodePrefWeb {
-		return errors.New("ưu tiên node không hợp lệ")
-	}
-	f.settings.NodePref = p
-	return nil
 }
 func (f *fakeBackend) ToolAllowed(c, t string) bool { return f.settings.ToolAllowed(c, t) }
 func (f *fakeBackend) Recent() []string             { return f.recent }

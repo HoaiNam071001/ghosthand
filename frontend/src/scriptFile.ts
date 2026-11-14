@@ -7,7 +7,6 @@ import {
 } from '../wailsjs/go/app/App';
 import { model, store } from '../wailsjs/go/models';
 import { getEditor, markSaved, reloadScript, replaceScript, setNotice, subscribe } from './store';
-import { nodePrefLabel } from './aiLevel';
 import { setUpdateInfo } from './store/updateStore';
 import { update } from '../wailsjs/go/models';
 import { inWails, setWindowMode } from './windowMode';
@@ -208,11 +207,9 @@ if (inWails) {
     if (location.hash) setWindowMode('main');
     openRecent(path);
   });
-  // AI đổi ưu tiên node (set_node_preference – bước 44): báo nhẹ, không hỏi
   // Có bản mới trên GitHub (kiểm tra lúc mở app): báo nhẹ, xem chi tiết ở Cài đặt → Giới thiệu
   EventsOn('update:available', (info: update.Info) => {
     setUpdateInfo(info);
     setNotice(`Có bản mới v${info.latest} – xem ở Cài đặt → Giới thiệu`);
   });
-  EventsOn('mcp:nodePref', (p: string) => setNotice(`AI đổi ưu tiên node sang “${nodePrefLabel(p)}”`));
 }

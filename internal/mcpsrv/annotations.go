@@ -32,7 +32,7 @@ func annotationsFor(kind, name string) *mcp.ToolAnnotations {
 		return &mcp.ToolAnnotations{ReadOnlyHint: true}
 	case KindRun:
 		return &mcp.ToolAnnotations{DestructiveHint: ptr(true), OpenWorldHint: ptr(true)}
-	case KindApp, KindSettings:
+	case KindApp:
 		return &mcp.ToolAnnotations{DestructiveHint: ptr(false), IdempotentHint: true, OpenWorldHint: ptr(false)}
 	default: // KindWrite: tạo / sửa file kịch bản của app
 		return &mcp.ToolAnnotations{DestructiveHint: ptr(false), OpenWorldHint: ptr(false)}

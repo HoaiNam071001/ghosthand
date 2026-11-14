@@ -27,7 +27,7 @@ type readIn struct {
 type typesIn struct {
 	Type    string `json:"type,omitempty" jsonschema:"chi tiết loại node (trường, ví dụ, output), nhiều loại cách dấu phẩy: waitImage,clickImage,forEach"`
 	Compact bool   `json:"compact,omitempty" jsonschema:"true = hướng dẫn flow + mỗi loại node một dòng (khi nào dùng, cổng) – đọc cái này trước"`
-	Topic   string `json:"topic,omitempty" jsonschema:"debug = mẹo thử – sửa: run_script, đọc error.detail, ảnh lỗi"`
+	Topic   string `json:"topic,omitempty" jsonschema:"debug = mẹo thử – sửa: run_script, đọc error.detail, ảnh lỗi; web = cách dùng node web (chỉ khi người dùng xin)"`
 }
 
 const scriptsPage = 30 // kịch bản mỗi trang
@@ -138,8 +138,11 @@ func (s *Server) readScript(_ context.Context, _ *mcp.CallToolRequest, in readIn
 }
 
 func (s *Server) stepTypes(_ context.Context, _ *mcp.CallToolRequest, in typesIn) (*mcp.CallToolResult, any, error) {
-	if in.Topic == "debug" {
+	switch in.Topic {
+	case "debug":
 		return ok(map[string]string{"debug": debugTips})
+	case "web":
+		return ok(map[string]string{"web": webTips})
 	}
 	if in.Type != "" {
 		var out []typeDoc
@@ -156,7 +159,7 @@ func (s *Server) stepTypes(_ context.Context, _ *mcp.CallToolRequest, in typesIn
 		}
 		return ok(map[string]any{"types": out})
 	}
-	g := guideDoc(s.back.MCP().NodePreference())
+	g := guideDoc()
 	if in.Compact {
 		return ok(toCompact(g))
 	}

@@ -17,7 +17,7 @@ export function useAiLevel(active: boolean): { level: AiLevel; onLevel: (l: AiLe
   if (!active || !mcp) return undefined;
   return {
     level: aiLevel(mcp),
-    // đọc lại trước khi lưu – AI có thể vừa đổi phần khác (ưu tiên node – 44)
+    // đọc lại trước khi lưu – phần khác của cài đặt MCP có thể vừa đổi ở nơi khác
     onLevel: (l) => GetSettings().then((s) => {
       const next = store.MCPSettings.createFrom(withLevel(s.mcp, l));
       return SetMCPSettings(next).then(() => setMcp(next));

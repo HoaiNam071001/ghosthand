@@ -353,3 +353,4 @@
 - **2026-11-09** – Bước 54 C9 C10: backend MCP cho đồng bộ cloud (`cloud/mcpmap` + `cloud/mcpcloud`, chọn nơi đồng bộ ở Cài đặt → Đồng bộ, mẫu Filesystem, lượt tự động chỉ chạy khi tool đã được "luôn cho") + tool `sync_status` chỉ đọc. go vet/test, npm build/test OK; chưa thử tay với MCP server thật.
 - **2026-11-09** – Bước 54 C11: chốt không thêm hẹn giờ đồng bộ riêng (trùng "Theo chu kỳ" ở C8). Bước 54 xong code, chờ thử tay (checks.md).
 - **2026-11-09** – Bước 56 D1b (trả lời từ điện thoại) bỏ theo người dùng; bước 56 xong code.
+- **2026-11-14** – Bỏ cài đặt *AI ưu tiên node* (44 T3): xoá NodePref / set_node_preference / KindSettings / mcp:nodePref; AI mặc định ảnh / chữ, node web khi người dùng xin (get_step_types topic=web)

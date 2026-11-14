@@ -21,11 +21,3 @@ export const withLevel = <T extends Mcp>(m: T, l: AiLevel): T => (l === 'off' ? 
 
 export const levelLabel = (l: AiLevel) => AI_LEVELS.find((x) => x.id === l)!.label;
 
-// Ưu tiên node khi AI soạn (bước 44, khớp store.NodePref* trong Go): giá trị lạ / trống = ảnh / chữ.
-export type NodePref = 'vision' | 'web';
-export const NODE_PREFS: { id: NodePref; label: string }[] = [
-  { id: 'vision', label: 'Ảnh / chữ' },
-  { id: 'web', label: 'Trình duyệt app' },
-];
-export const nodePref = (m: { nodePref?: string }): NodePref => (m.nodePref === 'web' ? 'web' : 'vision');
-export const nodePrefLabel = (p: string) => NODE_PREFS.find((x) => x.id === nodePref({ nodePref: p }))!.label;

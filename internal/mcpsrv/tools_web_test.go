@@ -36,22 +36,16 @@ func TestProbePage(t *testing.T) {
 	}
 }
 
-func TestNodePreference(t *testing.T) {
+func TestWebTips(t *testing.T) {
 	cs, _ := connect(t)
-	if out, _ := call(t, cs, "get_preferences", nil); out["nodePref"] != "vision" {
-		t.Fatalf("mặc định phải vision: %v", out)
+	if out, _ := call(t, cs, "get_preferences", nil); out["nodePref"] != nil || out["run"] == nil {
+		t.Errorf("get_preferences không còn nodePref: %v", out)
 	}
-	if g, _ := call(t, cs, "get_step_types", nil); g["nodePref"] != "vision" || g["nodePrefTips"] == "" {
-		t.Fatalf("guide mặc định: nodePref %v", g["nodePref"])
+	if out, _ := call(t, cs, "get_step_types", map[string]any{"topic": "web"}); out["web"] != webTips {
+		t.Errorf("topic web: %v", out)
 	}
-	if out, isErr := call(t, cs, "set_node_preference", map[string]any{"pref": "Web"}); isErr || out["nodePref"] != "web" {
-		t.Fatalf("set web: %v", out)
-	}
-	if g, _ := call(t, cs, "get_step_types", nil); g["nodePref"] != "web" || g["nodePrefTips"] != nodePrefTips["web"] {
-		t.Errorf("guide sau khi đổi: %v", g["nodePref"])
-	}
-	if _, isErr := call(t, cs, "set_node_preference", map[string]any{"pref": "dom"}); !isErr {
-		t.Error("mức lạ phải lỗi")
+	if g, _ := call(t, cs, "get_step_types", nil); g["webTips"] != webTips {
+		t.Error("guide đầy đủ phải có webTips")
 	}
 }
 
