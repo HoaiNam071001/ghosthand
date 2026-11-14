@@ -354,3 +354,4 @@
 - **2026-11-09** – Bước 54 C11: chốt không thêm hẹn giờ đồng bộ riêng (trùng "Theo chu kỳ" ở C8). Bước 54 xong code, chờ thử tay (checks.md).
 - **2026-11-09** – Bước 56 D1b (trả lời từ điện thoại) bỏ theo người dùng; bước 56 xong code.
 - **2026-11-14** – Bỏ cài đặt *AI ưu tiên node* (44 T3): xoá NodePref / set_node_preference / KindSettings / mcp:nodePref; AI mặc định ảnh / chữ, node web khi người dùng xin (get_step_types topic=web)
+- **2026-11-14** – Trần mặc định mỗi lượt AI chạy 10 phút → 5 giờ (store.AIMaxMinutes = 300).

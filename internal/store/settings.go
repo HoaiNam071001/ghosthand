@@ -56,7 +56,7 @@ const (
 )
 
 // AIMaxMinutes – trần mặc định mỗi lượt AI chạy.
-const AIMaxMinutes = 10
+const AIMaxMinutes = 300 // 5 giờ
 
 // RunMode – mức chạy đã chuẩn hoá ("" / lạ → ask).
 func (m MCPSettings) RunMode() string {

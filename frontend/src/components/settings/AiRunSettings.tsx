@@ -8,7 +8,7 @@ import NumInput from '../NumInput';
 import Segmented from '../Segmented';
 import { Switch } from '../Switch';
 
-const AI_MAX_MINUTES = 10; // khớp store.AIMaxMinutes
+const AI_MAX_MINUTES = 300; // 5 giờ – khớp store.AIMaxMinutes
 const TOUCH_RESUME_S = 5; // khớp store.TouchResumeDefault
 const TRIAL_DAYS = 7; // khớp store.TrialDaysDefault
 
