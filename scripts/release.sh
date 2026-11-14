@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Phát hành một phiên bản: scripts/release.sh 1.0.1   (hoặc: make release V=1.0.1)
+# Phát hành một phiên bản: scripts/release.sh [x|y|z|1.0.1]   (hoặc: make release [x|y|z|1.0.1]; bỏ trống = z)
 # - build macOS (ký + .dmg) tại máy này,
 # - gắn tag vX.Y.Z + đẩy lên GitHub → workflow "Release Windows" tự build setup.exe + portable.zip và đính vào Release,
 # - tạo / cập nhật Release kèm .dmg → app của người dùng báo có bản mới.
@@ -7,8 +7,22 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-V="${1:-}"
-[[ "$V" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Dùng: scripts/release.sh X.Y.Z (vd 1.0.1)"; exit 1; }
+# Không ghi số → tự tăng từ tag mới nhất theo vị trí trong X.Y.Z: z (mặc định) 1.2.2 → 1.2.3, y → 1.3.0, x → 2.0.0
+V="${1:-z}"
+case "$V" in x) V=major ;; y) V=minor ;; z) V=patch ;; esac
+if [[ "$V" =~ ^(patch|minor|major)$ ]]; then
+  git fetch --tags -q origin || true
+  LAST=$(git tag --list 'v*.*.*' --sort=-v:refname | head -1)
+  IFS=. read -r MA MI PA <<< "${LAST#v}"
+  case "$V" in
+    major) V="$((${MA:-0}+1)).0.0" ;;
+    minor) V="${MA:-0}.$((${MI:-0}+1)).0" ;;
+    patch) V="${MA:-0}.${MI:-0}.$((${PA:-0}+1))" ;;
+  esac
+  echo "Tag mới nhất ${LAST:-(chưa có)} → phát hành v$V"
+  if [ -t 0 ]; then read -r -p "Tiếp tục? [y/N] " OK; [[ "$OK" =~ ^[yY]$ ]] || exit 1; fi
+fi
+[[ "$V" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Dùng: make release [x|y|z|X.Y.Z]"; exit 1; }
 command -v gh >/dev/null || { echo "Thiếu gh: brew install gh && gh auth login"; exit 1; }
 [ -z "$(git status --porcelain)" ] || { echo "Còn file chưa commit – commit trước khi phát hành"; exit 1; }
 [ "$(git branch --show-current)" = main ] || { echo "Phát hành từ nhánh main"; exit 1; }

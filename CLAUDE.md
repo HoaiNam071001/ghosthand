@@ -17,7 +17,7 @@ wails dev                      # chạy app (hot reload). wails nằm ở ~/go/b
 wails build                    # build ra build/bin/
 make dev-install               # macOS: build bản dev + cài đè /Applications + mở lại nền (AI thử qua MCP ngay – skill test-after-change)
 scripts/mac-build.sh            # macOS: build + ký chứng chỉ tự tạo "Ghosthand Dev" + .dmg – giữ quyền Accessibility / Screen Recording qua các bản build (bundle ID cố định app.ghosthand)
-make release V=1.0.1           # phát hành: build mac (.dmg) + tag + GitHub Release; tag kích hoạt workflow "Release Windows" (setup.exe + portable.zip tự đính vào Release) – cần gh
+make release                   # phát hành, tự tăng từ tag mới nhất: bỏ trống / z 1.2.2→1.2.3, y →1.3.0, x →2.0.0, hoặc ghi số 1.3.0: build mac (.dmg) + tag + GitHub Release; tag kích hoạt workflow "Release Windows" (setup.exe + portable.zip tự đính vào Release) – cần gh
 make win V=1.0.1               # Windows (Git Bash): build/bin/ghosthand.exe (không cài đặt) + portable.zip, có NSIS thì thêm bộ cài; make mac V=…: chỉ build mac
 # exe Windows: GitHub Actions "Build Windows" mỗi lần push (tab Actions → Artifacts); build chéo tại máy: CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc wails build -platform windows/amd64 -skipbindings
 go vet ./... && go test ./...  # Go (thiết bị giả)
