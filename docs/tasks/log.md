@@ -356,3 +356,4 @@
 - **2026-11-14** – Bỏ cài đặt *AI ưu tiên node* (44 T3): xoá NodePref / set_node_preference / KindSettings / mcp:nodePref; AI mặc định ảnh / chữ, node web khi người dùng xin (get_step_types topic=web)
 - **2026-11-14** – Trần mặc định mỗi lượt AI chạy 10 phút → 5 giờ (store.AIMaxMinutes = 300).
 - **2026-11-15** – 62 xong code: internal/wisp (backend web.Browser qua cổng Wisp), engine chạy nền khi trình duyệt Native, Cài đặt → Trình duyệt, MCP read_web_outline / chụp tab / Thử tìm theo Cài đặt, sân thử qua http khi dùng Wisp, Hướng dẫn settings-browser. go vet + go test, frontend build + test, check-docs OK; 11/11 mẫu web sân thử chạy thật trên Wisp dev; chưa thử tay trong app.
+- **2026-11-15** – Phát hành 1.4.0 (62: node web trên Wisp) – make release 1.4.0 từ main (gộp nhánh wisp-backend), dmg ký Ghosthand Dev; Windows qua workflow Release Windows.
