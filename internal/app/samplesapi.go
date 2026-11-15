@@ -1,13 +1,18 @@
 package app
 
 import (
+	"net"
+	"net/http"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"ghosthand/internal/launch"
 	"ghosthand/internal/model"
 	"ghosthand/internal/samples"
+	"ghosthand/internal/session"
 	"ghosthand/internal/store"
+	"ghosthand/internal/wisp"
 )
 
 // Kịch bản mẫu để test (bước 33): danh sách, mở bản sao, mở trang sân thử.
@@ -50,5 +55,29 @@ func sandboxURL() (string, error) {
 	if err := samples.WriteSandbox(dir); err != nil {
 		return "", err
 	}
+	if use, _ := session.UseWisp(store.CurrentSettings().Web.Browser, wisp.Running); use {
+		return sandboxHTTP(dir)
+	}
 	return samples.FileURL(dir), nil
+}
+
+// sandboxSrv – sân thử qua http cho Wisp (cổng Wisp chỉ mở http(s), không file://): chỉ 127.0.0.1, cổng ngẫu nhiên,
+// chỉ đọc thư mục sân thử; bật lần đầu cần, sống tới khi app tắt.
+var sandboxSrv struct {
+	once sync.Once
+	url  string
+	err  error
+}
+
+func sandboxHTTP(dir string) (string, error) {
+	sandboxSrv.once.Do(func() {
+		l, err := net.Listen("tcp", "127.0.0.1:0")
+		if err != nil {
+			sandboxSrv.err = err
+			return
+		}
+		go func() { _ = http.Serve(l, http.FileServer(http.Dir(dir))) }()
+		sandboxSrv.url = "http://" + l.Addr().String()
+	})
+	return sandboxSrv.url, sandboxSrv.err
 }

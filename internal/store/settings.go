@@ -32,6 +32,8 @@ type Settings struct {
 	MCPServers []MCPServer `json:"mcpServers,omitempty"`
 	// Sync – đồng bộ cloud (bước 54): phạm vi, lịch, tên máy. Riêng từng máy (không mang đi).
 	Sync SyncSettings `json:"sync"`
+	// Web – trình duyệt cho node web (bước 62, websettings.go). Riêng từng máy.
+	Web WebSettings `json:"web"`
 }
 
 // MCPSettings – cho AI kết nối qua MCP (bước 31): bật mặc định; route /mcp chạy trên cùng cổng API local.

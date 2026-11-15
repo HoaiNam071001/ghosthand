@@ -12,6 +12,7 @@ import (
 	"ghosthand/internal/secrets"
 	"ghosthand/internal/store"
 	"ghosthand/internal/web"
+	"ghosthand/internal/wisp"
 )
 
 // Deps – thiết bị + lưu trữ một phiên dùng; trường nil = bản thật. Test thay bằng bản giả.
@@ -21,7 +22,7 @@ type Deps struct {
 	Displays    func() []model.Rect
 	Now         func() time.Time
 	AllowDanger func(sc model.Script, path, confirm string) (bool, error)
-	// Browser – Chrome của app cho node web (nối lười); close gọi khi phiên xong.
+	// Browser – trình duyệt cho node web theo Cài đặt (Chrome của app / Wisp – bước 62, nối lười); close gọi khi phiên xong.
 	Browser func(move func(x, y int) error) (b web.Browser, close func(), err error)
 	// Corners – dừng khẩn khi chuột chạm góc màn hình (chạy tới khi ctx huỷ).
 	Corners func(ctx context.Context, in *device.TrackingInput, onHit func())
@@ -54,6 +55,18 @@ type Deps struct {
 	Ask engine.Asker
 }
 
+// UseWisp – node web chạy trên Wisp không (choice = store.WebSettings.Browser); launch = Wisp chưa mở thì tự mở.
+// Tự động: chỉ dùng Wisp khi đang mở + bật cổng (running), không thì Chrome của app.
+func UseWisp(choice string, running func() bool) (use, launch bool) {
+	switch choice {
+	case store.WebBrowserWisp:
+		return true, true
+	case store.WebBrowserChrome:
+		return false, false
+	}
+	return running(), false
+}
+
 func (d Deps) withDefaults() Deps {
 	if d.Input == nil {
 		d.Input = func() device.Input { return device.RobotgoInput{} }
@@ -72,6 +85,10 @@ func (d Deps) withDefaults() Deps {
 	}
 	if d.Browser == nil {
 		d.Browser = func(move func(x, y int) error) (web.Browser, func(), error) {
+			if use, launch := UseWisp(store.CurrentSettings().Web.Browser, wisp.Running); use {
+				br := wisp.New(launch)
+				return br, br.Close, nil
+			}
 			profile, err := store.BrowserProfile()
 			if err != nil {
 				return nil, nil, err

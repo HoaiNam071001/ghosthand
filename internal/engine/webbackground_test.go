@@ -76,3 +76,20 @@ func TestFindElementIgnoresBackground(t *testing.T) {
 		t.Errorf("query %+v", b.queries[0])
 	}
 }
+
+// nativeBrowser – trình duyệt tự thao tác bằng sự kiện thật (Wisp, bước 62).
+type nativeBrowser struct{ *fakeBrowser }
+
+func (nativeBrowser) NativeInput() bool { return true }
+
+// Trình duyệt Native: node web không bật chạy nền vẫn đi qua Bg*, không chuột thật / hover.
+func TestWebNativeBrowserRunsInBackground(t *testing.T) {
+	fb := &fakeBrowser{finds: []web.Found{found(0, model.Rect{X: 100, Y: 200, W: 40, H: 20})}}
+	in, _, err := runWeb(t, nativeBrowser{fb}, webNode(model.StepWebClick, nil))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !fb.queries[0].Background || !reflect.DeepEqual(fb.bg, []string{"click 120,210 left 1"}) || len(in.Lines()) != 0 || len(fb.hovered) != 0 {
+		t.Errorf("query %+v, chạy nền %q, chuột thật %q, hover %q", fb.queries[0], fb.bg, in.Lines(), fb.hovered)
+	}
+}

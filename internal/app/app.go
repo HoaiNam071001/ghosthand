@@ -13,6 +13,7 @@ import (
 	"ghosthand/internal/session"
 	"ghosthand/internal/store"
 	"ghosthand/internal/web"
+	"ghosthand/internal/wisp"
 	"ghosthand/internal/winfloat"
 )
 
@@ -49,6 +50,7 @@ type App struct {
 	running    bool // đang có lần chạy (theo session.Activity) – thanh mini nổi (58 D6); đọc / ghi dưới mu
 
 	web        *web.Chrome        // Chrome của app cho giao diện (webapi.go) – tạo lười
+	wispB      *wisp.Browser      // Wisp cho giao diện / MCP khi Cài đặt chọn Wisp (wispapi.go) – tạo lười
 	pickCancel context.CancelFunc // huỷ lần Chọn phần tử đang chờ
 
 	upd updateState // bản mới đã hỏi được + đang cập nhật (updateapi.go)

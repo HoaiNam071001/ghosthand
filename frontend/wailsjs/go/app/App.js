@@ -450,6 +450,10 @@ export function SetTheme(arg1) {
   return window['go']['app']['App']['SetTheme'](arg1);
 }
 
+export function SetWebSettings(arg1) {
+  return window['go']['app']['App']['SetWebSettings'](arg1);
+}
+
 export function SetWindowMode(arg1) {
   return window['go']['app']['App']['SetWindowMode'](arg1);
 }
@@ -520,4 +524,8 @@ export function TrialScripts() {
 
 export function ValidateScript(arg1, arg2) {
   return window['go']['app']['App']['ValidateScript'](arg1, arg2);
+}
+
+export function WispStatus() {
+  return window['go']['app']['App']['WispStatus']();
 }

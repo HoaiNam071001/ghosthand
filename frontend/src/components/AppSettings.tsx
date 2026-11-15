@@ -1,10 +1,10 @@
-// Cài đặt app (nút bánh răng trên thanh tiêu đề), chia tab: Lưu trữ – thư mục kịch bản / ảnh (bước 41, settings/StorageSettings), Màn hình – cạnh đặt thanh overlay (bước 49) + viền lúc đang chạy (58 D5, settings/OverlaySettings),
+// Cài đặt app (nút bánh răng trên thanh tiêu đề), chia tab: Lưu trữ – thư mục kịch bản / ảnh (bước 41, settings/StorageSettings), Màn hình – cạnh đặt thanh overlay (bước 49) + viền lúc đang chạy (58 D5, settings/OverlaySettings), Trình duyệt – Chrome của app / Wisp cho node web (bước 62, settings/WebBrowserSettings),
 // Bí mật – kho mật khẩu / token (bước 43 S10, settings/SecretsSettings), Quyền – quyền hệ điều hành (bước 48, settings/PermSettings), API – dòng lệnh + API local (bước 22, settings/ApiSettings), AI qua MCP (bước 31, settings/McpSettings), MCP server – server ngoài node Gọi tool MCP dùng (bước 55, settings/McpServersSettings), Đồng bộ – Google Drive (bước 54, settings/SyncSettings), Giới thiệu – phiên bản + kiểm tra bản mới (settings/AboutSettings).
 import { useEffect, useState } from 'react';
 import {
-  GetSettings, OpenFolder, PickFolder, SetAPISettings, SetMCPSettings, SetOverlaySettings, SetStorageSettings, StorageDefaults,
+  GetSettings, OpenFolder, PickFolder, SetAPISettings, SetMCPSettings, SetOverlaySettings, SetStorageSettings, SetWebSettings, StorageDefaults, WispStatus,
 } from '../../wailsjs/go/app/App';
-import { store } from '../../wailsjs/go/models';
+import { store, wisp } from '../../wailsjs/go/models';
 import { EventsOn } from '../../wailsjs/runtime/runtime';
 import { errorText } from '../engineStore';
 import { Gear } from './icons';
@@ -23,10 +23,11 @@ import PermSettings from './settings/PermSettings';
 import SecretsSettings from './settings/SecretsSettings';
 import SyncSettings from './settings/SyncSettings';
 import StorageSettings, { StorageKey } from './settings/StorageSettings';
+import WebBrowserSettings from './settings/WebBrowserSettings';
 import Segmented from './Segmented';
 
 type Tab = SettingsTab;
-const TABS: { id: Tab; label: string }[] = [{ id: 'storage', label: 'Lưu trữ' }, { id: 'overlay', label: 'Màn hình' }, { id: 'secrets', label: 'Bí mật' }, { id: 'perms', label: 'Quyền' }, { id: 'api', label: 'API' }, { id: 'mcp', label: 'AI (MCP)' }, { id: 'askai', label: 'Hỏi AI' }, { id: 'servers', label: 'MCP server' }, { id: 'sync', label: 'Đồng bộ' }, { id: 'about', label: 'Giới thiệu' }];
+const TABS: { id: Tab; label: string }[] = [{ id: 'storage', label: 'Lưu trữ' }, { id: 'overlay', label: 'Màn hình' }, { id: 'browser', label: 'Trình duyệt' }, { id: 'secrets', label: 'Bí mật' }, { id: 'perms', label: 'Quyền' }, { id: 'api', label: 'API' }, { id: 'mcp', label: 'AI (MCP)' }, { id: 'askai', label: 'Hỏi AI' }, { id: 'servers', label: 'MCP server' }, { id: 'sync', label: 'Đồng bộ' }, { id: 'about', label: 'Giới thiệu' }];
 
 export default function AppSettings() {
   const [open, setOpen] = useState(false);
@@ -54,6 +55,9 @@ export default function AppSettings() {
     return () => window.removeEventListener('focus', refreshPerms);
   }, [open, tab]);
   useEffect(() => { if (open && tab === 'about') loadVersion(); }, [open, tab]);
+  const [wispState, setWispState] = useState<wisp.State | null>(null);
+  const refreshWisp = () => { setWispState(null); WispStatus().then(setWispState).catch((e) => setError(errorText(e))); };
+  useEffect(() => { if (open && tab === 'browser') refreshWisp(); }, [open, tab]);
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
@@ -78,6 +82,12 @@ export default function AppSettings() {
     const overlay = store.OverlaySettings.createFrom({ ...settings.overlay, ...patch });
     setSettings(store.Settings.createFrom({ ...settings, overlay }));
     SetOverlaySettings(overlay).then(() => setError('')).catch((e) => setError(errorText(e)));
+  };
+  const saveWeb = (patch: Partial<store.WebSettings>) => {
+    if (!settings) return;
+    const web = store.WebSettings.createFrom({ ...settings.web, ...patch });
+    setSettings(store.Settings.createFrom({ ...settings, web }));
+    SetWebSettings(web).then(() => setError('')).catch((e) => setError(errorText(e)));
   };
   const saveStorage = (key: StorageKey, dir: string) => {
     if (!settings) return;
@@ -105,6 +115,7 @@ export default function AppSettings() {
               <StorageSettings storage={settings.storage ?? {}} defaults={defaults} onPick={pick} onOpen={openDir} onReset={(key) => saveStorage(key, '')} />
             )}
             {tab === 'overlay' && <OverlaySettings overlay={settings.overlay ?? {}} onChange={saveOverlay} />}
+            {tab === 'browser' && <WebBrowserSettings web={settings.web ?? {}} status={wispState} onChange={saveWeb} onRefresh={refreshWisp} />}
             {tab === 'secrets' && <SecretsSettings onError={setError} />}
             {tab === 'perms' && (
               <PermSettings items={perms.items} needed={needs(script)} focus={focusId} busy={perms.busy} error={perms.error}

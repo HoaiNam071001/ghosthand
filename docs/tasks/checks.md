@@ -4,6 +4,16 @@ Những việc **đã xong code** nhưng cần người dùng thử trong app th
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
 
+## 62 – Wisp làm trình duyệt của node web (2026-11-15) · [62](phase3/62-trinh-duyet-wisp.md)
+- [ ] Cài đặt → *Trình duyệt*: Wisp đang mở + bật Cổng Ghosthand → ô Wisp "Sẵn sàng"; tắt Wisp → *Kiểm tra lại* báo cách sửa; chưa cài → "chưa cài Wisp"
+- [ ] Chọn *Wisp* → *Mẫu thử* → các mẫu Web (đăng nhập, chạy nền, iframe, hộp thoại JS, phím trên trang…) → Chạy: chạy trong tab Wisp, chuột không nhúc nhích, thành công như với Chrome của app
+- [ ] Chọn *Wisp* khi Wisp đang tắt → Chạy mẫu web: Wisp tự mở rồi chạy
+- [ ] *Tự động*: Wisp mở → dùng Wisp; tắt Wisp → dùng Chrome của app
+- [ ] Đang chạy, bấm chip tím Ghosthand trên Wisp → node lỗi "đã ngắt Ghosthand trong Wisp"
+- [ ] Nút *Thử tìm* của node web khi chọn Wisp → khung vẽ đúng chỗ trên cửa sổ Wisp
+- [ ] AI (MCP) `read_web_outline` khi chọn Wisp → đọc tab Wisp
+- [ ] Windows: tìm thấy Wisp đã cài, chạy mẫu web
+
 ## 56 B4 · C3 · D2 · D3 – đăng nhập, ảnh cho AI, gói lỗi, mẫu Telegram / Zalo (2026-11-08) · [56](phase3/56-hoc-tu-mcp-ngoai.md)
 - [ ] (C3) Cài đặt → AI: tắt *Gửi ảnh màn hình cho AI* → nhờ AI chụp màn hình: AI chỉ nhận chữ + dòng “Ảnh đã bỏ…” (không lỗi tool); bật lại → có ảnh
 - [ ] (C3) Qua MCP: `screenshot cursor=true` → chữ thập đỏ đúng chỗ chuột, kết quả có `cursor {x, y}`; thử trên màn phụ và Windows có scale 125–150 %; chuột ngoài vùng → `outside: true`, không vẽ

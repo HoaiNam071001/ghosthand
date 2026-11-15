@@ -2725,6 +2725,18 @@ export namespace store {
 	        this.border = source["border"];
 	    }
 	}
+	export class WebSettings {
+	    browser?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new WebSettings(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.browser = source["browser"];
+	    }
+	}
 	export class SyncSettings {
 	    scripts?: boolean;
 	    settings?: boolean;
@@ -2797,6 +2809,7 @@ export namespace store {
 	    ai: AISettings;
 	    mcpServers?: MCPServer[];
 	    sync: SyncSettings;
+	    web: WebSettings;
 	
 	    static createFrom(source: any = {}) {
 	        return new Settings(source);
@@ -2813,6 +2826,7 @@ export namespace store {
 	        this.ai = this.convertValues(source["ai"], AISettings);
 	        this.mcpServers = this.convertValues(source["mcpServers"], MCPServer);
 	        this.sync = this.convertValues(source["sync"], SyncSettings);
+	        this.web = this.convertValues(source["web"], WebSettings);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -3102,6 +3116,29 @@ export namespace web {
 		    }
 		    return a;
 		}
+	}
+
+}
+
+export namespace wisp {
+	
+	export class State {
+	    ready: boolean;
+	    installed: boolean;
+	    version: string;
+	    problem: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new State(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.ready = source["ready"];
+	        this.installed = source["installed"];
+	        this.version = source["version"];
+	        this.problem = source["problem"];
+	    }
 	}
 
 }

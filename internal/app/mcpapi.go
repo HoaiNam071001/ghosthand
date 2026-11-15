@@ -182,6 +182,16 @@ func (b mcpBackend) CheckPage(ctx context.Context, url string) (web.PageCheck, e
 
 // ReadOutline – chỉ đọc tab đang mở, không bật trình duyệt: không đụng máy nên mọi mức AI đều dùng được.
 func (b mcpBackend) ReadOutline(ctx context.Context, tab string, onlyDialog, all bool) (web.Outline, []web.Tab, error) {
+	if w := b.a.wispFor(); w != nil {
+		ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
+		defer cancel()
+		o, err := w.ReadOutline(ctx, tab, onlyDialog, all)
+		if err != nil {
+			return web.Outline{}, nil, err
+		}
+		tabs, err := w.Tabs(ctx)
+		return o, tabs, err
+	}
 	c, err := b.a.browser()
 	if err != nil {
 		return web.Outline{}, nil, err
@@ -200,6 +210,11 @@ func (b mcpBackend) ReadOutline(ctx context.Context, tab string, onlyDialog, all
 
 // TabShot – chỉ chụp tab đang mở, không bật trình duyệt: không đụng chuột / phím nên mọi mức AI đều dùng được.
 func (b mcpBackend) TabShot(ctx context.Context, tab string) (web.TabShot, error) {
+	if w := b.a.wispFor(); w != nil {
+		ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
+		defer cancel()
+		return w.Screenshot(ctx, tab)
+	}
 	c, err := b.a.browser()
 	if err != nil {
 		return web.TabShot{}, err

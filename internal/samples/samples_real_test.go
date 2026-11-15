@@ -2,6 +2,8 @@ package samples_test
 
 import (
 	"context"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,12 +16,15 @@ import (
 	"ghosthand/internal/samples"
 	"ghosthand/internal/script"
 	"ghosthand/internal/web"
+	"ghosthand/internal/wisp"
 )
 
 // testProfile – profile Chrome riêng cho test (không đụng profile của app); giữ giữa các lần chạy để không bật lại.
 func testProfile() string { return filepath.Join(os.TempDir(), "ghosthand-test-browser") }
 
 // Chạy mẫu thật bằng engine (chuột thật, chụp + OCR thật, mở trình duyệt mặc định) – chỉ khi GHOSTHAND_REAL=1.
+// GHOSTHAND_BROWSER=wisp: node web chạy trên Wisp đang mở (WISP_USER_DATA nếu là Wisp dev) – sân thử phục vụ qua
+// http (cổng Wisp không mở file://).
 // GHOSTHAND_SAMPLES=id1,id2 chọn mẫu (trống = tất cả mẫu sân thử; mẫu web thật chỉ chạy khi ghi tên). Cần quyền Accessibility + Screen Recording.
 // Mẫu kết thúc thất bại có chủ đích: ket-thuc-that-bai.
 func TestRealSamples(t *testing.T) {
@@ -34,6 +39,12 @@ func TestRealSamples(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	base := samples.FileURL(dir)
+	if os.Getenv("GHOSTHAND_BROWSER") == "wisp" {
+		srv := httptest.NewServer(http.FileServer(http.Dir(dir)))
+		defer srv.Close()
+		base = srv.URL
+	}
 	want := map[string]bool{}
 	for _, id := range strings.Split(os.Getenv("GHOSTHAND_SAMPLES"), ",") {
 		if id = strings.TrimSpace(id); id != "" {
@@ -44,7 +55,7 @@ func TestRealSamples(t *testing.T) {
 		if (len(want) > 0 && !want[info.ID]) || (len(want) == 0 && info.Real) { // web thật chỉ chạy khi gọi tên
 			continue
 		}
-		t.Run(info.ID, func(t *testing.T) { runSample(t, info.ID, samples.FileURL(dir)) })
+		t.Run(info.ID, func(t *testing.T) { runSample(t, info.ID, base) })
 	}
 }
 
@@ -58,7 +69,10 @@ func runSample(t *testing.T, id, sandbox string) {
 	}
 	var last model.StepResult
 	in := device.RobotgoInput{}
-	br := web.NewChrome(testProfile(), in.Move)
+	var br web.Browser = web.NewChrome(testProfile(), in.Move)
+	if os.Getenv("GHOSTHAND_BROWSER") == "wisp" {
+		br = wisp.New(false)
+	}
 	defer br.Close()
 	eng := engine.New(in, sc, engine.Options{
 		Screen: device.MainScreen(), Displays: device.Displays(), Browser: br,

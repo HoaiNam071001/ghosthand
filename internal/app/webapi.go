@@ -105,8 +105,10 @@ func (a *App) FindElement(sc model.Script, stepID string) (engine.WebFindResult,
 	if s, err = script.WithInputDefaults(sc, s); err != nil {
 		return engine.WebFindResult{}, err
 	}
-	b, err := a.browser()
-	if err != nil {
+	var b web.Browser
+	if w := a.wispFor(); w != nil {
+		b = w
+	} else if b, err = a.browser(); err != nil {
 		return engine.WebFindResult{}, err
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), webUITimeout)

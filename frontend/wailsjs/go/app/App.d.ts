@@ -15,6 +15,7 @@ import {mcplib} from '../models';
 import {perm} from '../models';
 import {session} from '../models';
 import {samples} from '../models';
+import {wisp} from '../models';
 
 export function AIScripts():Promise<Array<string>>;
 
@@ -240,6 +241,8 @@ export function SetSyncSettings(arg1:store.SyncSettings):Promise<void>;
 
 export function SetTheme(arg1:string):Promise<void>;
 
+export function SetWebSettings(arg1:store.WebSettings):Promise<void>;
+
 export function SetWindowMode(arg1:string):Promise<void>;
 
 export function StartRecording():Promise<void>;
@@ -275,3 +278,5 @@ export function TestNode(arg1:model.Script,arg2:string):Promise<engine.NodeTest>
 export function TrialScripts():Promise<app.TrialList>;
 
 export function ValidateScript(arg1:model.Script,arg2:Record<string, any>):Promise<void>;
+
+export function WispStatus():Promise<wisp.State>;

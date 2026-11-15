@@ -32,6 +32,9 @@ func (e *Engine) noteDialog(f web.Found) error {
 // webNode – node web có tìm phần tử: chạy theo loại, thêm dialogText khi đã tự đóng hộp thoại JS giữa chừng.
 func (e *Engine) webNode(ctx context.Context, s model.Step) (map[string]any, error) {
 	e.dialogText = ""
+	if web.IsNative(e.browser) { // Wisp: thao tác qua cổng như chạy nền (bước 62)
+		s.WebBackground = true
+	}
 	var out map[string]any
 	var err error
 	switch s.Type {

@@ -15,3 +15,9 @@ func TestSetOverlayRejectsUnknown(t *testing.T) {
 		t.Error("cạnh lạ phải báo lỗi")
 	}
 }
+
+func TestSetWebRejectsUnknown(t *testing.T) {
+	if err := SetWeb(WebSettings{Browser: "firefox"}); err == nil {
+		t.Error("trình duyệt lạ phải báo lỗi")
+	}
+}

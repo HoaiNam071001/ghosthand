@@ -38,6 +38,18 @@ type Browser interface {
 	Close()
 }
 
+// Native – trình duyệt tự thao tác bằng sự kiện thật bên trong nó (Wisp – bước 62): engine chạy node web như chạy
+// nền (Bg*) dù kịch bản không bật, không dùng chuột / phím thật.
+type Native interface {
+	NativeInput() bool
+}
+
+// IsNative – b là trình duyệt Native.
+func IsNative(b Browser) bool {
+	n, ok := b.(Native)
+	return ok && n.NativeInput()
+}
+
 // Query – phần tử cần tìm: thử từng selector theo thứ tự, cái đầu thấy thì dùng.
 type Query struct {
 	Selectors  []model.Selector

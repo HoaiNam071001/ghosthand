@@ -758,7 +758,8 @@
     ],
     "tips": [
       "Profile của app giữ đăng nhập giữa các lần chạy: đăng nhập tay một lần là đủ.",
-      "Bấm nút quả địa cầu *Thử trang* trước khi viết kịch bản để biết trang có bị chặn không."
+      "Bấm nút quả địa cầu *Thử trang* trước khi viết kịch bản để biết trang có bị chặn không.",
+      "Có Wisp: [[chapter:settings-browser]] chọn Wisp (hoặc Tự động khi Wisp đang mở) – node web chạy trên Wisp, không chiếm chuột."
     ],
     "fields": [
       "**URL** – nhận {{biến}}",

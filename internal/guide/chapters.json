@@ -267,6 +267,18 @@
     ]
   },
   {
+    "id": "settings-browser",
+    "group": "Cài đặt",
+    "title": "Trình duyệt",
+    "summary": "Node web chạy trên Chrome của app hay trên Wisp.",
+    "blocks": [
+      { "kind": "p", "text": "**Trình duyệt cho node web** – trình duyệt mà [[node:openWeb]], [[node:webClick]], [[node:webType]], [[node:webRead]], [[node:webScroll]], [[node:webWait]], [[node:webKey]] điều khiển. Kịch bản không phải sửa khi đổi." },
+      { "kind": "p", "text": "*Tự động* (mặc định): Wisp đang mở và bật **Cổng Ghosthand** (menu ⋮ → Tuỳ chọn trong Wisp) thì dùng Wisp, không thì Chrome của app. *Chrome của app*: Chrome / Edge / Brave trên máy với profile riêng. *Wisp*: luôn dùng Wisp – chưa mở thì app tự mở rồi chờ." },
+      { "kind": "p", "text": "Trên Wisp mọi thao tác đi qua cổng của Wisp (sự kiện thật trong trình duyệt) như khi bật **Chạy nền**: không chiếm chuột / bàn phím, không cần đưa cửa sổ lên trước. Lúc đang nối, thanh công cụ Wisp có chip tím **Ghosthand** – bấm vào là ngắt." },
+      { "kind": "tip", "text": "Ô trạng thái cho biết Wisp đã sẵn sàng chưa và cách sửa (chưa cài, chưa mở, cổng tắt, bản không khớp). Bấm *Kiểm tra lại* sau khi mở Wisp." }
+    ]
+  },
+  {
     "id": "settings-secrets",
     "group": "Cài đặt",
     "title": "Bí mật",
