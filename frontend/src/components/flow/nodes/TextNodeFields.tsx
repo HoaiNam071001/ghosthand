@@ -1,35 +1,37 @@
 // Inspector node xử lý chữ (bước 42 G4b): Lọc mẫu, Tách chữ, Làm sạch chữ, Số & ngày – ô chữ vào chung, trường riêng
 // từng loại, nút Chạy thử (Go PreviewText – cùng regex RE2 như lúc chạy). Chỉ hiển thị – nối store ở stepform/ControlSection.
+import { tr, useT } from '../../../i18n';
 import NumInput, { fieldBox } from '../../NumInput';
 import Segmented from '../../Segmented';
 import VarTextInput from '../../inputs/VarTextInput';
 import { errText, Field, hint, SwitchField } from '../../stepform/shared';
-import { CASE_MODES, NUM_OPS, NUM_STYLES, type TextType } from '../../../flow/textNodes';
+import { caseModes, numOps, NUM_STYLES, type TextType } from '../../../flow/textNodes';
 import type { CondCtx } from './CondEditor';
 import TextPreviewButton from './TextPreviewButton';
 
 const textBox = `${fieldBox} w-full text-ink outline-none`;
 
-const INPUT_HELP: Record<TextType, string> = {
-  textMatch: 'Chữ cần lọc – thường là biến, vd chữ node Đọc phần tử đọc được',
-  textSplit: 'Chữ cần tách – vd “Táo, Cam, Xoài” hoặc mỗi dòng một mục',
-  textClean: 'Chữ cần làm sạch – thường là biến',
-  textNumber: 'Chữ chứa số / ngày – vd “Giá: 1.234.000 đ”, “21/10/2026 14:30”',
-};
+const inputHelp = (): Record<TextType, string> => ({
+  textMatch: tr('txn.in.match'),
+  textSplit: tr('txn.in.split'),
+  textClean: tr('txn.in.clean'),
+  textNumber: tr('txn.in.number'),
+});
 
 export default function TextNodeFields({ ctx, type }: { ctx: CondCtx; type: TextType }) {
+  const t = useT();
   const { step: s, set, vars, tools } = ctx;
   const date = type === 'textNumber' && s.numOp === 'date';
   return (
     <div className="flex flex-col gap-3">
-      <Field label="Chữ vào" group help={INPUT_HELP[type]}>
-        <VarTextInput {...vars} rows={2} value={s.value ?? ''} onChange={(value) => set({ value })} placeholder={date ? 'trống = bây giờ' : '{{n2.output.text}}'} />
-        {!s.value?.trim() && !date && <span className={errText}>Chưa có chữ – chạy sẽ báo lỗi</span>}
+      <Field label={t('txn.f.in')} group help={inputHelp()[type]}>
+        <VarTextInput {...vars} rows={2} value={s.value ?? ''} onChange={(value) => set({ value })} placeholder={date ? t('txn.f.nowPh') : '{{n2.output.text}}'} />
+        {!s.value?.trim() && !date && <span className={errText}>{t('txn.f.noText')}</span>}
       </Field>
       {type === 'textMatch' && <MatchForm ctx={ctx} />}
       {type === 'textSplit' && (
-        <Field label="Tách theo" group help="Trống = mỗi dòng một phần · \n = xuống dòng · \t = tab. Mỗi phần tự cắt khoảng trắng, bỏ phần trống">
-          <input value={s.separator ?? ''} onChange={(e) => set({ separator: e.target.value || undefined })} placeholder="trống = mỗi dòng"
+        <Field label={t('txn.f.sep')} group help={t('txn.f.sepHelp')}>
+          <input value={s.separator ?? ''} onChange={(e) => set({ separator: e.target.value || undefined })} placeholder={t('txn.f.sepPh')}
             className={`${textBox} font-mono text-[13px]`} />
         </Field>
       )}
@@ -41,66 +43,69 @@ export default function TextNodeFields({ ctx, type }: { ctx: CondCtx; type: Text
 }
 
 function MatchForm({ ctx: { step: s, set, vars } }: { ctx: CondCtx }) {
+  const t = useT();
   return <>
-    <Field label="Mẫu (regex)" group help="Có nhóm () thì lấy phần trong nhóm đầu. (?i) ở đầu = không phân biệt hoa thường">
-      <VarTextInput {...vars} rows={1} compact value={s.pattern ?? ''} onChange={(v) => set({ pattern: v || undefined })} placeholder={'Mã đơn: (\\w+)'} />
-      {!s.pattern && <span className={errText}>Chưa nhập mẫu</span>}
+    <Field label={t('txn.f.pattern')} group help={t('txn.f.patternHelp')}>
+      <VarTextInput {...vars} rows={1} compact value={s.pattern ?? ''} onChange={(v) => set({ pattern: v || undefined })} placeholder={t('txn.f.patternPh')} />
+      {!s.pattern && <span className={errText}>{t('txn.f.noPattern')}</span>}
     </Field>
-    <SwitchField label="Lấy mọi chỗ khớp" on={!!s.matchAll} onChange={(on) => set({ matchAll: on || undefined })}
-      help="Bật: items = mọi chỗ khớp (nối vào Lặp qua danh sách). Tắt: chỉ chỗ đầu" />
+    <SwitchField label={t('txn.f.all')} on={!!s.matchAll} onChange={(on) => set({ matchAll: on || undefined })}
+      help={t('txn.f.allHelp')} />
     <span className={hint}>
-      Hay dùng: <span className="font-mono text-ink">\d+</span> số · <span className="font-mono text-ink">[\w.]+@[\w.]+</span> email ·
-      <span className="font-mono text-ink"> 0\d{'{9}'}</span> số điện thoại. Không khớp → cổng <b className="text-ink">Không khớp</b>.
+      {t('txn.f.commonA')} <span className="font-mono text-ink">\d+</span> {t('txn.f.digits')} · <span className="font-mono text-ink">[\w.]+@[\w.]+</span> {t('txn.f.email')} ·
+      <span className="font-mono text-ink"> 0\d{'{9}'}</span> {t('txn.f.phone')}. {t('txn.f.noMatchA')} <b className="text-ink">{t('txn.f.noMatchB')}</b>.
     </span>
   </>;
 }
 
 function CleanForm({ ctx: { step: s, set, vars } }: { ctx: CondCtx }) {
+  const t = useT();
   return <>
     <>
-      <Field label="Thay" group>
-        <VarTextInput {...vars} rows={1} compact value={s.replaceFrom ?? ''} onChange={(v) => set({ replaceFrom: v || undefined })} placeholder="chữ cần thay" />
+      <Field label={t('txn.f.replace')} group>
+        <VarTextInput {...vars} rows={1} compact value={s.replaceFrom ?? ''} onChange={(v) => set({ replaceFrom: v || undefined })} placeholder={t('txn.f.replacePh')} />
       </Field>
-      <Field label="Bằng" group help={s.replaceRegex ? '$1 = phần trong nhóm () thứ nhất' : 'Trống = xoá chữ cần thay'}>
-        <VarTextInput {...vars} rows={1} compact value={s.replaceTo ?? ''} onChange={(v) => set({ replaceTo: v || undefined })} placeholder="trống = xoá" />
+      <Field label={t('txn.f.with')} group help={s.replaceRegex ? t('txn.f.withRe') : t('txn.f.withEmpty')}>
+        <VarTextInput {...vars} rows={1} compact value={s.replaceTo ?? ''} onChange={(v) => set({ replaceTo: v || undefined })} placeholder={t('txn.f.withPh')} />
       </Field>
     </>
-    {s.replaceFrom && <SwitchField label="Chữ cần thay là regex" on={!!s.replaceRegex} onChange={(on) => set({ replaceRegex: on || undefined })} />}
-    <SwitchField label="Bỏ dấu tiếng Việt" on={!!s.stripAccents} onChange={(on) => set({ stripAccents: on || undefined })} help="Đà Nẵng → Da Nang" />
-    <Field label="Hoa / thường" group>
-      <Segmented value={s.caseMode ?? ''} onChange={(v) => set({ caseMode: v || undefined })} full label="Hoa / thường" options={CASE_MODES} />
+    {s.replaceFrom && <SwitchField label={t('txn.f.isRe')} on={!!s.replaceRegex} onChange={(on) => set({ replaceRegex: on || undefined })} />}
+    <SwitchField label={t('txn.f.strip')} on={!!s.stripAccents} onChange={(on) => set({ stripAccents: on || undefined })} help="Đà Nẵng → Da Nang" />
+    <Field label={t('txn.f.case')} group>
+      <Segmented value={s.caseMode ?? ''} onChange={(v) => set({ caseMode: v || undefined })} full label={t('txn.f.case')} options={caseModes()} />
     </Field>
-    <SwitchField label="Gọn khoảng trắng" on={!!s.trim} onChange={(on) => set({ trim: on || undefined })}
-      help="Cắt khoảng trắng hai đầu từng dòng, gộp khoảng trắng liền nhau, bỏ dòng trống" />
-    <span className={hint}>Làm lần lượt: thay → bỏ dấu → hoa / thường → gọn khoảng trắng.</span>
+    <SwitchField label={t('txn.f.trim')} on={!!s.trim} onChange={(on) => set({ trim: on || undefined })}
+      help={t('txn.f.trimHelp')} />
+    <span className={hint}>{t('txn.f.order')}</span>
   </>;
 }
 
 function NumberForm({ ctx: { step: s, set } }: { ctx: CondCtx }) {
+  const t = useT();
   return <>
-    <Field label="Việc" group>
-      <Segmented value={s.numOp ?? ''} onChange={(v) => set({ numOp: v || undefined })} full label="Việc" options={NUM_OPS} />
+    <Field label={t('txn.f.job')} group>
+      <Segmented value={s.numOp ?? ''} onChange={(v) => set({ numOp: v || undefined })} full label={t('txn.f.job')} options={numOps()} />
     </Field>
     {s.numOp === 'format' && (
       <>
-        <Field label="Kiểu viết" group>
-          <Segmented value={s.numStyle ?? ''} onChange={(v) => set({ numStyle: v || undefined })} full label="Kiểu viết" options={NUM_STYLES} />
+        <Field label={t('txn.f.style')} group>
+          <Segmented value={s.numStyle ?? ''} onChange={(v) => set({ numStyle: v || undefined })} full label={t('txn.f.style')} options={NUM_STYLES} />
         </Field>
-        <Field label="Số lẻ" help="Số chữ số sau dấu thập phân (làm tròn)">
+        <Field label={t('txn.f.dec')} help={t('txn.f.decHelp')}>
           <NumInput value={s.decimals ?? 0} onChange={(d) => set({ decimals: Math.min(d, 10) || undefined })} />
         </Field>
       </>
     )}
     {s.numOp === 'date' && (
-      <Field label="Mẫu ngày" group help="dd ngày · MM tháng · yyyy năm · HH giờ · mm phút · ss giây (d, M, H: không thêm số 0)">
+      <Field label={t('txn.f.layout')} group help={t('txn.f.layoutHelp')}>
         <input value={s.dateLayout ?? ''} onChange={(e) => set({ dateLayout: e.target.value || undefined })} placeholder="dd/MM/yyyy"
           className={`${textBox} font-mono text-[13px]`} />
       </Field>
     )}
     <span className={hint}>
-      {s.numOp === 'date' ? 'Đọc dd/mm/yyyy, yyyy-mm-dd, kèm giờ HH:mm – ở đâu trong chữ cũng được. '
-        : <>Đọc số kiểu <span className="font-mono text-ink">1.234.000 đ</span>, <span className="font-mono text-ink">$1,234.56</span> – dấu chấm theo sau đúng 3 chữ số là ngăn nghìn. </>}
-      Không đọc được → cổng <b className="text-ink">Không đọc được</b>.
+      {s.numOp === 'date' ? t('txn.f.readDate')
+        : <>{t('txn.f.readNumA')} <span className="font-mono text-ink">1.234.000 đ</span>, <span className="font-mono text-ink">$1,234.56</span> {t('txn.f.readNumB')}</>}
+      {t('txn.f.unreadA')} <b className="text-ink">{t('txn.port.noRead')}</b>.
     </span>
   </>;
 }
