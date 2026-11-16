@@ -9,8 +9,10 @@ import '@fontsource/jetbrains-mono/500.css'
 import './style.css'
 import App from './App'
 import {initTheme} from './theme'
+import {initLang} from './i18n'
 
 initTheme()
+initLang()
 
 const container = document.getElementById('root')
 

@@ -22,6 +22,7 @@ import OverlaySettings from './settings/OverlaySettings';
 import PermSettings from './settings/PermSettings';
 import SecretsSettings from './settings/SecretsSettings';
 import SyncSettings from './settings/SyncSettings';
+import UiSettings from './settings/UiSettings';
 import StorageSettings, { StorageKey } from './settings/StorageSettings';
 import WebBrowserSettings from './settings/WebBrowserSettings';
 import SettingsNav, { pageOf } from './settings/SettingsNav';
@@ -90,6 +91,7 @@ export default function AppSettings() {
 
   const section = (t: typeof tab) => {
     switch (t) {
+      case 'ui': return <UiSettings />;
       case 'storage': return <StorageSettings storage={settings!.storage ?? {}} defaults={defaults} onPick={pick} onOpen={openDir} onReset={(key) => saveStorage(key, '')} />;
       case 'overlay': return <OverlaySettings overlay={settings!.overlay ?? {}} onChange={saveOverlay} />;
       case 'browser': return <WebBrowserSettings web={settings!.web ?? {}} status={wispState} onChange={saveWeb} onRefresh={refreshWisp} />;

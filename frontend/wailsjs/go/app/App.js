@@ -406,6 +406,10 @@ export function SetEditorState(arg1, arg2) {
   return window['go']['app']['App']['SetEditorState'](arg1, arg2);
 }
 
+export function SetLanguage(arg1) {
+  return window['go']['app']['App']['SetLanguage'](arg1);
+}
+
 export function SetMCPServerEnabled(arg1, arg2) {
   return window['go']['app']['App']['SetMCPServerEnabled'](arg1, arg2);
 }

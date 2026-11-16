@@ -219,6 +219,8 @@ export function SetAPISettings(arg1:store.APISettings):Promise<store.APISettings
 
 export function SetEditorState(arg1:string,arg2:boolean):Promise<void>;
 
+export function SetLanguage(arg1:string):Promise<void>;
+
 export function SetMCPServerEnabled(arg1:string,arg2:boolean):Promise<app.MCPServerView>;
 
 export function SetMCPSettings(arg1:store.MCPSettings):Promise<void>;

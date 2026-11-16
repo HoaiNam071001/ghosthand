@@ -246,6 +246,18 @@
     ]
   },
   {
+    "id": "settings-ui",
+    "group": "Cài đặt",
+    "title": "Giao diện",
+    "summary": "Chọn ngôn ngữ Tiếng Việt / English.",
+    "blocks": [
+      { "kind": "list", "items": [
+        "Chọn **Tiếng Việt**, **English** hoặc **Theo hệ thống** – đổi ngay, không cần mở lại app. Cũng đổi nhanh được bằng nút **VI / EN** trên thanh tiêu đề (cạnh nút đổi giao diện sáng / tối).",
+        "Phần chưa dịch tạm hiện tiếng Việt. Chữ cho AI qua MCP và tên node bạn tự đặt trong kịch bản không đổi theo ngôn ngữ."
+      ] }
+    ]
+  },
+  {
     "id": "settings-storage",
     "group": "Cài đặt",
     "title": "Lưu trữ",

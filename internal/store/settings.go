@@ -21,13 +21,14 @@ const (
 )
 
 type Settings struct {
-	Theme   string          `json:"theme"`            // light | dark | system
-	Recent  []string        `json:"recent,omitempty"` // file kịch bản mở / lưu gần đây, mới nhất trước (storage.go)
-	API     APISettings     `json:"api"`
-	MCP     MCPSettings     `json:"mcp"`
-	Storage StorageSettings `json:"storage"`
-	Overlay OverlaySettings `json:"overlay"`
-	AI      AISettings      `json:"ai"`
+	Theme    string          `json:"theme"`            // light | dark | system
+	Language string          `json:"language"`         // vi | en | system (bước 64; system = theo ngôn ngữ hệ điều hành, frontend tự chọn)
+	Recent   []string        `json:"recent,omitempty"` // file kịch bản mở / lưu gần đây, mới nhất trước (storage.go)
+	API      APISettings     `json:"api"`
+	MCP      MCPSettings     `json:"mcp"`
+	Storage  StorageSettings `json:"storage"`
+	Overlay  OverlaySettings `json:"overlay"`
+	AI       AISettings      `json:"ai"`
 	// MCPServers – MCP server ngoài app nối tới (bước 55, mcpservers.go)
 	MCPServers []MCPServer `json:"mcpServers,omitempty"`
 	// Sync – đồng bộ cloud (bước 54): phạm vi, lịch, tên máy. Riêng từng máy (không mang đi).
@@ -133,7 +134,7 @@ func SetAPI(a APISettings) (APISettings, error) {
 }
 
 func defaultSettings() Settings {
-	return Settings{Theme: ThemeSystem, API: APISettings{Port: DefaultAPIPort}, MCP: MCPSettings{Enabled: true}}
+	return Settings{Theme: ThemeSystem, Language: "system", API: APISettings{Port: DefaultAPIPort}, MCP: MCPSettings{Enabled: true}}
 }
 
 const settingsFile = "settings.json"
@@ -164,6 +165,9 @@ func loadSettings(dir string) Settings {
 	if json.Unmarshal(b, &s) != nil || !validTheme(s.Theme) {
 		s.Theme = ThemeSystem
 	}
+	if !validLanguage(s.Language) {
+		s.Language = "system"
+	}
 	return s
 }
 
@@ -183,6 +187,8 @@ func WriteFileAtomic(path string, b []byte) error {
 	}
 	return os.Rename(tmp, path)
 }
+
+func validLanguage(l string) bool { return l == "vi" || l == "en" || l == "system" }
 
 func validTheme(t string) bool { return t == ThemeLight || t == ThemeDark || t == ThemeSystem }
 
@@ -208,6 +214,25 @@ func SetTheme(theme string) error {
 	}
 	s := loadSettings(dir)
 	s.Theme = theme
+	if err := saveSettings(dir, s); err != nil {
+		return fmt.Errorf("không lưu được cấu hình: %w", err)
+	}
+	return nil
+}
+
+// SetLanguage lưu ngôn ngữ giao diện: vi | en | system.
+func SetLanguage(lang string) error {
+	if !validLanguage(lang) {
+		return fmt.Errorf("ngôn ngữ không hợp lệ: %q", lang)
+	}
+	settingsMu.Lock()
+	defer settingsMu.Unlock()
+	dir, err := ConfigDir()
+	if err != nil {
+		return fmt.Errorf("không mở được thư mục cấu hình: %w", err)
+	}
+	s := loadSettings(dir)
+	s.Language = lang
 	if err := saveSettings(dir, s); err != nil {
 		return fmt.Errorf("không lưu được cấu hình: %w", err)
 	}

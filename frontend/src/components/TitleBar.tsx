@@ -7,6 +7,7 @@ import { Logo } from './icons';
 import { RibbonIcon, RibbonIconName } from './ribbon/ribbonIcons';
 import Guide from './guide/Guide';
 import ThemeSwitch from './shell/ThemeSwitch';
+import LangSwitch from './shell/LangSwitch';
 import { openGuide } from '../guideNav';
 
 const winBase = 'grid h-9 w-11 place-items-center text-ink';
@@ -59,6 +60,7 @@ export default function TitleBar({ name, nameTitle, unsaved, unsavedTitle, canUn
         <span className="mr-2 text-xs whitespace-nowrap text-muted max-[1100px]:hidden" title="Bấm F8 hoặc rê chuột vào một góc màn hình để dừng kịch bản đang chạy">Dừng khẩn cấp: F8 / góc màn hình</span>
         <button onClick={() => openGuide()} aria-label="Hướng dẫn" title="Hướng dẫn (F1)" className="grid h-9 w-9 place-items-center text-muted hover:bg-hover hover:text-ink"><RibbonIcon name="help" /></button>
         <Guide />
+        <LangSwitch />
         <ThemeSwitch />
         <button onClick={onSettings} disabled={!onSettings} aria-label="Cài đặt" title={`Cài đặt (${modKey},)`}
           className="grid h-9 w-9 place-items-center text-muted hover:bg-hover hover:text-ink"><RibbonIcon name="gear" /></button>

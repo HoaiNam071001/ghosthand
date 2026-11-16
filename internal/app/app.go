@@ -133,6 +133,9 @@ func (a *App) SetOverlaySettings(o store.OverlaySettings) error { return store.S
 // SetTheme lưu theme: light | dark | system.
 func (a *App) SetTheme(theme string) error { return store.SetTheme(theme) }
 
+// SetLanguage lưu ngôn ngữ giao diện: vi | en | system (bước 64).
+func (a *App) SetLanguage(lang string) error { return store.SetLanguage(lang) }
+
 // GetInputMemory trả giá trị lần trước / preset của kịch bản id (đường dẫn file, hoặc tên khi chưa lưu).
 func (a *App) GetInputMemory(id string) store.InputMemory { return store.InputMemoryFor(id) }
 

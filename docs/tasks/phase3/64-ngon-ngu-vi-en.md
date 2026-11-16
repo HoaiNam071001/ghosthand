@@ -6,8 +6,8 @@
     - **Vị trí nút:** Cài đặt › Giao diện (cạnh chọn theme) + nút nhỏ `VI / EN` ở ribbon tab *Xem* cạnh nút đổi theme. Lưu trong settings như theme (`internal/store/settings.go`), chưa đặt = theo ngôn ngữ hệ điều hành (`vi*` → vi, còn lại → en).
     - **MCP giữ tiếng Việt** – primer, `get_step_types`, lỗi validate cho AI không đổi theo ngôn ngữ (tránh giữ hai bản chữ gọn + budget test đôi).
     - **Tự viết i18n nhẹ**, không thêm thư viện: `src/i18n/` – `vi.ts` (nguồn chuẩn), `en.ts` kiểu `Record<keyof typeof vi, string>` (tsc báo thiếu key), `t(key, vars)` thay `{x}`, hook `useLang()` re-render khi đổi.
-  - [ ] L1. Khung: `src/i18n/` (logic thuần `t`, chọn ngôn ngữ từ settings / `navigator.language`, test), `Settings.Language` bên Go + `SetLanguage` (bind, validate `vi|en|system`), `wails generate module`. Màn mẫu nhận `?lang=en`.
-  - [ ] L2. Nút chọn: Cài đặt › Giao diện (`Segmented` Tự động / Tiếng Việt / English) + nút ribbon tab Xem; `<html lang>` đổi theo.
+  - [x] L1. Khung: `src/i18n/` (logic thuần `t`, chọn ngôn ngữ từ settings / `navigator.language`, test), `Settings.Language` bên Go + `SetLanguage` (bind, validate `vi|en|system`), `wails generate module`. Màn mẫu nhận `?lang=en`.
+  - [x] L2. Nút chọn: Cài đặt › Giao diện (`settings/UiSettings`, `Segmented`) + nút `VI / EN` (`shell/LangSwitch`) trên thanh tiêu đề cạnh nút theme (chưa có nút trong ribbon tab Xem – theme cũng nằm ở thanh tiêu đề); `<html lang>` đổi theo.
   - [ ] L3. Đợt 1 dịch khung chính: thanh tiêu đề, ribbon (`ribbon/model.ts`), trang Tệp, Cài đặt, status bar, inspector khung, tên node / nhóm palette / nhãn cổng (`flow/view.ts` – trả key hoặc nhận `t`, giữ logic thuần không đọc store).
   - [ ] L4. Đợt 2: form từng loại node (`stepform/`), thông báo / toast, hộp thoại, overlay, thanh mini, Lịch sử chạy.
   - [ ] L5. Đợt 3: Hướng dẫn (`internal/guide/` thêm bản `*.en.json`, modal chọn theo ngôn ngữ, MCP vẫn đọc bản vi) + lỗi Go hiện cho người dùng (`ScriptError` / `StepError` – frontend dịch theo **mã lỗi**, Go giữ chữ vi cho MCP).

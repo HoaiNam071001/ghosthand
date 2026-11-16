@@ -2801,6 +2801,7 @@ export namespace store {
 	}
 	export class Settings {
 	    theme: string;
+	    language: string;
 	    recent?: string[];
 	    api: APISettings;
 	    mcp: MCPSettings;
@@ -2818,6 +2819,7 @@ export namespace store {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.theme = source["theme"];
+	        this.language = source["language"];
 	        this.recent = source["recent"];
 	        this.api = this.convertValues(source["api"], APISettings);
 	        this.mcp = this.convertValues(source["mcp"], MCPSettings);

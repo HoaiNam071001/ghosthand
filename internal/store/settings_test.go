@@ -33,3 +33,22 @@ func TestSettingsBadFile(t *testing.T) {
 		}
 	}
 }
+
+func TestLanguageSettings(t *testing.T) {
+	dir := t.TempDir()
+	if got := loadSettings(dir); got.Language != "system" {
+		t.Fatalf("chưa có file: language = %q, muốn system", got.Language)
+	}
+	if err := saveSettings(dir, Settings{Theme: ThemeDark, Language: "en"}); err != nil {
+		t.Fatal(err)
+	}
+	if got := loadSettings(dir); got.Language != "en" {
+		t.Fatalf("đọc lại: language = %q, muốn en", got.Language)
+	}
+	if err := saveSettings(dir, Settings{Theme: ThemeDark, Language: "fr"}); err != nil {
+		t.Fatal(err)
+	}
+	if got := loadSettings(dir); got.Language != "system" {
+		t.Fatalf("giá trị lạ phải về system, được %q", got.Language)
+	}
+}
