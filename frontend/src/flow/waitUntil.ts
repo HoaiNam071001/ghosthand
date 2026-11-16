@@ -1,7 +1,7 @@
 // Node Chờ đến giờ (bước 35 N6) – đọc giờ hẹn (cùng công thức ParseAt, internal/script/at.go – test chung
 // testdata/wait_until.json), xem trước "còn bao lâu", đếm ngược trên thanh mini. Chạy ở internal/engine/waituntil.go.
 import type { Step } from '../types';
-import { tr } from '../i18n/lang';
+import { getLang, tr } from '../i18n/lang';
 
 // '' = đi tiếp ngay (khớp model.PassedModes)
 export type IfPassed = '' | 'tomorrow' | 'fail';
@@ -30,9 +30,9 @@ export function parseAt(at: string, now: Date): { t: Date; dated: boolean } | nu
 // "1 giờ 5 phút" / "3 phút 20 giây" / "12,5 giây"
 export function fmtDuration(ms: number): string {
   const s = Math.max(ms, 0) / 1000;
-  if (s < 60) return `${s.toLocaleString('vi-VN', { maximumFractionDigits: 1 })} giây`;
-  if (s < 3600) return `${Math.floor(s / 60)} phút ${Math.floor(s % 60)} giây`;
-  return `${Math.floor(s / 3600)} giờ ${Math.floor((s % 3600) / 60)} phút`;
+  if (s < 60) return `${s.toLocaleString(getLang() === 'vi' ? 'vi-VN' : 'en-US', { maximumFractionDigits: 1 })} ${tr('wu2.sec')}`;
+  if (s < 3600) return tr('wu2.minSec', { m: Math.floor(s / 60), s: Math.floor(s % 60) });
+  return tr('wu2.hourMin', { h: Math.floor(s / 3600), m: Math.floor((s % 3600) / 60) });
 }
 
 // Đếm ngược trên thanh mini: "01:59:30" / "04:05.2"
@@ -48,11 +48,11 @@ export function untilText(s: Pick<Step, 'at' | 'ifPassed'>, now: Date): { text: 
   const at = s.at ?? '';
   if (at.includes('{{')) return null;
   const p = parseAt(at, now);
-  if (!p) return { text: 'Giờ sai dạng – vd 20:00, 20:00:00.500, 2026-11-11 20:00, 11/11/2026 20:00', bad: true };
+  if (!p) return { text: tr('wu2.badFmt'), bad: true };
   const left = p.t.getTime() - now.getTime();
-  if (left > 0) return { text: `Còn ${fmtDuration(left)}`, bad: false };
-  if (s.ifPassed === 'tomorrow' && !p.dated) return { text: `Đã qua – chờ đến ngày mai (còn ${fmtDuration(left + 86400000)})`, bad: false };
-  return { text: s.ifPassed === 'fail' ? 'Đã qua giờ này – chạy bây giờ sẽ báo thất bại' : 'Đã qua giờ này – chạy bây giờ sẽ đi tiếp ngay', bad: s.ifPassed === 'fail' };
+  if (left > 0) return { text: tr('wu2.left', { d: fmtDuration(left) }), bad: false };
+  if (s.ifPassed === 'tomorrow' && !p.dated) return { text: tr('wu2.tomorrow', { d: fmtDuration(left + 86400000) }), bad: false };
+  return { text: s.ifPassed === 'fail' ? tr('wu2.passedFail') : tr('wu2.passedGo'), bad: s.ifPassed === 'fail' };
 }
 
-export const fmtWaitUntil = (s: Pick<Step, 'at' | 'useNtp'>) => `đến ${s.at?.trim() || '(chưa nhập giờ)'}${s.useNtp ? ' · giờ chuẩn' : ''}`;
+export const fmtWaitUntil = (s: Pick<Step, 'at' | 'useNtp'>) => tr('wu2.d', { at: s.at?.trim() || tr('wu2.noAt') }) + (s.useNtp ? ` · ${tr('wu2.ntp')}` : '');

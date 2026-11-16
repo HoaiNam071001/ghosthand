@@ -1,4 +1,5 @@
 // "Chạy thử" tool MCP một lần (qua cổng quyền như chạy thật) + xem output mẫu (bước 55 M4).
+import { useT } from '../../i18n';
 import { useState } from 'react';
 import { TestMCPTool } from '../../../wailsjs/go/app/App';
 import { errorText } from '../../engineStore';
@@ -7,6 +8,7 @@ import { errText, hint } from './shared';
 type Props = { server: string; tool: string; args: string };
 
 export default function MCPToolTest({ server, tool, args }: Props) {
+  const t = useT();
   const [busy, setBusy] = useState(false);
   const [out, setOut] = useState<Record<string, unknown> | null>(null);
   const [err, setErr] = useState('');
@@ -18,15 +20,15 @@ export default function MCPToolTest({ server, tool, args }: Props) {
   return (
     <div className="col-span-2 flex flex-col gap-1.5">
       <button onClick={run} disabled={busy || !server || !tool} className="btn-primary self-start rounded-control px-3 py-1.5 text-xs disabled:opacity-40">
-        {busy ? 'Đang gọi…' : 'Chạy thử'}
+        {busy ? t('mtt.busy') : t('mtt.run')}
       </button>
-      <span className={hint}>Gọi tool thật một lần. Biến {'{{…}}'} trong đối số không thay được ở đây.</span>
+      <span className={hint}>{t('mtt.note')}</span>
       {err && <span className={errText}>{err}</span>}
       {out && (
         <div className="flex flex-col gap-1 rounded-control border border-line bg-field p-2 text-xs">
-          <span className={out.isError ? 'text-danger-text' : 'text-muted'}>{out.isError ? 'Tool báo lỗi:' : 'Kết quả (text):'}</span>
-          <pre className="max-h-48 overflow-auto whitespace-pre-wrap break-words font-mono">{text || '(không có chữ)'}</pre>
-          {out.json !== undefined && <span className="text-muted">Có output.json – đọc sâu {'{{n2.output.json.<trường>}}'}</span>}
+          <span className={out.isError ? 'text-danger-text' : 'text-muted'}>{out.isError ? t('mtt.err') : t('mtt.result')}</span>
+          <pre className="max-h-48 overflow-auto whitespace-pre-wrap break-words font-mono">{text || t('mtt.noText')}</pre>
+          {out.json !== undefined && <span className="text-muted">{t('mtt.json')} {'{{n2.output.json.<field>}}'}</span>}
         </div>
       )}
     </div>

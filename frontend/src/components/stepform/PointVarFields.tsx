@@ -1,4 +1,5 @@
 // Điểm lấy toạ độ từ biến (F5b) – chỉ hiển thị: ô X / Y nhận số / biến cộng trừ px, nút điền nhanh chỗ thấy của node trước.
+import { useT } from '../../i18n';
 import Select from '../Select';
 import VarTextInput from '../inputs/VarTextInput';
 import type { ScriptInput } from '../inputs/model';
@@ -17,6 +18,7 @@ type Props = {
 };
 
 export default function PointVarFields({ point: p, onChange, relative = false, inputs, nodeVars, sources, onCreateInput }: Props) {
+  const t = useT();
   return (
     <div className="flex flex-col gap-1.5">
       {(['x', 'y'] as const).map((k) => (
@@ -30,13 +32,13 @@ export default function PointVarFields({ point: p, onChange, relative = false, i
       ))}
       {!relative && (sources.length ? (
         <Select value="" onChange={(base) => onChange({ xVar: `{{${base}.x}}`, yVar: `{{${base}.y}}` })}
-          className={selectBox} aria-label="Điền chỗ thấy của node" placeholder="Điền chỗ thấy / chỗ chuột dừng của node…"
+          className={selectBox} aria-label={t('pv.fillLabel')} placeholder={t('pv.fill')}
           options={sources.map((s) => ({ value: s.base, label: s.label }))} />
       ) : (
-        <span className={hint}>Chưa có node nào phía trước trả toạ độ (Chờ ảnh / chữ, Click, phần tử web…).</span>
+        <span className={hint}>{t('pv.none')}</span>
       ))}
       <span className={hint}>
-        {relative ? 'Độ lệch so với A (px)' : 'Toạ độ màn hình (không tính theo vùng)'} – số hoặc biến, cộng / trừ px được, vd {'{{n2.output.x}} + 20'}.
+        {relative ? t('pv.offA') : t('pv.screen')} – {t('pv.numOrVar')} {'{{n2.output.x}} + 20'}.
       </span>
     </div>
   );
