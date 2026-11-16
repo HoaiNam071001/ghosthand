@@ -76,11 +76,6 @@ export const Package = ({ className = 'h-[15px] w-[15px]' }: P) => (
 export const Chevron = ({ className = 'h-[11px] w-[11px]', open = false }: P & { open?: boolean }) => (
   <svg viewBox="0 0 24 24" className={`${className} transition-transform ${open ? 'rotate-90' : ''}`} {...base} strokeWidth={2.4}><path d="M9 6l6 6-6 6" /></svg>
 );
-export const SidebarToggle = ({ className = 'h-4 w-4', open = true }: P & { open?: boolean }) => (
-  <svg viewBox="0 0 24 24" className={className} {...base} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16" /><path d={open ? 'M15.5 10l-2 2 2 2' : 'M13.5 10l2 2-2 2'} />
-  </svg>
-);
 // Chọn nhiều (khung chọn nét đứt + con trỏ)
 export const SelectIcon = ({ className = 'h-4 w-4' }: P) => (
   <svg viewBox="0 0 24 24" className={className} {...base} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">

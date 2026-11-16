@@ -37,7 +37,7 @@
   --c-raise: 0 1px 2px rgb(22 24 29 / 0.1);
   /* v3 – gọn (bước 38) */
   --c-canvas: #EFF1F4;               /* nền canvas flow */
-  --c-dot: rgb(22 24 29 / 0.09);     /* chấm lưới canvas */
+  --c-dot: rgb(22 24 29 / 0.18);     /* chấm lưới canvas */
   --c-panel: #FCFCFD;                /* khối thu gọn trong inspector */
   --c-faint: #9AA0AA;                /* icon ⓘ, chữ rất phụ */
   /* Màu nhóm node: chữ / icon theo theme; gốc pha (-base) cho nền đầu thẻ (soft) và ô icon (tile) */
@@ -80,7 +80,7 @@
   --c-raise: none;
   /* v3 – gọn: giữ bảng Slate, chỉ thêm token mới */
   --c-canvas: #141820;
-  --c-dot: rgb(255 255 255 / 0.07);
+  --c-dot: rgb(255 255 255 / 0.17);
   --c-panel: #1F2530;
   --c-faint: #6B7689;
   --c-cat-mouse: #8EA8FF;
@@ -122,7 +122,7 @@
     --c-raise: none;
     /* v3 – gọn: giữ bảng Slate, chỉ thêm token mới */
     --c-canvas: #141820;
-    --c-dot: rgb(255 255 255 / 0.07);
+    --c-dot: rgb(255 255 255 / 0.17);
     --c-panel: #1F2530;
     --c-faint: #6B7689;
     --c-cat-mouse: #8EA8FF;
@@ -277,3 +277,9 @@ body {
 .sim-hold {
   animation: sim-hold linear forwards;
 }
+
+/* Thanh thu phóng ở status bar (bước 63): rãnh mảnh + nắm kéo */
+.zoom-range { appearance: none; background: transparent; }
+.zoom-range::-webkit-slider-runnable-track { height: 3px; border-radius: 2px; background: var(--c-line-strong); }
+.zoom-range::-webkit-slider-thumb { appearance: none; width: 11px; height: 11px; margin-top: -4px; border-radius: 999px; background: var(--c-ink); border: 0; }
+.zoom-range:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }

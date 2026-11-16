@@ -1,4 +1,4 @@
-// Kéo mép để đổi bề rộng cột (thư viện kịch bản, inspector) – nhớ trên máy (localStorage); bấm đúp mép = về mặc định.
+// Kéo mép để đổi bề rộng cột (inspector) – nhớ trên máy (localStorage); bấm đúp mép = về mặc định.
 import { PointerEvent, useEffect, useState } from 'react';
 
 export function usePanelWidth(key: string, def: number, min: number, max: number) {
@@ -19,7 +19,7 @@ export function usePanelWidth(key: string, def: number, min: number, max: number
   return { width: w, setWidth: (v: number) => setW(clamp(v)), reset: () => setW(def) };
 }
 
-// edge: mép nằm bên nào của cột – 'right' (thư viện, kéo sang phải = rộng ra) / 'left' (inspector, kéo sang trái = rộng ra).
+// edge: mép nằm bên nào của cột – 'right' (kéo sang phải = rộng ra) / 'left' (inspector, kéo sang trái = rộng ra).
 // Đặt trong khung relative bọc ngoài cột (cột cuộn riêng thì tay kéo không trôi theo nội dung).
 export function ResizeHandle({ edge, width, onWidth, onReset, label }: {
   edge: 'left' | 'right'; width: number; onWidth: (w: number) => void; onReset: () => void; label: string;

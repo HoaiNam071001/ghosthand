@@ -1,5 +1,5 @@
 // Dòng đầu canvas flow (design v3): "Flow · N node" bên trái, nút (vùng, + Thêm node…) bên phải – nằm đè trên canvas,
-// nền trong suốt; chỉ nút nhận chuột để kéo / chọn trên canvas không bị chặn. Dùng chung app (FlowEditor) và #demo-flow.
+// nền trong suốt; chỉ nút nhận chuột để kéo / chọn trên canvas không bị chặn. Chỉ còn màn mẫu #demo-data dùng (app thật đã chuyển nút lên ribbon – bước 63).
 // Canvas hẹp (panel node mở) thì nút chỉ còn icon – chữ ẩn theo container query, không xuống dòng / tràn dưới panel.
 import { ReactNode } from 'react';
 

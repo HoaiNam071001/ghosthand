@@ -15,6 +15,22 @@ import RunTreeView from '../runs/RunTreeView';
 import Segmented from '../Segmented';
 
 export default function RunsDialog({ onClose }: { onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+  return (
+    <div className="fixed inset-0 z-40 flex items-start justify-center bg-black/25 px-4 pt-[6vh]" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+      <div role="dialog" aria-label="Lịch sử chạy" className="flex h-[86vh] w-[1240px] max-w-full flex-col overflow-hidden rounded-panel border border-line bg-surface text-ink shadow-[0_16px_48px_rgb(0_0_0/.22)]">
+        <RunsBody onClose={onClose} closable />
+      </div>
+    </div>
+  );
+}
+
+// onClose chạy khi "Xem trên flow" (đóng hộp thoại / trang Tệp rồi mở nhật ký dưới canvas); closable: có nút ✕ (hộp thoại; trang Tệp thì không).
+export function RunsBody({ onClose, closable = false }: { onClose: () => void; closable?: boolean }) {
   const { history, stats } = useRunLog();
   const { script } = useEditor();
   const [sel, setSel] = useState(history[0]?.id ?? '');
@@ -28,11 +44,6 @@ export default function RunsDialog({ onClose }: { onClose: () => void }) {
     if (sel) fetchRun(sel).then((r) => live && setRun(r));
     return () => { live = false; };
   }, [sel]);
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
   const views = useMemo(() => nodeViews(script), [script]);
   const statsLine = useMemo(() => {
     const byId = new Map(views.map((v) => [v.id, `${v.ref} ${v.title}`]));
@@ -52,10 +63,9 @@ export default function RunsDialog({ onClose }: { onClose: () => void }) {
     openRun(sel);
   };
   return (
-    <div className="fixed inset-0 z-40 flex items-start justify-center bg-black/25 px-4 pt-[6vh]" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div role="dialog" aria-label="Lịch sử chạy" className="flex h-[86vh] w-[1240px] max-w-full flex-col overflow-hidden rounded-panel border border-line bg-surface text-ink shadow-[0_16px_48px_rgb(0_0_0/.22)]">
-        <div className="flex items-center gap-3 border-b border-line px-[18px] py-3">
-          <div className="flex-1">
+    <>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-line px-[18px] py-3 [&>button]:shrink-0 [&>button]:whitespace-nowrap">
+          <div className="min-w-[260px] flex-1">
             <div className="text-base font-semibold">Lịch sử chạy</div>
             <div className="text-[13px] text-muted">{script.name} · {history.length} lần đã lưu – chọn một lần để xem nhật ký</div>
             {statsLine && <div className="text-xs text-muted" title="Tính từ các lần chạy đã lưu – lần bị dừng không tính vào tỷ lệ thành công">{statsLine}</div>}
@@ -67,7 +77,7 @@ export default function RunsDialog({ onClose }: { onClose: () => void }) {
           <RunsDelete count={history.length} canDelete={!!sel} onDelete={() => remove(sel)} onClear={() => remove('')} />
           <button disabled={!run} onClick={view} className="btn-primary h-8 rounded-control px-3 text-[13px] font-semibold disabled:opacity-50"
             title="Đóng hộp thoại, mở nhật ký dưới canvas và tô đường đã đi">Xem trên flow</button>
-          <button onClick={onClose} aria-label="Đóng" className="h-8 w-8 rounded-control text-muted hover:bg-hover hover:text-ink">✕</button>
+          {closable && <button onClick={onClose} aria-label="Đóng" className="h-8 w-8 rounded-control text-muted hover:bg-hover hover:text-ink">✕</button>}
         </div>
         <div className="flex min-h-0 flex-1">
           <ol className="w-[260px] flex-none overflow-y-auto border-r border-line p-1.5">
@@ -97,7 +107,15 @@ export default function RunsDialog({ onClose }: { onClose: () => void }) {
             ) : <p className="grid h-full place-items-center text-muted">{sel ? 'Đang đọc…' : 'Chọn một lần chạy'}</p>}
           </div>
         </div>
-      </div>
+    </>
+  );
+}
+
+// Trang Tệp → Lịch sử chạy (bước 63)
+export function RunsPage({ onDone }: { onDone: () => void }) {
+  return (
+    <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-panel border border-line bg-surface">
+      <RunsBody onClose={onDone} />
     </div>
   );
 }

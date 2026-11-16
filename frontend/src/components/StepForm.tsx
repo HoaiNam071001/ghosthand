@@ -4,6 +4,8 @@
 import ChangeTypePalette from './palette/ChangeTypePalette';
 import { ReactNode, useState } from 'react';
 import { Eye } from './icons';
+import { RibbonIcon } from './ribbon/ribbonIcons';
+import { setInspectorPinned, useShell } from '../shellStore';
 import { Switch } from './Switch';
 import { openOverlay } from '../windowMode';
 import { toggleStep, updateStep, useScript } from '../store';
@@ -75,6 +77,7 @@ const REF_RE = /^[A-Za-z][A-Za-z0-9_]{0,31}$/; // khớp validRef (flow.go)
 
 export default function StepForm({ step: s, mode = 'panel', onClose }: { step: Step; mode?: DetailMode; onClose?: () => void }) {
   const script = useScript();
+  const { inspectorPinned: pinned } = useShell();
   const [tab, setTab] = useState<'step' | 'inputs' | 'data'>('step');
   const setPoint = (i: number, p: Partial<StepPoint>) => updateStep(s.id, { points: s.points.map((q, j) => (j === i ? { ...q, ...p } : q)) });
   const atPoint = isMouse(s) || s.type === 'waitPixel' || (s.type === 'scroll' && s.points.length > 0); // có vị trí trên màn hình
@@ -94,6 +97,12 @@ export default function StepForm({ step: s, mode = 'panel', onClose }: { step: S
                 title="Xem / sửa vị trí riêng node này trên màn hình – các node khác mờ đi" className={iconBtn}><Eye /></button>
             )}
             <Switch on={s.enabled} onChange={() => toggleStep(s.id)} label="Bật node" />
+            {mode === 'panel' && (
+              <button onClick={() => setInspectorPinned(!pinned)} aria-pressed={pinned} aria-label="Ghim vào cạnh phải"
+                title={pinned ? 'Bỏ ghim – bảng nổi trên canvas' : 'Ghim vào cạnh phải – canvas co lại nhường chỗ'} className={`${iconBtn} ${pinned ? 'bg-accent-soft text-accent-text' : ''}`}>
+                <RibbonIcon name="pin" />
+              </button>
+            )}
             {onClose && <button onClick={onClose} aria-label="Đóng" title="Đóng (Esc)" className={iconBtn}>✕</button>}
           </>} />
 

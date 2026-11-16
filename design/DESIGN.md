@@ -39,12 +39,15 @@ v3 giữ nguyên nguyên tắc v2 (một màu nhấn cho trạng thái, gradient
 
 ### Bố cục (màn soạn – `Main`)
 
-- **Thanh tiêu đề** cao 36 (v2: 40): logo accent, "Ghosthand" 12 `muted`, bên phải nút sáng / tối (một nút bật tắt), nút cửa sổ 44×36.
-- **Toolbar** chung nền `chrome` với thanh tiêu đề, padding 4×16×10, viền dưới `line`: tên kịch bản 18/600 (v2: 19), chip "Chưa lưu" (chấm `warn`, nền `soft`, cao 22), tab Soạn / Xem trước (gạch dưới 3 px). Phải: nút vòng lặp ("3 vòng" mono), **nút Chạy tách đôi** (xem dưới). Các nút debug / ghi macro rời toolbar → vào menu Chạy.
-- **Thư viện** rộng 224 (v2: 236), nền `side`: ô tìm + nút thu gọn thư viện; nhãn nhỏ "KỊCH BẢN 4"; mục cao 34 (mục mở: `bg-hover`, vạch trái accent, chấm `warn`; giờ hẹn mono bên phải); "Mở gần đây" / "Lịch sử chạy" dạng hàng thu gọn (▸ + số / chấm kết quả `ok` / `danger`); chân: "+ Mới" + 3 nút icon 34 (Mẫu thử, Mở, Lưu).
-- **Canvas flow** nền `canvas` + lưới `dot`. Góc trái trên: "Flow · 10 node"; phải: "Toàn màn hình", "+ Thêm node Ctrl+K". Góc trái dưới: nhóm + / − / vừa khung + nút "?" (tooltip phím tắt canvas, thay dòng gợi ý v2). Góc phải dưới: minimap 148×92, node đang chọn tô `accent`.
-- **Inspector** rộng 340, padding 14, các khối cách 12.
-- **Status bar** padding 5×16, chữ 12: chấm trạng thái, toạ độ chuột mono, "Bản nháp tự lưu 14:32", phải "Dừng khẩn cấp: F8 / góc màn hình".
+> Layout ribbon kiểu Word (bước 63, mockup `design/mockup-ribbon.html`) thay thanh bên + toolbar của v3. Token / màu nhóm node không đổi.
+
+- **Thanh tiêu đề** cao 36, nền `chrome`, cả hàng kéo được cửa sổ: trái logo + truy cập nhanh Lưu / Hoàn tác / Làm lại (nút 28, icon 16, vạch ngăn `line`); **giữa** tên kịch bản 600 + chip "Chưa lưu" (chấm `warn`, nền `soft`, cao 20); phải Hướng dẫn, Cài đặt (36×36, icon `muted`), nút cửa sổ 44×36.
+- **Hàng tab ribbon** cao 34, nền `chrome`: **Tệp** (nút viền `line` nền `soft`; mở trang Tệp thì nền `accent-soft`) rồi các tab Soạn / Chèn node / Chạy / Xem / Công cụ (chữ `muted`; tab đang mở `ink` 600 + gạch dưới accent 3 px, cách 28 % hai bên). Cố định bên phải: nút vòng lặp (cao 28, mono) + **nút Chạy tách đôi** cao 28. Hàng này cũng kéo được cửa sổ.
+- **Thân ribbon** cao 98, nền `surface`, viền trên / dưới `line`, cuộn ngang khi hẹp, nút ⌃ góc phải dưới thu gọn (Ctrl+F1 / bấm đúp tab): các **nhóm** ngăn bằng vạch dọc `line`, nhãn nhóm 11 `faint` ở dưới. **Nút lớn** 52–92 × 66 (icon 24, chữ 11.5 tối đa 2 dòng); **nút nhỏ** cao 21 (icon 14, chữ 12), xếp chồng 3 nút / cột; nút đang bật `accent-soft` + `accent-text`, nút tắt mờ 45 %. Tab Chèn node: icon tô màu nhóm node (`cat-*`).
+- **Trang Tệp** phủ vùng giữa thanh tiêu đề và status bar: menu dọc 216 nền `side` (mục cao 36, mục mở `accent-soft` + vạch trái accent; mục "Cài đặt" dính đáy; ← Quay lại ở đầu) + nội dung nền `bg` padding 22×28 (thẻ "Mới" lưới 150, hàng kịch bản / lịch sử cao 36; Mẫu thử, Lịch sử chạy, Cài đặt là khung `surface` đầy chiều cao).
+- **Canvas flow** nền `canvas` + lưới `dot`, chiếm hết phần dưới ribbon. Góc trái trên: nút "?" (tooltip phím tắt canvas). Góc trái dưới: minimap 148×92 (bật / tắt ở tab Xem). Không còn nút thu phóng / thêm node trên canvas.
+- **Inspector** **nổi** trên canvas (cách mép 10, bo 12, bóng `0 12px 40px`), rộng 340 (kéo mép trái 300–640), padding 14, các khối cách 12; chỉ hiện khi chọn node, Esc / ✕ ẩn; nút ghim → dính cạnh phải (không bo, viền trái `line`, canvas co lại).
+- **Status bar** padding 3×16, chữ 12: chấm trạng thái, toạ độ chuột mono, "N node", "Bản nháp tự lưu 14:32", "Dừng khẩn cấp: F8 / góc màn hình"; **phải cùng: thanh thu phóng** (− ━●━ + 65 % ⛶, nút 20, thanh 96×3).
 
 ### Thẻ node (v3)
 
@@ -237,11 +240,11 @@ Soạn kịch bản dạng node + cạnh kiểu n8n (`@xyflow/react`). Xem mẫu
 
 | Artboard | Nội dung | File trong repo |
 |---|---|---|
-| `Main` / `MainDark` | Màn soạn gọn: thanh tiêu đề + toolbar, thư viện 224, canvas flow, inspector accordion | `components/TitleBar.tsx`, `AppChrome.tsx`, `Library.tsx` + `library/LibraryParts.tsx`, `StepForm.tsx`, `stepform/*`, `components/flow/*` (`FlowHeader`) |
+| `Main` / `MainDark` | Màn soạn kiểu ribbon (63): thanh tiêu đề, ribbon theo tab, canvas flow, inspector nổi accordion | `components/TitleBar.tsx`, `ribbon/*` (`RibbonView`, `model.ts`), `backstage/*` (trang Tệp), `shell/*` (`EdgeResize`, `ZoomBar`), `AppChrome.tsx` (`StatusBar`), `StepForm.tsx`, `stepform/*`, `components/flow/*` |
 | `Inspectors` | Inspector Click, Switch theo màn hình, HTTP | `stepform/MouseFields.tsx`, `flow/nodes/ControlFields`, `stepform/HttpFields.tsx`, `flow/PortField.tsx` |
 | `Categories` | Màu 7 nhóm node, thẻ mẫu sáng / tối | token `cat-*` trong `style.css`; nhóm của node trong `flow/view.ts` |
 | `FieldKit` / `ClickDetail` | Ô nhập trong inspector: các trạng thái; node Click dùng ô mới | `stepform/shared` (`Field`, `NumField`), `NumInput`, `inputs/PinButton`, `VarTextInput`, `stepform/MouseFields`, `PointSource` |
-| `RunMenu` | Nút Chạy tách đôi + menu | `RunMenu.tsx` (`RunButton`), `AppChrome.tsx` (`Toolbar`) |
+| `RunMenu` | Nút Chạy tách đôi + menu | `RunMenu.tsx` (`RunButton`), `ribbon/RibbonHost.tsx` (cạnh phải hàng tab) |
 
 **v2 (đã dựng, mã artboard đã xoá):**
 

@@ -3,7 +3,7 @@
 import './flow.css';
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Background, BackgroundVariant, getNodesBounds, MarkerType, MiniMap, Panel, ReactFlow, ReactFlowProvider, useNodesState, useReactFlow, useStore, useStoreApi,
+  Background, BackgroundVariant, getNodesBounds, MarkerType, MiniMap, ReactFlow, ReactFlowProvider, useNodesState, useReactFlow, useStore, useStoreApi,
 } from '@xyflow/react';
 import NodeCard, { CardNode } from './NodeCard';
 import NodePopover from './NodePopover';
@@ -15,6 +15,7 @@ import { GroupActions, GroupCard, GroupCardNode, GROUP_HANDLE, GroupFrame, Group
 import { CardMode, FlowEdgeView, FlowGroupView, FlowNodeView } from './model';
 import type { Positions } from '../../flow/layout';
 import { fnOfKey, portForDrag } from '../../flow/dragConnect';
+import { onCanvasCommand, onZoomRequest, setCanvasZoom } from '../../canvasBus';
 
 export type FlowCanvasProps = {
   nodes: FlowNodeView[];
@@ -32,7 +33,6 @@ export type FlowCanvasProps = {
   // kéo từ cổng ra rồi thả ở chỗ trống → mở bảng thêm node (client = toạ độ màn hình, flow = toạ độ canvas)
   onDropPort?: (from: string, port: string, client: { x: number; y: number }, flow: { x: number; y: number }) => void;
   onNodeMenu?: (id: string, client: { x: number; y: number }) => void; // chuột phải thẻ node
-  onLayout?: () => void;
   fitKey?: number; // đổi số → vừa màn hình (sau khi xếp lại)
   focus?: { id: string; key: number }; // đổi key → cuộn canvas cho node id ra giữa (giữ zoom)
   taken?: Set<string>; // id cạnh đã đi qua trong lần chạy
@@ -46,6 +46,7 @@ export type FlowCanvasProps = {
   onLinkData?: (from: string, key: string, to: string, slot: string) => void;
   linkBlock?: (from: string, to: string) => string | null;
   popover?: ReactNode; // chi tiết node kiểu Popover – hiện dưới node đang chọn
+  minimap?: boolean; // bản đồ nhỏ nổi ở góc dưới trái (mặc định bật; vẫn ẩn khi canvas thấp)
 };
 
 const nodeTypes = { card: NodeCard, group: GroupFrame, groupCard: GroupCard };
@@ -57,12 +58,24 @@ export default function FlowCanvas(props: FlowCanvasProps) {
 }
 
 function Canvas({
-  nodes, edges, start, positions, selected, picked, onSelect, onSelectBox, onMove, onConnect, onDeleteEdge, onDeleteNodes, onDropPort, onNodeMenu, onLayout, fitKey, focus,
-  taken, activeEdge, groups, groupActions, onMoveGroup, mode = 'compact', dataEdges, onLinkData, linkBlock, popover,
+  nodes, edges, start, positions, selected, picked, onSelect, onSelectBox, onMove, onConnect, onDeleteEdge, onDeleteNodes, onDropPort, onNodeMenu, fitKey, focus,
+  taken, activeEdge, groups, groupActions, onMoveGroup, mode = 'compact', dataEdges, onLinkData, linkBlock, popover, minimap = true,
 }: FlowCanvasProps) {
   const fan = useDataFan(mode === 'compact', linkBlock);
   const { fanOf } = fan;
-  const { fitView, getZoom, getIntersectingNodes, screenToFlowPosition, setCenter, setViewport, zoomIn, zoomOut } = useReactFlow();
+  const { fitView, getZoom, getIntersectingNodes, screenToFlowPosition, setCenter, setViewport, zoomIn, zoomOut, zoomTo } = useReactFlow();
+  // Thu phóng do nút ngoài canvas ra lệnh (ribbon, status bar) và mức zoom báo ra ngoài – canvasBus
+  const zoomNow = useStore((s) => s.transform[2]);
+  useEffect(() => {
+    setCanvasZoom(zoomNow);
+  }, [zoomNow]);
+  useEffect(() => onZoomRequest((z) => zoomTo(z)), [zoomTo]);
+  useEffect(() => onCanvasCommand((c) => {
+    if (c === 'zoomIn') zoomIn({ duration: 150 });
+    else if (c === 'zoomOut') zoomOut({ duration: 150 });
+    else if (c === 'zoom100') zoomTo(1, { duration: 150 });
+    else if (c === 'fit') fitView({ padding: 0.12, maxZoom: 1, duration: 200 });
+  }), [zoomIn, zoomOut, zoomTo, fitView]);
   const fnKey = useRef(0); // phím F1..F9 đang giữ (chọn cổng khi kéo node nối node)
   useEffect(() => {
     const set = (e: KeyboardEvent, down: boolean) => {
@@ -76,7 +89,8 @@ function Canvas({
     return () => { window.removeEventListener('keydown', dn); window.removeEventListener('keyup', up); };
   }, []);
   const store = useStoreApi();
-  const tall = useStore((s) => s.height > 520); // canvas thấp (đang mở nhật ký) thì ẩn minimap cho đỡ che node
+  const paneH = useStore((s) => s.height); // canvas thấp (cửa sổ nhỏ / đang mở nhật ký): minimap thu nhỏ, chỉ ẩn khi quá thấp
+  const mapSize = paneH > 420 ? { width: 148, height: 92 } : { width: 104, height: 64 };
   const [edgeSel, setEdgeSel] = useState<string | null>(null);
 
   // Node: React Flow cần giữ `measured` / vị trí lúc kéo trong state riêng – đồng bộ lại từ props mỗi khi dữ liệu đổi.
@@ -209,28 +223,10 @@ function Canvas({
       minZoom={0.3} maxZoom={1.6} proOptions={{ hideAttribution: true }}>
       {popover && selected && <NodePopover nodeId={selected}>{popover}</NodePopover>}
       <Background variant={BackgroundVariant.Dots} gap={18} size={1.4} color="var(--c-dot)" />
-      {tall && <MiniMap pannable zoomable nodeColor="var(--c-soft)" nodeStrokeColor="var(--c-line-strong)" nodeBorderRadius={6}
-        maskColor="color-mix(in srgb, var(--c-bg) 70%, transparent)" style={{ width: 148, height: 92 }} />}
-      <Panel position="bottom-left" className="flex gap-1.5">
-        <div className="flex gap-1 rounded-control border border-line bg-surface p-1 shadow-[0_1px_3px_rgb(0_0_0/.06)]">
-          <ToolBtn label="Phóng to" onClick={() => zoomIn({ duration: 150 })} d="M12 5v14M5 12h14" />
-          <ToolBtn label="Thu nhỏ" onClick={() => zoomOut({ duration: 150 })} d="M5 12h14" />
-          <ToolBtn label="Vừa màn hình" onClick={() => fitView({ padding: 0.12, maxZoom: 1, duration: 200 })} d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" />
-          {onLayout && <ToolBtn label="Sắp xếp lại tự động" onClick={onLayout} d="M4 5h6v5H4zM14 14h6v5h-6zM10 7.5h2a2 2 0 0 1 2 2v7" />}
-        </div>
-        <span tabIndex={0} aria-label="Phím tắt canvas" title={HELP}
-          className="grid h-9 w-9 cursor-help place-items-center rounded-control border border-line bg-surface font-semibold text-muted shadow-[0_1px_3px_rgb(0_0_0/.06)]">?</span>
-      </Panel>
+      {minimap && paneH > 200 && <MiniMap position="bottom-left" pannable zoomable nodeColor="var(--c-soft)" nodeStrokeColor="var(--c-line-strong)" nodeBorderRadius={6}
+        maskColor="color-mix(in srgb, var(--c-bg) 70%, transparent)" style={{ ...mapSize, marginBottom: 10 }} />}
     </ReactFlow>
   );
 }
 
-const HELP = 'Kéo từ chấm cổng ra sang node để nối · kéo ô vuông output (rê thẻ chờ toả ra, hoặc thẻ Đầy đủ) sang ô VÀO của node chạy sau để nối dữ liệu · giữ Ctrl/Cmd (thành công) hoặc Option (thất bại) rồi kéo node này thả lên node kia để nối nhanh, thêm F1/F2… chọn cổng/case thứ n · thả ở chỗ trống để thêm node · Shift + kéo chọn nhiều · Delete xoá';
 
-function ToolBtn({ label, onClick, d }: { label: string; onClick: () => void; d: string }) {
-  return (
-    <button onClick={onClick} aria-label={label} title={label} className="grid h-7 w-7 place-items-center rounded-md text-muted hover:bg-hover hover:text-ink">
-      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d={d} /></svg>
-    </button>
-  );
-}

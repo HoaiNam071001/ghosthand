@@ -5,8 +5,8 @@ import { ReactNode, RefObject, useLayoutEffect, useRef, useState } from 'react';
 import { useStore, type ReactFlowState } from '@xyflow/react';
 import { placePopover, type Box } from '../../flow/popoverPlace';
 
-// Thanh công cụ nổi trên canvas (FlowHeader: top-3 + nút h-8) – popover không chui xuống dưới nó.
-const HEADER_H = 44;
+// Chừa mép trên canvas (bước 63: thanh công cụ đã chuyển lên ribbon) – popover không dính sát mép.
+const HEADER_H = 10;
 
 const sameBox = (a: Box | null, b: Box | null) => a === b || (!!a && !!b && a.x === b.x && a.y === b.y && a.w === b.w && a.h === b.h);
 

@@ -8,7 +8,8 @@ import { normalizeUrl } from '../../pageCheck';
 import { Globe } from '../icons';
 import PageCheckDialog from './PageCheckDialog';
 
-export default function PageCheckButton() {
+// ribbon: nút lớn "Thử trang" trong tab Công cụ (bước 63) thay cho nút icon trên thanh tiêu đề.
+export default function PageCheckButton({ ribbon }: { ribbon?: boolean }) {
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState('');
   const [busy, setBusy] = useState(false);
@@ -36,8 +37,12 @@ export default function PageCheckButton() {
 
   return (
     <>
-      <button onClick={() => setOpen(!open)} aria-label="Thử trang trên Chrome của app" title="Thử trang trên Chrome của app" aria-haspopup="dialog" aria-expanded={open}
-        className="grid h-9 w-9 place-items-center text-muted hover:bg-hover hover:text-ink"><Globe /></button>
+      <button onClick={() => setOpen(!open)} aria-label="Thử trang trên Chrome của app" title="Thử trang trên Chrome của app – mở trang, dò captcha" aria-haspopup="dialog" aria-expanded={open}
+        className={ribbon
+          ? 'flex h-[66px] min-w-[52px] max-w-[92px] flex-none flex-col items-center gap-1.5 rounded-[7px] px-2 pt-[7px] text-center text-[11.5px] leading-[1.15] hover:bg-hover'
+          : 'grid h-9 w-9 place-items-center text-muted hover:bg-hover hover:text-ink'}>
+        {ribbon ? <><Globe className="h-6 w-6" /><span>Thử trang</span></> : <Globe />}
+      </button>
       {open && <PageCheckDialog url={url} onUrl={setUrl} busy={busy} result={result} error={error} onCheck={check} onRecheck={() => run('')} onClose={() => setOpen(false)} />}
     </>
   );

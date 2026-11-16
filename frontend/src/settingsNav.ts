@@ -1,10 +1,6 @@
-// Yêu cầu mở Cài đặt ở một tab (vd nút "Mở Cài đặt → Quyền" từ cảnh báo thiếu quyền); AppSettings lắng nghe.
+// Yêu cầu mở Cài đặt ở một tab (vd nút "Mở Cài đặt → Quyền" từ cảnh báo thiếu quyền): mở trang Tệp → Cài đặt (shellStore).
 export type SettingsTab = 'storage' | 'overlay' | 'browser' | 'secrets' | 'perms' | 'api' | 'mcp' | 'askai' | 'servers' | 'sync' | 'about';
+import { showSettings } from './shellStore';
+
 // focus: id mục cần nhìn thấy (vd quyền thiếu khiến node lỗi permission – tab Quyền ghim + tô mục đó).
-type Listener = (tab: SettingsTab, focus?: string) => void;
-const listeners = new Set<Listener>();
-export const openSettings = (tab: SettingsTab, focus?: string) => listeners.forEach((l) => l(tab, focus));
-export const onOpenSettings = (l: Listener) => {
-  listeners.add(l);
-  return () => { listeners.delete(l); };
-};
+export const openSettings = (tab: SettingsTab, focus?: string) => showSettings(tab, focus ?? '');

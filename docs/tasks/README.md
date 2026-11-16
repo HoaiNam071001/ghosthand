@@ -7,9 +7,9 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 > Hook đầu phiên chèn nguyên mục này cho AI – giữ ngắn (≤ ~1500 ký tự, `check-docs.py` cảnh báo): mỗi dòng một ý, chi tiết để ở file bước / `log.md`. Cập nhật mỗi khi xong / bắt đầu một bước.
 
 - **Đang làm:** không có bước dở.
-- **Xong code, chờ kiểm tra tay:** 62, 54, 33, 59, 56 A–D, 61, 58, 57, 55, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 40, 39, 38, 37, 36, 35, 34, 31a–d, 28, 26, 25d, 24, 22 – xem bảng *Tổng quan* + [checks.md](checks.md).
+- **Xong code, chờ kiểm tra tay:** 63, 62, 54, 33, 59, 56 A–D, 61, 58, 57, 55, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 40, 39, 38, 37, 36, 35, 34, 31a–d, 28, 26, 25d, 24, 22 – xem bảng *Tổng quan* + [checks.md](checks.md).
 - **Tiếp theo:** chưa chọn – xem bảng *Tổng quan*. Hoãn: 17 (Windows), 18b.
-- **Cập nhật lần cuối:** 2026-11-15 (62 xong code: node web chạy trên Wisp – Cài đặt → Trình duyệt).
+- **Cập nhật lần cuối:** 2026-11-16 (63 xong code: layout ribbon kiểu Word – trang Tệp, inspector nổi, viền resize).
 
 ## Tính năng của hệ thống
 
@@ -40,7 +40,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | ✅ | Dữ liệu qua node | Thẻ node Gọn / Đầy đủ có VÀO / RA, kéo output sang input để nối (chỉ tới node chạy sau), thẻ gọn toả cổng khi rê; chi tiết Panel / Modal / Popover; Lịch sử chạy dạng cây node, rê thẻ xem giá trị vào / ra, đường dữ liệu + truy ngược | [60](phase3/60-du-lieu-qua-node.md) |
 | 🧪 | Dùng AI gọn hơn | Trạng thái đầu phiên ngắn, `ghosthand test` chạy nhiều kịch bản ra bảng gọn, kiểm tra môi trường trước khi chạy, `browserNorm` bắt buộc chọn đích, tự dọn kịch bản thử của AI | [61](phase3/61-dung-ai-gon.md) |
 | 🧪 | Wisp làm trình duyệt node web | Cài đặt → Trình duyệt (Tự động / Chrome của app / Wisp), node web chạy qua cổng Ghosthand của Wisp (sự kiện thật, không chiếm chuột), tự mở Wisp | [62](phase3/62-trinh-duyet-wisp.md) |
-| ⬜ | Layout ribbon kiểu Word | Thanh tiêu đề + ribbon theo tab gom mọi nút, trang Tệp (thư viện, lịch sử, Cài đặt), dưới chỉ còn canvas + inspector nổi, viền resize quanh cửa sổ | [63](phase3/63-layout-ribbon.md) |
+| 🧪 | Layout ribbon kiểu Word | Thanh tiêu đề + ribbon theo tab gom mọi nút, trang Tệp (thư viện, lịch sử, Cài đặt), dưới chỉ còn canvas + inspector nổi, viền resize quanh cửa sổ | [63](phase3/63-layout-ribbon.md) |
 
 ### Node hành động
 
@@ -124,7 +124,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 > Bảng tự sinh – sau khi tick chạy `python3 scripts/tasks-index.py`. Bấm tên bước để mở file chi tiết.
 
 <!-- index:start -->
-**70 / 73 bước xong code** · 🧪 **[331 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
+**71 / 73 bước xong code** · 🧪 **[340 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
 
 ### Phase 3 – Design v2 & tự động hoá (theo thứ tự làm)
 
@@ -173,7 +173,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | ✅ xong | [60. Dữ liệu qua node](phase3/60-du-lieu-qua-node.md) | 11 / 11 |  |
 | 🧪 chờ kiểm tra tay | [61. Dùng AI gọn hơn](phase3/61-dung-ai-gon.md) | 5 / 5 | [8 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [62. Wisp làm trình duyệt của node web](phase3/62-trinh-duyet-wisp.md) | 6 / 7 | [8 việc](checks.md) |
-| ⬜ chưa làm | [63. Layout chính kiểu ribbon](phase3/63-layout-ribbon.md) | 0 / 8 |  |
+| 🧪 chờ kiểm tra tay | [63. Layout chính kiểu ribbon](phase3/63-layout-ribbon.md) | 8 / 8 | [10 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | 12 / 12 | [10 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | 43 / 43 | [22 việc](checks.md) |
 | ✅ xong | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | 12 / 12 |  |

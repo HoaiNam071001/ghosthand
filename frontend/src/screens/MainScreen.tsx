@@ -1,12 +1,12 @@
-// Màn soạn kịch bản (design v3, artboard Main): thanh tiêu đề, thanh công cụ, thư viện | canvas flow | inspector, status bar
+// Màn soạn kịch bản (bước 63, layout ribbon kiểu Word): thanh tiêu đề (truy cập nhanh + tên kịch bản) → ribbon theo tab → canvas flow
+// với inspector nổi / ghim → status bar (thanh zoom). Thư viện, mẫu thử, lịch sử, cài đặt nằm ở trang Tệp (components/backstage).
 import { useEffect, useState } from 'react';
-import { StatusBar, Toolbar } from '../components/AppChrome';
-import { RUN_ICON, RunMenuItem } from '../components/RunMenu';
-import { MousePos, StopScript } from '../../wailsjs/go/app/App';
-import { inWails, openOverlay } from '../windowMode';
-import { selectStep, startRecording, useEditor } from '../store';
+import { StatusBar } from '../components/AppChrome';
+import { MousePos } from '../../wailsjs/go/app/App';
+import { inWails } from '../windowMode';
+import { redo, selectStep, undo, useEditor } from '../store';
 import { useFlowPrefs } from '../flowPrefs';
-import { closeRunForm, deletePreset, loadMemory, savePreset, startRun, submitRun, useRunForm } from '../runForm';
+import { closeRunForm, deletePreset, loadMemory, savePreset, submitRun, useRunForm } from '../runForm';
 import { inputViews, runSections } from '../scriptInputs';
 import RunDialog from '../components/inputs/RunDialog';
 import { newScript, openScript, save, useFile } from '../scriptFile';
@@ -19,10 +19,14 @@ import UserAskDialog from '../components/ask/UserAskDialog';
 import MCPAskDialog from '../components/MCPAskDialog';
 import { SyncChipHost, SyncConflictHost, useSyncPulled } from '../components/sync/SyncHosts';
 import TitleBar from '../components/TitleBar';
-import Library from '../components/Library';
+import RibbonHost from '../components/ribbon/RibbonHost';
+import Backstage from '../components/backstage/Backstage';
+import EdgeResize from '../components/shell/EdgeResize';
+import ZoomBar from '../components/shell/ZoomBar';
 import FlowEditor from '../components/flow/FlowEditor';
 import StepForm from '../components/StepForm';
-import RunSettings, { loopSummary } from '../components/RunSettings';
+import { requestZoom, sendCanvas, useCanvasZoom } from '../canvasBus';
+import { getShell, openBackstage } from '../shellStore';
 import { STOP_REASON, useEngine } from '../engineStore';
 import { useRunLog } from '../runStore';
 import { Point } from '../types';
@@ -34,16 +38,16 @@ const clock = (ms: number) => new Date(ms).toLocaleTimeString('vi-VN', { hour: '
 
 export default function MainScreen() {
   useSyncPulled();
-  const { script, selected, notice, dirty, path, countdown: editorCountdown } = useEditor();
+  const { script, selected, notice, dirty, path, countdown: editorCountdown, past, future } = useEditor();
   const { draftAt, error: fileError } = useFile();
   const { steps } = script;
   const cur = steps.find((s) => s.id === selected); // undefined khi chưa chọn node nào
-  const { detail } = useFlowPrefs(); // chi tiết node: Panel (cột phải) / Modal / Popover (FlowEditor vẽ dưới node)
+  const { detail } = useFlowPrefs(); // chi tiết node: Panel (nổi / ghim) / Modal / Popover (FlowEditor vẽ dưới node)
   const { running, lastError, stopReason, hotkeyError } = useEngine();
   const { summary, live } = useRunLog();
+  const zoom = useCanvasZoom();
   const endMessage = !running && live && summary?.status === 'success' ? summary.message : undefined;
   const runForm = useRunForm();
-  const autoRun = !!script.inputs?.length && !!runForm.memory.autoRun;
   useEffect(() => {
     loadMemory();
   }, [path, script.name]);
@@ -74,29 +78,27 @@ export default function MainScreen() {
   }, []);
 
   return (
-    // h-screen + từng cột tự cuộn: thanh tiêu đề và status bar luôn nằm trong cửa sổ.
+    // h-screen + từng vùng tự cuộn: thanh tiêu đề và status bar luôn nằm trong cửa sổ.
     <div className="flex h-screen flex-col overflow-hidden bg-bg text-ink">
-      <TitleBar />
-
-      <Toolbar name={script.name} nameTitle={path ?? 'Chưa lưu thành file'} unsaved={dirty}
+      <TitleBar name={script.name} nameTitle={path ?? 'Chưa lưu thành file'} unsaved={dirty} modKey={modKey}
         unsavedTitle={`Có thay đổi chưa lưu xuống file (${modKey}S) – bản nháp vẫn tự lưu trên máy`}
-        loop={loopSummary(script)} loopPanel={<RunSettings />}
-        running={running} onRun={(e) => (running ? StopScript() : startRun(e.shiftKey))}
-        runDisabled={!inWails}
-        runTitle={!inWails ? 'Chỉ chạy được trong app'
-          : autoRun ? 'Chạy luôn với giá trị lần trước – Shift + bấm để sửa input' : undefined}
-        runItems={runItems(cur?.ref, !inWails || running, !!script.inputs?.length, cur && ((only) => startRun(false, { from: cur.id, only })))}
-        onPreview={() => openOverlay('preview')} />
+        canUndo={past.length > 0} canRedo={future.length > 0} onSave={() => save()} onUndo={undo} onRedo={redo} onSettings={() => openBackstage('settings')} />
 
-      <div className="flex min-h-0 flex-1 border-t border-line">
-        <Library />
-        <FlowEditor />
-        {/* chưa chọn node thì ẩn inspector – canvas lấy hết chiều ngang */}
-        {cur && detail === 'panel' && <StepForm key={cur.id} step={cur} />}
-        {cur && detail === 'modal' && <StepForm key={cur.id} step={cur} mode="modal" onClose={() => selectStep('')} />}
+      <div className="relative flex min-h-0 flex-1 flex-col">
+        <RibbonHost />
+        {/* relative: inspector nổi (position absolute) nằm trong khung canvas */}
+        <div className="relative flex min-h-0 flex-1">
+          <FlowEditor />
+          {/* chưa chọn node thì ẩn inspector – canvas lấy hết chỗ; Esc / ✕ cũng ẩn */}
+          {cur && detail === 'panel' && <StepForm key={cur.id} step={cur} onClose={() => !getShell().backstage && selectStep('')} />}
+          {cur && detail === 'modal' && <StepForm key={cur.id} step={cur} mode="modal" onClose={() => selectStep('')} />}
+        </div>
+        <Backstage />
       </div>
 
-      <StatusBar running={running} mouse={mouse ? `X ${mouse.x} Y ${mouse.y}` : 'X — Y —'}>
+      <StatusBar running={running} mouse={mouse ? `X ${mouse.x} Y ${mouse.y}` : 'X — Y —'}
+        end={<ZoomBar zoom={zoom} onZoom={requestZoom} onIn={() => sendCanvas('zoomIn')} onOut={() => sendCanvas('zoomOut')} onFit={() => sendCanvas('fit')} onReset={() => sendCanvas('zoom100')} />}>
+        <span>{steps.length} node</span>
         {hotkeyError && <span className="text-danger-text">{hotkeyError}</span>}
         {lastError && <span className="text-danger-text">Lỗi lần chạy trước: {lastError}</span>}
         {endMessage && <span className="text-ok" title="Lời nhắn của node Kết thúc">Xong: {endMessage}</span>}
@@ -119,24 +121,7 @@ export default function MainScreen() {
           countdown={editorCountdown} error={runForm.error} onClose={closeRunForm} onRun={submitRun}
           onSavePreset={savePreset} onDeletePreset={deletePreset} />
       )}
+      <EdgeResize />
     </div>
   );
-}
-
-// Menu ▾ cạnh nút Chạy. off: không chạy được lúc này (trình duyệt / đang chạy); onFrom: có node đang chọn (only: chỉ riêng node đó).
-function runItems(ref: string | undefined, off: boolean, hasInputs: boolean, onFrom?: (only: boolean) => void): RunMenuItem[] {
-  return [
-    { label: ref ? `Chạy từ ${ref}` : 'Chạy từ node đang chọn', icon: RUN_ICON.from, disabled: off || !onFrom, onClick: () => onFrom?.(false),
-      title: ref ? `Chạy một vòng bắt đầu từ ${ref} – các node trước đó không chạy` : 'Chọn một node để chạy từ đó' },
-    { label: ref ? `Chạy riêng ${ref}` : 'Chạy riêng node đang chọn', icon: RUN_ICON.only, disabled: off || !onFrom, onClick: () => onFrom?.(true),
-      title: ref ? `Chạy đúng ${ref} một lần rồi dừng – biến của node trước trống` : 'Chọn một node để chạy riêng' },
-    { label: 'Chạy từng node', icon: RUN_ICON.step, hotkey: 'F10', disabled: off, onClick: () => startRun(false, { step: true }),
-      title: 'Dừng trước mỗi node, bấm Tiếp / F10 để chạy node kế' },
-    { label: 'Xem trước trên màn hình', icon: RUN_ICON.preview, onClick: () => openOverlay('preview'),
-      title: 'Xem đường đi các node bằng con trỏ giả, không click thật' },
-    { label: 'Ghi thao tác', icon: RUN_ICON.record, hotkey: 'F9', danger: true, disabled: off, onClick: startRecording,
-      title: 'Thu nhỏ app, ghi chuột / phím bạn thao tác thành node – F9 để dừng' },
-    { label: 'Sửa input trước khi chạy', minor: true, disabled: off || !hasInputs, onClick: () => startRun(true),
-      title: hasInputs ? 'Mở form input rồi mới chạy – cũng mở được bằng Shift + bấm Chạy' : 'Kịch bản chưa có input' },
-  ];
 }

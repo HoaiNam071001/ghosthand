@@ -3,14 +3,17 @@
 // không nối Go, không đụng store kịch bản. Thao tác đồ thị đi qua flowEdit.ts (dùng lại ở F4b).
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import TitleBar from '../components/TitleBar';
-import { LibraryView } from '../components/Library';
-import { StatusBar, Toolbar } from '../components/AppChrome';
-import { demoRunItems } from '../demo/runMenu';
+import { StatusBar } from '../components/AppChrome';
+import DemoRibbon from '../demo/DemoRibbon';
+import Backstage from '../components/backstage/Backstage';
+import ZoomBar from '../components/shell/ZoomBar';
+import EdgeResize from '../components/shell/EdgeResize';
+import { requestZoom, sendCanvas, useCanvasZoom } from '../canvasBus';
+import { openBackstage } from '../shellStore';
 import Segmented from '../components/Segmented';
 import { PaletteGroup, PaletteView } from '../components/PaletteView';
 import { InfoKey, NODE_INFO } from '../flow/nodeInfo';
 import FlowCanvas from '../components/flow/FlowCanvas';
-import FlowHeader, { headerBtn } from '../components/flow/FlowHeader';
 import RunLog from '../components/flow/RunLog';
 import { FlowNodeView } from '../components/flow/model';
 import FlowDemoInspector from '../demo/FlowDemoInspector';
@@ -18,7 +21,7 @@ import { addConnected, connect, disconnect, Edge, reachable, removeEdge, removeN
 import { layoutFlow, Positions } from '../flow/layout';
 import { nodeCategory } from '../flow/category';
 import type { StepType } from '../types';
-import { demoInputs, demoLibrary } from '../demo/demoScript';
+import { demoInputs } from '../demo/demoScript';
 import {
   DemoFlowNode, demoFlowEdges, demoFlowNodes, demoFlowStart, DemoRun, failedRun, newDemoNode, portsOf, runningRun,
 } from '../demo/flowDemo';
@@ -112,31 +115,24 @@ export default function DemoFlow() {
   const curView = views.find((v) => v.id === selected);
   const fromView = drop && views.find((v) => v.id === drop.from);
   const palette = drop !== null || paletteOpen;
+  const zoom = useCanvasZoom();
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-bg text-ink">
-      <TitleBar />
-      <Toolbar name="Nhắn tin Facebook" unsaved loop="3 vòng" loopPanel={<p className="text-[13px] text-muted">Lặp / đếm ngược: xem màn chính.</p>}
-        running={mode === 'running'} onRun={() => setMode(mode === 'running' ? 'edit' : 'running')} onPreview={() => {}}
-        runItems={demoRunItems(setNotice)}
-        extra={
-          <span className="flex items-center gap-2 text-xs text-muted">Trạng thái (mẫu)
-            <Segmented value={mode} onChange={setMode} label="Trạng thái mẫu"
-              options={[{ id: 'edit', label: 'Soạn' }, { id: 'running', label: 'Đang chạy' }, { id: 'failed', label: 'Thất bại' }]} />
-          </span>
-        } />
+      <TitleBar name="Nhắn tin Facebook" unsaved onSettings={() => openBackstage('settings')} canUndo canRedo />
+      <div className="relative flex min-h-0 flex-1 flex-col">
+        <DemoRibbon notify={setNotice} loop="3 vòng" running={mode === 'running'} onRun={() => setMode(mode === 'running' ? 'edit' : 'running')}
+          insert={paletteGroups(add)} acts={{ palette: () => { setDrop(null); setPaletteOpen(true); }, layout: () => relayout(nodes, edges) }}
+          extra={
+            <span className="flex items-center gap-2 text-xs text-muted">Trạng thái (mẫu)
+              <Segmented value={mode} onChange={setMode} label="Trạng thái mẫu"
+                options={[{ id: 'edit', label: 'Soạn' }, { id: 'running', label: 'Đang chạy' }, { id: 'failed', label: 'Thất bại' }]} />
+            </span>
+          } />
 
       <div className="flex min-h-0 flex-1 border-t border-line">
-        <LibraryView {...demoLibrary} />
-
         <main aria-label="Flow (mẫu)" className="flex min-w-0 flex-1 flex-col">
           <div className="relative min-h-0 flex-1">
-            <FlowHeader count={nodes.length}>
-              <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap text-accent-text">Màn mẫu #demo-flow</span>
-              <button onClick={() => { setDrop(null); setPaletteOpen(true); }} className={headerBtn}>
-                + Thêm node <span className="font-mono text-[11px] text-muted">Ctrl+K</span>
-              </button>
-            </FlowHeader>
             <FlowCanvas nodes={views} edges={edges} start={start} positions={positions} selected={selected} fitKey={fitKey} focus={focus}
               onSelect={setSelected}
               onMove={(id, pos) => setPositions((p) => ({ ...p, [id]: pos }))}
@@ -144,7 +140,6 @@ export default function DemoFlow() {
               onDeleteEdge={(id) => setEdges((es) => removeEdge(es, id))}
               onDeleteNodes={(ids) => ids.forEach(del)}
               onDropPort={(from, port, _client, at) => setDrop({ from, port, at })}
-              onLayout={() => relayout(nodes, edges)}
               taken={run ? new Set(run.taken) : undefined} activeEdge={run?.active} />
           </div>
           {run && <RunLog title={run.title} summary={run.summary} tone={run.ok === null ? 'running' : run.ok ? 'ok' : 'fail'} rows={run.rows} nodes={views} selected={selected} onSelect={jump} />}
@@ -160,8 +155,15 @@ export default function DemoFlow() {
             onJump={jump} onSetStart={() => setStart(cur.id)} onDelete={() => del(cur.id)} />
         )}
       </div>
+        <Backstage />
+      </div>
 
-      <StatusBar running={mode === 'running'} mouse="X 1204 Y 388"><span>Bản nháp tự lưu lúc 14:32</span>{notice && <span className="text-accent-text">{notice}</span>}</StatusBar>
+      <StatusBar running={mode === 'running'} mouse="X 1204 Y 388"
+        end={<ZoomBar zoom={zoom} onZoom={requestZoom} onIn={() => sendCanvas('zoomIn')} onOut={() => sendCanvas('zoomOut')} onFit={() => sendCanvas('fit')} onReset={() => sendCanvas('zoom100')} />}>
+        <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap text-accent-text">Màn mẫu #demo-flow</span>
+        <span>{nodes.length} node</span><span>Bản nháp tự lưu lúc 14:32</span>{notice && <span className="text-accent-text">{notice}</span>}
+      </StatusBar>
+      <EdgeResize />
 
       {palette && (
         <PaletteView groups={paletteGroups(add)} onClose={() => { setDrop(null); setPaletteOpen(false); }}

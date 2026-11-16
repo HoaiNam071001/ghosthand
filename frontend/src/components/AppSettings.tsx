@@ -1,15 +1,15 @@
-// Cài đặt app (nút bánh răng trên thanh tiêu đề), menu dọc ít mục (settings/SettingsNav), mục gom nhiều phần thì có tab ngang, các phần: Lưu trữ – thư mục kịch bản / ảnh (bước 41, settings/StorageSettings), Màn hình – cạnh đặt thanh overlay (bước 49) + viền lúc đang chạy (58 D5, settings/OverlaySettings), Trình duyệt – Chrome của app / Wisp cho node web (bước 62, settings/WebBrowserSettings),
+// Trang Cài đặt trong trang Tệp (bước 63; trước là hộp thoại mở bằng bánh răng): menu dọc ít mục (settings/SettingsNav), mục gom nhiều phần thì có tab ngang.
+// Các phần: Lưu trữ – thư mục kịch bản / ảnh (bước 41, settings/StorageSettings), Màn hình – cạnh đặt thanh overlay (bước 49) + viền lúc đang chạy (58 D5, settings/OverlaySettings), Trình duyệt – Chrome của app / Wisp cho node web (bước 62, settings/WebBrowserSettings),
 // Bí mật – kho mật khẩu / token (bước 43 S10, settings/SecretsSettings), Quyền – quyền hệ điều hành (bước 48, settings/PermSettings), API – dòng lệnh + API local (bước 22, settings/ApiSettings), AI qua MCP (bước 31, settings/McpSettings), MCP server – server ngoài node Gọi tool MCP dùng (bước 55, settings/McpServersSettings), Đồng bộ – Google Drive (bước 54, settings/SyncSettings), Giới thiệu – phiên bản + kiểm tra bản mới (settings/AboutSettings).
+// Mở ở tab nào / mục nào: shellStore (openSettings trong settingsNav.ts).
 import { useEffect, useState } from 'react';
 import {
   GetSettings, OpenFolder, PickFolder, SetAPISettings, SetMCPSettings, SetOverlaySettings, SetStorageSettings, SetWebSettings, StorageDefaults, WispStatus,
 } from '../../wailsjs/go/app/App';
 import { store, wisp } from '../../wailsjs/go/models';
-import { EventsOn } from '../../wailsjs/runtime/runtime';
 import { errorText } from '../engineStore';
-import { Gear } from './icons';
 import { needs } from '../flow/perms';
-import { onOpenSettings, SettingsTab } from '../settingsNav';
+import { setSettingsTab, useShell } from '../shellStore';
 import { openPermSettings, refreshPerms, requestPerm, usePerms } from '../store/permStore';
 import { useScript } from '../store/editor';
 import { checkUpdate, installUpdate, loadVersion, openReleasePage, useUpdate } from '../store/updateStore';
@@ -27,44 +27,32 @@ import WebBrowserSettings from './settings/WebBrowserSettings';
 import SettingsNav, { pageOf } from './settings/SettingsNav';
 import { TabBtn } from './stepform/shared';
 
-type Tab = SettingsTab;
-
 export default function AppSettings() {
-  const [open, setOpen] = useState(false);
+  const { settingsTab: tab, settingsFocus: focusId } = useShell();
   const [settings, setSettings] = useState<store.Settings | null>(null);
   const [error, setError] = useState('');
-  const [tab, setTab] = useState<Tab>('storage');
   const perms = usePerms();
   const upd = useUpdate();
   const script = useScript();
   const [defaults, setDefaults] = useState<store.StorageDefaults | null>(null);
   const page = pageOf(tab);
 
-  const show = () => {
-    GetSettings().then(setSettings).catch((e) => setError(errorText(e)));
-    StorageDefaults().then(setDefaults).catch((e) => setError(errorText(e)));
-    setOpen(true);
-  };
-  const [focusId, setFocusId] = useState('');
-  const toggle = () => (open ? setOpen(false) : show());
-  useEffect(() => onOpenSettings((t, f) => { setTab(t); setFocusId(f ?? ''); show(); }), []);
   useEffect(() => {
-    if (!open || tab !== 'perms') return;
+    // Promise.resolve().then: trình duyệt (#demo) không có Go → lỗi thành thông báo thay vì làm sập cả màn
+    Promise.resolve().then(GetSettings).then(setSettings).catch((e) => setError(errorText(e)));
+    Promise.resolve().then(StorageDefaults).then(setDefaults).catch((e) => setError(errorText(e)));
+  }, []);
+  useEffect(() => {
+    if (tab !== 'perms') return;
     // cấp quyền xong ở System Settings rồi quay lại app → tự kiểm tra lại
     refreshPerms();
     window.addEventListener('focus', refreshPerms);
     return () => window.removeEventListener('focus', refreshPerms);
-  }, [open, tab]);
-  useEffect(() => { if (open && tab === 'about') loadVersion(); }, [open, tab]);
+  }, [tab]);
+  useEffect(() => { if (tab === 'about') loadVersion(); }, [tab]);
   const [wispState, setWispState] = useState<wisp.State | null>(null);
-  const refreshWisp = () => { setWispState(null); WispStatus().then(setWispState).catch((e) => setError(errorText(e))); };
-  useEffect(() => { if (open && tab === 'browser') refreshWisp(); }, [open, tab]);
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
-    window.addEventListener('keydown', onKey);
-    return () => { window.removeEventListener('keydown', onKey); };
-  }, [open]);
+  const refreshWisp = () => { setWispState(null); Promise.resolve().then(WispStatus).then(setWispState).catch((e) => setError(errorText(e))); };
+  useEffect(() => { if (tab === 'browser') refreshWisp(); }, [tab]);
   const saveApi = (patch: Partial<store.APISettings>) => {
     if (!settings) return;
     const api = store.APISettings.createFrom({ ...settings.api, ...patch });
@@ -100,7 +88,7 @@ export default function AppSettings() {
     PickFolder('Chọn thư mục', from).then((dir) => dir && saveStorage(key, dir)).catch((e) => setError(errorText(e)));
   const openDir = (dir: string) => OpenFolder(dir).then(() => setError('')).catch((e) => setError(errorText(e)));
 
-  const section = (t: Tab) => {
+  const section = (t: typeof tab) => {
     switch (t) {
       case 'storage': return <StorageSettings storage={settings!.storage ?? {}} defaults={defaults} onPick={pick} onOpen={openDir} onReset={(key) => saveStorage(key, '')} />;
       case 'overlay': return <OverlaySettings overlay={settings!.overlay ?? {}} onChange={saveOverlay} />;
@@ -118,31 +106,20 @@ export default function AppSettings() {
   };
 
   return (
-    <>
-      <button onClick={toggle} aria-label="Cài đặt" title="Cài đặt" aria-haspopup="dialog" aria-expanded={open}
-        className="grid h-9 w-9 place-items-center text-muted hover:bg-hover hover:text-ink"><Gear /></button>
-      {open && settings && (
-        <div className="fixed inset-0 z-40 flex items-start justify-center bg-black/25 px-4 pt-[6vh]" onMouseDown={(e) => e.target === e.currentTarget && setOpen(false)}>
-          <div role="dialog" aria-modal="true" aria-label="Cài đặt" className="flex h-[80vh] max-h-[88vh] w-[860px] max-w-full flex-col gap-3 rounded-panel border border-line bg-surface p-[18px] text-[13px] text-ink shadow-[0_16px_48px_rgb(0_0_0/.22)]">
-            <div className="flex items-center justify-between">
-              <div className="text-base font-semibold">Cài đặt</div>
-              <button onClick={() => setOpen(false)} aria-label="Đóng" className="rounded-md px-2 py-1 text-muted hover:bg-hover hover:text-ink">✕</button>
+    <div className="flex h-full min-h-0 max-w-[920px] flex-col gap-3 text-[13px] text-ink">
+      <h2 className="text-xl font-semibold">Cài đặt</h2>
+      <div className="flex min-h-0 flex-1 gap-4">
+        <SettingsNav page={page} onChange={(p) => setSettingsTab(p.sections[0].id)} />
+        <div key={tab} className="flex min-w-0 flex-1 flex-col gap-3 overflow-y-auto pr-1">
+          {page.sections.length > 1 && (
+            <div className="flex flex-none gap-4 border-b border-line" role="tablist" aria-label={page.label}>
+              {page.sections.map((sec) => <TabBtn key={sec.id} active={tab === sec.id} onClick={() => setSettingsTab(sec.id)}>{sec.label}</TabBtn>)}
             </div>
-            <div className="flex min-h-0 flex-1 gap-4">
-              <SettingsNav page={page} onChange={(p) => { setTab(p.sections[0].id); setFocusId(''); }} />
-              <div key={tab} className="flex min-w-0 flex-1 flex-col gap-3 overflow-y-auto pr-1">
-                {page.sections.length > 1 && (
-                  <div className="flex flex-none gap-4 border-b border-line" role="tablist" aria-label={page.label}>
-                    {page.sections.map((sec) => <TabBtn key={sec.id} active={tab === sec.id} onClick={() => { setTab(sec.id); setFocusId(''); }}>{sec.label}</TabBtn>)}
-                  </div>
-                )}
-                {section(tab)}
-                {error && <span className="text-danger-text">{error}</span>}
-              </div>
-            </div>
-          </div>
+          )}
+          {settings ? section(tab) : <span className="text-muted">Đang nạp…</span>}
+          {error && <span className="text-danger-text">{error}</span>}
         </div>
-      )}
-    </>
+      </div>
+    </div>
   );
 }

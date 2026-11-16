@@ -4,10 +4,21 @@ Những việc **đã xong code** nhưng cần người dùng thử trong app th
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
 
+## 63 – Layout ribbon kiểu Word (2026-11-16) · [63](phase3/63-layout-ribbon.md)
+- [ ] Viền resize (Windows): rê vào 4 cạnh + 4 góc cửa sổ → con trỏ ↔ ↕ ⤡, kéo đổi được kích thước; cả khi mép đè lên canvas / inspector nổi / ribbon; phóng to rồi thì không còn viền (kéo mép không làm gì)
+- [ ] Viền resize (macOS): kéo mép cửa sổ vẫn đổi được kích thước như trước (không vẽ viền riêng ở macOS)
+- [ ] Ribbon: 5 tab (Soạn, Chèn node, Chạy, Xem, Công cụ) đổi được; nút Chép / Dán / Hoàn tác / Gom nhóm / Bật-tắt node / Đặt làm bắt đầu làm đúng việc, tắt khi chưa chọn node; Ctrl+F1 và bấm đúp tab thu gọn / mở ribbon; cửa sổ hẹp thì cuộn ngang
+- [ ] Tab Chèn node: bấm một loại node → thêm node nối sau node đang chọn (giống Ctrl+K); node *Của tôi* (MCP) có mặt; tab Chạy: Chạy / Dừng, chạy từ / riêng / từng node, Xem trước, Ghi thao tác, Gói báo lỗi; Chạy + số vòng luôn ở bên phải hàng tab
+- [ ] Tab Xem: đổi thẻ Gọn / Đầy đủ, cách mở chi tiết node (bảng phải / hộp thoại / dưới node), ghim bảng, bản đồ nhỏ, Phóng to / Thu nhỏ / 100% / Vừa màn hình / Xếp lại tự động, Sáng / Tối / Theo hệ thống; tab Công cụ: Lấy toạ độ, Chọn vùng, Thử trang, AI qua MCP, Cài đặt, Hướng dẫn
+- [ ] Inspector: bấm node → hiện **nổi** trên canvas; Esc hoặc ✕ ẩn; nút ghim → dính cạnh phải, canvas co lại, nhớ lần sau; kéo mép trái đổi bề rộng; thanh zoom ở status bar (− ━●━ + %, vừa màn hình) điều khiển đúng canvas
+- [ ] Trang Tệp: Trang đầu (Mới + mẫu, kịch bản đang mở + Mở gần đây, AI thử, lịch sử), Mới / Mở / Lưu / Lưu thành (Ctrl+N / O / S vẫn chạy), Mẫu thử, Nhúng kịch bản (từ file / từ mẫu), Xuất – Nhập gói .zip, Lịch sử chạy (xem cây, Xem trên flow, Xuất gói lỗi, xoá); Esc / ← Quay lại về màn soạn, canvas giữ nguyên vị trí xem
+- [ ] Cài đặt: ⚙ trên thanh tiêu đề và Ctrl+, mở Tệp → Cài đặt; các nút "Mở Cài đặt → Quyền / Hỏi AI / MCP server / Bí mật / Đồng bộ" ở chỗ khác mở đúng mục + tab; sửa cài đặt vẫn lưu như cũ
+- [ ] Hai theme sáng / tối đều đọc được ribbon, trang Tệp, inspector nổi; thanh tiêu đề: Lưu / Hoàn tác / Làm lại đúng, tên kịch bản ở giữa + chip Chưa lưu khi có thay đổi, kéo cả hàng tiêu đề + hàng tab dời được cửa sổ, bấm đúp thanh tiêu đề phóng to
+- [ ] Hướng dẫn (F1 → Giao diện / Mẫu thử / Lịch sử) mô tả đúng layout mới; Ctrl+F1 không mở Hướng dẫn
+
 ## UI – Cài đặt gọn + dòng đầu canvas co theo bề rộng (2026-11-16)
 - [ ] Cài đặt: menu dọc 6 mục (Lưu trữ, Khi chạy, Bảo mật, AI, API, Giới thiệu); mục gom nhiều phần có tab gạch chân ngang; chọn tab nào chỉ hiện phần đó
 - [ ] Nút "Mở Cài đặt → Quyền / Hỏi AI / MCP server / Bí mật" ở chỗ khác → mở đúng mục, chọn sẵn đúng tab con
-- [ ] Mở panel node (canvas hẹp): dòng đầu canvas chỉ còn icon (vùng, nhúng, xem) + "+ Thêm node", một dòng, không đè dưới panel; rê chuột có chú thích; canvas rộng thì đủ chữ như cũ
 
 ## 62 – Wisp làm trình duyệt của node web (2026-11-15) · [62](phase3/62-trinh-duyet-wisp.md)
 - [ ] Cài đặt → *Trình duyệt*: Wisp đang mở + bật Cổng Ghosthand → ô Wisp "Sẵn sàng"; tắt Wisp → *Kiểm tra lại* báo cách sửa; chưa cài → "chưa cài Wisp"

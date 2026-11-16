@@ -14,13 +14,13 @@ export type RunMenuItem = {
   onClick?: () => void;
 };
 
-export function RunButton({ running, disabled, title, onRun, items }: {
-  running: boolean; disabled?: boolean; title?: string; onRun: (e: { shiftKey: boolean }) => void; items: RunMenuItem[];
+export function RunButton({ running, disabled, title, onRun, items, compact }: {
+  running: boolean; disabled?: boolean; title?: string; onRun: (e: { shiftKey: boolean }) => void; items: RunMenuItem[]; compact?: boolean;
 }) {
   const { open, setOpen, ref } = usePopover();
   const main = items.filter((it) => !it.minor);
   const minor = items.filter((it) => it.minor);
-  const half = 'flex h-[34px] items-center disabled:opacity-50';
+  const half = `flex ${compact ? 'h-7' : 'h-[34px]'} items-center disabled:opacity-50`;
   return (
     <div ref={ref} className="relative flex">
       {/* style inline: btn-primary / btn-danger-soft tự đặt cả 4 viền – hai nửa dính nhau, ngăn bằng vạch sáng mờ */}

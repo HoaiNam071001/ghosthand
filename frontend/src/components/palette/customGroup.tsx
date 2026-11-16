@@ -9,7 +9,8 @@ import { customIcon } from './customIcons';
 
 export function useCustomNodes() {
   const [list, setList] = useState<store.CustomNode[]>([]);
-  const reload = useCallback(() => ListCustomNodes().then((l) => setList(l ?? [])).catch(() => setList([])), []);
+  // Promise.resolve().then: trình duyệt (không có Go) thì ra danh sách rỗng thay vì ném lỗi làm sập màn (ribbon nạp ngay khi mở)
+  const reload = useCallback(() => Promise.resolve().then(ListCustomNodes).then((l) => setList(l ?? [])).catch(() => setList([])), []);
   useEffect(() => { reload(); }, [reload]);
   return { list, reload };
 }

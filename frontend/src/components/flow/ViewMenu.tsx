@@ -1,4 +1,4 @@
-// Nút "Xem" trên dòng đầu canvas (bước 60): kiểu thẻ Gọn / Đầy đủ và cách mở chi tiết node. Chỉ hiển thị – giá trị qua props.
+// Nút "Xem" trên dòng đầu canvas của màn mẫu #demo-data (bước 60): kiểu thẻ Gọn / Đầy đủ và cách mở chi tiết node. App thật dùng tab Xem của ribbon (63). Chỉ hiển thị – giá trị qua props.
 import Segmented from '../Segmented';
 import { usePopover } from '../usePopover';
 import { Eye } from '../icons';

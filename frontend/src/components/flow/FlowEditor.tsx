@@ -1,11 +1,10 @@
 // Canvas flow của màn chính (bước 20 F4b): nối FlowCanvas (chỉ hiển thị) với store kịch bản.
 // Dữ liệu thẻ tính ở flow/view.ts; mọi thao tác (nối, xoá, dời, thêm node) gọi hàm store – component không tự sửa script.
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import FlowCanvas from './FlowCanvas';
-import FlowHeader, { headerBtn, headerKey, headerLabel } from './FlowHeader';
-import EmbedMenu from './EmbedMenu';
 import AddStepPalette from '../AddStepPalette';
-import { Region } from '../icons';
+import { onCanvasCommand } from '../../canvasBus';
+import { useShell } from '../../shellStore';
 import { layoutFlow } from '../../flow/layout';
 import { portsOf } from '../../flow/model';
 import { groupViews, routeEdges } from '../../flow/groups';
@@ -14,24 +13,22 @@ import { missingOf, needsOf } from '../../flow/perms';
 import { usePerms } from '../../store/permStore';
 import { runHead, runRows, runTrace } from '../../flow/run';
 import RunLog from './RunLog';
-import ViewMenu from './ViewMenu';
 import StepForm from '../StepForm';
 import { ioHeight } from './model';
 import { dataEdges, dataPins, DataPins } from '../../flow/dataView';
 import { linkBlock as blockOf, usedKeys } from '../../flow/dataLinks';
-import { setFlowPrefs, useFlowPrefs } from '../../flowPrefs';
+import { useFlowPrefs } from '../../flowPrefs';
 import NodeMenu from './NodeMenu';
 import { nodeMenuItems } from './nodeMenuItems';
 import {
   applyLayout, clearInsertAt, connectPort, copySelected, insertAfterSelected, moveNode, pasteClip, removeEdge, removeSteps, selectNodes, selectStep,
-  deleteGroup, getEditor, groupPicked, linkData, moveGroup, setNotice, renameGroup, setGroupColor, setInsertAt, setRegion, toggleGroup, toggleMultiStep, ungroup, useEditor,
+  deleteGroup, getEditor, groupPicked, linkData, moveGroup, renameGroup, setGroupColor, setInsertAt, toggleGroup, toggleMultiStep, ungroup, useEditor,
 } from '../../store';
 import { stepInputCount } from '../../scriptInputs';
 import { useEngine } from '../../engineStore';
 import { startRun } from '../../runForm';
 import { pinResult, unpin, usePins } from '../../pinStore';
 import { closeRunLog, shotUrl, useRunLog } from '../../runStore';
-import { openOverlay } from '../../windowMode';
 import type { Script } from '../../types';
 
 const groupActions = { onToggle: toggleGroup, onUngroup: ungroup, onDelete: deleteGroup, onRename: renameGroup, onColor: setGroupColor };
@@ -77,6 +74,9 @@ export default function FlowEditor() {
   }), [script, trace, pins, permItems, pinsById]);
   const cur = script.steps.find((s) => s.id === selected);
   const relayout = () => layoutOf(script, prefs.card === 'full' ? pinsById : undefined).then((pos) => { applyLayout(pos); setFitKey((k) => k + 1); });
+  const relayoutRef = useRef(relayout); // lệnh "Xếp lại" từ ribbon đăng ký một lần nhưng phải thấy script / kiểu thẻ mới nhất
+  relayoutRef.current = relayout;
+  const { minimap } = useShell();
   const rows = useMemo(() => (log.open ? runRows(log.results, script.steps, script.edges) : []), [log.open, log.results, script.steps, script.edges]);
   const head = runHead(log.results, log.summary, log.live, running);
   const jump = (id: string) => {
@@ -124,32 +124,16 @@ export default function FlowEditor() {
     setPalette(true);
   };
 
-  const { region } = script;
+  // Lệnh từ ribbon / status bar: bảng thêm node, xếp lại tự động (thu phóng do FlowCanvas xử lý)
+  useEffect(() => onCanvasCommand((c) => {
+    if (c === 'palette') openPalette();
+    else if (c === 'layout') relayoutRef.current();
+  }), []); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <main aria-label="Flow" className="flex min-w-0 flex-1 flex-col">
       <div className="relative min-h-0 flex-1">
-        <FlowHeader count={script.steps.length}>
-          <button onClick={() => openOverlay('region')} title="Chọn vùng trên màn hình – toạ độ điểm tính theo vùng" aria-label={region ? `Vùng ${region.w} × ${region.h}` : 'Toàn màn hình'}
-            className={`${headerBtn} text-muted hover:text-ink`}>
-            <Region className="h-3.5 w-3.5" />
-            {region ? <span className="font-mono">{region.w} × {region.h}</span> : <span className={headerLabel}>Toàn màn hình</span>}
-          </button>
-          {region && (
-            <button onClick={() => setRegion(null)} aria-label="Về toàn màn hình" title="Về toàn màn hình"
-              className="grid h-8 w-8 place-items-center rounded-control text-muted hover:bg-hover hover:text-ink">✕</button>
-          )}
-          {picked.length > 1 && (
-            <button onClick={groupPicked} title="Gom các node đang chọn vào một khung" className={headerBtn}>
-              Nhóm lại <span className={`font-mono text-[11px] text-muted ${headerKey}`}>{isMac ? '⌘G' : 'Ctrl+G'}</span>
-            </button>
-          )}
-          <EmbedMenu />
-          <ViewMenu card={prefs.card} detail={prefs.detail} onCard={(card) => { setFlowPrefs({ card }); if (card === 'full') setNotice('Thẻ Đầy đủ cao hơn – thẻ chồng nhau thì bấm Sắp xếp lại (góc dưới trái)'); }} onDetail={(detail) => setFlowPrefs({ detail })} />
-          <button onClick={openPalette} title="Thêm node" aria-label="Thêm node" className={headerBtn}>
-            + <span className="@max-md:hidden">Thêm node</span> <span className={`font-mono text-[11px] text-muted ${headerKey}`}>{isMac ? '⌘K' : 'Ctrl+K'}</span>
-          </button>
-        </FlowHeader>
-        <FlowCanvas nodes={views} edges={edges} groups={groups} groupActions={groupActions} onMoveGroup={moveGroup} start={script.start} positions={positions} selected={selected || null} picked={picked} fitKey={fitKey}
+        <FlowCanvas minimap={minimap} nodes={views} edges={edges} groups={groups} groupActions={groupActions} onMoveGroup={moveGroup} start={script.start} positions={positions} selected={selected || null} picked={picked} fitKey={fitKey}
           focus={focus} taken={trace.taken} activeEdge={trace.active}
           mode={prefs.card} dataEdges={dEdges} onLinkData={linkData} linkBlock={linkBlock}
           popover={prefs.detail === 'pop' && cur ? <StepForm key={cur.id} step={cur} mode="pop" onClose={() => selectStep('')} /> : undefined}
@@ -167,11 +151,10 @@ export default function FlowEditor() {
             setInsertAt({ from, port, pos: { x: Math.round(pos.x), y: Math.round(pos.y - 28) } });
             setPalette(true);
           }}
-          onNodeMenu={(id, c) => setMenu({ id, x: c.x, y: c.y })}
-          onLayout={relayout} />
+          onNodeMenu={(id, c) => setMenu({ id, x: c.x, y: c.y })} />
         {script.steps.length === 0 && (
           <p className="pointer-events-none absolute inset-0 grid place-items-center text-center text-muted">
-            Chưa có node nào – bấm “+ Thêm node” hoặc F6 để lưu vị trí chuột.
+            Chưa có node nào – mở tab “Chèn node” (hoặc {isMac ? '⌘K' : 'Ctrl+K'}), hoặc F6 để lưu vị trí chuột.
           </p>
         )}
       </div>

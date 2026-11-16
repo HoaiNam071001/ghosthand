@@ -22,7 +22,7 @@ export default function Guide() {
   useEffect(() => onOpenGuide((p) => { if (p) nav(p); setOpen(true); }), []);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'F1') { e.preventDefault(); setOpen(true); }
+      if (e.key === 'F1' && !e.ctrlKey && !e.metaKey) { e.preventDefault(); setOpen(true); } // Ctrl+F1 = thu gọn ribbon
       else if (e.key === 'Escape') setOpen(false);
     };
     window.addEventListener('keydown', onKey);

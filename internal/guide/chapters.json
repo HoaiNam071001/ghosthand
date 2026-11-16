@@ -17,7 +17,7 @@
       { "kind": "p", "text": "macOS chặn app điều khiển chuột và chụp màn hình cho tới khi bạn cho phép. Tối thiểu cần **Trợ năng (Accessibility)** và **Ghi màn hình (Screen Recording)** – chi tiết từng quyền ở [[chapter:quyen]]. Windows không cần cấp quyền riêng." },
       { "kind": "h", "text": "Chạy thử kịch bản đầu tiên" },
       { "kind": "steps", "items": [
-        "Ở thư viện bên trái bấm nút **Mẫu thử** (ô lưới) – danh sách kịch bản mẫu, mỗi mẫu thử một loại node trên trang sân thử có sẵn.",
+        "Bấm **Tệp** (góc trái hàng tab) → **Mẫu thử** – danh sách kịch bản mẫu, mỗi mẫu thử một loại node trên trang sân thử có sẵn.",
         "Chọn một mẫu dễ, vd *Click theo chữ*, bấm **Dùng mẫu** – kịch bản hiện trên canvas.",
         "Bấm **Mở trang** trên thẻ mẫu để mở trang sân thử trong trình duyệt.",
         "Bấm **Chạy** (hoặc F8). Muốn dừng ngay: bấm F8 lần nữa hoặc rê chuột vào một góc màn hình.",
@@ -93,14 +93,15 @@
     "id": "giao-dien",
     "group": "Dùng app",
     "title": "Giao diện",
-    "summary": "Thư viện, canvas, inspector, thanh công cụ, overlay chọn vùng, thanh mini lúc chạy.",
+    "summary": "Ribbon, canvas, inspector nổi, trang Tệp, overlay chọn vùng, thanh mini lúc chạy.",
     "blocks": [
       { "kind": "list", "items": [
-        "**Thư viện** (trái): kịch bản mới / mở / lưu, Mẫu thử, Mở gần đây, Lịch sử chạy, hẹn giờ của từng kịch bản. Nút **Gói** (hình hộp): *Xuất gói .zip* – kịch bản kèm file CSV / xlsx của Lặp qua danh sách, ảnh của Clipboard / Hỏi AI để gửi máy khác (ảnh mẫu đã nằm sẵn trong kịch bản); *Nhập gói .zip* – giải nén vào thư mục kịch bản, đổi đường dẫn file sang chỗ mới rồi mở.",
-        "**Canvas** (giữa): các node và cạnh nối. Kéo node để xếp, kéo từ cổng ra của node này sang node khác để nối. Ctrl+K (macOS: Cmd+K) mở bảng **Thêm node** có ô tìm không dấu.",
-        "**Inspector** (phải): trường của node đang chọn. Nút ⓘ cạnh tên node cho biết node làm gì; *Xem hướng dẫn* mở trang của node đó trong modal này.",
-        "**Thanh công cụ**: tên kịch bản, *Soạn / Xem trước*, nút số vòng (lặp, đếm ngược), nút **Chạy** kèm menu ▾.",
-        "**Status bar** (dưới): trạng thái, toạ độ chuột hiện tại, cách dừng khẩn cấp."
+        "**Thanh tiêu đề** (trên cùng): Lưu / Hoàn tác / Làm lại, tên kịch bản (chip *Chưa lưu* khi có thay đổi), Hướng dẫn (F1), Cài đặt (Ctrl+,). Kéo cả hàng để dời cửa sổ; kéo mép / góc cửa sổ để đổi kích thước.",
+        "**Ribbon** (dưới thanh tiêu đề, như Word): các tab **Soạn** (chép / dán, hoàn tác, gom nhóm, bật-tắt node, vùng màn hình), **Chèn node** (mọi loại node theo nhóm – bấm để thêm; ô *Tìm node…* = Ctrl+K), **Chạy** (chạy từ / riêng / từng node, xem trước, ghi thao tác, lịch sử, gói báo lỗi), **Xem** (kiểu thẻ Gọn / Đầy đủ, cách mở chi tiết node, thu phóng, xếp lại tự động, sáng / tối) và **Công cụ** (lấy toạ độ, thử trang, MCP, cài đặt). Ctrl+F1 hoặc bấm đúp tab để thu gọn ribbon. Nút số vòng (lặp, đếm ngược) và nút **Chạy** kèm menu ▾ luôn ở bên phải hàng tab.",
+        "**Tệp** (nút đầu hàng tab): trang toàn cửa sổ gồm *Trang đầu* (kịch bản trống + mẫu, kịch bản của tôi, lịch sử gần đây), Mới / Mở / Lưu / Lưu thành, *Mẫu thử*, *Nhúng kịch bản*, Lịch sử chạy và **Cài đặt**. *Xuất gói .zip* – kịch bản kèm file CSV / xlsx của Lặp qua danh sách, ảnh của Clipboard / Hỏi AI để gửi máy khác (ảnh mẫu đã nằm sẵn trong kịch bản); *Nhập gói .zip* – kịch bản kèm file CSV / xlsx của Lặp qua danh sách, ảnh của Clipboard / Hỏi AI để gửi máy khác (ảnh mẫu đã nằm sẵn trong kịch bản); *Nhập gói .zip* – giải nén vào thư mục kịch bản, đổi đường dẫn file sang chỗ mới rồi mở.",
+        "**Canvas** (giữa): các node và cạnh nối. Kéo node để xếp, kéo từ cổng ra của node này sang node khác để nối. Ctrl+K (macOS: Cmd+K) mở bảng **Thêm node** có ô tìm không dấu (tab Chèn node cũng có đủ nút).",
+        "**Inspector** (phải): hiện khi bấm một node, **nổi** trên canvas; nút ghim đưa nó dính cạnh phải (canvas co lại), Esc / ✕ để ẩn, kéo mép trái đổi bề rộng. Trường của node đang chọn. Nút ⓘ cạnh tên node cho biết node làm gì; *Xem hướng dẫn* mở trang của node đó trong modal này.",
+        "**Status bar** (dưới): trạng thái, toạ độ chuột hiện tại, số node, cách dừng khẩn cấp, thanh **thu phóng** canvas (− ━●━ + 100 %, vừa màn hình)."
       ] },
       { "kind": "h", "text": "Overlay – chọn vùng và điểm" },
       { "kind": "p", "text": "Overlay phủ lên màn hình để khoanh **vùng** kịch bản, chọn điểm click, khoanh ảnh mẫu. Đang ở overlay, rê chuột tới chỗ cần bấm rồi nhấn **F6** để thêm điểm. Điểm lưu theo vùng + **neo** (bám cạnh trái / phải / giữa / theo tỉ lệ), nên cửa sổ đổi cỡ thì điểm vẫn bám đúng nút." },
@@ -160,7 +161,7 @@
       ] },
       { "kind": "h", "text": "Nối dữ liệu trên canvas" },
       { "kind": "list", "items": [
-        "Nút **Xem** trên canvas: thẻ **Gọn** hoặc **Đầy đủ**. Thẻ Đầy đủ có khối **VÀO** (ô của node đang đọc biến gì – chấm vuông bên trái) và **RA** (output – chấm vuông bên phải); dây nét đứt nối output với ô đang dùng nó. Chấm tròn vẫn là cổng luồng chạy.",
+        "Tab **Xem** của ribbon: thẻ **Gọn** hoặc **Đầy đủ**. Thẻ Đầy đủ có khối **VÀO** (ô của node đang đọc biến gì – chấm vuông bên trái) và **RA** (output – chấm vuông bên phải); dây nét đứt nối output với ô đang dùng nó. Chấm tròn vẫn là cổng luồng chạy.",
         "Thẻ Gọn: rê chuột lên thẻ một lúc, VÀO toả ra bên trái, RA toả ra bên phải.",
         "**Kéo ô vuông output** sang ô VÀO của node khác để nối – ô chữ đang có nội dung thì biến chèn vào cuối, ô số / toạ độ thì thay. Kéo đi qua node nào thì VÀO của node đó toả ra. Chỉ nối được tới node **chạy sau** node nguồn; node chạy trước báo lý do. Ctrl+Z để hoàn tác.",
         "Tab **Dữ liệu** ở chi tiết node: mỗi ô đọc biến của node nào (bấm để sang node đó, *Bỏ nối*), mỗi output đang được node nào dùng; mở nhật ký một lần chạy để thấy giá trị thật.",
@@ -205,7 +206,7 @@
     "title": "Lịch sử và đọc lỗi",
     "summary": "Xem lại lần chạy, output từng node, hiểu mã lỗi.",
     "blocks": [
-      { "kind": "p", "text": "Mỗi lần chạy lưu nhật ký: node nào chạy, ra cổng nào, output gì, mất bao lâu, ảnh màn hình lúc lỗi. Mở **Lịch sử chạy** ở thư viện; *Xem trên flow* tô đường đã đi lên canvas. Đầu hộp thoại có thống kê: số lần chạy, % thành công (không tính lần bạn dừng), thời gian trung bình lần thành công và node hay làm kịch bản thất bại nhất – sửa node đó trước." },
+      { "kind": "p", "text": "Mỗi lần chạy lưu nhật ký: node nào chạy, ra cổng nào, output gì, mất bao lâu, ảnh màn hình lúc lỗi. Mở **Lịch sử chạy** ở tab Chạy (hoặc Tệp →); *Xem trên flow* tô đường đã đi lên canvas. Đầu hộp thoại có thống kê: số lần chạy, % thành công (không tính lần bạn dừng), thời gian trung bình lần thành công và node hay làm kịch bản thất bại nhất – sửa node đó trước." },
       { "kind": "h", "text": "Xem dạng cây" },
       { "kind": "list", "items": [
         "Hộp thoại Lịch sử chạy mặc định xem **Cây** (đổi sang **Danh sách** ở góc trên): mỗi lần node chạy là một thẻ, xếp từ trên xuống; node Lặp qua danh sách / Đếm toả mỗi lượt thành một nhánh, gom về *Hết danh sách*. Mặc định mở lượt đầu và lượt có lỗi; ▸ / ▾ trên thẻ lượt để mở / thu nhánh, quá 10 lượt thì gộp thành *N lượt nữa*.",
@@ -240,8 +241,8 @@
         "Chọn tool cho từng loại AI. AI mặc định soạn bằng node tìm ảnh / chữ trên màn hình; muốn dùng node trình duyệt (web) thì nói với AI."
       ] },
       { "kind": "p", "text": "Khi AI chạy, cửa sổ chính thu về **thanh mini** và cửa sổ app đích được đưa lên trước; chạy xong thanh mini vẫn giữ – bấm *Mở app* để về màn chính. Bạn đụng chuột giữa chừng thì app tạm dừng, chuột đứng yên 5 giây thì tự chạy tiếp (thanh mini đếm ngược; bấm Dừng để huỷ) – đổi số giây hoặc tắt ở Cài đặt, tắt thì phải bấm Tiếp tục." },
-      { "kind": "p", "text": "Kịch bản AI tạo chỉ để thử nằm riêng ở nhóm **AI thử** cuối thư viện (thu gọn) và tự vào Thùng rác sau 7 ngày không mở – đổi số ngày hoặc tắt ở Cài đặt; muốn giữ thì mở rồi bấm Lưu. Khi AI chạy thử, app báo trước cho AI những chuyện hay làm kịch bản lỗi mà không do kịch bản: trình duyệt bật *hỏi nơi lưu tệp*, hộp thoại đang mở, cửa sổ trình duyệt quá nhỏ."}, {"kind": "p", "text": "**Lệnh AI gần đây** (cùng trang Cài đặt) cho biết AI nào gọi gì, mất bao lâu; bấm một dòng để xem tham số – mật khẩu / token được che. Chữ AI đọc từ màn hình, web, file không được coi là lệnh." },
-      { "kind": "warn", "text": "Kịch bản AI tạo có nhãn **AI** trong thư viện – xem kỹ trước khi chạy. Node Chạy lệnh / Nguồn luôn cần bạn đồng ý." }
+      { "kind": "p", "text": "Kịch bản AI tạo chỉ để thử nằm riêng ở nhóm **AI thử** trong Tệp → Trang đầu và tự vào Thùng rác sau 7 ngày không mở – đổi số ngày hoặc tắt ở Cài đặt; muốn giữ thì mở rồi bấm Lưu. Khi AI chạy thử, app báo trước cho AI những chuyện hay làm kịch bản lỗi mà không do kịch bản: trình duyệt bật *hỏi nơi lưu tệp*, hộp thoại đang mở, cửa sổ trình duyệt quá nhỏ."}, {"kind": "p", "text": "**Lệnh AI gần đây** (cùng trang Cài đặt) cho biết AI nào gọi gì, mất bao lâu; bấm một dòng để xem tham số – mật khẩu / token được che. Chữ AI đọc từ màn hình, web, file không được coi là lệnh." },
+      { "kind": "warn", "text": "Kịch bản AI tạo có nhãn **AI** trong Tệp → Trang đầu – xem kỹ trước khi chạy. Node Chạy lệnh / Nguồn luôn cần bạn đồng ý." }
     ]
   },
   {

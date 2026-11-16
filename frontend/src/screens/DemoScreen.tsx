@@ -2,16 +2,17 @@
 // để xem / so với canvas. Không nối Go, không đụng store kịch bản thật.
 import { useState } from 'react';
 import TitleBar from '../components/TitleBar';
-import { LibraryView } from '../components/Library';
-import { StatusBar, Toolbar } from '../components/AppChrome';
-import { demoRunItems } from '../demo/runMenu';
-import ScheduleDialog, { Schedule, ScheduleRow } from '../components/ScheduleDialog';
+import { StatusBar } from '../components/AppChrome';
+import DemoRibbon from '../demo/DemoRibbon';
+import Backstage from '../components/backstage/Backstage';
+import { openBackstage } from '../shellStore';
+import ScheduleDialog, { Schedule } from '../components/ScheduleDialog';
 import { GroupFrame, StaticCard } from '../components/StepCard';
 import RunDialog from '../components/inputs/RunDialog';
 import DemoInspector from '../demo/DemoInspector';
 import PageCheckDemo from '../demo/PageCheckDemo';
 import {
-  demoInputs, demoItems, demoLibrary, demoNumbers, demoPresets, demoRunSections, DemoStep, findDemoStep,
+  demoInputs, demoItems, demoNumbers, demoPresets, demoRunSections, DemoStep, findDemoStep,
 } from '../demo/demoScript';
 
 export default function DemoScreen() {
@@ -22,7 +23,6 @@ export default function DemoScreen() {
   const [notice, setNotice] = useState('');
   const [schedule, setSchedule] = useState<Schedule | null>(null);
   const [scheduleOpen, setScheduleOpen] = useState(false);
-  const [recording, setRecording] = useState(false);
 
   const card = (s: DemoStep) => (
     <StaticCard key={s.id} icon={s.type} n={demoNumbers.get(s.id)!} title={s.title} detail={s.detail} delay={s.delay}
@@ -33,19 +33,12 @@ export default function DemoScreen() {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-bg text-ink">
-      <TitleBar />
-      <Toolbar name="Nhắn tin Facebook" unsaved loop="10 vòng" loopPanel={<div className="flex flex-col gap-3"><p className="text-[13px] text-muted">Lặp / đếm ngược: xem màn chính.</p><ScheduleRow value={schedule} onEdit={() => setScheduleOpen(true)} /></div>}
-        running={false} onRun={() => setRunOpen(true)} onPreview={() => {}}
-        runItems={demoRunItems(setNotice, { on: recording, toggle: () => setRecording(!recording) })}
-        extra={recording && (
-          <span className="btn-danger-soft flex h-[34px] items-center gap-2 rounded-control px-3 text-[13px]">
-            <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-danger" />Đang ghi <span className="font-mono">0:07</span>
-          </span>
-        )} />
+      <TitleBar name="Nhắn tin Facebook" unsaved onSettings={() => openBackstage('settings')} canUndo canRedo />
+      <div className="relative flex min-h-0 flex-1 flex-col">
+      <DemoRibbon notify={setNotice} loop="10 vòng" onRun={() => setRunOpen(true)}
+        extra={<button onClick={() => setScheduleOpen(true)} className="flex h-7 items-center gap-1.5 rounded-control border border-line bg-surface px-2.5 text-[12.5px] hover:bg-hover" title="Hẹn giờ chạy (mẫu)">⏱ {schedule ? schedule.time : 'Hẹn giờ'}</button>} />
 
       <div className="flex min-h-0 flex-1 border-t border-line">
-        <LibraryView {...demoLibrary} />
-
         <main aria-label="Danh sách bước (mẫu)" className="flex min-w-0 flex-1 flex-col gap-3 overflow-y-auto px-[22px] py-4">
           <div className="flex items-center gap-2.5">
             <h1 className="text-base font-semibold">Các bước</h1>
@@ -64,6 +57,8 @@ export default function DemoScreen() {
         </main>
 
         {cur && <DemoInspector key={cur.id} step={cur} n={demoNumbers.get(cur.id) ?? ''} inputs={inputs} setInputs={setInputs} />}
+      </div>
+      <Backstage />
       </div>
 
       <StatusBar running={false} mouse="X 1204 Y 388">
