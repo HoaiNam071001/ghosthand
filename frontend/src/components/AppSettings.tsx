@@ -3,6 +3,7 @@
 // Bí mật – kho mật khẩu / token (bước 43 S10, settings/SecretsSettings), Quyền – quyền hệ điều hành (bước 48, settings/PermSettings), API – dòng lệnh + API local (bước 22, settings/ApiSettings), AI qua MCP (bước 31, settings/McpSettings), MCP server – server ngoài node Gọi tool MCP dùng (bước 55, settings/McpServersSettings), Đồng bộ – Google Drive (bước 54, settings/SyncSettings), Giới thiệu – phiên bản + kiểm tra bản mới (settings/AboutSettings).
 // Mở ở tab nào / mục nào: shellStore (openSettings trong settingsNav.ts).
 import { useEffect, useState } from 'react';
+import { useT } from '../i18n';
 import {
   GetSettings, OpenFolder, PickFolder, SetAPISettings, SetMCPSettings, SetOverlaySettings, SetStorageSettings, SetWebSettings, StorageDefaults, WispStatus,
 } from '../../wailsjs/go/app/App';
@@ -37,6 +38,7 @@ export default function AppSettings() {
   const script = useScript();
   const [defaults, setDefaults] = useState<store.StorageDefaults | null>(null);
   const page = pageOf(tab);
+  const t = useT();
 
   useEffect(() => {
     // Promise.resolve().then: trình duyệt (#demo) không có Go → lỗi thành thông báo thay vì làm sập cả màn
@@ -109,16 +111,16 @@ export default function AppSettings() {
 
   return (
     <div className="flex h-full min-h-0 max-w-[920px] flex-col gap-3 text-[13px] text-ink">
-      <h2 className="text-xl font-semibold">Cài đặt</h2>
+      <h2 className="text-xl font-semibold">{t('st.title')}</h2>
       <div className="flex min-h-0 flex-1 gap-4">
         <SettingsNav page={page} onChange={(p) => setSettingsTab(p.sections[0].id)} />
         <div key={tab} className="flex min-w-0 flex-1 flex-col gap-3 overflow-y-auto pr-1">
           {page.sections.length > 1 && (
-            <div className="flex flex-none gap-4 border-b border-line" role="tablist" aria-label={page.label}>
-              {page.sections.map((sec) => <TabBtn key={sec.id} active={tab === sec.id} onClick={() => setSettingsTab(sec.id)}>{sec.label}</TabBtn>)}
+            <div className="flex flex-none gap-4 border-b border-line" role="tablist" aria-label={t(page.key)}>
+              {page.sections.map((sec) => <TabBtn key={sec.id} active={tab === sec.id} onClick={() => setSettingsTab(sec.id)}>{t(sec.key)}</TabBtn>)}
             </div>
           )}
-          {settings ? section(tab) : <span className="text-muted">Đang nạp…</span>}
+          {settings ? section(tab) : <span className="text-muted">{t('st.loading')}</span>}
           {error && <span className="text-danger-text">{error}</span>}
         </div>
       </div>

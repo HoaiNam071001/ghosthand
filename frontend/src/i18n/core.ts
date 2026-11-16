@@ -20,6 +20,8 @@ export function format(text: string, vars?: Record<string, string | number>): st
 
 const dicts: Record<Lang, Record<MsgKey, string>> = { vi, en };
 
+export type Translate = (key: MsgKey, vars?: Record<string, string | number>) => string;
+
 export function translate(lang: Lang, key: MsgKey, vars?: Record<string, string | number>): string {
   return format(dicts[lang][key] || vi[key], vars);
 }

@@ -1,6 +1,7 @@
 // Ribbon cho màn mẫu (#demo, #demo-flow – bước 63): cùng RibbonView + danh sách lệnh model.ts với app thật, nhưng nút chỉ báo "Màn mẫu".
 // Tab và thu gọn dùng state cục bộ (không đụng shellStore); trang Tệp mở thật (shellStore).
 import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { useT } from '../i18n';
 import InsertSearch from '../components/ribbon/InsertSearch';
 import { LoopButton } from '../components/AppChrome';
 import { RunButton } from '../components/RunMenu';
@@ -24,11 +25,12 @@ export default function DemoRibbon({ notify, running = false, onRun, loop = '3 v
   const [collapsed, setCollapsed] = useState(false);
   const [q, setQ] = useState("");
   const { backstage } = useShell();
+  const t = useT();
   const act = useMemo(() => new Proxy(acts, {
     get: (t, k) => t[k as keyof RibbonActions] ?? (() => notify(`Màn mẫu – lệnh “${String(k)}”`)),
   }) as RibbonActions, [notify, acts]);
   const groups = buildRibbon(tab, {
-    running, offline: false, hasInputs: false, hasSteps: true, selectedOn: true, picked: 0, canUndo: true, canRedo: true,
+    t, running, offline: false, hasInputs: false, hasSteps: true, selectedOn: true, picked: 0, canUndo: true, canRedo: true,
     card: 'compact', detail: 'panel', pinned: false, minimap: true, theme: 'system', insert, slots: { loop: <LoopButton summary={loop}><p className="text-[13px] text-muted">Lặp / đếm ngược: xem màn chính.</p></LoopButton> }, insertQuery: q, act,
   });
   return (

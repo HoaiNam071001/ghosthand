@@ -1,6 +1,7 @@
 // Menu dọc bên trái trang Tệp (bước 63): các mục nhóm bằng vạch ngăn; mục có `page` là trang trong Tệp, mục có `onClick` là lệnh làm ngay.
 // Chỉ hiển thị – Backstage ghép danh sách và nối việc.
 import { RibbonIcon, RibbonIconName } from '../ribbon/ribbonIcons';
+import { useT } from '../../i18n';
 import type { BackstagePageId } from '../../shellStore';
 
 export type NavEntry = { id: string; label: string; icon: RibbonIconName; hint?: string; page?: BackstagePageId; disabled?: boolean; title?: string; onClick?: () => void };
@@ -8,10 +9,11 @@ export type NavEntry = { id: string; label: string; icon: RibbonIconName; hint?:
 export default function BackstageNav({ sections, current, onPage, onBack }: {
   sections: NavEntry[][]; current: BackstagePageId; onPage: (p: BackstagePageId) => void; onBack: () => void;
 }) {
+  const t = useT();
   return (
-    <nav aria-label="Trang Tệp" className="flex w-[216px] flex-none flex-col border-r border-line bg-side px-2 pt-3">
-      <button onClick={onBack} title="Quay lại màn soạn (Esc)" className="mb-1 flex h-9 flex-none items-center gap-2.5 rounded-md px-3 text-left font-semibold hover:bg-hover">
-        <span className="-rotate-90"><RibbonIcon name="up" /></span>Quay lại
+    <nav aria-label={t('bs.nav')} className="flex w-[216px] flex-none flex-col border-r border-line bg-side px-2 pt-3">
+      <button onClick={onBack} title={t('bs.backT')} className="mb-1 flex h-9 flex-none items-center gap-2.5 rounded-md px-3 text-left font-semibold hover:bg-hover">
+        <span className="-rotate-90"><RibbonIcon name="up" /></span>{t('bs.back')}
       </button>
       <div className="flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto pb-3">
       {sections.map((sec, i) => (

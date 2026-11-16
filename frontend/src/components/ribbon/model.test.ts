@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { buildRibbon, columnsOf, RIBBON_TABS, RibbonActions, RibbonCtx, RibbonItem } from './model';
+import { translate } from '../../i18n/core';
 import type { PaletteGroup } from '../PaletteView';
 
 // Danh mục giả (groups.ts kéo theo store → cần window); model chỉ dựng nút từ danh mục được đưa vào
@@ -11,7 +12,7 @@ const GROUPS: PaletteGroup[] = [
 const noop = () => {};
 const act = new Proxy({}, { get: () => noop }) as RibbonActions;
 const ctx = (p: Partial<RibbonCtx> = {}): RibbonCtx => ({
-  running: false, offline: false, hasInputs: false, hasSteps: true, selectedOn: true, picked: 0, canUndo: true, canRedo: false,
+  t: (k, v) => translate('vi', k, v), running: false, offline: false, hasInputs: false, hasSteps: true, selectedOn: true, picked: 0, canUndo: true, canRedo: false,
   card: 'compact', detail: 'panel', pinned: false, minimap: true, theme: 'system', insert: GROUPS, slots: {}, act, ...p,
 });
 

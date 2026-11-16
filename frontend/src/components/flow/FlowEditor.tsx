@@ -1,6 +1,7 @@
 // Canvas flow của màn chính (bước 20 F4b): nối FlowCanvas (chỉ hiển thị) với store kịch bản.
 // Dữ liệu thẻ tính ở flow/view.ts; mọi thao tác (nối, xoá, dời, thêm node) gọi hàm store – component không tự sửa script.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useLang } from '../../i18n';
 import FlowCanvas from './FlowCanvas';
 import AddStepPalette from '../AddStepPalette';
 import { onCanvasCommand } from '../../canvasBus';
@@ -39,6 +40,7 @@ const layoutOf = (sc: Script, pins?: Map<string, DataPins>) =>
   layoutFlow(sc.steps.map((s) => ({ id: s.id, ports: portsOf(s), io: pins ? ioHeight(pins.get(s.id), 'full') : 0 })), sc.edges);
 
 export default function FlowEditor() {
+  const lang = useLang(); // nhãn cổng lấy theo ngôn ngữ → tính lại khi đổi
   const { script, selected, picked, path } = useEditor();
   const { running, progress, failedStep, foreign } = useEngine();
   const log = useRunLog();
@@ -71,7 +73,7 @@ export default function FlowEditor() {
     if (!step?.enabled) return v;
     const lack = missingOf(permItems, needsOf(step)).map((id) => permItems?.find((it) => it.id === id)?.name ?? id);
     return lack.length ? { ...v, warn: [v.warn, `Thiếu quyền: ${lack.join(', ')}`].filter(Boolean).join('\n') } : v;
-  }), [script, trace, pins, permItems, pinsById]);
+  }), [script, trace, pins, permItems, pinsById, lang]);
   const cur = script.steps.find((s) => s.id === selected);
   const relayout = () => layoutOf(script, prefs.card === 'full' ? pinsById : undefined).then((pos) => { applyLayout(pos); setFitKey((k) => k + 1); });
   const relayoutRef = useRef(relayout); // lệnh "Xếp lại" từ ribbon đăng ký một lần nhưng phải thấy script / kiểu thẻ mới nhất

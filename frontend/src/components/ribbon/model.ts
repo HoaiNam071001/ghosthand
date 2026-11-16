@@ -11,6 +11,8 @@ import type { CardMode } from '../flow/model';
 import type { DetailMode } from '../../flowPrefs';
 import type { Theme } from '../../theme';
 import type { RibbonTabId } from '../../shellStore';
+import type { MsgKey } from '../../i18n/vi';
+import type { Translate } from '../../i18n/core';
 
 export type RibbonItem = {
   id: string;
@@ -29,12 +31,12 @@ export type RibbonItem = {
 };
 export type RibbonGroup = { id: string; label: string; items: RibbonItem[] };
 
-export const RIBBON_TABS: { id: RibbonTabId; label: string }[] = [
-  { id: 'home', label: 'Soạn' },
-  { id: 'insert', label: 'Chèn node' },
-  { id: 'run', label: 'Chạy' },
-  { id: 'view', label: 'Xem' },
-  { id: 'tools', label: 'Công cụ' },
+export const RIBBON_TABS: { id: RibbonTabId; key: MsgKey }[] = [
+  { id: 'home', key: 'rb.tab.home' },
+  { id: 'insert', key: 'rb.tab.insert' },
+  { id: 'run', key: 'rb.tab.run' },
+  { id: 'view', key: 'rb.tab.view' },
+  { id: 'tools', key: 'rb.tab.tools' },
 ];
 
 // Hàm xử lý do RibbonHost nối vào store / Go; màn mẫu truyền hàm giả.
@@ -48,6 +50,7 @@ export type RibbonActions = {
 };
 
 export type RibbonCtx = {
+  t: Translate;
   running: boolean;
   offline: boolean; // trình duyệt, không có Go – nút chạy tắt
   hasInputs: boolean;
@@ -75,39 +78,41 @@ export const MOD = isMac ? '⌘' : 'Ctrl+';
 const big = (i: RibbonItem): RibbonItem => ({ ...i, size: 'big' });
 
 function home(c: RibbonCtx): RibbonGroup[] {
+  const t = c.t;
   const a = c.act;
   const sel = !!c.selectedRef;
   const none = c.picked === 0 && !sel;
   return [
-    { id: 'clip', label: 'Bộ nhớ tạm', items: [
-      big({ id: 'paste', label: 'Dán', icon: 'paste', hotkey: `${MOD}V`, title: `Dán node đã chép (${MOD}V)`, onClick: a.paste }),
-      { id: 'cut', label: 'Cắt', icon: 'cut', disabled: none, title: 'Chép rồi xoá node đang chọn', onClick: a.cut },
-      { id: 'copy', label: 'Chép', icon: 'copy', hotkey: `${MOD}C`, disabled: none, title: `Chép node đang chọn (${MOD}C)`, onClick: a.copy },
-      { id: 'dup', label: 'Nhân bản', icon: 'dup', disabled: !sel, title: 'Nhân bản node đang chọn', onClick: a.duplicate },
+    { id: 'clip', label: t('rb.g.clip'), items: [
+      big({ id: 'paste', label: t('rb.paste'), icon: 'paste', hotkey: `${MOD}V`, title: t('rb.t.paste', { mod: MOD }), onClick: a.paste }),
+      { id: 'cut', label: t('rb.cut'), icon: 'cut', disabled: none, title: t('rb.t.cut'), onClick: a.cut },
+      { id: 'copy', label: t('rb.copy'), icon: 'copy', hotkey: `${MOD}C`, disabled: none, title: t('rb.t.copy', { mod: MOD }), onClick: a.copy },
+      { id: 'dup', label: t('rb.dup'), icon: 'dup', disabled: !sel, title: t('rb.t.dup'), onClick: a.duplicate },
     ] },
-    { id: 'edit', label: 'Chỉnh sửa', items: [
-      { id: 'undo', label: 'Hoàn tác', icon: 'undo', hotkey: `${MOD}Z`, disabled: !c.canUndo, title: `Hoàn tác (${MOD}Z)`, onClick: a.undo },
-      { id: 'redo', label: 'Làm lại', icon: 'redo', hotkey: `${MOD}Y`, disabled: !c.canRedo, title: `Làm lại (${MOD}Y)`, onClick: a.redo },
-      { id: 'del', label: 'Xoá', icon: 'del', hotkey: 'Delete', disabled: none, title: 'Xoá node đang chọn (kèm cạnh nối vào nó)', onClick: a.remove },
+    { id: 'edit', label: t('rb.g.edit'), items: [
+      { id: 'undo', label: t('rb.undo'), icon: 'undo', hotkey: `${MOD}Z`, disabled: !c.canUndo, title: t('rb.t.undo', { mod: MOD }), onClick: a.undo },
+      { id: 'redo', label: t('rb.redo'), icon: 'redo', hotkey: `${MOD}Y`, disabled: !c.canRedo, title: t('rb.t.redo', { mod: MOD }), onClick: a.redo },
+      { id: 'del', label: t('rb.del'), icon: 'del', hotkey: 'Delete', disabled: none, title: t('rb.t.del'), onClick: a.remove },
     ] },
-    { id: 'select', label: 'Chọn', items: [
-      { id: 'all', label: 'Chọn tất cả', icon: 'all', hotkey: `${MOD}A`, disabled: !c.hasSteps, title: `Chọn mọi node (${MOD}A)`, onClick: a.selectAll },
+    { id: 'select', label: t('rb.g.select'), items: [
+      { id: 'all', label: t('rb.all'), icon: 'all', hotkey: `${MOD}A`, disabled: !c.hasSteps, title: t('rb.t.all', { mod: MOD }), onClick: a.selectAll },
     ] },
-    { id: 'group', label: 'Nhóm', items: [
-      big({ id: 'group', label: 'Gom nhóm', icon: 'group', hotkey: `${MOD}G`, disabled: c.picked < 2, title: c.picked < 2 ? 'Chọn từ 2 node (Shift + bấm) để gom vào một khung' : `Gom các node đang chọn vào một khung (${MOD}G)`, onClick: a.group }),
+    { id: 'group', label: t('rb.g.group'), items: [
+      big({ id: 'group', label: t('rb.group'), icon: 'group', hotkey: `${MOD}G`, disabled: c.picked < 2, title: c.picked < 2 ? t('rb.t.group2') : t('rb.t.groupN', { mod: MOD }), onClick: a.group }),
     ] },
-    { id: 'node', label: 'Node', items: [
-      { id: 'toggle', label: c.selectedOn ? 'Tắt node' : 'Bật node', icon: 'power', disabled: !sel, title: 'Node tắt thì bị bỏ qua khi chạy', onClick: a.toggleNode },
-      { id: 'start', label: 'Đặt làm bắt đầu', icon: 'flag', disabled: !sel, title: 'Kịch bản bắt đầu chạy từ node này', onClick: a.setStart },
+    { id: 'node', label: t('rb.g.node'), items: [
+      { id: 'toggle', label: c.selectedOn ? t('rb.nodeOff') : t('rb.nodeOn'), icon: 'power', disabled: !sel, title: t('rb.t.toggle'), onClick: a.toggleNode },
+      { id: 'start', label: t('rb.start'), icon: 'flag', disabled: !sel, title: t('rb.t.start'), onClick: a.setStart },
     ] },
-    { id: 'screen', label: 'Màn hình', items: [
-      big({ id: 'region', label: 'Vùng màn hình', icon: 'region', title: 'Chọn vùng trên màn hình – toạ độ điểm tính theo vùng', onClick: a.region }),
+    { id: 'screen', label: t('rb.g.screen'), items: [
+      big({ id: 'region', label: t('rb.region'), icon: 'region', title: t('rb.t.region'), onClick: a.region }),
     ] },
   ];
 }
 
 // Tab Chèn node: mỗi nhóm node một nhóm ribbon, đủ mọi loại node từ danh mục palette (không chép danh sách).
 export function insertGroups(c: RibbonCtx): RibbonGroup[] {
+  const t = c.t;
   const words = fold(c.insertQuery ?? '').split(/s+/).filter(Boolean);
   const hit = (g: PaletteGroup, it: PaletteGroup['items'][number]) => words.every((w) => fold(`${it.label} ${it.keywords} ${g.title ?? categoryName(g.cat)}`).includes(w));
   const groups: RibbonGroup[] = c.insert.map((g, k) => ({
@@ -118,7 +123,7 @@ export function insertGroups(c: RibbonCtx): RibbonGroup[] {
       const desc = it.info?.desc ? ` – ${it.info.desc}` : '';
       return {
         id: `${g.cat}:${it.key ?? it.label}`, label: it.label, step: it.icon, cat: g.cat, disabled: !it.run,
-        title: it.soon ? `Sắp có (${it.soon})` : `${it.label}${desc}${warn ? ` · ${warn}` : ''}`,
+        title: it.soon ? t('rb.soon', { when: it.soon }) : `${it.label}${desc}${warn ? ` · ${warn}` : ''}`,
         onClick: it.run ? () => { it.run?.(); } : undefined,
       };
     }),
@@ -127,78 +132,81 @@ export function insertGroups(c: RibbonCtx): RibbonGroup[] {
 }
 
 function run(c: RibbonCtx): RibbonGroup[] {
+  const t = c.t;
   const a = c.act;
   const off = c.offline || c.running;
   const sel = !!c.selectedRef;
   const ref = c.selectedRef;
   return [
-    { id: 'run', label: 'Chạy', items: [
-      big({ id: 'run', label: c.running ? 'Dừng' : 'Chạy', icon: c.running ? 'stop' : 'play', hotkey: 'F8', danger: c.running, disabled: c.offline,
-        title: c.offline ? 'Chỉ chạy được trong app' : c.running ? 'Dừng kịch bản đang chạy (F8)' : 'Chạy kịch bản (F8)', onClick: () => (c.running ? a.stop() : a.run(false)) }),
-      { id: 'from', label: ref ? `Chạy từ ${ref}` : 'Chạy từ node chọn', icon: 'from', disabled: off || !sel, title: 'Chạy một vòng bắt đầu từ node đang chọn – các node trước đó không chạy', onClick: () => a.runFrom(false) },
-      { id: 'only', label: ref ? `Chạy riêng ${ref}` : 'Chạy riêng node chọn', icon: 'only', disabled: off || !sel, title: 'Chạy đúng node đang chọn một lần rồi dừng', onClick: () => a.runFrom(true) },
-      { id: 'step', label: 'Chạy từng node', icon: 'step', hotkey: 'F10', disabled: off, title: 'Dừng trước mỗi node, bấm Tiếp / F10 để chạy node kế', onClick: a.runStep },
-      { id: 'inputs', label: 'Sửa input rồi chạy', icon: 'pack', disabled: off || !c.hasInputs, title: c.hasInputs ? 'Mở form input rồi mới chạy (Shift + bấm Chạy)' : 'Kịch bản chưa có input', onClick: () => a.run(true) },
+    { id: 'run', label: t('rb.tab.run'), items: [
+      big({ id: 'run', label: c.running ? t('rb.stop') : t('rb.tab.run'), icon: c.running ? 'stop' : 'play', hotkey: 'F8', danger: c.running, disabled: c.offline,
+        title: c.offline ? t('rb.t.offline') : c.running ? t('rb.t.stop') : t('rb.t.run'), onClick: () => (c.running ? a.stop() : a.run(false)) }),
+      { id: 'from', label: ref ? t('rb.runFromRef', { ref }) : t('rb.runFromSel'), icon: 'from', disabled: off || !sel, title: t('rb.t.from'), onClick: () => a.runFrom(false) },
+      { id: 'only', label: ref ? t('rb.runOnlyRef', { ref }) : t('rb.runOnlySel'), icon: 'only', disabled: off || !sel, title: t('rb.t.only'), onClick: () => a.runFrom(true) },
+      { id: 'step', label: t('rb.stepRun'), icon: 'step', hotkey: 'F10', disabled: off, title: t('rb.t.step'), onClick: a.runStep },
+      { id: 'inputs', label: t('rb.inputsRun'), icon: 'pack', disabled: off || !c.hasInputs, title: c.hasInputs ? t('rb.t.inputs') : t('rb.t.noInputs'), onClick: () => a.run(true) },
     ] },
-    ...(c.slots.loop ? [{ id: 'loop', label: 'Lặp', items: [{ id: 'loop', label: 'Lặp', size: 'big' as const, custom: c.slots.loop }] }] : []),
-    { id: 'try', label: 'Thử', items: [
-      big({ id: 'preview', label: 'Xem trước', icon: 'eye', title: 'Xem đường đi các node bằng con trỏ giả, không click thật', onClick: a.preview }),
-      { id: 'record', label: 'Ghi thao tác', icon: 'record', hotkey: 'F9', danger: true, disabled: off, title: 'Thu nhỏ app, ghi chuột / phím bạn thao tác thành node – F9 để dừng', onClick: a.record },
+    ...(c.slots.loop ? [{ id: 'loop', label: t('rb.g.loop'), items: [{ id: 'loop', label: t('rb.g.loop'), size: 'big' as const, custom: c.slots.loop }] }] : []),
+    { id: 'try', label: t('rb.g.try'), items: [
+      big({ id: 'preview', label: t('rb.preview'), icon: 'eye', title: t('rb.t.preview'), onClick: a.preview }),
+      { id: 'record', label: t('rb.record'), icon: 'record', hotkey: 'F9', danger: true, disabled: off, title: t('rb.t.record'), onClick: a.record },
     ] },
-    { id: 'result', label: 'Kết quả', items: [
-      { id: 'history', label: 'Lịch sử chạy', icon: 'history', title: 'Mở trang Lịch sử chạy', onClick: a.history },
-      { id: 'bundle', label: 'Gói báo lỗi', icon: 'zip', disabled: c.offline, title: 'Xuất .zip lần chạy gần nhất để gửi báo lỗi', onClick: a.bundle },
+    { id: 'result', label: t('rb.g.result'), items: [
+      { id: 'history', label: t('rb.history'), icon: 'history', title: t('rb.t.history'), onClick: a.history },
+      { id: 'bundle', label: t('rb.bundle'), icon: 'zip', disabled: c.offline, title: t('rb.t.bundle'), onClick: a.bundle },
     ] },
   ];
 }
 
 function view(c: RibbonCtx): RibbonGroup[] {
+  const t = c.t;
   const a = c.act;
   return [
-    { id: 'card', label: 'Kiểu thẻ', items: [
-      big({ id: 'compact', label: 'Gọn', icon: 'card', active: c.card === 'compact', title: 'Thẻ gọn – rê chuột lên thẻ để toả cổng dữ liệu', onClick: () => a.card('compact') }),
-      big({ id: 'full', label: 'Đầy đủ', icon: 'full', active: c.card === 'full', title: 'Thẻ đầy đủ có khối VÀO / RA', onClick: () => a.card('full') }),
+    { id: 'card', label: t('rb.g.card'), items: [
+      big({ id: 'compact', label: t('rb.compact'), icon: 'card', active: c.card === 'compact', title: t('rb.t.compact'), onClick: () => a.card('compact') }),
+      big({ id: 'full', label: t('rb.full'), icon: 'full', active: c.card === 'full', title: t('rb.t.full'), onClick: () => a.card('full') }),
     ] },
-    { id: 'show', label: 'Chi tiết node', items: [
-      { id: 'panel', label: 'Bảng bên phải', icon: 'panel', active: c.detail === 'panel', title: 'Chi tiết node mở thành bảng bên phải', onClick: () => a.detail('panel') },
-      { id: 'modal', label: 'Hộp thoại', icon: 'full', active: c.detail === 'modal', title: 'Chi tiết node mở giữa màn hình', onClick: () => a.detail('modal') },
-      { id: 'pop', label: 'Dưới node', icon: 'card', active: c.detail === 'pop', title: 'Chi tiết node mở ngay dưới thẻ', onClick: () => a.detail('pop') },
+    { id: 'show', label: t('rb.g.detail'), items: [
+      { id: 'panel', label: t('rb.panel'), icon: 'panel', active: c.detail === 'panel', title: t('rb.t.panel'), onClick: () => a.detail('panel') },
+      { id: 'modal', label: t('rb.modal'), icon: 'full', active: c.detail === 'modal', title: t('rb.t.modal'), onClick: () => a.detail('modal') },
+      { id: 'pop', label: t('rb.pop'), icon: 'card', active: c.detail === 'pop', title: t('rb.t.pop'), onClick: () => a.detail('pop') },
     ] },
-    { id: 'pane', label: 'Hiện', items: [
-      { id: 'pin', label: 'Ghim bảng phải', icon: 'pin', active: c.pinned, disabled: c.detail !== 'panel', title: 'Bảng chi tiết dính cạnh phải (canvas co lại) thay vì nổi trên canvas', onClick: () => a.pin(!c.pinned) },
-      { id: 'minimap', label: 'Bản đồ nhỏ', icon: 'map', active: c.minimap, title: 'Bản đồ nhỏ của canvas', onClick: () => a.minimap(!c.minimap) },
+    { id: 'pane', label: t('rb.g.show'), items: [
+      { id: 'pin', label: t('rb.pin'), icon: 'pin', active: c.pinned, disabled: c.detail !== 'panel', title: t('rb.t.pin'), onClick: () => a.pin(!c.pinned) },
+      { id: 'minimap', label: t('rb.minimap'), icon: 'map', active: c.minimap, title: t('rb.t.minimap'), onClick: () => a.minimap(!c.minimap) },
     ] },
-    { id: 'zoom', label: 'Thu phóng', items: [
-      big({ id: 'fit', label: 'Vừa màn hình', icon: 'fit', title: 'Thu phóng cho thấy mọi node', onClick: a.fit }),
-      { id: 'zin', label: 'Phóng to', icon: 'zin', onClick: a.zoomIn },
-      { id: 'zout', label: 'Thu nhỏ', icon: 'zout', onClick: a.zoomOut },
+    { id: 'zoom', label: t('rb.g.zoom'), items: [
+      big({ id: 'fit', label: t('rb.fit'), icon: 'fit', title: t('rb.t.fit'), onClick: a.fit }),
+      { id: 'zin', label: t('rb.zin'), icon: 'zin', onClick: a.zoomIn },
+      { id: 'zout', label: t('rb.zout'), icon: 'zout', onClick: a.zoomOut },
       { id: 'z100', label: '100%', icon: 'target', onClick: a.zoom100 },
     ] },
-    { id: 'layout', label: 'Sắp xếp', items: [
-      big({ id: 'layout', label: 'Xếp lại tự động', icon: 'layout', disabled: !c.hasSteps, title: 'Xếp lại vị trí mọi node theo luồng', onClick: a.layout }),
+    { id: 'layout', label: t('rb.g.layout'), items: [
+      big({ id: 'layout', label: t('rb.layout'), icon: 'layout', disabled: !c.hasSteps, title: t('rb.t.layout'), onClick: a.layout }),
     ] },
-    { id: 'theme', label: 'Giao diện', items: [
-      { id: 'light', label: 'Sáng', icon: 'sun', active: c.theme === 'light', onClick: () => a.theme('light') },
-      { id: 'dark', label: 'Tối', icon: 'moon', active: c.theme === 'dark', onClick: () => a.theme('dark') },
-      { id: 'system', label: 'Theo hệ thống', icon: 'monitor', active: c.theme === 'system', onClick: () => a.theme('system') },
+    { id: 'theme', label: t('rb.g.theme'), items: [
+      { id: 'light', label: t('theme.light'), icon: 'sun', active: c.theme === 'light', onClick: () => a.theme('light') },
+      { id: 'dark', label: t('theme.dark'), icon: 'moon', active: c.theme === 'dark', onClick: () => a.theme('dark') },
+      { id: 'system', label: t('theme.system'), icon: 'monitor', active: c.theme === 'system', onClick: () => a.theme('system') },
     ] },
   ];
 }
 
 function tools(c: RibbonCtx): RibbonGroup[] {
+  const t = c.t;
   const a = c.act;
   return [
-    { id: 'screen', label: 'Màn hình', items: [
-      big({ id: 'point', label: 'Lấy toạ độ', icon: 'target', title: 'Mở overlay để bấm lấy điểm trên màn hình', onClick: a.pickPoint }),
-      { id: 'region', label: 'Chọn vùng', icon: 'region', title: 'Chọn vùng trên màn hình cho cả kịch bản', onClick: a.region },
+    { id: 'screen', label: t('rb.g.screen'), items: [
+      big({ id: 'point', label: t('rb.point'), icon: 'target', title: t('rb.t.point'), onClick: a.pickPoint }),
+      { id: 'region', label: t('rb.pickRegion'), icon: 'region', title: t('rb.t.pickRegion'), onClick: a.region },
     ] },
-    ...(c.slots.pageCheck ? [{ id: 'web', label: 'Trang web', items: [{ id: 'pagecheck', label: 'Thử trang', size: 'big' as const, custom: c.slots.pageCheck }] }] : []),
-    { id: 'ai', label: 'AI', items: [
-      big({ id: 'mcp', label: 'AI qua MCP', icon: 'plug', title: 'Cài đặt → AI: cho AI (Claude, Cursor…) soạn và chạy kịch bản', onClick: a.mcp }),
+    ...(c.slots.pageCheck ? [{ id: 'web', label: t('rb.g.web'), items: [{ id: 'pagecheck', label: t('rb.pageCheck'), size: 'big' as const, custom: c.slots.pageCheck }] }] : []),
+    { id: 'ai', label: t('rb.g.ai'), items: [
+      big({ id: 'mcp', label: t('rb.mcp'), icon: 'plug', title: t('rb.t.mcp'), onClick: a.mcp }),
     ] },
-    { id: 'app', label: 'Ứng dụng', items: [
-      big({ id: 'settings', label: 'Cài đặt', icon: 'gear', hotkey: `${MOD},`, title: `Cài đặt (${MOD},)`, onClick: a.settings }),
-      { id: 'guide', label: 'Hướng dẫn', icon: 'help', hotkey: 'F1', title: 'Hướng dẫn dùng app và từng loại node (F1)', onClick: a.guide },
+    { id: 'app', label: t('rb.g.app'), items: [
+      big({ id: 'settings', label: t('rb.settings'), icon: 'gear', hotkey: `${MOD},`, title: t('rb.t.settings', { mod: MOD }), onClick: a.settings }),
+      { id: 'guide', label: t('rb.guide'), icon: 'help', hotkey: 'F1', title: t('rb.t.guide'), onClick: a.guide },
     ] },
   ];
 }

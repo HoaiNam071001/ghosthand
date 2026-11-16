@@ -1,18 +1,20 @@
 // Nhóm của node (design v3, bước 38): quyết định màu ô icon / đầu thẻ / đầu inspector và nhóm trong bảng thêm node.
 // Màu nhóm chỉ để nhận ra loại node – trạng thái (chọn, chạy, lỗi) vẫn dùng accent / ok / danger.
 import type { Step, StepType } from '../types';
+import { tr } from '../i18n/lang';
+import type { MsgKey } from '../i18n/vi';
 
 export type NodeCategory = 'mouse' | 'kb' | 'wait' | 'data' | 'app' | 'flow' | 'web';
 
 // Thứ tự = thứ tự nhóm trong bảng thêm node
-export const CATEGORIES: { id: NodeCategory; name: string }[] = [
-  { id: 'mouse', name: 'Chuột' },
-  { id: 'kb', name: 'Bàn phím' },
-  { id: 'wait', name: 'Chờ & ảnh' },
-  { id: 'data', name: 'Hệ thống & dữ liệu' },
-  { id: 'app', name: 'Ứng dụng' },
-  { id: 'flow', name: 'Rẽ nhánh & luồng' },
-  { id: 'web', name: 'Web (trình duyệt)' },
+export const CATEGORIES: { id: NodeCategory; key: MsgKey }[] = [
+  { id: 'mouse', key: 'cat.mouse' },
+  { id: 'kb', key: 'cat.kb' },
+  { id: 'wait', key: 'cat.wait' },
+  { id: 'data', key: 'cat.data' },
+  { id: 'app', key: 'cat.app' },
+  { id: 'flow', key: 'cat.flow' },
+  { id: 'web', key: 'cat.web' },
 ];
 
 const BY_TYPE: Record<StepType, NodeCategory> = {
@@ -33,4 +35,4 @@ export const nodeCategory = (s: Pick<Step, 'type' | 'webBrowser'>): NodeCategory
 // Nhóm theo tên loại dạng chuỗi (danh sách Mẫu thử từ Go) – loại lạ thì không có nhóm.
 export const categoryOfType = (type: string): NodeCategory | undefined => BY_TYPE[type as StepType];
 
-export const categoryName = (c: NodeCategory) => CATEGORIES.find((x) => x.id === c)!.name;
+export const categoryName = (c: NodeCategory) => tr(CATEGORIES.find((x) => x.id === c)!.key);

@@ -2,6 +2,7 @@
 // dòng xem output / lỗi / ảnh lúc lỗi ngay trong hộp thoại). "Xem trên flow" mới đóng hộp thoại, mở bảng Nhật ký và
 // tô đường đã đi trên canvas. Xoá lần đang chọn / xoá hết (bước 41 – RunsDelete). Xuất gói lỗi (56 D2).
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useLang } from '../../i18n';
 import RunLog from '../flow/RunLog';
 import { deleteRuns, exportRunBundle, fetchRun, openRun, RunSummary, runShotUrl, useRunLog } from '../../runStore';
 import { errorText } from '../../engineStore';
@@ -44,7 +45,8 @@ export function RunsBody({ onClose, closable = false }: { onClose: () => void; c
     if (sel) fetchRun(sel).then((r) => live && setRun(r));
     return () => { live = false; };
   }, [sel]);
-  const views = useMemo(() => nodeViews(script), [script]);
+  const lang = useLang();
+  const views = useMemo(() => nodeViews(script), [script, lang]);
   const statsLine = useMemo(() => {
     const byId = new Map(views.map((v) => [v.id, `${v.ref} ${v.title}`]));
     return stats ? runStatsParts(stats, (id) => byId.get(id)).join(' · ') : '';

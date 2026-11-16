@@ -2,6 +2,7 @@
 // + chip "Chưa lưu" ở giữa, Hướng dẫn, Cài đặt và nút thu nhỏ / phóng to / đóng bên phải. Cả hàng kéo được cửa sổ.
 // Chỉ hiển thị – dữ liệu và hàm xử lý do MainScreen / màn mẫu truyền vào.
 import { Quit, WindowMinimise, WindowToggleMaximise } from '../../wailsjs/runtime/runtime';
+import { useT } from '../i18n';
 import { inWails } from '../windowMode';
 import { Logo } from './icons';
 import { RibbonIcon, RibbonIconName } from './ribbon/ribbonIcons';
@@ -31,6 +32,7 @@ export type TitleBarProps = {
 };
 
 export default function TitleBar({ name, nameTitle, unsaved, unsavedTitle, canUndo, canRedo, modKey = 'Ctrl+', onSave, onUndo, onRedo, onSettings }: TitleBarProps) {
+  const t = useT();
   const qa = (icon: RibbonIconName, label: string, on?: () => void, off?: boolean) => (
     <button onClick={on} disabled={off || !on} aria-label={label} title={label} className={quick}><RibbonIcon name={icon} /></button>
   );
@@ -41,38 +43,38 @@ export default function TitleBar({ name, nameTitle, unsaved, unsavedTitle, canUn
       onDoubleClick={(e) => inWails && isDragArea(e.target as HTMLElement) && WindowToggleMaximise()}>
       <Logo className="mr-2 h-[15px] w-[15px] flex-none" />
       <div className="mr-1.5 flex gap-px border-r border-line pr-2">
-        {qa('save', `Lưu (${modKey}S)`, onSave)}
-        {qa('undo', `Hoàn tác (${modKey}Z)`, onUndo, !canUndo)}
-        {qa('redo', `Làm lại (${modKey}Y)`, onRedo, !canRedo)}
+        {qa('save', t('tb.save', { mod: modKey }), onSave)}
+        {qa('undo', t('tb.undo', { mod: modKey }), onUndo, !canUndo)}
+        {qa('redo', t('tb.redo', { mod: modKey }), onRedo, !canRedo)}
       </div>
       {/* tên nằm giữa cửa sổ, nhường chỗ cho cụm nút hai bên khi hẹp (truncate) */}
       <div className="pointer-events-none absolute inset-x-0 flex justify-center px-[22%]">
-        <span className="pointer-events-auto flex min-w-0 items-center gap-2 font-semibold" title={nameTitle ?? 'Kịch bản'}>
+        <span className="pointer-events-auto flex min-w-0 items-center gap-2 font-semibold" title={nameTitle ?? t('tb.script')}>
           <span className="truncate">{name}</span>
           {unsaved && (
             <span title={unsavedTitle} className="flex h-5 flex-none items-center gap-1.5 rounded-full bg-soft px-2 text-[11.5px] font-normal text-muted">
-              <span className="h-1.5 w-1.5 rounded-full bg-warn" />Chưa lưu
+              <span className="h-1.5 w-1.5 rounded-full bg-warn" />{t('tb.unsaved')}
             </span>
           )}
         </span>
       </div>
       <div className="ml-auto flex items-center">
-        <span className="mr-2 text-xs whitespace-nowrap text-muted max-[1100px]:hidden" title="Bấm F8 hoặc rê chuột vào một góc màn hình để dừng kịch bản đang chạy">Dừng khẩn cấp: F8 / góc màn hình</span>
-        <button onClick={() => openGuide()} aria-label="Hướng dẫn" title="Hướng dẫn (F1)" className="grid h-9 w-9 place-items-center text-muted hover:bg-hover hover:text-ink"><RibbonIcon name="help" /></button>
+        <span className="mr-2 text-xs whitespace-nowrap text-muted max-[1100px]:hidden" title={t('tb.stopHintTitle')}>{t('tb.stopHint')}</span>
+        <button onClick={() => openGuide()} aria-label={t('tb.guide')} title={t('tb.guideT')} className="grid h-9 w-9 place-items-center text-muted hover:bg-hover hover:text-ink"><RibbonIcon name="help" /></button>
         <Guide />
         <LangSwitch />
         <ThemeSwitch />
-        <button onClick={onSettings} disabled={!onSettings} aria-label="Cài đặt" title={`Cài đặt (${modKey},)`}
+        <button onClick={onSettings} disabled={!onSettings} aria-label={t('tb.settings')} title={t('tb.settingsT', { mod: modKey })}
           className="grid h-9 w-9 place-items-center text-muted hover:bg-hover hover:text-ink"><RibbonIcon name="gear" /></button>
         {inWails && (
           <>
-            <button aria-label="Thu nhỏ" onClick={WindowMinimise} className={winBtn}>
+            <button aria-label={t('tb.min')} onClick={WindowMinimise} className={winBtn}>
               <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden><path d="M0 5h10" stroke="currentColor" /></svg>
             </button>
-            <button aria-label="Phóng to" onClick={WindowToggleMaximise} className={winBtn}>
+            <button aria-label={t('tb.max')} onClick={WindowToggleMaximise} className={winBtn}>
               <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden><rect x=".5" y=".5" width="9" height="9" rx="1.5" fill="none" stroke="currentColor" /></svg>
             </button>
-            <button aria-label="Đóng" onClick={Quit} className={closeBtn}>
+            <button aria-label={t('tb.close')} onClick={Quit} className={closeBtn}>
               <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden><path d="M0 0l10 10M10 0L0 10" stroke="currentColor" /></svg>
             </button>
           </>

@@ -6,5 +6,6 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   // nội dung Hướng dẫn nằm ở internal/guide (go:embed bên Go) – frontend import thẳng (bước 51)
+  test: { setupFiles: ['./src/testSetup.ts'] },
   server: { fs: { allow: ['..'] } },
 })

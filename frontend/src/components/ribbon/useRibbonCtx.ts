@@ -1,5 +1,6 @@
 // Nối ribbon với store / Go (bước 63): đọc trạng thái kịch bản, chạy, xem → RibbonCtx cho model.ts. Mọi sửa kịch bản đi qua hàm của store.
 import { useMemo } from 'react';
+import { useT } from '../../i18n';
 import { StopScript } from '../../../wailsjs/go/app/App';
 import {
   copySelected, duplicateStep, getEditor, groupPicked, insertAfterSelected, pasteClip, redo, removeSteps, selectNodes, setNotice, setStart, startRecording, toggleStep, undo, useEditor,
@@ -77,6 +78,7 @@ export function useRibbonCtx(slots: { pageCheck?: ReactNode; loop?: ReactNode },
   const shell = useShell();
   const theme = useTheme();
   const act = useRibbonActions();
+  const t = useT();
   const { list, reload } = useCustomNodes();
   const { goos, only } = usePlatform();
   const cur = script.steps.find((s) => s.id === selected);
@@ -86,12 +88,12 @@ export function useRibbonCtx(slots: { pageCheck?: ReactNode; loop?: ReactNode },
     ...g, items: g.items.map((it) => (it.run ? { ...it, run: () => { insertAfterSelected(); return it.run?.(); } } : it)),
   }));
   return {
-    running, offline: !inWails, hasInputs: !!script.inputs?.length, hasSteps: script.steps.length > 0,
+    t, running, offline: !inWails, hasInputs: !!script.inputs?.length, hasSteps: script.steps.length > 0,
     selectedRef: cur?.ref, selectedOn: !!cur?.enabled, picked: picked.length,
     canUndo: past.length > 0, canRedo: future.length > 0,
     card: prefs.card, detail: prefs.detail, pinned: shell.inspectorPinned, minimap: shell.minimap, theme,
     insert,
-    platformWarn: (type) => (unsupportedHere(only, type, goos) ? `${onlyLabel(only, type)} – không chạy được trên máy này` : onlyLabel(only, type)),
+    platformWarn: (type) => (unsupportedHere(only, type, goos) ? t('rb.warnPlatform', { label: onlyLabel(only, type) }) : onlyLabel(only, type)),
     slots, insertQuery, act,
   };
 }

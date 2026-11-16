@@ -2,6 +2,7 @@
 // Ô tìm (không dấu cũng được), các nhóm, phím mũi tên + Enter; khung dưới mô tả mục đang chọn (bước 35 N0).
 // Loại chưa làm hiện nhãn "Sắp có" và không chọn được.
 import { KeyboardEvent, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { useLang } from '../i18n';
 import { StepIcon, StepIconName } from './icons';
 import { fold } from '../fold';
 import type { InfoKey, NodeInfo } from '../flow/nodeInfo';
@@ -25,6 +26,7 @@ const COLS = 3;
 export function PaletteView({ groups: all, onClose, onCancel, onGuide, footer, context, label = 'Thêm bước' }: {
   groups: PaletteGroup[]; onClose: () => void; onCancel?: () => void; onGuide?: (key: InfoKey) => void; footer?: ReactNode; context?: ReactNode; label?: string;
 }) {
+  useLang(); // tên nhóm lấy theo ngôn ngữ → vẽ lại khi đổi
   const cancel = () => {
     onCancel?.();
     onClose();

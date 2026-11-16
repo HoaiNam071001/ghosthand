@@ -12,24 +12,26 @@ import { checkCalc } from './calc';
 import { browserTabWarning } from './browserTab';
 import { isTextNode, textDetail, textPortLabel, textWarning } from './textNodes';
 import { outputsOf } from './outputs';
+import { tr } from '../i18n/lang';
+import type { MsgKey } from '../i18n/vi';
 export { outputsOf, type OutputField } from './outputs';
 
 // Nhãn + màu cổng ra. Cổng case:<key> lấy nhãn từ case của node.
-const PORTS: Record<string, Omit<PortView, 'id'>> = {
-  [PORT_SUCCESS]: { label: 'Thành công', kind: 'ok' },
-  [PORT_FAIL]: { label: 'Thất bại', kind: 'fail' },
-  true: { label: 'Đúng', kind: 'neutral' },
-  false: { label: 'Sai', kind: 'neutral' },
-  default: { label: 'Khác', kind: 'neutral' },
-  none: { label: 'Không thấy', kind: 'neutral' },
-  next: { label: 'Còn lượt', kind: 'neutral' },
-  done: { label: 'Hết lượt', kind: 'neutral' },
-  item: { label: 'Mỗi phần tử', kind: 'neutral' },
-  yes: { label: 'Đang chạy', kind: 'neutral' },
-  no: { label: 'Không chạy', kind: 'neutral' },
-  approve: { label: 'Đồng ý', kind: 'ok' },
-  deny: { label: 'Từ chối', kind: 'fail' },
-  timeout: { label: 'Hết giờ', kind: 'neutral' },
+const PORTS: Record<string, { key: MsgKey; kind: PortView['kind'] }> = {
+  [PORT_SUCCESS]: { key: 'port.success', kind: 'ok' },
+  [PORT_FAIL]: { key: 'port.fail', kind: 'fail' },
+  true: { key: 'port.true', kind: 'neutral' },
+  false: { key: 'port.false', kind: 'neutral' },
+  default: { key: 'port.default', kind: 'neutral' },
+  none: { key: 'port.none', kind: 'neutral' },
+  next: { key: 'port.next', kind: 'neutral' },
+  done: { key: 'port.done', kind: 'neutral' },
+  item: { key: 'port.item', kind: 'neutral' },
+  yes: { key: 'port.yes', kind: 'neutral' },
+  no: { key: 'port.no', kind: 'neutral' },
+  approve: { key: 'port.approve', kind: 'ok' },
+  deny: { key: 'port.deny', kind: 'fail' },
+  timeout: { key: 'port.timeout', kind: 'neutral' },
 };
 export function portView(id: string, s?: Pick<Step, 'type' | 'cases'>): PortView {
   if (id.startsWith(CASE_PREFIX)) {
@@ -37,10 +39,11 @@ export function portView(id: string, s?: Pick<Step, 'type' | 'cases'>): PortView
     const c = s?.cases?.find((x) => x.key === key);
     return { id, label: c?.label || key, kind: 'neutral' };
   }
-  if (id === PORT_SUCCESS && (s?.type === 'setVar' || s?.type === 'calc')) return { id, label: 'Tiếp', kind: 'ok' };
+  if (id === PORT_SUCCESS && (s?.type === 'setVar' || s?.type === 'calc')) return { id, label: tr('port.then'), kind: 'ok' };
   if (s && isTextNode(s.type)) return { id, label: textPortLabel(s.type, id), kind: id === PORT_FAIL ? 'fail' : 'ok' };
-  if (id === 'done' && s?.type === 'forEach') return { id, label: 'Hết danh sách', kind: 'neutral' };
-  return { id, ...(PORTS[id] ?? { label: id, kind: 'neutral' }) };
+  if (id === 'done' && s?.type === 'forEach') return { id, label: tr('port.doneList'), kind: 'neutral' };
+  const p = PORTS[id];
+  return { id, label: p ? tr(p.key) : id, kind: p ? p.kind : 'neutral' };
 }
 export const portViews = (s: PortShape) => portsOf(s).map((p) => portView(p, s));
 

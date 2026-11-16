@@ -1,13 +1,14 @@
 // Hàng tab + thân ribbon kiểu Word (bước 63) – chỉ hiển thị: tab, nhóm nút (nút lớn / nhỏ, nhãn nhóm), thu gọn. Việc của từng nút
 // do model.ts đưa vào; RibbonHost nối store. Dùng chung app thật và màn mẫu (#demo*).
 import { ReactNode, useEffect, useRef } from 'react';
+import { MsgKey, useT } from '../../i18n';
 import { StepIcon } from '../icons';
 import { RibbonIcon } from './ribbonIcons';
 import { columnsOf, RibbonGroup, RibbonItem } from './model';
 import type { RibbonTabId } from '../../shellStore';
 
 export type RibbonViewProps = {
-  tabs: { id: RibbonTabId; label: string }[];
+  tabs: { id: RibbonTabId; key: MsgKey }[];
   tab: RibbonTabId;
   collapsed: boolean;
   fileActive: boolean; // trang Tệp đang mở
@@ -45,16 +46,17 @@ function useRowScroll(on: boolean) {
 }
 
 export default function RibbonView({ tabs, tab, collapsed, fileActive, groups, lead, wrap, right, onTab, onToggle, onFile }: RibbonViewProps) {
+  const tt = useT();
   const body = useRowScroll(!!wrap);
   return (
     <div className={`flex-none bg-chrome ${fileActive ? 'invisible' : ''}`} aria-hidden={fileActive}>
       <div role="tablist" aria-label="Ribbon" className="drag flex h-[34px] items-end gap-0.5 px-2.5">
-        <button onClick={onFile} aria-pressed={fileActive} title="Trang Tệp: kịch bản, mẫu thử, lịch sử chạy, cài đặt"
-          className={`mb-0.5 h-[26px] rounded-[7px] border px-3 font-semibold ${fileActive ? 'border-transparent bg-accent-soft text-accent-text' : 'border-line bg-soft text-ink hover:bg-hover'}`}>Tệp</button>
+        <button onClick={onFile} aria-pressed={fileActive} title={tt('rb.t.file')}
+          className={`mb-0.5 h-[26px] rounded-[7px] border px-3 font-semibold ${fileActive ? 'border-transparent bg-accent-soft text-accent-text' : 'border-line bg-soft text-ink hover:bg-hover'}`}>{tt('rb.file')}</button>
         {tabs.map((t) => (
           <button key={t.id} role="tab" aria-selected={!fileActive && tab === t.id} onClick={() => onTab(t.id)} onDoubleClick={onToggle}
             className={`relative h-[30px] rounded-t-[7px] px-3 hover:bg-hover ${!fileActive && tab === t.id ? 'font-semibold text-ink' : 'text-muted hover:text-ink'}`}>
-            {t.label}
+            {tt(t.key)}
             {!fileActive && tab === t.id && <span className="absolute inset-x-[28%] bottom-0 h-[3px] rounded-sm bg-accent" />}
           </button>
         ))}
@@ -66,7 +68,7 @@ export default function RibbonView({ tabs, tab, collapsed, fileActive, groups, l
           <div ref={body} role="tabpanel" className={`flex h-full min-w-0 flex-1 py-1.5 pr-9 pl-2 ${wrap ? "flex-wrap content-start overflow-y-auto overflow-x-hidden" : "items-stretch overflow-x-auto overflow-y-hidden"}`}>
             {groups.map((g) => <Group key={g.id} group={g} wrap={wrap} />)}
           </div>
-          <button onClick={onToggle} aria-label="Thu gọn ribbon" title="Thu gọn ribbon (Ctrl+F1)"
+          <button onClick={onToggle} aria-label={tt('rb.collapse')} title={tt('rb.t.collapse')}
             className="absolute right-1 bottom-1 grid h-7 w-7 place-items-center rounded-md bg-surface/90 text-muted hover:bg-hover hover:text-ink">
             <RibbonIcon name="up" className="h-3.5 w-3.5" />
           </button>

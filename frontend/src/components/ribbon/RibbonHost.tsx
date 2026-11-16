@@ -1,6 +1,7 @@
 // Ribbon của màn soạn thật (bước 63): nối RibbonView với store – tab đang mở, thu gọn (Ctrl+F1 / bấm đúp tab), trang Tệp, nút Chạy + vòng lặp
 // cố định bên phải hàng tab (đổi tab hay thu gọn vẫn bấm được).
 import { useEffect, useState } from 'react';
+import { useT } from '../../i18n';
 import InsertSearch from './InsertSearch';
 import { StopScript } from '../../../wailsjs/go/app/App';
 import { LoopButton } from '../AppChrome';
@@ -20,6 +21,7 @@ import { useRibbonCtx } from './useRibbonCtx';
 const isMac = navigator.platform.startsWith('Mac');
 
 export default function RibbonHost() {
+  const t = useT();
   const shell = useShell();
   const { script, selected } = useEditor();
   const { running } = useEngine();
@@ -42,7 +44,7 @@ export default function RibbonHost() {
   const right = (
     <>
       <RunButton compact badge={loopBadge(script)} running={running} disabled={!inWails} onRun={(e) => (running ? StopScript() : startRun(e.shiftKey))}
-        title={!inWails ? 'Chỉ chạy được trong app' : !!script.inputs?.length ? 'Shift + bấm để sửa input trước khi chạy' : undefined}
+        title={!inWails ? t('rb.t.offline') : !!script.inputs?.length ? t('rb.t.inputsRun') : undefined}
         items={runItems(cur?.ref, off, !!script.inputs?.length, {
           from: cur && ((only) => startRun(false, { from: getEditor().selected, only })),
           step: act.runStep, preview: () => void openOverlay('preview'), record: act.record, inputs: () => act.run(true),
