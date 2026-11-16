@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="vi" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ghosthand – layout ribbon</title>
+<style>
+:root{
+  --accent:#4F6BED;--on-accent:#fff;--bg:#F6F7F9;--chrome:#FBFBFC;--side:#F3F4F7;--surface:#fff;--field:#fff;
+  --soft:rgb(22 24 29/.045);--hover:rgb(22 24 29/.06);--line:#E6E8EC;--line-strong:#D3D6DC;--ink:#16181D;--muted:#636A76;
+  --accent-text:#3B55CF;--accent-soft:color-mix(in srgb,var(--accent) 10%,transparent);--warn:#C8893A;--ok:#3E9B5C;--danger:#D6343A;
+  --canvas:#EFF1F4;--dot:rgb(22 24 29/.09);--faint:#9AA0AA;--page:#dfe3ea;
+  --mouse:#3657C8;--kb:#0E7C71;--wait:#6A4BC4;--flow:#B0306A;--web:#0B6F94;--data:#93580A;
+}
+[data-theme=dark]{
+  --accent:#60A5FA;--on-accent:#0B1B33;--bg:#171B22;--chrome:#171B22;--side:#1B2029;--surface:#222833;--field:#2E3644;
+  --soft:#2E3644;--hover:#2E3644;--line:#343D4D;--line-strong:#4A5568;--ink:#F1F5F9;--muted:#9AA6B8;--accent-text:#93C5FD;
+  --accent-soft:rgb(96 165 250/.18);--warn:#FACC15;--ok:#4ADE80;--danger:#F87171;--canvas:#141820;--dot:rgb(255 255 255/.07);
+  --faint:#6B7689;--page:#0d1015;--mouse:#8EA8FF;--kb:#5FD3C4;--wait:#B9A4FF;--flow:#F28BB8;--web:#6CCDF0;--data:#F2B24D;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font:13px/1.4 "Segoe UI Variable","Segoe UI","Plus Jakarta Sans",system-ui,sans-serif}
+.mono{font-family:"Cascadia Mono","JetBrains Mono",ui-monospace,monospace}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+svg.i{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.wrap{max-width:1240px;margin:0 auto;padding:20px 16px 48px}
+.top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+.top h1{font-size:17px;margin:0 12px 0 0}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 10px;display:flex;gap:6px;align-items:center}
+.chip[aria-pressed=true]{border-color:var(--accent);color:var(--accent-text);background:var(--accent-soft)}
+
+/* ===== cửa sổ ===== */
+.win{position:relative;height:720px;border-radius:10px;background:var(--bg);display:flex;flex-direction:column;overflow:hidden;
+  border:1px solid var(--line-strong);box-shadow:0 18px 60px rgb(0 0 0/.35)}
+.resize{position:absolute;inset:0;pointer-events:none;z-index:50;border-radius:10px}
+.show-resize .resize{box-shadow:inset 0 0 0 6px color-mix(in srgb,var(--warn) 45%,transparent)}
+.show-resize .resize::after{content:"viền resize 6px – luôn nằm trên mọi thứ, con trỏ ↔ ↕ ⤡";position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+  background:var(--warn);color:#1b1300;font-size:11px;padding:2px 8px;border-radius:6px;white-space:nowrap}
+
+/* hàng 1: tiêu đề */
+.title{height:36px;display:flex;align-items:center;gap:4px;background:var(--chrome);padding-left:10px;flex:none}
+.qa{display:flex;gap:1px;padding:0 6px;border-right:1px solid var(--line);margin-right:6px}
+.ib{height:28px;min-width:28px;display:grid;place-items:center;border-radius:6px;color:var(--muted)}
+.ib:hover{background:var(--hover);color:var(--ink)}
+.docname{position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;font-weight:600}
+.unsaved{display:flex;gap:5px;align-items:center;font-size:11.5px;color:var(--muted);font-weight:400;background:var(--soft);border-radius:99px;padding:1px 8px}
+.dot{width:6px;height:6px;border-radius:99px;background:var(--warn)}
+.search{margin-left:auto;margin-right:6px;width:220px;height:26px;border:1px solid var(--line);border-radius:6px;background:var(--field);
+  display:flex;align-items:center;gap:6px;padding:0 8px;color:var(--faint);font-size:12px}
+.wbtn{width:44px;height:36px;display:grid;place-items:center}.wbtn:hover{background:var(--hover)}.wbtn.x:hover{background:#d6343a;color:#fff}
+
+/* hàng 2: tab ribbon */
+.tabs{display:flex;align-items:flex-end;gap:2px;padding:0 10px;background:var(--chrome);flex:none;height:34px}
+.tab{height:30px;padding:0 12px;border-radius:7px 7px 0 0;color:var(--muted);position:relative}
+.tab:hover{color:var(--ink);background:var(--hover)}
+.tab[aria-selected=true]{color:var(--ink);font-weight:600}
+.tab[aria-selected=true]::after{content:"";position:absolute;left:28%;right:28%;bottom:0;height:3px;border-radius:2px;background:var(--accent)}
+.tab.file{background:var(--accent);color:var(--on-accent);border-radius:7px;height:26px;margin-bottom:2px;font-weight:600}
+.tabs .right{margin-left:auto;display:flex;gap:6px;align-items:center;padding-bottom:3px}
+.loop{height:28px;border:1px solid var(--line);border-radius:7px;padding:0 10px;display:flex;gap:6px;align-items:center;background:var(--surface)}
+.run{height:28px;display:flex;border-radius:7px;overflow:hidden;color:var(--on-accent);background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 70%,#a78bfa))}
+.run b{padding:0 12px;display:flex;align-items:center;gap:6px}.run span{border-left:1px solid rgb(255 255 255/.25);padding:0 7px;display:grid;place-items:center}
+
+/* hàng 3: thân ribbon */
+.ribbon{display:flex;align-items:stretch;gap:0;background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  height:94px;padding:6px 8px 0;flex:none;overflow-x:auto;position:relative}
+.collapsed .ribbon{display:none}
+.grp{display:flex;flex-direction:column;padding:0 8px;border-right:1px solid var(--line);flex:none}
+.grp .body{flex:1;display:flex;gap:2px;align-items:flex-start}
+.grp .lbl{text-align:center;font-size:11px;color:var(--faint);padding:2px 0 4px}
+.big{width:58px;height:64px;border-radius:7px;display:flex;flex-direction:column;align-items:center;gap:5px;padding-top:7px;font-size:11.5px;text-align:center;line-height:1.15}
+.big svg.i{width:24px;height:24px;stroke-width:1.5}
+.big:hover,.sm:hover{background:var(--hover)}
+.col{display:flex;flex-direction:column;gap:1px}
+.sm{height:21px;display:flex;align-items:center;gap:6px;padding:0 7px 0 5px;border-radius:5px;font-size:12px;white-space:nowrap}
+.sm svg.i{width:14px;height:14px}
+.on{background:var(--accent-soft)!important;color:var(--accent-text)}
+.c-mouse{color:var(--mouse)}.c-kb{color:var(--kb)}.c-wait{color:var(--wait)}.c-flow{color:var(--flow)}.c-web{color:var(--web)}.c-data{color:var(--data)}
+.pin{position:absolute;right:6px;bottom:4px}
+
+/* main */
+.main{flex:1;position:relative;background-color:var(--canvas);background-image:radial-gradient(var(--dot) 1.2px,transparent 1.3px);background-size:20px 20px;overflow:hidden}
+.node{position:absolute;width:190px;border-radius:10px;background:var(--surface);border:1px solid var(--line);box-shadow:0 1px 2px rgb(0 0 0/.12);cursor:pointer}
+.node .h{display:flex;align-items:center;gap:7px;padding:8px 10px 4px;font-weight:600}
+.node .h .ref{margin-left:auto;font-size:11px;color:var(--faint)}
+.node .d{padding:0 10px 9px;font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.node.sel{box-shadow:0 0 0 2px var(--accent),0 0 0 6px var(--accent-soft)}
+.start{position:absolute;font-size:11px;background:var(--accent-soft);color:var(--accent-text);border-radius:6px;padding:1px 7px}
+svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.mini{position:absolute;right:14px;bottom:14px;width:150px;height:96px;border-radius:9px;background:var(--surface);border:1px solid var(--line);opacity:.92}
+.mini i{position:absolute;left:30px;top:22px;width:70px;height:46px;border:1.5px solid var(--accent);border-radius:4px}
+.hint{position:absolute;left:14px;bottom:14px;font-size:11.5px;color:var(--faint);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:4px 9px}
+
+/* inspector nổi */
+.pane{position:absolute;top:10px;right:10px;bottom:10px;width:330px;background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  box-shadow:0 12px 40px rgb(0 0 0/.28);display:flex;flex-direction:column;transition:transform .18s,opacity .18s}
+.pane.hide{transform:translateX(30px);opacity:0;pointer-events:none}
+.pane.docked{top:0;right:0;bottom:0;border-radius:0;border-width:0 0 0 1px;box-shadow:none}
+.pane .ph{display:flex;align-items:center;gap:8px;padding:10px 10px 8px 14px;border-bottom:1px solid var(--line)}
+.pane .grip{position:absolute;left:-3px;top:0;bottom:0;width:6px;cursor:ew-resize}
+.pane .ptabs{display:flex;gap:16px;padding:8px 14px 0;color:var(--muted)}
+.pane .ptabs b{color:var(--ink);border-bottom:2px solid var(--accent);padding-bottom:6px}
+.pane .pb{padding:12px 14px;overflow:auto;display:flex;flex-direction:column;gap:10px}
+.fl{font-size:12px;color:var(--muted)}
+.inp{height:32px;border-radius:7px;background:var(--field);border:1px solid var(--line);display:flex;align-items:center;padding:0 10px;justify-content:space-between}
+.sec{border:1px solid var(--line);border-radius:9px;padding:8px 10px;display:flex;justify-content:space-between;color:var(--muted);font-size:12px}
+.sec b{color:var(--ink)}
+
+/* backstage Tệp */
+.back{position:absolute;inset:36px 0 0 0;display:none;background:var(--bg);z-index:20}
+.backstage .back{display:flex}
+.bs-nav{width:210px;background:var(--accent);color:var(--on-accent);padding:12px 8px;display:flex;flex-direction:column;gap:2px}
+.bs-nav button{text-align:left;padding:8px 12px;border-radius:7px;display:flex;gap:10px;align-items:center}
+.bs-nav button:hover,.bs-nav .cur{background:rgb(255 255 255/.16)}
+.bs-nav hr{border:0;border-top:1px solid rgb(255 255 255/.25);margin:6px 4px}
+.bs-body{flex:1;padding:22px 28px;overflow:auto}
+.bs-body h2{margin:0 0 14px;font-size:20px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:22px}
+.card{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.card .th{height:64px;border-radius:7px;background-color:var(--canvas);background-image:radial-gradient(var(--dot) 1px,transparent 1.2px);background-size:10px 10px;display:grid;place-items:center}
+.row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:7px}
+.row:hover{background:var(--hover)}
+.row .t{margin-left:auto;color:var(--muted)}
+
+/* status bar */
+.status{height:26px;flex:none;display:flex;align-items:center;gap:16px;padding:0 12px;background:var(--chrome);border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+.zoom{margin-left:auto;display:flex;align-items:center;gap:8px}
+.zoom .bar{width:110px;height:3px;border-radius:2px;background:var(--line-strong);position:relative}
+.zoom .bar i{position:absolute;left:50%;top:-4px;width:3px;height:11px;background:var(--ink);border-radius:1px}
+
+/* chú thích */
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px;margin-top:18px}
+.note{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.note h3{margin:0 0 6px;font-size:13.5px;display:flex;gap:8px;align-items:center}
+.note h3 em{font-style:normal;background:var(--accent);color:var(--on-accent);border-radius:99px;width:20px;height:20px;display:grid;place-items:center;font-size:11px}
+.note p,.note li{color:var(--muted);margin:0}.note ul{padding-left:18px;margin:4px 0 0}
+.badge{position:absolute;z-index:40;background:var(--accent);color:var(--on-accent);border-radius:99px;width:20px;height:20px;display:grid;place-items:center;font-size:11px;font-weight:700;box-shadow:0 0 0 3px var(--bg)}
+.nobadge .badge,.backstage .badge{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <h1>Ghosthand – đề xuất layout kiểu ribbon (Word)</h1>
+    <button class="chip" id="tTheme">☀︎ / ☾ Đổi theme</button>
+    <button class="chip" id="tResize" aria-pressed="true">Hiện viền resize</button>
+    <button class="chip" id="tBadge" aria-pressed="true">Hiện số chú thích</button>
+    <button class="chip" id="tPane" aria-pressed="false">Inspector: nổi</button>
+  </div>
+  <p style="margin:0 0 12px;color:var(--muted)">Mockup bấm được: đổi tab ribbon, bấm <b>Tệp</b> để mở trang Tệp, bấm node để hiện / ẩn inspector, <b>⌃</b> góc phải ribbon để thu gọn ribbon (Ctrl+F1).</p>
+
+  <div class="win show-resize" id="win">
+    <div class="resize"></div>
+    <span class="badge" style="left:6px;top:6px">1</span>
+    <span class="badge" style="left:132px;top:8px">2</span>
+    <span class="badge" style="right:40px;top:120px">3</span>
+    <span class="badge" style="right:300px;top:44px">4</span>
+    <span class="badge" style="left:260px;top:220px">5</span>
+    <span class="badge" style="right:330px;top:190px">6</span>
+    <span class="badge" style="right:180px;bottom:3px">7</span>
+
+    <!-- hàng 1 -->
+    <div class="title">
+      <svg class="i" viewBox="0 0 24 24" style="color:var(--accent)"><path d="M12 3a7 7 0 0 0-7 7v10l2.3-1.7L9.6 20l2.4-1.7 2.4 1.7 2.3-1.7L19 20V10a7 7 0 0 0-7-7z"/><circle cx="9.5" cy="10" r="1"/><circle cx="14.5" cy="10" r="1"/></svg>
+      <div class="qa">
+        <button class="ib" title="Lưu (Ctrl+S)" data-i="save"></button>
+        <button class="ib" title="Hoàn tác (Ctrl+Z)" data-i="undo"></button>
+        <button class="ib" title="Làm lại (Ctrl+Y)" data-i="redo"></button>
+      </div>
+      <div class="docname">vang-voi-051126 <span class="unsaved"><span class="dot"></span>Chưa lưu</span></div>
+      <div class="search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m20 20-4-4"/></svg>Tìm lệnh, node… (Alt+Q)</div>
+      <button class="ib" title="Hướng dẫn (F1)" data-i="help"></button>
+      <button class="wbtn">—</button><button class="wbtn">▢</button><button class="wbtn x">✕</button>
+    </div>
+
+    <!-- hàng 2 -->
+    <div class="tabs" role="tablist">
+      <button class="tab file" data-tab="file">Tệp</button>
+      <button class="tab" data-tab="home" aria-selected="true">Soạn</button>
+      <button class="tab" data-tab="insert">Chèn node</button>
+      <button class="tab" data-tab="run">Chạy</button>
+      <button class="tab" data-tab="view">Xem</button>
+      <button class="tab" data-tab="tools">Công cụ</button>
+      <div class="right">
+        <button class="loop mono" title="Cài đặt lặp / đếm ngược"><span data-i="loop"></span>1 vòng</button>
+        <div class="run"><b><span style="font-size:10px">▶</span>Chạy <span class="mono" style="opacity:.7;border:0;padding:0">F8</span></b><span>▾</span></div>
+      </div>
+    </div>
+
+    <!-- hàng 3 -->
+    <div class="ribbon" id="ribbon"></div>
+
+    <!-- main -->
+    <div class="main" id="main">
+      <svg class="edges"><path d="M268 216 C 320 216, 320 316, 372 316" stroke="var(--line-strong)" stroke-width="2" fill="none"/>
+        <path d="M562 316 C 610 316, 610 216, 660 216" stroke="var(--line-strong)" stroke-width="2" fill="none"/>
+        <path d="M562 316 C 610 316, 610 410, 660 410" stroke="var(--line-strong)" stroke-width="2" fill="none" stroke-dasharray="5 4"/></svg>
+      <span class="start" style="left:78px;top:172px">▸ Bắt đầu</span>
+      <div class="node" style="left:78px;top:192px" data-n><div class="h"><span class="c-web" data-i="tab"></span>Tab trình duyệt<span class="ref mono">n1</span></div><div class="d mono">Mở tab · github.com</div></div>
+      <div class="node sel" style="left:372px;top:292px" data-n><div class="h"><span class="c-wait" data-i="eye"></span>Chờ chữ<span class="ref mono">n2</span></div><div class="d mono">“Đăng nhập” · tối đa 10 s</div></div>
+      <div class="node" style="left:660px;top:192px" data-n><div class="h"><span class="c-mouse" data-i="click"></span>Click<span class="ref mono">n3</span></div><div class="d mono">neo n2 · trái 1 lần</div></div>
+      <div class="node" style="left:660px;top:386px" data-n><div class="h"><span class="c-flow" data-i="stop"></span>Kết thúc<span class="ref mono">n4</span></div><div class="d mono">thất bại · “Không thấy”</div></div>
+      <div class="hint">Kéo nền để cuộn · Ctrl + lăn chuột để thu phóng · Space + kéo</div>
+      <div class="mini"><i></i></div>
+
+      <aside class="pane" id="pane">
+        <div class="grip" title="Kéo để đổi bề rộng"></div>
+        <div class="ph"><span class="c-wait" data-i="eye"></span><b>Chờ chữ</b><span class="mono" style="color:var(--faint);font-size:11px">n2</span>
+          <button class="ib" style="margin-left:auto" title="Ghim vào cạnh phải" id="pinPane" data-i="pinI"></button>
+          <button class="ib" title="Đóng (Esc)" id="closePane">✕</button></div>
+        <div class="ptabs"><b>Node</b><span>Input</span><span>Dữ liệu</span></div>
+        <div class="pb">
+          <div class="fl">Chữ cần thấy</div><div class="inp">Đăng nhập</div>
+          <div class="fl">Vùng tìm</div><div class="inp">Cả màn hình <span>▾</span></div>
+          <div class="fl">Chờ tối đa</div><div class="inp mono">10000 <span class="fl">ms</span></div>
+          <div class="sec"><b>Thời gian</b>chờ 300 ms, cố định</div>
+          <div class="sec"><b>Khi thất bại</b>không thử lại</div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- status -->
+    <div class="status">
+      <span style="display:flex;gap:6px;align-items:center"><span class="dot" style="background:var(--ok)"></span>Sẵn sàng</span>
+      <span class="mono">X 422 Y 170</span>
+      <span>4 node · 1 nhánh</span>
+      <span style="color:var(--accent-text)">Bản nháp tự lưu 14:56</span>
+      <span>Dừng khẩn cấp: F8 / góc màn hình</span>
+      <div class="zoom"><button>−</button><div class="bar"><i></i></div><button>+</button><span class="mono">100%</span><button title="Vừa màn hình" data-i="fit"></button></div>
+    </div>
+
+    <!-- backstage -->
+    <div class="back">
+      <nav class="bs-nav">
+        <button id="bsBack">← Quay lại</button><hr>
+        <button class="cur">Trang đầu</button><button>Mới</button><button>Mở…</button><button>Mẫu thử</button><hr>
+        <button>Lưu</button><button>Lưu thành…</button><button>Nhúng kịch bản…</button><button>Gói báo lỗi (.zip)</button><hr>
+        <button>Lịch sử chạy</button><button>Thùng rác</button>
+        <button style="margin-top:auto">Cài đặt</button>
+      </nav>
+      <div class="bs-body">
+        <h2>Mới</h2>
+        <div class="cards">
+          <div class="card"><div class="th" style="font-size:24px;color:var(--muted)">+</div><b>Kịch bản trống</b></div>
+          <div class="card"><div class="th"><span class="c-web" data-i="tab"></span></div><b>Mở web + đăng nhập</b><span class="fl">Mẫu thử</span></div>
+          <div class="card"><div class="th"><span class="c-wait" data-i="eye"></span></div><b>Chờ ảnh rồi click</b><span class="fl">Mẫu thử</span></div>
+          <div class="card"><div class="th"><span class="c-flow" data-i="loop"></span></div><b>Lặp N vòng</b><span class="fl">Mẫu thử</span></div>
+        </div>
+        <h2 style="font-size:16px">Kịch bản của tôi</h2>
+        <div class="row"><span class="dot"></span><b>vang-voi-051126</b><span class="fl">chưa lưu</span><span class="t mono">14:56 hôm nay</span></div>
+        <div class="row"><span class="dot" style="background:var(--ok)"></span>dang-nhap-shopee<span class="t mono">hôm qua</span></div>
+        <div class="row"><span class="dot" style="background:var(--ok)"></span>auto-farm<span class="t mono">24/10</span></div>
+        <h2 style="font-size:16px;margin-top:18px">Lịch sử chạy gần đây</h2>
+        <div class="row"><span class="dot" style="background:var(--ok)"></span>Chạy tay · vang-voi-051126<span class="t mono">17:15 26/10</span></div>
+        <div class="row"><span class="dot" style="background:var(--danger)"></span>Chạy tay · vang-voi-051126 – lỗi ở n2<span class="t mono">17:13 26/10</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="note"><h3><em>1</em>Viền resize</h3><p>Viền 6px quanh cả cửa sổ, nằm trên mọi lớp (không bị canvas / inspector che) nên nắm kéo được ở mọi cạnh + 4 góc. Khi phóng to toàn màn hình thì tắt viền.</p></div>
+    <div class="note"><h3><em>2</em>Thanh tiêu đề + truy cập nhanh</h3><p>Như Word: Lưu / Hoàn tác / Làm lại luôn ở góc trái, tên kịch bản ở giữa (bấm đúp đổi tên), ô <b>Tìm lệnh</b> (Alt+Q) tìm cả lệnh lẫn loại node. Cả hàng kéo được cửa sổ.</p></div>
+    <div class="note"><h3><em>3</em>Ribbon theo tab</h3><ul>
+      <li><b>Soạn</b>: chép / dán, hoàn tác, chọn vùng, nhóm, bật-tắt node, kiểm tra flow</li>
+      <li><b>Chèn node</b>: thay nút “+ Thêm node” – mỗi nhóm node (Chuột, Phím, Chờ, Luồng, Web, Dữ liệu) là một nhóm ribbon</li>
+      <li><b>Chạy</b>, <b>Xem</b>, <b>Công cụ</b>; thu gọn ribbon bằng Ctrl+F1 hoặc bấm đúp tab</li></ul></div>
+    <div class="note"><h3><em>4</em>Chạy luôn hiện</h3><p>Nút Chạy F8 + số vòng nằm cố định bên phải hàng tab – đổi tab hay thu gọn ribbon vẫn bấm được.</p></div>
+    <div class="note"><h3><em>5</em>Main chỉ còn canvas</h3><p>Bỏ thanh thư viện trái, nút zoom / thanh công cụ nổi trên canvas. Canvas chiếm hết phần dưới để kéo thả; minimap nổi góc phải, có thể ẩn ở tab Xem.</p></div>
+    <div class="note"><h3><em>6</em>Inspector kiểu task pane</h3><p>Chỉ hiện khi chọn node (Esc / ✕ để ẩn). Mặc định <b>nổi</b> trên canvas; bấm ghim để <b>dính cạnh phải</b> (canvas co lại). Kéo mép trái đổi bề rộng.</p></div>
+    <div class="note"><h3><em>7</em>Status bar kiểu Word</h3><p>Trạng thái, toạ độ chuột, số node, thông báo; bên phải là thanh <b>zoom</b> (− ━●━ + 100%, vừa màn hình) thay cụm nút zoom trên canvas.</p></div>
+    <div class="note"><h3><em>Tệp</em>Trang Tệp (backstage)</h3><p>Thư viện kịch bản, Mở gần đây, Mẫu thử, Lịch sử chạy, Thùng rác, Lưu / xuất gói, Cài đặt – gom vào trang toàn màn hình như Word thay cho thanh bên trái.</p></div>
+  </div>
+</div>
+
+<script>
+const P={save:'<path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/>',undo:'<path d="M9 7 4 12l5 5"/><path d="M4 12h11a5 5 0 0 1 0 10h-2"/>',
+redo:'<path d="m15 7 5 5-5 5"/><path d="M20 12H9a5 5 0 0 0 0 10h2"/>',help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5v.7M12 17h.01"/>',
+loop:'<path d="M17 2l3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12M7 22l-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/>',
+tab:'<rect x="3" y="5" width="18" height="15" rx="2"/><path d="M3 9h18M8 5v4"/>',eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+click:'<path d="m9 9 5 12 1.8-5.2L21 14z"/><path d="M7.2 2.2 8 5.1M5.1 8 2.2 7.2M14 4.1 12 6.2M6.2 12l-2.1 2"/>',stop:'<rect x="5" y="5" width="14" height="14" rx="2"/>',
+fit:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',pinI:'<path d="M12 17v5M9 3h6l-1 6 3 3v2H7v-2l3-3z"/>',
+paste:'<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V2h6v2"/>',cut:'<circle cx="6" cy="18" r="3"/><circle cx="18" cy="18" r="3"/><path d="M8 16 20 4M16 16 4 4"/>',
+copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>',dup:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M14 11v6M11 14h6M4 16V5a1 1 0 0 1 1-1h11"/>',
+del:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',box:'<rect x="4" y="4" width="16" height="16" rx="2" stroke-dasharray="3 3"/>',all:'<path d="M4 4h4M16 4h4v4M20 16v4h-4M8 20H4v-4M4 8V4"/><rect x="8" y="8" width="8" height="8" rx="1"/>',
+group:'<rect x="3" y="3" width="18" height="18" rx="3" stroke-dasharray="4 3"/><rect x="7" y="8" width="5" height="4" rx="1"/><rect x="12" y="13" width="5" height="4" rx="1"/>',
+ungroup:'<rect x="5" y="6" width="6" height="5" rx="1"/><rect x="13" y="13" width="6" height="5" rx="1"/>',color:'<circle cx="12" cy="12" r="8"/><path d="M12 4v16"/>',
+power:'<path d="M12 3v8M6.3 7a8 8 0 1 0 11.4 0"/>',flag:'<path d="M5 21V4h11l-2 4 2 4H5"/>',check:'<path d="m5 12 4 4 10-10"/>',
+drag:'<path d="M8 8h.01M8 16h.01M16 8l-4 8"/><circle cx="16" cy="8" r="2"/>',scroll:'<rect x="7" y="3" width="10" height="18" rx="5"/><path d="M12 7v4"/>',
+type:'<path d="M4 7V5h16v2M12 5v14M9 19h6"/>',key:'<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/>',
+image:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+branch:'<circle cx="6" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="9" r="2"/><path d="M6 8v8M18 11c0 4-6 3-11 6"/>',
+web:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',app:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/>',
+vars:'<path d="M8 4c-3 0-3 4-3 8s0 8 3 8M16 4c3 0 3 4 3 8s0 8-3 8M9 9l6 6M15 9l-6 6"/>',sub:'<rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/><path d="M7 11v6h6"/>',
+grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+play:'<path d="M7 4v16l13-8z"/>',from:'<path d="M5 4v16M9 4v16l11-8z"/>',ghost:'<path d="M12 3a7 7 0 0 0-7 7v10l3-2 2 2 2-2 2 2 2-2 3 2V10a7 7 0 0 0-7-7z"/>',
+cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',ai:'<path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M6 18l2-2M16 8l2-2"/><circle cx="12" cy="12" r="3"/>',
+history:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/>',log:'<path d="M5 4h14v16H5zM9 8h6M9 12h6M9 16h4"/>',
+card:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h6"/>',full:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/>',
+map:'<rect x="3" y="5" width="18" height="14" rx="2"/><rect x="11" y="11" width="7" height="5" rx="1"/>',panel:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/>',
+zin:'<circle cx="11" cy="11" r="6"/><path d="m20 20-4-4M11 8v6M8 11h6"/>',zout:'<circle cx="11" cy="11" r="6"/><path d="m20 20-4-4M8 11h6"/>',
+sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5"/>',
+monitor:'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',pick:'<path d="m14 4 6 6-9 9H5v-6z"/>',target:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>',
+plug:'<path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0zM12 17v5"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
+zip:'<path d="M6 3h9l4 4v14H6z"/><path d="M11 3v2M11 7v2M11 11v2"/>'};
+const ic=(k,c='')=>`<span class="${c}"><svg class="i" viewBox="0 0 24 24">${P[k]||''}</svg></span>`;
+const big=(k,t,c,cls='')=>`<button class="big ${cls}">${ic(k,c)}${t}</button>`;
+const sm=(k,t,c,cls='')=>`<button class="sm ${cls}">${ic(k,c)}${t}</button>`;
+const col=(...a)=>`<div class="col">${a.join('')}</div>`;
+const grp=(l,...a)=>`<div class="grp"><div class="body">${a.join('')}</div><div class="lbl">${l}</div></div>`;
+const R={
+home:grp('Bộ nhớ tạm',big('paste','Dán'),col(sm('cut','Cắt'),sm('copy','Chép'),sm('dup','Nhân bản')))+
+  grp('Chỉnh sửa',col(sm('undo','Hoàn tác'),sm('redo','Làm lại'),sm('del','Xoá')))+
+  grp('Chọn',big('box','Chọn vùng','', 'on'),col(sm('all','Chọn tất cả'),sm('target','Đến node…')))+
+  grp('Nhóm',big('group','Gom nhóm'),col(sm('ungroup','Bỏ nhóm'),sm('color','Màu nhóm')))+
+  grp('Node',col(sm('power','Bật / tắt node'),sm('flag','Đặt làm bắt đầu'),sm('vars','Đổi tên ref')))+
+  grp('Kiểm tra',big('check','Kiểm tra flow')),
+insert:grp('Chuột',big('click','Click','c-mouse'),col(sm('drag','Kéo','c-mouse'),sm('scroll','Cuộn','c-mouse')))+
+  grp('Phím',big('type','Gõ chữ','c-kb'),col(sm('key','Phím tắt','c-kb')))+
+  grp('Chờ',big('image','Chờ ảnh','c-wait'),col(sm('eye','Chờ chữ','c-wait'),sm('clock','Chờ','c-wait')))+
+  grp('Luồng',big('branch','Rẽ nhánh','c-flow'),col(sm('loop','Lặp','c-flow'),sm('stop','Kết thúc','c-flow'),sm('sub','Kịch bản con','c-flow')))+
+  grp('Web',big('tab','Tab trình duyệt','c-web'),col(sm('web','Phần tử web','c-web')))+
+  grp('Ứng dụng · Dữ liệu',col(sm('app','Mở app'),sm('vars','Đặt biến','c-data'),sm('log','Đọc file','c-data')))+
+  grp('Tất cả',big('grid','Mọi loại node…')),
+run:grp('Chạy',big('play','Chạy (F8)'),col(sm('from','Chạy từ node chọn'),sm('ghost','Chạy nền'),sm('stop','Dừng')))+
+  grp('Lặp',col(sm('loop','Số vòng: 1'),sm('clock','Đếm ngược: 3 s')))+
+  grp('Thử',big('eye','Xem trước'),col(sm('ai','AI thử'),sm('web','Thử trang')))+
+  grp('Hẹn giờ',big('cal','Lịch chạy'))+
+  grp('Kết quả',col(sm('history','Lịch sử chạy'),sm('log','Nhật ký'),sm('zip','Gói báo lỗi'))),
+view:grp('Kiểu thẻ',big('card','Gọn','','on'),big('full','Đầy đủ'))+
+  grp('Hiện',col(sm('panel','Inspector','','on'),sm('map','Minimap','','on'),sm('log','Nhật ký chạy')))+
+  grp('Thu phóng',big('fit','Vừa màn hình'),col(sm('zin','Phóng to'),sm('zout','Thu nhỏ'),sm('box','100%')))+
+  grp('Giao diện',col(sm('sun','Sáng'),sm('monitor','Tối','','on'),sm('monitor','Theo hệ thống')))+
+  grp('Cửa sổ',col(sm('ghost','Thanh mini'),sm('monitor','Overlay toàn màn hình'))),
+tools:grp('Màn hình',big('target','Lấy toạ độ'),col(sm('pick','Lấy màu'),sm('image','Chụp vùng')))+
+  grp('Trang web',big('monitor','Kiểm tra trang'),col(sm('web','Trình duyệt…')))+
+  grp('AI',big('plug','MCP server'))+
+  grp('Ứng dụng',big('gear','Cài đặt'),col(sm('help','Hướng dẫn (F1)')))
+};
+const rib=document.getElementById('ribbon'),win=document.getElementById('win');
+function setTab(t){
+  if(t==='file'){win.classList.add('backstage');return}
+  document.querySelectorAll('.tab[data-tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t));
+  rib.innerHTML=R[t]+`<button class="ib pin" title="Thu gọn ribbon (Ctrl+F1)" id="col">⌃</button>`;
+  document.getElementById('col').onclick=()=>win.classList.add('collapsed');
+}
+document.querySelectorAll('.tab[data-tab]').forEach(b=>{b.onclick=()=>{win.classList.remove('collapsed');setTab(b.dataset.tab)};b.ondblclick=()=>win.classList.toggle('collapsed')});
+document.getElementById('bsBack').onclick=()=>win.classList.remove('backstage');
+setTab('home');
+document.querySelectorAll('[data-i]').forEach(e=>{if(!e.innerHTML.trim())e.innerHTML=`<svg class="i" viewBox="0 0 24 24">${P[e.dataset.i]}</svg>`;else e.insertAdjacentHTML('afterbegin',`<svg class="i" viewBox="0 0 24 24">${P[e.dataset.i]}</svg>`)});
+const pane=document.getElementById('pane');
+document.querySelectorAll('[data-n]').forEach(n=>n.onclick=()=>{const was=n.classList.contains('sel');document.querySelectorAll('[data-n]').forEach(x=>x.classList.remove('sel'));
+  if(!was){n.classList.add('sel');pane.classList.remove('hide')}else pane.classList.add('hide')});
+document.getElementById('closePane').onclick=()=>pane.classList.add('hide');
+const tp=document.getElementById('tPane');
+const dock=()=>{pane.classList.toggle('docked');const d=pane.classList.contains('docked');tp.textContent='Inspector: '+(d?'ghim cạnh phải':'nổi');tp.setAttribute('aria-pressed',d)};
+document.getElementById('pinPane').onclick=dock;tp.onclick=dock;
+const tog=(id,fn)=>{const b=document.getElementById(id);b.onclick=()=>{const v=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',v);fn(v)}};
+tog('tResize',v=>win.classList.toggle('show-resize',v));tog('tBadge',v=>document.body.classList.toggle('nobadge',!v));
+document.getElementById('tTheme').onclick=()=>{const h=document.documentElement;h.dataset.theme=h.dataset.theme==='dark'?'light':'dark'};
+</script>
+</body>
+</html>
