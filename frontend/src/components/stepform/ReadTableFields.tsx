@@ -1,4 +1,5 @@
 // Node Đọc bảng (bước 43 B5): phạm vi (bảng đầu tiên | bảng thứ N | bảng trong một phần tử) + ghi ra file .csv / .xlsx.
+import { useT } from '../../i18n';
 import NumInput from '../NumInput';
 import PathInput from './PathInput';
 import VarTextInput from '../inputs/VarTextInput';
@@ -9,6 +10,7 @@ import { errText, fmtSec, Field, hint, NumField, SwitchField, useNodeVars } from
 import { ElementQueryFields } from './ElementFields';
 
 export default function ReadTableFields({ step: s }: { step: Step }) {
+  const t = useT();
   const script = useScript();
   const nodeVars = useNodeVars(s.id);
   const varProps = { inputs: script.inputs ?? [], nodeVars, onCreateInput: (key: string) => addInput({ key, label: key, type: 'text' }) };
@@ -17,25 +19,25 @@ export default function ReadTableFields({ step: s }: { step: Step }) {
   return (
     <>
       <ElementQueryFields step={s} optional />
-      <SwitchField label="Gồm phần ngoài khung nhìn" help="Mặc định chỉ đọc dòng đang hiện trên màn. Bật để lấy cả bảng dài chưa cuộn tới."
+      <SwitchField label={t('rt2.all')} help={t('rt2.allHelp')}
         on={!!s.pageAll} onChange={(pageAll) => updateStep(s.id, { pageAll: pageAll || undefined })} />
-      <Field label="Ghi ra file" wide group help="Trống = không ghi. .csv hoặc .xlsx · GHI ĐÈ file cũ · ~ = thư mục người dùng">
+      <Field label={t('rt2.write')} wide group help={t('rt2.writeHelp')}>
         <PathInput kind="save" {...varProps} value={s.filePath ?? ''} onChange={(v) => updateStep(s.id, { filePath: v || undefined })}
-          placeholder="~/Documents/don-hang.xlsx" />
-        {badFile && <span className={errText}>Chỉ ghi được file .csv hoặc .xlsx – đổi đuôi file</span>}
+          placeholder="~/Documents/orders.xlsx" />
+        {badFile && <span className={errText}>{t('rt2.badExt')}</span>}
       </Field>
       {/\.xlsx$/i.test(file) && (
         <Field label="Sheet" wide group>
-          <VarTextInput {...varProps} rows={1} compact value={s.sheet ?? ''} onChange={(v) => updateStep(s.id, { sheet: v || undefined })} placeholder="trống = sheet đầu" />
+          <VarTextInput {...varProps} rows={1} compact value={s.sheet ?? ''} onChange={(v) => updateStep(s.id, { sheet: v || undefined })} placeholder={t('fi.sheetPh')} />
         </Field>
       )}
-      <NumField label="Chờ tối đa" step={s} field="timeoutMs" unit="ms" min={1} />
-      <Field label="Kiểm tra mỗi">
+      <NumField label={t('common.maxWait')} step={s} field="timeoutMs" unit="ms" min={1} />
+      <Field label={t('er.every')}>
         <NumInput value={s.intervalMs ?? 250} min={20} unit="ms" onChange={(intervalMs) => updateStep(s.id, { intervalMs })} />
       </Field>
       <span className={`col-span-2 -mt-1 ${hint}`}>
-        Dòng đầu là tên cột. Node sau dùng {`{{${s.ref}.output.items}}`} nối vào Lặp qua danh sách (mỗi dòng {`{{item.<tên cột không dấu>}}`}), hoặc {`{{${s.ref}.output.rows}}`}.
-        Chưa thấy bảng (table / grid) sau {fmtSec(s.timeoutMs)} → cổng Thất bại. Cần quyền Accessibility.
+        {t('rt2.note1')} {`{{${s.ref}.output.items}}`} {t('rt2.note2')} {`{{item.<${t('rt2.colName')}>}}`}), {t('rt2.note3')} {`{{${s.ref}.output.rows}}`}.
+        {t('rt2.note4', { t: fmtSec(s.timeoutMs) })}
       </span>
     </>
   );
