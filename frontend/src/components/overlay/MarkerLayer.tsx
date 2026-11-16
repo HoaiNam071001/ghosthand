@@ -1,4 +1,5 @@
 // Marker + đường nối trên overlay (chỉ hiển thị): đường neo, mũi tên cuộn, đường giữa các điểm, ô ngẫu nhiên, marker.
+import { useT } from '../../i18n';
 import { MouseEvent } from 'react';
 import { AnchorLine, Marker, ScrollArrow } from '../../overlay/geometry';
 import { Point } from '../../types';
@@ -10,6 +11,7 @@ export function OverlayLines({ anchorLines, scrollArrows, markers, dragA, cursor
   anchorLines: AnchorLine[]; scrollArrows: ScrollArrow[]; markers: Marker[]; dragA: Point | null; cursor: Point; focus: string | null;
   paths?: { id: string; pts: Point[] }[]; // nét node Vẽ đường
 }) {
+  const t = useT();
   return (
     <svg className="pointer-events-none absolute inset-0 h-full w-full" aria-hidden>
       <defs>
@@ -36,7 +38,7 @@ export function OverlayLines({ anchorLines, scrollArrows, markers, dragA, cursor
             <line x1={r.a.x} y1={r.a.y} x2={r.tip.x} y2={r.tip.y} className="stroke-accent" strokeWidth={4} strokeDasharray={r.cut ? '10 6' : undefined} markerEnd="url(#ah)" />
             <text x={r.tip.x} y={r.tip.y} dx={nearRight ? -10 : 10} dy={-8} textAnchor={nearRight ? 'end' : 'start'}
               className="fill-white font-mono text-xs font-semibold" stroke="rgb(0 0 0 / .65)" strokeWidth={3} paintOrder="stroke">
-              {r.text}{r.cut ? ' – dài hơn màn hình, xem Xem trước' : ''}
+              {r.text}{r.cut ? ` – ${t('ml.cut')}` : ''}
             </text>
           </g>
         );
@@ -70,11 +72,12 @@ export function MarkerDots({ markers, selectMode, multi, preview, focus, selecte
   markers: Marker[]; selectMode: boolean; multi: string[]; preview: boolean; focus: string | null;
   selected: string | null; grabbing: boolean; dragA: Point | null; onDown: (e: MouseEvent, id: string, index: number) => void;
 }) {
+  const t = useT();
   return (
     <>
       {markers.filter((m) => !m.ghost).map((m) => (
         <span key={m.label} style={{ left: m.at.x, top: m.at.y }}
-          title={selectMode ? 'Click chọn · Shift / ⌘ + click thêm bớt · kéo để di chuyển cả nhóm' : 'Kéo để dời điểm, click để chọn bước'}
+          title={selectMode ? t('ml.selTip') : t('ml.dragTip')}
           onMouseDown={(e) => onDown(e, m.id, m.index)}
           className={`${selectMode ? (multi.includes(m.key) ? 'z-10 outline-2 outline-offset-2 outline-white' : 'opacity-60') : ''} ${preview ? 'pointer-events-none opacity-70' : ''} ${focus && m.id !== focus ? 'pointer-events-none opacity-25 grayscale' : ''} ${focus === m.id ? 'z-10 scale-110' : ''} absolute ${dot} ${grabbing ? 'cursor-grabbing' : 'cursor-grab'} ${m.id === selected ? 'outline-[3px] outline-offset-2 outline-white outline-dashed' : ''}`}>
           {m.label}

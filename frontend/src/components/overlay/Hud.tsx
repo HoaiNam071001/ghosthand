@@ -1,4 +1,5 @@
 // Chữ trên overlay (chỉ hiển thị): dòng gợi ý giữa trên, crosshair + toạ độ chuột, ô thông tin góc trên trái.
+import { useT } from '../../i18n';
 import { ReactNode } from 'react';
 import { app } from '../../../wailsjs/go/models';
 import type { Mapping } from '../../coordMap';
@@ -38,15 +39,16 @@ export function CoordInfo({ region, displays, current, focusStep, focusEnds, map
   region: Rect | null; displays: app.DisplayInfo[]; current?: app.DisplayInfo; focusStep: Step | null;
   focusEnds?: { start: Point | null; end: Point | null }; map: Mapping | null;
 }) {
-  const pts = !focusStep ? [] : focusStep.type === 'drag' ? [['A', focusEnds?.start], ['B', focusEnds?.end]] as const : [['Điểm', focusEnds?.start]] as const;
+  const t = useT();
+  const pts = !focusStep ? [] : focusStep.type === 'drag' ? [['A', focusEnds?.start], ['B', focusEnds?.end]] as const : [[t('if.point'), focusEnds?.start]] as const;
   return (
     <div data-ui className="absolute top-2 left-2 flex max-w-[240px] flex-col rounded-md border border-hud-line bg-hud/85 px-2 py-1 font-mono text-[11px] leading-[16px] text-hud-text/80">
-      <span>{region ? `Vùng X ${region.x} Y ${region.y} · ${region.w} × ${region.h}` : 'Vùng: toàn màn hình'}</span>
-      {displays.length > 1 && current && <span>Màn {current.index + 1}{current.main ? ' (chính)' : ''} / {displays.length}</span>}
+      <span>{region ? t('hud.region', { x: region.x, y: region.y, w: region.w, h: region.h }) : t('hud.full')}</span>
+      {displays.length > 1 && current && <span>{t('shot.dispN', { n: current.index + 1 })}{current.main ? ` ${t('shot.main')}` : ''} / {displays.length}</span>}
       {pts.map(([k, p]) => <span key={k}>{k}: {p ? `X ${p.x} Y ${p.y}` : '—'}</span>)}
       {map && (
         <span className="text-hud-text/60">
-          Toạ độ: tỷ lệ {map.kx.toFixed(2)}{Math.abs(map.kx - map.ky) > 0.01 ? `/${map.ky.toFixed(2)}` : ''} · gốc X {Math.round(map.bx)} Y {Math.round(map.by)}
+          {t('hud.map', { k: `${map.kx.toFixed(2)}${Math.abs(map.kx - map.ky) > 0.01 ? `/${map.ky.toFixed(2)}` : ''}`, x: Math.round(map.bx), y: Math.round(map.by) })}
         </span>
       )}
     </div>

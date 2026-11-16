@@ -1,6 +1,7 @@
 // Thanh công cụ overlay (chỉ hiển thị) – đặt ở cạnh chọn trong Cài đặt (trái / phải xếp dọc), tự ẩn, hiện khi chuột sát
 // cạnh đó. Màn hẹp thì ẩn nhãn (chỉ icon), còn dài nữa thì xuống hàng – công thức ở overlay/toolbarLayout.
 // Ba dạng: xem riêng một node, xem trước, các công cụ đặt điểm / vùng.
+import { tr, useT } from '../../i18n';
 import { ReactNode } from 'react';
 import { app } from '../../../wailsjs/go/models';
 import { PageKindPicker } from '../MockPage';
@@ -15,11 +16,11 @@ import { AppPicker } from './AppPicker';
 import type { WindowChoice } from '../../overlay/windowChoices';
 
 export const TOOLS: { id: OverlayTool; label: string; soon?: string; icon: ReactNode }[] = [
-  { id: 'point', label: 'Đặt điểm', icon: <StepIcon type="click" /> },
-  { id: 'drag', label: 'Kéo thả A → B', icon: <StepIcon type="drag" /> },
-  { id: 'region', label: 'Chọn vùng', icon: <Region /> },
-  { id: 'select', label: 'Chọn nhiều', icon: <SelectIcon /> },
-  { id: 'capture', label: 'Khoanh ảnh', icon: <StepIcon type="waitImage" /> },
+  { id: 'point', get label() { return tr('ot.point'); }, icon: <StepIcon type="click" /> },
+  { id: 'drag', get label() { return tr('ot.drag'); }, icon: <StepIcon type="drag" /> },
+  { id: 'region', get label() { return tr('ot.region'); }, icon: <Region /> },
+  { id: 'select', get label() { return tr('ot.select'); }, icon: <SelectIcon /> },
+  { id: 'capture', get label() { return tr('ot.capture'); }, icon: <StepIcon type="waitImage" /> },
 ];
 const SPEEDS = [1, 2, 4];
 // group/bar: data-vertical / data-compact đặt ở khung thanh – con đổi theo bằng biến thể group-data.
@@ -60,28 +61,30 @@ export function OverlayToolbar(p: ToolbarProps) {
 }
 
 function FocusTools({ focusStep, repicking, onToggleRepick, onShowAll }: ToolbarProps & { focusStep: Step }) {
+  const t = useT();
   return (
     <>
       <span className="flex items-center gap-2 px-2.5 font-semibold">
         <span className="grid h-7 w-7 place-items-center rounded-full bg-accent text-[13px] text-on-accent">{focusStep.ref}</span>
         <Label>{focusStep.ref} · {stepLabel(focusStep)}</Label>
       </span>
-      <button onClick={onToggleRepick} title={repicking ? 'Huỷ chọn lại' : 'Chọn lại trên màn hình'} className={`${toolBtn} ${on(repicking)}`}>
-        <Target /><Label>{repicking ? 'Huỷ chọn lại' : 'Chọn lại trên màn hình'}</Label>
+      <button onClick={onToggleRepick} title={repicking ? t('ot.cancelRepick') : t('sf.repick')} className={`${toolBtn} ${on(repicking)}`}>
+        <Target /><Label>{repicking ? t('ot.cancelRepick') : t('sf.repick')}</Label>
       </button>
       <Sep />
-      <button onClick={onShowAll} title="Xem tất cả" className={`${toolBtn} font-normal hover:bg-white/6`}><Label>Xem tất cả</Label><span className="hidden group-data-[compact]/bar:inline">Tất cả</span></button>
+      <button onClick={onShowAll} title={t('ot.showAll')} className={`${toolBtn} font-normal hover:bg-white/6`}><Label>{t('ot.showAll')}</Label><span className="hidden group-data-[compact]/bar:inline">{t('ot.all')}</span></button>
     </>
   );
 }
 
 function PreviewTools({ simRunning, onToggleSim, speed, setSpeed, onEditPoints, branches, choices, onChooseBranch, onResetBranches }: ToolbarProps) {
+  const t = useT();
   return (
     <>
-      <button onClick={onToggleSim} title={simRunning ? 'Dừng' : 'Chạy thử'} className={`${toolBtn} ${simRunning ? 'btn-danger-soft' : 'btn-primary'}`}>
-        {simRunning ? <><Stop className="h-2.5 w-2.5" /><Label>Dừng</Label></> : <><Play className="h-3 w-3" /><Label>Chạy thử</Label></>}
+      <button onClick={onToggleSim} title={simRunning ? t('rm.stop') : t('mtt.run')} className={`${toolBtn} ${simRunning ? 'btn-danger-soft' : 'btn-primary'}`}>
+        {simRunning ? <><Stop className="h-2.5 w-2.5" /><Label>{t('rm.stop')}</Label></> : <><Play className="h-3 w-3" /><Label>{t('mtt.run')}</Label></>}
       </button>
-      <div className={seg} role="radiogroup" aria-label="Tốc độ xem trước">
+      <div className={seg} role="radiogroup" aria-label={t('ot.speed')}>
         {SPEEDS.map((v) => (
           <button key={v} role="radio" aria-checked={speed === v} onClick={() => setSpeed(v)}
             className={`h-[38px] rounded-md px-3 font-mono group-data-[compact]/bar:px-2 ${on(speed === v)}`}>
@@ -92,16 +95,17 @@ function PreviewTools({ simRunning, onToggleSim, speed, setSpeed, onEditPoints, 
       {branches.length > 0 && <BranchMenu branches={branches} choices={choices} onChoose={onChooseBranch} onReset={onResetBranches} className={`${toolBtn} font-normal`} />}
       <PageKindPicker className={`${toolBtn} font-normal`} />
       <Sep />
-      <button onClick={onEditPoints} title="Chọn nhiều điểm để di chuyển / co giãn / xoay, rồi Xem trước lại" className={`${toolBtn} font-normal hover:bg-white/6`}><Label>Sửa điểm</Label><span className="hidden group-data-[compact]/bar:inline">Sửa</span></button>
+      <button onClick={onEditPoints} title={t('ot.editTip')} className={`${toolBtn} font-normal hover:bg-white/6`}><Label>{t('ot.edit')}</Label><span className="hidden group-data-[compact]/bar:inline">{t('ot.editShort')}</span></button>
     </>
   );
 }
 
 function MainTools({ tool, setTool, fullRegion }: ToolbarProps) {
+  const t = useT();
   return (
     <>
       {TOOLS.map((t) => (
-        <button key={t.id} disabled={!!t.soon} title={t.soon ? `Sắp có (bước ${t.soon})` : t.label} onClick={() => setTool(t.id)}
+        <button key={t.id} disabled={!!t.soon} title={t.soon ? `${t.soon}` : t.label} onClick={() => setTool(t.id)}
           className={`${toolBtn} disabled:opacity-40 ${on(tool === t.id)}`}>
           {t.icon}<Label>{t.label}</Label>
         </button>
@@ -111,23 +115,24 @@ function MainTools({ tool, setTool, fullRegion }: ToolbarProps) {
       )}
       <Sep />
       <span className="flex items-center gap-1.5 px-1.5 text-[13px] text-hud-text/60 group-data-[compact]/bar:hidden">
-        <kbd className="rounded border border-hud-line px-1.5 font-mono text-hud-text">F6</kbd>lưu vị trí chuột
+        <kbd className="rounded border border-hud-line px-1.5 font-mono text-hud-text">F6</kbd>{t('ot.f6')}
       </span>
-      <button onClick={() => setTool('preview')} title="Xem trước" className={`${toolBtn} font-normal hover:bg-white/6`}><Label>Xem trước</Label><span className="hidden group-data-[compact]/bar:inline">Thử</span></button>
+      <button onClick={() => setTool('preview')} title={t('ot.preview')} className={`${toolBtn} font-normal hover:bg-white/6`}><Label>{t('ot.preview')}</Label><span className="hidden group-data-[compact]/bar:inline">{t('ot.try')}</span></button>
     </>
   );
 }
 
 function DisplayPicker({ displays, onPick }: { displays: app.DisplayInfo[]; onPick: (i: number) => void }) {
+  const t = useT();
   return (
-    <div className={seg} role="radiogroup" aria-label="Màn hình">
+    <div className={seg} role="radiogroup" aria-label={t('shot.display')}>
       {displays.map((d) => (
         <button key={d.index} role="radio" aria-checked={d.current} onClick={() => onPick(d.index)}
-          title={`Màn ${d.index + 1}${d.main ? ' (chính)' : ''} · ${d.rect.w} × ${d.rect.h} tại X ${d.rect.x} Y ${d.rect.y}`}
+          title={`${t('shot.dispN', { n: d.index + 1 })}${d.main ? ` ${t('shot.main')}` : ''} · ${d.rect.w} × ${d.rect.h} ${t('ot.at')} X ${d.rect.x} Y ${d.rect.y}`}
           className={`flex h-[38px] items-center gap-1.5 rounded-md px-2.5 ${on(d.current)}`}>
           <svg width="14" height="12" viewBox="0 0 14 12" aria-hidden><rect x="1" y="1" width="12" height="8" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.4" /><path d="M5 11h4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>
           <span className="font-mono text-[13px]">{d.index + 1}</span>
-          {d.main && <span className="text-[11px] text-hud-text/60 group-data-[compact]/bar:hidden">chính</span>}
+          {d.main && <span className="text-[11px] text-hud-text/60 group-data-[compact]/bar:hidden">{t('ot.main')}</span>}
         </button>
       ))}
     </div>

@@ -1,4 +1,5 @@
 // Chữ gợi ý một dòng trên overlay theo công cụ / trạng thái đang làm.
+import { tr } from '../i18n/lang';
 import type { OverlayTool } from '../windowMode';
 import { STEP_LABEL, Step, StepType } from '../types';
 
@@ -18,30 +19,30 @@ export type HintState = {
 };
 
 export function overlayHint(h: HintState): string {
-  if (h.pickingElement) return 'Click vào phần tử cần tìm (nút, ô nhập, chữ) – app tự viết cách tìm · Esc huỷ';
+  if (h.pickingElement) return tr('oh.pickEl');
   const f = h.focusStep;
   if (f) {
-    if (!h.repicking) return 'Kéo marker để sửa · Esc quay lại';
-    if (f.type === 'drag' && !f.dragFromPrev) return h.dragA ? 'Click điểm B (nơi thả)' : 'Click điểm A (nơi bắt đầu kéo)';
-    return 'Click (hoặc fn+F6) để đặt lại điểm';
+    if (!h.repicking) return tr('oh.dragMarker');
+    if (f.type === 'drag' && !f.dragFromPrev) return h.dragA ? tr('oh.clickB') : tr('oh.clickA');
+    return tr('oh.repoint');
   }
   switch (h.tool) {
     case 'preview':
-      return 'Con trỏ giả, không click thật';
+      return tr('oh.fake');
     case 'region':
-      return 'Kéo để khoanh vùng';
+      return tr('oh.region');
     case 'stroke':
-      return 'Giữ chuột và kéo một nét liền theo đường cần vẽ – thả chuột là xong · Esc huỷ';
+      return tr('oh.stroke');
     case 'capture':
-      if (h.captureRect) return h.captured ? 'Enter: dùng vùng này · kéo lại hoặc Esc: khoanh lại' : `Kéo khung quanh vùng cần chụp (${h.captureRef})`;
-      return h.captured ? 'Enter: dùng ảnh này · kéo lại hoặc Esc: khoanh lại'
-        : `Kéo khung sát quanh nút / chữ cần chờ${h.captureRef ? ` (${h.captureRef})` : ' – tạo bước Chờ ảnh mới'}`;
+      if (h.captureRect) return h.captured ? tr('oh.useRegion') : tr('oh.dragRegion', { ref: h.captureRef ?? '' });
+      return h.captured ? tr('oh.useImage')
+        : tr('oh.dragImage') + (h.captureRef ? ` (${h.captureRef})` : ` – ${tr('oh.newWait')}`);
     case 'select':
       return h.selected
-        ? `${h.selected} điểm · kéo khung / núm để biến đổi · ${h.modKey}+núm: xiên, phối cảnh`
-        : `Click, Shift+click hoặc kéo khung để chọn · ${h.modKey}A tất cả`;
+        ? tr('oh.selected', { n: h.selected, k: h.modKey })
+        : tr('oh.selectHint', { k: h.modKey });
     case 'drag':
-      return h.dragA ? 'Click điểm B · Esc huỷ A' : `Click điểm A${h.picking ? ' (chọn lại)' : ''}`;
+      return h.dragA ? tr('oh.clickBEsc') : tr('oh.clickA2') + (h.picking ? ` ${tr('oh.again')}` : '');
   }
-  return h.picking ? 'Click để đặt lại điểm' : `Click / F6: thêm ${STEP_LABEL[h.placing].toLowerCase()} · kéo marker để dời`;
+  return h.picking ? tr('oh.clickRepoint') : tr('oh.add', { what: STEP_LABEL[h.placing].toLowerCase() });
 }
