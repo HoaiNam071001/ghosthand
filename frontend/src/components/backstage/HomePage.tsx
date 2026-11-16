@@ -1,6 +1,8 @@
 // Trang Tệp → Trang đầu (bước 63): bắt đầu nhanh (kịch bản trống + vài mẫu thử), kịch bản của tôi (đang soạn + mở gần đây + AI thử),
 // lịch sử chạy gần đây. Thay cho thanh thư viện bên trái cũ.
+import { tr } from '../../i18n/lang';
 import { ReactNode } from 'react';
+import { useLang } from '../../i18n';
 import { useEditor } from '../../store';
 import { fileName, forgetRecent, newScript, openRecent, openSample, useFile } from '../../scriptFile';
 import { scheduleOf, useSchedules } from '../../scheduleStore';
@@ -20,6 +22,7 @@ const RUNS_SHOWN = 5;
 const rowCls = 'group flex min-h-9 items-center gap-2.5 rounded-md px-3 py-1.5 text-left hover:bg-hover';
 
 export default function HomePage({ onDone }: { onDone: () => void }) {
+  useLang();
   const { script, dirty, path } = useEditor();
   const { recent, aiPaths, trials } = useFile();
   const sched = scheduleOf(useSchedules(), path);
@@ -30,49 +33,49 @@ export default function HomePage({ onDone }: { onDone: () => void }) {
   const now = Date.now();
   return (
     <div className="flex max-w-[900px] flex-col gap-6">
-      <Section title="Mới">
+      <Section title={tr('home.new')}>
         <div className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-3">
-          <Card title="Kịch bản trống" sub="Bắt đầu từ đầu" onClick={go(newScript)} disabled={!inWails}
+          <Card title={tr('home.blank')} sub={tr('home.blank.sub')} onClick={go(newScript)} disabled={!inWails}
             thumb={<span className="text-2xl text-muted">+</span>} />
           {(list ?? []).slice(0, SAMPLES_SHOWN).map((s) => (
-            <Card key={s.id} title={s.name} sub="Mẫu thử" disabled={!inWails} onClick={go(() => openSample(s.id, s.name))}
+            <Card key={s.id} title={s.name} sub={tr('home.sample')} disabled={!inWails} onClick={go(() => openSample(s.id, s.name))}
               thumb={<SampleThumb type={s.steps[0]} />} />
           ))}
-          <Card title="Tất cả mẫu thử…" sub="Lọc theo loại node" onClick={() => openBackstage('samples')} thumb={<RibbonIcon name="grid" className="h-6 w-6 text-muted" />} />
+          <Card title={tr('home.allSamples')} sub={tr('home.allSamples.sub')} onClick={() => openBackstage('samples')} thumb={<RibbonIcon name="grid" className="h-6 w-6 text-muted" />} />
         </div>
       </Section>
 
-      <Section title="Kịch bản của tôi">
+      <Section title={tr('home.mine')}>
         <div className="flex flex-col">
-          <div className={`${rowCls} bg-hover`} aria-current="true" title={path ?? 'Chưa lưu thành file'}>
+          <div className={`${rowCls} bg-hover`} aria-current="true" title={path ?? tr('home.notSaved')}>
             <Dot cls={dirty ? 'bg-warn' : 'bg-ok'} />
             <span className="min-w-0 truncate font-semibold">{script.name}</span>
             {script.meta?.createdBy === 'ai' && <AIChip />}
-            <span className="text-xs text-muted">{dirty ? 'chưa lưu' : 'đang mở'}</span>
-            {sched && <span className="ml-auto font-mono text-[11px] text-muted" title={`Hẹn chạy lúc ${sched.time}`}>⏱ {sched.time}</span>}
+            <span className="text-xs text-muted">{dirty ? tr('home.dirty') : tr('home.current')}</span>
+            {sched && <span className="ml-auto font-mono text-[11px] text-muted" title={tr('home.schedAt', { time: sched.time })}>⏱ {sched.time}</span>}
           </div>
           {recent.filter((r) => r !== path && !trialPaths.has(r)).map((r) => (
             <div key={r} className={rowCls}>
               <button title={r} onClick={go(() => openRecent(r))} disabled={!inWails} className="flex min-w-0 flex-1 items-center gap-2.5 text-left">
                 <Dot cls="bg-ok" /><span className="min-w-0 truncate">{fileName(r)}</span>{aiPaths.includes(r) && <AIChip />}
               </button>
-              <button onClick={() => forgetRecent(r)} aria-label={`Bỏ ${fileName(r)} khỏi danh sách`} title="Bỏ khỏi danh sách (file vẫn còn)"
+              <button onClick={() => forgetRecent(r)} aria-label={tr('home.forgetAria', { name: fileName(r) })} title={tr('home.forgetTip')}
                 className="grid h-6 w-6 place-items-center rounded text-muted opacity-0 group-hover:opacity-100 hover:bg-soft hover:text-ink focus-visible:opacity-100">✕</button>
             </div>
           ))}
-          {recent.length === 0 && <span className="px-3 py-1.5 text-muted">Chưa mở kịch bản nào khác – bấm Mở… hoặc dùng một mẫu thử.</span>}
+          {recent.length === 0 && <span className="px-3 py-1.5 text-muted">{tr('home.noRecent')}</span>}
         </div>
       </Section>
 
       {trials.items.length > 0 && (
-        <Section title="AI thử" hint={trialNote(trials.days)}>
+        <Section title={tr('home.aiTrials')} hint={trialNote(trials.days)}>
           <div className="flex flex-col">
             {trials.items.filter((t) => t.path !== path).map((t) => {
               const left = daysLeft(t.lastUsed, trials.days, now);
               return (
                 <button key={t.path} title={t.path} onClick={go(() => openRecent(t.path))} className={rowCls}>
                   <Dot cls="bg-muted" /><span className="min-w-0 flex-1 truncate">{t.name}</span><AIChip />
-                  {left !== null && <span className="font-mono text-[11px] text-muted" title="Còn bấy nhiêu ngày thì tự vào Thùng rác">{left}d</span>}
+                  {left !== null && <span className="font-mono text-[11px] text-muted" title={tr('home.trialLeft')}>{left}d</span>}
                 </button>
               );
             })}
@@ -80,7 +83,7 @@ export default function HomePage({ onDone }: { onDone: () => void }) {
         </Section>
       )}
 
-      <Section title="Lịch sử chạy gần đây" action={history.length > RUNS_SHOWN ? { label: `Xem tất cả (${history.length})…`, on: () => openBackstage('runs') } : undefined}>
+      <Section title={tr('home.recentRuns')} action={history.length > RUNS_SHOWN ? { label: tr('home.seeAll', { n: history.length }), on: () => openBackstage('runs') } : undefined}>
         <div className="flex flex-col">
           {history.slice(0, RUNS_SHOWN).map((h) => {
             const r = libraryRun(h);
@@ -91,7 +94,7 @@ export default function HomePage({ onDone }: { onDone: () => void }) {
               </button>
             );
           })}
-          {history.length === 0 && <span className="px-3 py-1.5 text-muted">Chưa có lần chạy nào</span>}
+          {history.length === 0 && <span className="px-3 py-1.5 text-muted">{tr('home.noRuns')}</span>}
         </div>
       </Section>
     </div>
