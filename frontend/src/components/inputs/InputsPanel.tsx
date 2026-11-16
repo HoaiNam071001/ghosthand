@@ -1,5 +1,6 @@
 // Tab Input của inspector (artboard InputsTab): các giá trị hỏi khi bấm Chạy, theo thứ tự – kéo ⋮⋮ để sắp xếp,
 // bấm một dòng để mở rộng sửa key / nhãn / kiểu / mặc định / bắt buộc / gợi ý, xoá input.
+import { useT } from '../../i18n';
 import Select from '../Select';
 import { ReactNode, useEffect, useState } from 'react';
 import { closestCenter, DndContext, DragEndEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
@@ -23,6 +24,7 @@ type Props = {
 const kindTypes: Record<string, InputType[]> = { int: ['number', 'ms'], bool: ['bool'] };
 
 export default function InputsPanel({ inputs, onUpdate, onRemove, onMove, onAdd, footer }: Props) {
+  const t = useT();
   const [open, setOpen] = useState<string | null>(null);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
   const onDragEnd = ({ active, over }: DragEndEvent) => {
@@ -31,7 +33,7 @@ export default function InputsPanel({ inputs, onUpdate, onRemove, onMove, onAdd,
 
   return (
     <div className="flex flex-1 flex-col gap-3.5">
-      <p className="text-xs text-muted">Các giá trị được hỏi khi bấm Chạy, theo thứ tự dưới đây.</p>
+      <p className="text-xs text-muted">{t('ip.intro')}</p>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
         <SortableContext items={inputs.map((i) => i.key)} strategy={verticalListSortingStrategy}>
           <div className="flex flex-col gap-1.5">
@@ -47,11 +49,11 @@ export default function InputsPanel({ inputs, onUpdate, onRemove, onMove, onAdd,
           </div>
         </SortableContext>
       </DndContext>
-      {inputs.length === 0 && <p className="py-4 text-center text-[13px] text-muted">Chưa có input – bấm ghim cạnh một trường hoặc gõ {'{{'} trong ô chữ.</p>}
+      {inputs.length === 0 && <p className="py-4 text-center text-[13px] text-muted">{t('ip.none1')} {'{{'} {t('ip.none2')}</p>}
       <button onClick={onAdd} disabled={!onAdd}
-        className="h-[38px] rounded-lg border border-dashed border-line-strong text-muted enabled:hover:bg-hover enabled:hover:text-ink">+ Thêm input</button>
+        className="h-[38px] rounded-lg border border-dashed border-line-strong text-muted enabled:hover:bg-hover enabled:hover:text-ink">{t('ip.add')}</button>
       {footer}
-      <p className="mt-auto text-xs text-muted">Giá trị lần chạy trước lưu trên máy này, không ghi vào file kịch bản.</p>
+      <p className="mt-auto text-xs text-muted">{t('ip.note')}</p>
     </div>
   );
 }
@@ -60,9 +62,10 @@ function Row({ inp, open, onToggle, onChange, onRemove }: {
   inp: InputView; open: boolean; onToggle: () => void;
   onChange: (p: Partial<ScriptInput>) => string | null | void; onRemove: () => void;
 }) {
+  const t = useT();
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({ id: inp.key });
   const handle = (
-    <span ref={setActivatorNodeRef} {...listeners} {...attributes} aria-label={`Kéo để sắp xếp ${inp.label}`}
+    <span ref={setActivatorNodeRef} {...listeners} {...attributes} aria-label={t('ip.drag', { n: inp.label })}
       className="cursor-grab touch-none text-muted active:cursor-grabbing" onClick={(e) => e.stopPropagation()}>⋮⋮</span>
   );
   const used = inp.usedBy.map((u) => `B${u.n}`).join(', ');
@@ -76,12 +79,12 @@ function Row({ inp, open, onToggle, onChange, onRemove }: {
         {handle}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5 font-semibold"><span className="truncate">{inp.label}</span>{inp.required && <span className="text-warn">*</span>}</div>
-          <div className="truncate font-mono text-xs text-muted">{inp.key}  ·  {inp.required && inp.default === undefined ? 'bắt buộc' : `mặc định ${fmtValue(inp.default, inp.unit)}`}</div>
+          <div className="truncate font-mono text-xs text-muted">{inp.key}  ·  {inp.required && inp.default === undefined ? t('ip.required') : t('ip.default', { v: fmtValue(inp.default, inp.unit) })}</div>
         </div>
         <span className="rounded-[5px] bg-soft px-[7px] py-0.5 text-[11px] whitespace-nowrap text-muted">{INPUT_TYPE_LABEL[inp.type]}</span>
         {used
           ? <span className="rounded-[5px] border border-line px-1.5 py-px font-mono text-[11px] text-muted">{used}</span>
-          : <span className="text-[11px] text-warn" title="Chưa bước nào dùng – chạy sẽ báo lỗi">chưa dùng</span>}
+          : <span className="text-[11px] text-warn" title={t('ip.unusedTip')}>{t('ip.unused')}</span>}
       </div>
     );
   }
@@ -96,41 +99,41 @@ function Row({ inp, open, onToggle, onChange, onRemove }: {
         {handle}
         <span className="var-token text-[13px]">{inp.key}</span>
         <span className={`truncate text-xs ${used ? 'text-muted' : 'text-warn'}`}>
-          {used ? `dùng ở ${inp.usedBy.map((u) => `B${u.n} ${u.title}`).join(', ')}` : 'chưa bước nào dùng – chạy sẽ báo lỗi'}
+          {used ? t('ip.usedIn', { l: inp.usedBy.map((u) => `B${u.n} ${u.title}`).join(', ') }) : t('ip.unusedTip')}
         </span>
-        <button onClick={(e) => { e.stopPropagation(); onRemove(); }} aria-label="Xoá input" title="Xoá input (bỏ ghim, biến {{…}} trong ô chữ sẽ báo lỗi)"
+        <button onClick={(e) => { e.stopPropagation(); onRemove(); }} aria-label={t('ip.del')} title={t('ip.delTip')}
           className="ml-auto grid h-7 w-7 flex-none place-items-center rounded-md text-muted hover:bg-hover hover:text-danger-text"><Trash className="h-3.5 w-3.5" /></button>
       </div>
       <div className="grid grid-cols-2 gap-2">
-        <label className={label}>Nhãn
+        <label className={label}>{t('ip.label')}
           <input value={inp.label} onChange={(e) => onChange({ label: e.target.value })} className={input} />
         </label>
         <KeyField value={inp.key} onCommit={(key) => onChange({ key })} />
       </div>
       <div className="grid grid-cols-2 gap-2">
-        <label className={label}>Kiểu
-          <Select value={inp.type as string} onChange={(t) => onChange({ type: t as InputType })} className={input} aria-label="Kiểu"
-            title={pinnedKind ? 'Đang ghim vào trường – chỉ đổi được kiểu cùng loại' : undefined}
+        <label className={label}>{t('ip.type')}
+          <Select value={inp.type as string} onChange={(ty) => onChange({ type: ty as InputType })} className={input} aria-label={t('ip.type')}
+            title={pinnedKind ? t('ip.pinnedTip') : undefined}
             options={types.map((k) => ({ value: k as string, label: INPUT_TYPE_LABEL[k] }))} />
         </label>
         {inp.type === 'bool' ? (
-          <div className={label}>Mặc định
-            <span className="flex h-8 items-center"><Switch on={inp.default === true} onChange={(v) => onChange({ default: v })} label="Mặc định" /></span>
+          <div className={label}>{t('ip.defaultCap')}
+            <span className="flex h-8 items-center"><Switch on={inp.default === true} onChange={(v) => onChange({ default: v })} label={t('ip.defaultCap')} /></span>
           </div>
         ) : inp.type === 'select' ? (
-          <label className={label}>Mặc định
-            <Select value={inp.default === undefined ? '' : String(inp.default)} onChange={(d) => onChange({ default: d })} className={input} aria-label="Mặc định"
-              options={[{ value: '', label: '(trống)' }, ...(inp.options ?? []).map((o) => ({ value: o, label: o }))]} />
+          <label className={label}>{t('ip.defaultCap')}
+            <Select value={inp.default === undefined ? '' : String(inp.default)} onChange={(d) => onChange({ default: d })} className={input} aria-label={t('ip.defaultCap')}
+              options={[{ value: '', label: t('ip.blank') }, ...(inp.options ?? []).map((o) => ({ value: o, label: o }))]} />
           </label>
         ) : (
           <DefaultField inp={inp} onCommit={(v) => onChange({ default: v })} className={`${input} font-mono`} />
         )}
       </div>
       {inp.type === 'select' && <OptionsField value={inp.options ?? []} onChange={(options) => onChange({ options })} />}
-      <label className="flex items-center justify-between text-[13px]">Bắt buộc nhập
-        <Switch on={!!inp.required} onChange={(required) => onChange({ required })} label="Bắt buộc nhập" />
+      <label className="flex items-center justify-between text-[13px]">{t('ip.req')}
+        <Switch on={!!inp.required} onChange={(required) => onChange({ required })} label={t('ip.req')} />
       </label>
-      <label className={label}>Gợi ý hiện dưới ô
+      <label className={label}>{t('ip.hint')}
         <input value={inp.hint ?? ''} onChange={(e) => onChange({ hint: e.target.value })} className={input} />
       </label>
     </div>
@@ -139,6 +142,7 @@ function Row({ inp, open, onToggle, onChange, onRemove }: {
 
 // Key: sửa nháp, Enter / rời ô mới đổi (đổi key = đổi luôn {{key}} trong ô chữ); lỗi hiện dưới ô.
 function KeyField({ value, onCommit }: { value: string; onCommit: (key: string) => string | null | void }) {
+  const t = useT();
   const [draft, setDraft] = useState(value);
   const [err, setErr] = useState<string | null>(null);
   useEffect(() => setDraft(value), [value]);
@@ -158,14 +162,15 @@ function KeyField({ value, onCommit }: { value: string; onCommit: (key: string) 
 
 // Mặc định dạng chữ / số: giữ nháp khi gõ, số sai thì báo (không ghi).
 function DefaultField({ inp, onCommit, className }: { inp: InputView; onCommit: (v: string) => void; className: string }) {
+  const t = useT();
   const shown = inp.default === undefined ? '' : String(inp.default);
   const [draft, setDraft] = useState(shown);
   useEffect(() => setDraft(shown), [shown]);
   const isNum = inp.type === 'number' || inp.type === 'ms';
   const bad = isNum && draft !== '' && !/^\d+$/.test(draft.trim());
   return (
-    <label className="flex flex-col gap-[5px] text-[13px] text-muted">Mặc định
-      <input value={draft} placeholder="(trống)" inputMode={isNum ? 'numeric' : undefined}
+    <label className="flex flex-col gap-[5px] text-[13px] text-muted">{t('ip.defaultCap')}
+      <input value={draft} placeholder={t('ip.blank')} inputMode={isNum ? 'numeric' : undefined}
         onChange={(e) => {
           setDraft(e.target.value);
           if (!isNum || e.target.value === '' || /^\d+$/.test(e.target.value.trim())) onCommit(e.target.value);
@@ -177,9 +182,10 @@ function DefaultField({ inp, onCommit, className }: { inp: InputView; onCommit: 
 
 // Danh sách chọn: mỗi lựa chọn một dòng.
 function OptionsField({ value, onChange }: { value: string[]; onChange: (v: string[]) => void }) {
+  const t = useT();
   const [draft, setDraft] = useState(value.join('\n'));
   return (
-    <label className="flex flex-col gap-[5px] text-[13px] text-muted">Các lựa chọn <span className="text-xs">(mỗi dòng một lựa chọn)</span>
+    <label className="flex flex-col gap-[5px] text-[13px] text-muted">{t('ip.options')} <span className="text-xs">{t('ip.optionsNote')}</span>
       <textarea value={draft} rows={3} onChange={(e) => {
           setDraft(e.target.value);
           onChange(e.target.value.split('\n').map((s) => s.trim()).filter(Boolean));

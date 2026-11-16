@@ -1,14 +1,15 @@
 // Công tắc AI 4 mức (bước 31b): Tắt = tắt MCP; Chỉ soạn / Hỏi / Tự chạy = MCPSettings.run (khớp store.AIRun* trong Go).
 // Dùng chung Cài đặt (AiRunSettings) và chip AI trên thanh mini.
+import { tr } from './i18n/lang';
 export type RunMode = 'edit' | 'ask' | 'auto';
 export type AiLevel = 'off' | RunMode;
 type Mcp = { enabled: boolean; run?: string };
 
 export const AI_LEVELS: { id: AiLevel; label: string }[] = [
-  { id: 'off', label: 'Tắt' },
-  { id: 'edit', label: 'Chỉ soạn' },
-  { id: 'ask', label: 'Hỏi' },
-  { id: 'auto', label: 'Tự chạy' },
+  { id: 'off', get label() { return tr('ail.0'); } },
+  { id: 'edit', get label() { return tr('ail.1'); } },
+  { id: 'ask', get label() { return tr('ail.2'); } },
+  { id: 'auto', get label() { return tr('ail.3'); } },
 ];
 
 // runMode – mức chạy khi MCP bật; giá trị lạ / trống = hỏi (mặc định của Go).

@@ -1,15 +1,16 @@
 // Input của kịch bản – phần dùng cho giao diện (tách biến, nhãn kiểu, hiển thị giá trị). Model ở types.ts (khớp inputs.go).
+import { tr } from '../../i18n/lang';
 import type { InputType, InputValue, ScriptInput } from '../../types';
 
 export type { InputType, InputValue, ScriptInput };
 
 export const INPUT_TYPE_LABEL: Record<InputType, string> = {
-  text: 'Chữ',
-  multiline: 'Nhiều dòng',
-  number: 'Số',
+  get text() { return tr('inp.text'); },
+  get multiline() { return tr('inp.multiline'); },
+  get number() { return tr('inp.number'); },
   ms: 'ms',
-  bool: 'Bật / tắt',
-  select: 'Danh sách chọn',
+  get bool() { return tr('inp.bool'); },
+  get select() { return tr('inp.select'); },
 };
 
 // Input kèm thông tin hiển thị: bước nào dùng (ghim hoặc {{key}}), đơn vị / tiền tố trong ô.
@@ -39,4 +40,4 @@ export function splitVars(text: string): Segment[] {
 export const varsIn = (text: string) => [...new Set(splitVars(text).flatMap((s) => (s.varKey ? [s.varKey] : [])))];
 
 export const fmtValue = (v: InputValue | undefined, unit?: string) =>
-  v === undefined || v === '' ? 'trống' : typeof v === 'boolean' ? (v ? 'bật' : 'tắt') : `${v}${unit ? ` ${unit}` : ''}`;
+  v === undefined || v === '' ? tr('inp.empty') : typeof v === 'boolean' ? (v ? tr('inp.on') : tr('inp.off')) : `${v}${unit ? ` ${unit}` : ''}`;

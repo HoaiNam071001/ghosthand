@@ -1,5 +1,6 @@
 // Overlay chọn vùng / điểm – cửa sổ trong suốt phủ màn hình, always-on-top.
 // File này giữ state + xử lý chuột / phím; phần vẽ ở components/overlay/, hình học + chữ gợi ý ở overlay/ (thuần).
+import { tr } from '../i18n';
 import { MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { MousePos } from '../../wailsjs/go/app/App';
 import {
@@ -238,7 +239,7 @@ export default function OverlayScreen() {
   const hintIcon = preview ? <Eye className="h-3 w-3" /> : tool === 'region' && !focus ? <Region className="h-3 w-3" />
     : tool === 'select' && !focus ? <SelectIcon className="h-3 w-3" />
     : <StepIcon type={tool === 'drag' || focusStep?.type === 'drag' ? 'drag' : 'click'} className="h-3 w-3" />;
-  const toolName = focusStep ? `Node ${focusStep.ref}` : preview ? 'Xem trước' : tool === 'stroke' ? 'Vẽ đường' : TOOLS.find((t) => t.id === tool)?.label ?? '';
+  const toolName = focusStep ? `Node ${focusStep.ref}` : preview ? tr('ot.preview') : tool === 'stroke' ? tr('os2.stroke') : TOOLS.find((t) => t.id === tool)?.label ?? '';
   const exitFocus = () => {
     cancelPick();
     setRepicking(false);
@@ -293,7 +294,7 @@ export default function OverlayScreen() {
         preview={preview} simRunning={sim.running} onToggleSim={() => (sim.running ? stopSim() : startSim())} speed={speed} setSpeed={setSpeed}
         onEditPoints={() => { stopSim(); setTool('select'); }}
         branches={preview ? branchNodes(script) : []} choices={choices} onChooseBranch={chooseBranch} onResetBranches={resetBranches}
-        tool={tool} setTool={setTool} fullRegion={isFull ? null : { label: fullRegion ? 'Toàn màn này' : 'Toàn màn hình', onClick: () => requestRegion(fullRegion) }}
+        tool={tool} setTool={setTool} fullRegion={isFull ? null : { label: fullRegion ? tr('os2.thisScreen') : tr('os2.fullScreen'), onClick: () => requestRegion(fullRegion) }}
         displays={displays} onPickDisplay={pickDisplay} apps={apps.choices} onOpenApps={apps.load} onPickApp={apps.focus} />
 
       {tool === 'select' && !pending && quad.quad && <QuadBar dirty={!!quad.live} onApply={quad.apply} onExit={quad.exit} />}
