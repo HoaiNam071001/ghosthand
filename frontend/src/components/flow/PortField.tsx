@@ -3,6 +3,7 @@
 // - Khi thất bại: thử lại N lần, nghỉ giữa các lần (node hành động)
 // - Output: các giá trị node trả về, chèn vào ô chữ của node sau bằng {{n2.output.x}}
 // - Lần chạy gần nhất: status, lỗi, log của node (StepResult)
+import ErrorHint from './ErrorHint';
 import type { MsgKey } from '../../i18n/vi';
 import { tr, useT } from '../../i18n';
 import Select from '../Select';
@@ -106,7 +107,7 @@ export function LastRunPanel({ row, refName, fields }: { row: RunRow; refName: s
       </div>
       {row.error && (
         <div className="rounded-control bg-danger-soft px-2.5 py-2 text-[13px] text-danger-text">
-          <span className="font-mono text-xs">{row.error.code}</span> · {row.error.message}
+          <span className="font-mono text-xs">{row.error.code}</span> · {row.error.message}<ErrorHint code={row.error.code} />
         </div>
       )}
       {row.output && <OutputTable rows={outputRows(refName, row.output, fields)} output={row.output} label={refName} />}

@@ -1,0 +1,897 @@
+[
+  {
+    "id": "bat-dau",
+    "group": "Getting started",
+    "title": "Quick start",
+    "summary": "Install the app, grant permissions and run your first script in 5 minutes.",
+    "blocks": [
+      {
+        "kind": "p",
+        "text": "Ghosthand runs a **script** for you: clicking, typing, waiting for an image / text to appear, branching, looping. A script is a **flow** – nodes joined by edges, like n8n."
+      },
+      {
+        "kind": "h",
+        "text": "Installation"
+      },
+      {
+        "kind": "list",
+        "items": [
+          "**macOS:** open the `.dmg` file and drag Ghosthand into Applications. If Gatekeeper blocks the first launch, right-click the app → **Open**.",
+          "**Windows – no install:** unzip `portable.zip` and run `ghosthand.exe` (Vietnamese OCR is bundled).",
+          "**Windows – installer:** run `setup.exe`. If SmartScreen warns, choose *More info → Run anyway* (the app is not code-signed).",
+          "The app tells you when a new version is available; click **Update now** to download, verify and install over the old one (see [[chapter:settings-about]])."
+        ]
+      },
+      {
+        "kind": "h",
+        "text": "Grant permissions (macOS)"
+      },
+      {
+        "kind": "p",
+        "text": "macOS blocks apps from controlling the mouse and capturing the screen until you allow it. At minimum you need **Accessibility** and **Screen Recording** – details for each permission in [[chapter:quyen]]. Windows needs no separate permissions."
+      },
+      {
+        "kind": "h",
+        "text": "Run your first script"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Click **File** (top-left of the tab row) → **Samples** – a list of sample scripts, each trying one node type on a ready-made playground page.",
+          "Pick an easy one, e.g. *Click by text*, and click **Use sample** – the script appears on the canvas.",
+          "Click **Open page** on the sample card to open the playground page in the browser.",
+          "Click **Run** (or F8). To stop immediately: press F8 again or move the mouse into a screen corner.",
+          "Watch the log under the canvas: a green node is done, a red one failed – click it to see why."
+        ]
+      },
+      {
+        "kind": "sample",
+        "sample": "click-theo-chu",
+        "text": "The easiest sample to start with: find a line of text on the page and click it."
+      },
+      {
+        "kind": "tip",
+        "text": "Not sure which node to use to find a button on your page / app? Read [[chapter:chon-cach-tim]] first – choosing the right way to find decides whether a script stays reliable."
+      }
+    ]
+  },
+  {
+    "id": "quyen",
+    "group": "Getting started",
+    "title": "Operating system permissions",
+    "summary": "Which permission each node needs, where to grant it, and why it can still report missing after granting.",
+    "blocks": [
+      {
+        "kind": "p",
+        "text": "Without a permission the node fails with a `permission` error. The app checks ahead: the **Settings → Permissions** tab lists each permission's status, the node inspector reports what is missing, and pressing Run asks before running."
+      },
+      {
+        "kind": "table",
+        "head": [
+          "Permission (macOS)",
+          "Needed for",
+          "Where to grant"
+        ],
+        "rows": [
+          [
+            "Accessibility",
+            "All mouse / keyboard actions; reading screen elements (Wait / Click / Read element, Window)",
+            "System Settings → Privacy & Security → Accessibility"
+          ],
+          [
+            "Screen Recording",
+            "Screenshots, template-image search, OCR, Wait for pixel colour, Wait for screen",
+            "Privacy & Security → Screen & System Audio Recording – usually the app must be reopened after granting"
+          ],
+          [
+            "Automation → Google Chrome",
+            "Browser tab, Go to URL, Save PDF",
+            "Open Chrome, then click **Grant** in the Permissions tab – macOS asks once"
+          ],
+          [
+            "Automation → Finder",
+            "The File node when moving to the Trash",
+            "Permissions tab → Grant"
+          ],
+          [
+            "Automation → System Events",
+            "Window, Power, Display / audio, Input method",
+            "Permissions tab → Grant"
+          ],
+          [
+            "Notifications",
+            "The System notification node",
+            "System Settings → Notifications (the app cannot check this itself)"
+          ]
+        ]
+      },
+      {
+        "kind": "warn",
+        "text": "A permission is tied to the **exact app build** it was granted to. Running with `wails dev` means granting to Terminal / VS Code; running the copy in Applications means granting to that copy. If it still reports missing after granting: turn the permission off, on again, then reopen the app."
+      },
+      {
+        "kind": "h",
+        "text": "Windows"
+      },
+      {
+        "kind": "list",
+        "items": [
+          "There is no permission prompt like macOS, but the app **cannot control windows running as Administrator** (Task Manager, installers…) while it runs as a normal user – run Ghosthand with *Run as administrator* if needed.",
+          "Screens scaled to 125 % / 150 % keep correct coordinates: the app reads real screen pixels."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "chon-cach-tim",
+    "group": "Getting started",
+    "title": "Choosing how to find",
+    "summary": "Coordinates, template images, OCR text, Accessibility elements or web DOM – which way for which page / app.",
+    "blocks": [
+      {
+        "kind": "p",
+        "text": "Most scripts *find a spot on the screen, then click / read it*. There are five ways to find, differing in accuracy, speed and how well they survive UI changes. Choose wrongly and a script works today but breaks tomorrow."
+      },
+      {
+        "kind": "table",
+        "head": [
+          "Way",
+          "Nodes",
+          "Accuracy",
+          "Speed",
+          "Survives theme / window size change / being covered",
+          "Permission needed (macOS)"
+        ],
+        "rows": [
+          [
+            "Fixed coordinates",
+            "[[node:click]], [[node:drag]], [[node:scroll]]…",
+            "Pixel-exact – if the window does not move",
+            "Instant",
+            "No: moving / resizing the window misses (reduce with region + anchor, the [[node:window]] node)",
+            "Accessibility"
+          ],
+          [
+            "Template image",
+            "[[node:waitImage]], [[node:clickImage]], [[node:findAll]]",
+            "High when the UI looks like when the template was captured",
+            "Fast (a small search area is faster than the whole screen)",
+            "Poor with theme / zoom / font changes; not seen when covered",
+            "Screen Recording"
+          ],
+          [
+            "Text (OCR)",
+            "[[node:waitText]], [[node:clickText]]",
+            "Good with clear, medium-size text; small text / busy backgrounds are misread",
+            "Slower than images (reads the whole area)",
+            "Handles theme / size changes well; not seen when covered",
+            "Screen Recording"
+          ],
+          [
+            "Element (Accessibility)",
+            "[[node:waitElement]], [[node:clickElement]], [[node:elementRead]], [[node:elementAction]]",
+            "Absolutely exact – reads the app's real text, no guessing",
+            "Fast for small apps; large web pages are slower",
+            "Handles well; [[node:elementAction]] works even when the window is covered",
+            "Accessibility"
+          ],
+          [
+            "Web DOM (the app's Chrome)",
+            "[[node:openWeb]], [[node:webClick]], [[node:webType]], [[node:webRead]]…",
+            "Absolutely exact by CSS / text / label",
+            "Fast",
+            "Handles well; can run in the background",
+            "None"
+          ]
+        ]
+      },
+      {
+        "kind": "h",
+        "text": "Which way works with which kind of app"
+      },
+      {
+        "kind": "table",
+        "head": [
+          "App / page type",
+          "Use",
+          "Avoid"
+        ],
+        "rows": [
+          [
+            "Sites needing sign-in (Facebook, banks, Google) in the Chrome you already use",
+            "Element (Accessibility), OCR text, browser nodes ([[node:browserTab]], [[node:pageText]], [[node:readTable]])",
+            "Signing in directly in the app's Chrome while it is being controlled – easily triggers a captcha"
+          ],
+          [
+            "Public sites, or already signed in via the web node's **Sign in** button",
+            "Web DOM (the app's Chrome) – the most reliable, runs in the background",
+            "Fixed coordinates"
+          ],
+          [
+            "Native apps (Finder, Excel, Zalo PC, accounting software)",
+            "Element, then OCR text",
+            "Coordinates when the window is often resized"
+          ],
+          [
+            "Electron apps (Slack, Discord, VS Code)",
+            "Element (readable fairly fully), OCR text",
+            "Template images when the app changes theme often"
+          ],
+          [
+            "Games, canvas, video, drawing apps",
+            "Template image, pixel colour, coordinates (combine with [[node:window]] to pin the window)",
+            "Element / web DOM – there is no element tree"
+          ],
+          [
+            "Remote desktop, virtual machines, shared screens",
+            "Template image, OCR text, coordinates",
+            "Element – only a picture frame is visible"
+          ]
+        ]
+      },
+      {
+        "kind": "h",
+        "text": "Decision tree"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "A web page that **needs no sign-in** (or you signed in with the web node's *Sign in* button – the app's Chrome opens like normal Chrome, then click *Done*)? → use the Web nodes on the app's Chrome ([[node:openWeb]] then [[node:webClick]] / [[node:webType]]).",
+          "An app / page with **clear text or labels** on its buttons? → try **Element** first ([[node:clickElement]]); click *Try find* in the inspector to see whether it is found.",
+          "Elements not visible (game, remote, canvas) but **text is readable**? → [[node:clickText]].",
+          "A button with **only an icon**, no text? → template image ([[node:clickImage]]), cropped tightly around the icon.",
+          "Everything fixed, and the window placed exactly by [[node:window]]? → coordinates ([[node:click]]) – the fastest.",
+          "You only need to **know when it is done** (page loaded, animation stopped)? → [[node:waitScreen]] instead of a fixed [[node:wait]]."
+        ]
+      },
+      {
+        "kind": "warn",
+        "text": "Sites requiring sign-in: **do not let a node type the password** (typing `{{secret.…}}` into a password field) – many sites detect typing by machine, trigger a captcha or lock the account. Click **Sign in** on the web node, sign in yourself once in the app's Chrome, then click *Done* – the session is kept for later runs."
+      },
+      {
+        "kind": "tip",
+        "text": "Combine ways: [[node:waitText]] finds the line *Sign in*, then [[node:clickImage]] with *Position the previous node found* – no need to search twice."
+      },
+      {
+        "kind": "tip",
+        "text": "A robust start for a desktop app script: [[node:app]] checks the app is running → if not, [[node:open]] + wait until it opens → [[node:window]] sets position + size. After that coordinates and template images no longer drift between runs."
+      },
+      {
+        "kind": "sample",
+        "sample": "phan-tu-doc-gia",
+        "text": "Read a price on a page with an Accessibility element – no OCR, no template image."
+      },
+      {
+        "kind": "sample",
+        "sample": "web-bam-nut-chay",
+        "text": "Click a button on a page with the Web node (the app's Chrome) – still works when the layout changes."
+      }
+    ]
+  },
+  {
+    "id": "giao-dien",
+    "group": "Using the app",
+    "title": "Interface",
+    "summary": "Ribbon, canvas, floating inspector, File page, region-picking overlay, the mini bar while running.",
+    "blocks": [
+      {
+        "kind": "list",
+        "items": [
+          "**Title bar** (top): Save / Undo / Redo, script name (an *Unsaved* chip when there are changes), Guide (F1), Settings (Ctrl+,). Drag the whole row to move the window; drag edges / corners to resize.",
+          "**Ribbon** (below the title bar, like Word): the **Compose** tab (copy / paste, undo, group, enable-disable nodes, screen region), **Insert node** (every node type by group – click to add; the *Search node…* box = Ctrl+K), **Run** (run from / only / node by node, preview, record actions, history, bug report bundle), **View** (Compact / Full card style, how node details open, zoom, auto re-layout, light / dark) and **Tools** (pick coordinates, test page, MCP, settings). Ctrl+F1 or double-click a tab to collapse the ribbon. The loop-count button (repeat, countdown) and the **Run** button with its ▾ menu always stay at the right of the tab row.",
+          "**File** (the first button in the tab row): a full-window page with *Home* (blank script + samples, my scripts, recent history), New / Open / Save / Save as, *Samples*, *Embed script*, Run history and **Settings**. *Export .zip bundle* – the script plus the CSV / xlsx files of Loop over list and the images of Clipboard / Ask AI, to send to another machine (template images already live inside the script); *Import .zip bundle* – extracts into the script folder, changes file paths to the new place, then opens it.",
+          "**Canvas** (middle): the nodes and edges. Drag a node to arrange it, drag from one node's output port to another node to connect. Ctrl+K (macOS: Cmd+K) opens the **Add node** palette with accent-insensitive search (the Insert node tab has every button too).",
+          "**Inspector** (right): appears when you click a node, **floating** over the canvas; the pin button docks it to the right edge (the canvas shrinks), Esc / ✕ hides it, drag the left edge to resize. It shows the fields of the selected node. The ⓘ button next to the node name explains what the node does; *View guide* opens that node's page in this modal.",
+          "**Status bar** (bottom): status, the current mouse coordinates, node count, the emergency-stop method, and the canvas **zoom** bar (− ━●━ + 100 %, fit to screen)."
+        ]
+      },
+      {
+        "kind": "h",
+        "text": "Overlay – picking regions and points"
+      },
+      {
+        "kind": "p",
+        "text": "The overlay covers the screen so you can outline the script **region**, pick click points and crop template images. While in the overlay, move the mouse to where you want to click and press **F6** to add a point. A point is saved relative to the region + an **anchor** (stuck to the left / right / middle edge or proportional), so if the window is resized the point still follows the right button."
+      },
+      {
+        "kind": "h",
+        "text": "The mini bar while running"
+      },
+      {
+        "kind": "p",
+        "text": "While running, the window shrinks to a mini bar (a normal window, not on top of other apps): a progress ring, the running node, Pause / Stop. Scripts started from outside the app (CLI, API, schedule, AI) show this bar too."
+      },
+      {
+        "kind": "tip",
+        "text": "Switch light / dark with the sun / moon button on the title bar."
+      }
+    ]
+  },
+  {
+    "id": "dung-flow",
+    "group": "Using the app",
+    "title": "Building a flow",
+    "summary": "Nodes, edges, success / failure ports, branching, looping.",
+    "blocks": [
+      {
+        "kind": "p",
+        "text": "Each node does one thing. When it finishes, the node leaves through a **port**, and the edge from that port decides which node runs next. The order follows edges, not canvas positions. A node with a ▶ flag is the **start** node."
+      },
+      {
+        "kind": "table",
+        "head": [
+          "Node",
+          "Output ports"
+        ],
+        "rows": [
+          [
+            "Actions (click, type, wait for image…)",
+            "Success / Failed"
+          ],
+          [
+            "[[node:if]]",
+            "True / False"
+          ],
+          [
+            "[[node:switch]], [[node:switchScreen]]",
+            "One port per case + Default / No match"
+          ],
+          [
+            "[[node:counter]]",
+            "Remaining / Exhausted"
+          ],
+          [
+            "[[node:forEach]]",
+            "Each item / End of list"
+          ],
+          [
+            "[[node:app]] (check)",
+            "Running / Not running"
+          ],
+          [
+            "[[node:end]]",
+            "None – ends the loop"
+          ]
+        ]
+      },
+      {
+        "kind": "list",
+        "items": [
+          "An unconnected **Failed** port: on error the script stops and reports the error. Connect it to another node to handle it yourself (e.g. button not found → scroll then retry).",
+          "Any other unconnected port: the loop ends and moves to the next loop (if any remain).",
+          "**Repeat a section**: connect an edge back to an earlier node and add a [[node:counter]] to limit the count.",
+          "**Loop over a list**: [[node:forEach]] → loop body → an edge back to forEach.",
+          "A disabled node (the switch in the inspector) is skipped and goes straight out the success port."
+        ]
+      },
+      {
+        "kind": "scene",
+        "scene": "forEach",
+        "text": "Loop over a list: each item runs the loop body once."
+      },
+      {
+        "kind": "sample",
+        "sample": "lap-danh-sach",
+        "text": "Loop over a customer list, typing each name into a form."
+      },
+      {
+        "kind": "sample",
+        "sample": "dem-vong-lap",
+        "text": "Retry up to N times with the Counter node."
+      }
+    ]
+  },
+  {
+    "id": "bien",
+    "group": "Using the app",
+    "title": "Variables and output",
+    "summary": "Use earlier node results, run-time inputs, your own variables, secrets.",
+    "blocks": [
+      {
+        "kind": "p",
+        "text": "A node's text fields (typed text, URL, text to find, conditions…) accept **variables** inside `{{…}}`. At run time the variable is replaced by its real value. Type `{{` in a field to open suggestions: the script's inputs first, then the outputs of other nodes – ↑↓ to choose, Enter to insert."
+      },
+      {
+        "kind": "table",
+        "head": [
+          "Variable",
+          "What it is"
+        ],
+        "rows": [
+          [
+            "`{{n2.output.x}}`",
+            "Output of the node with code n2 in this loop (each node type has its own outputs – see the node's page)"
+          ],
+          [
+            "`{{n2.status}}`, `{{n2.error.message}}`",
+            "Result of node n2: success / fail / skipped, and the error if any"
+          ],
+          [
+            "`{{last.output.text}}`",
+            "Output of the node that ran just before"
+          ],
+          [
+            "`{{customer_name}}`",
+            "A script input – asked for when you press Run"
+          ],
+          [
+            "`{{vars.attempts}}`",
+            "A variable set / added to by [[node:setVar]]"
+          ],
+          [
+            "`{{secret.password}}`",
+            "A secret stored in Settings – never shown in the log (••••)"
+          ]
+        ]
+      },
+      {
+        "kind": "list",
+        "items": [
+          "Every node also has the outputs `startedAt` (start time) and `durationMs` (how long it ran).",
+          "Click point coordinates can come from variables: e.g. click at `{{n2.output.x}} + 20`, `{{n2.output.y}}` – 20 px to the right of where node n2 found something.",
+          "Number fields (click count, wait time…) can switch to variable mode to be computed at run time.",
+          "Variables reset at the start of each loop."
+        ]
+      },
+      {
+        "kind": "h",
+        "text": "Connecting data on the canvas"
+      },
+      {
+        "kind": "list",
+        "items": [
+          "The ribbon's **View** tab: **Compact** or **Full** cards. A Full card has an **IN** block (which variables the node's fields read – the square dot on the left) and an **OUT** block (outputs – the square dot on the right); dashed wires join an output to the field using it. Round dots are still the run-flow ports.",
+          "Compact card: hover over the card for a moment, IN fans out to the left and OUT to the right.",
+          "**Drag an output square** onto another node's IN square to connect – if the field already has text the variable is appended, number / coordinate fields are replaced. Dragging across a node makes that node's IN fan out. You can only connect to nodes that **run after** the source; a node that runs earlier explains why not. Ctrl+Z undoes.",
+          "The **Data** tab in node details: which node each field reads from (click to jump there, *Unlink*), which node uses each output; open a run's log to see real values.",
+          "Node details open as a **Panel** (right column), **Modal** (centre of the screen) or **Popover** (right under the node) – choose in the View button."
+        ]
+      },
+      {
+        "kind": "sample",
+        "sample": "bang-gia",
+        "text": "Price table: data flows from Find all → Loop over list → Number & date → Calculate → If → Click."
+      },
+      {
+        "kind": "sample",
+        "sample": "dat-bien",
+        "text": "Set and add to variables across branches."
+      },
+      {
+        "kind": "sample",
+        "sample": "bi-mat",
+        "text": "Fill in a password from the secret store without exposing it in the script."
+      }
+    ]
+  },
+  {
+    "id": "chay",
+    "group": "Using the app",
+    "title": "Running scripts",
+    "summary": "Run, preview, node by node, emergency stop, loops, schedule, command line, API.",
+    "blocks": [
+      {
+        "kind": "table",
+        "head": [
+          "How to run",
+          "Use when"
+        ],
+        "rows": [
+          [
+            "**Run** / F8",
+            "Run the whole script. If there are inputs, a form asks first (frequently used value sets can be saved)."
+          ],
+          [
+            "Preview",
+            "A fake cursor visits the points on screen without really clicking – check the points are in the right place."
+          ],
+          [
+            "Run from selected node",
+            "You are fixing a middle part of the script and do not want to rerun from the start."
+          ],
+          [
+            "Run only selected node",
+            "Try out a single node."
+          ],
+          [
+            "Run node by node (F10)",
+            "Debugging: each node pauses until you press Resume / F10. Set a **Breakpoint** at the bottom of the inspector to stop before a node."
+          ]
+        ]
+      },
+      {
+        "kind": "warn",
+        "text": "**Emergency stop:** press F8 or move the mouse into a screen corner. Always try a new script with a small loop count."
+      },
+      {
+        "kind": "h",
+        "text": "Loops and human-like"
+      },
+      {
+        "kind": "list",
+        "items": [
+          "The loop-count button on the toolbar: number of loops (0 = run forever), a minutes limit, and a countdown before running so you can switch to the app to operate.",
+          "**Human-like** (low / medium / high): the mouse follows a curve, clicks off-centre, types with an uneven rhythm – slower but lowers the chance of being detected as a bot (not guaranteed)."
+        ]
+      },
+      {
+        "kind": "h",
+        "text": "Running unattended"
+      },
+      {
+        "kind": "list",
+        "items": [
+          "**Schedule**: once, daily or on working days; results can be reported via Telegram / Discord. The app must be open – if it is closed the time is missed and not made up.",
+          "**Command line**: `ghosthand run script.json --set name=An --preset \"Set 1\"` sends it to the app (it starts the app if not open – see [[chapter:settings-api]]).",
+          "**Batch testing**: `ghosthand test folder/ sample:typing --samples` runs several scripts in turn (a failing script does not stop the rest and is not saved in Run history), printing one line per script: passed / failed with the error code + failing node. `--samples` takes every sample that runs on the playground (`--all` adds real-web samples / ones needing manual preparation). The AI does the same with the `run_batch` tool – the app asks you once for the whole batch.",
+          "**Local API** for other programs and **AI via MCP** – see [[chapter:ai-mcp]]."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "lich-su",
+    "group": "Using the app",
+    "title": "History and reading errors",
+    "summary": "Review a run, each node's output, understand error codes.",
+    "blocks": [
+      {
+        "kind": "p",
+        "text": "Each run keeps a log: which node ran, which port it left by, what output, how long it took, and a screenshot at the time of failure. Open **Run history** in the Run tab (or File →); *View on flow* highlights the path taken on the canvas. The top of the dialog has statistics: number of runs, % success (not counting runs you stopped), average time of successful runs and the node that most often makes the script fail – fix that node first."
+      },
+      {
+        "kind": "h",
+        "text": "Tree view"
+      },
+      {
+        "kind": "list",
+        "items": [
+          "The Run history dialog opens in **Tree** view by default (switch to **List** at the top corner): each time a node runs is a card, laid out top to bottom; the Loop over list / Counter nodes fan each iteration out as a branch, merging into *End of list*. By default the first iteration and iterations with errors are open; ▸ / ▾ on an iteration card opens / folds the branch, and beyond 10 iterations they merge into *N more iterations*.",
+          "**Compact · hover**: hovering a card opens the IN popover (values after variable substitution, from which node) / OUT (values, which node uses them next) and draws that card's data lines. **Always show**: values fan out above / below every card.",
+          "Click a card: the data lines leading to it light up, running in the direction of the value; the right panel has IN / OUT / the port taken / **Trace data back** (which nodes the value passed through to get here) / log / screenshot at failure. Click a source to jump to its card.",
+          "Older runs (from before the app saved values) can still be viewed as a tree, just without the IN block."
+        ]
+      },
+      {
+        "kind": "table",
+        "head": [
+          "Error code",
+          "Meaning",
+          "Usually caused by / how to fix"
+        ],
+        "rows": [
+          [
+            "`not_found`",
+            "The wait timed out without seeing the image / text / colour / element",
+            "UI changed, wrong search area, threshold too strict – see the error detail: the closest match, the text read"
+          ],
+          [
+            "`timeout`",
+            "The node ran longer than allowed",
+            "Increase the wait time or check whether the app hangs"
+          ],
+          [
+            "`permission`",
+            "A system permission is missing",
+            "[[chapter:quyen]]"
+          ],
+          [
+            "`invalid_input`",
+            "An invalid value – e.g. a variable pointing at a node that has not run, a negative number",
+            "Check the variables and node order"
+          ],
+          [
+            "`browser`",
+            "The app's Chrome is not open / lost connection",
+            "Put an Open page (the app's Chrome) node before the Web node"
+          ],
+          [
+            "`end`",
+            "An End node failed",
+            "Reported by the script itself – read the message"
+          ],
+          [
+            "`cancelled`",
+            "You stopped it midway",
+            "–"
+          ]
+        ]
+      },
+      {
+        "kind": "tip",
+        "text": "Need someone else to look at an error? Select the run and click **Export bug bundle…**: a .zip with the open script, each node's result, the screenshot at failure and the app / OS version. Secret values (Secrets tab) and password-like input names are replaced by ••••, but the screenshot is still a real image – review it before sending."
+      },
+      {
+        "kind": "tip",
+        "text": "Delete old history or change where it is stored in [[chapter:settings-storage]]."
+      }
+    ]
+  },
+  {
+    "id": "ai-mcp",
+    "group": "Using the app",
+    "title": "AI via MCP",
+    "summary": "Let Claude / other AIs read the screen, write and run scripts.",
+    "blocks": [
+      {
+        "kind": "p",
+        "text": "MCP lets an AI (Claude Desktop, Claude Code, Codex…) use Ghosthand as a tool: look at the screen, find elements, write scripts, test-run them. The AI reads this same guide to choose the right node."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Turn on MCP in **Settings → AI (MCP)**.",
+          "Click *Add to Claude Desktop* or copy the sample config into the AI you use (as the command `ghosthand --mcp` or an HTTP address).",
+          "Choose the AI's **run level**: *Compose only*, *Ask before running* or *Run automatically*. At the ask level, *Allow until the app closes* applies only to the exact content you just approved – if the AI edits the script and runs it, the app asks again.",
+          "Choose tools for each kind of AI. By default the AI writes with nodes that find images / text on screen; tell the AI if you want browser (web) nodes."
+        ]
+      },
+      {
+        "kind": "p",
+        "text": "When the AI runs, the main window shrinks to the **mini bar** and the target app's window is brought to the front; after the run the mini bar stays – click *Open app* to return to the main screen. If you touch the mouse midway the app pauses, and once the mouse has been still for 5 seconds it continues automatically (the mini bar counts down; press Stop to cancel) – change the seconds or turn it off in Settings, and when off you must press Resume."
+      },
+      {
+        "kind": "p",
+        "text": "Scripts the AI creates just for testing live in their own **AI trial** group under File → Home and go to the Trash after 7 days unopened – change the days or turn it off in Settings; to keep one, open it and click Save. When the AI test-runs, the app warns the AI beforehand about things that often break a script without being the script's fault: the browser having *ask where to save each file* on, an open dialog, a browser window that is too small."
+      },
+      {
+        "kind": "p",
+        "text": "**Recent AI commands** (same Settings page) shows which AI called what and how long it took; click a row to see the parameters – passwords / tokens are masked. Text the AI reads from the screen, web or files is never treated as a command."
+      },
+      {
+        "kind": "warn",
+        "text": "Scripts created by an AI carry an **AI** label in File → Home – review them carefully before running. The Run command / Power nodes always need your consent."
+      }
+    ]
+  },
+  {
+    "id": "settings-ui",
+    "group": "Settings",
+    "title": "Appearance",
+    "summary": "Choose the language: Tiếng Việt / English.",
+    "blocks": [
+      {
+        "kind": "list",
+        "items": [
+          "Choose **Tiếng Việt**, **English** or **Follow system** – it changes immediately, no restart needed. You can also switch quickly with the **VI / EN** button on the title bar (next to the light / dark button).",
+          "Anything not yet translated temporarily shows in Vietnamese. Text for AI via MCP and node names you set yourself in a script do not change with the language."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "settings-storage",
+    "group": "Settings",
+    "title": "Storage",
+    "summary": "Script folder, AI scripts, screenshots; run history.",
+    "blocks": [
+      {
+        "kind": "list",
+        "items": [
+          "Change the folder for scripts, AI-created scripts and screenshots: **Choose…** to change, **Open** to view it in Finder / Explorer, **Reset** to restore the default.",
+          "Put the folder inside Google Drive / OneDrive / Dropbox to have your scripts on several machines."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "settings-overlay",
+    "group": "Settings",
+    "title": "Screen",
+    "summary": "Which edge the overlay toolbar sits on; the border around the screen while running.",
+    "blocks": [
+      {
+        "kind": "p",
+        "text": "The overlay toolbar (pick region, add point) can sit on the Top / Bottom / Left / Right edge – choose an edge that does not cover where you usually work. The bar scales with the screen size."
+      },
+      {
+        "kind": "p",
+        "text": "**Border while running**: while the app (you pressed Run, an AI, a schedule) controls the machine, the screen edge has a border – blinking blue = clicking / typing (do not touch the mouse), dim blue = waiting for an image / text / window, yellow = paused; it turns off when done. The mini bar says exactly what it waits for and how many seconds remain. The border does not appear in screenshots, image search or text reading. Choose *Off*, *Thin* (default) or *Medium*."
+      }
+    ]
+  },
+  {
+    "id": "settings-browser",
+    "group": "Settings",
+    "title": "Browser",
+    "summary": "Whether web nodes run on the app's Chrome or on Wisp.",
+    "blocks": [
+      {
+        "kind": "p",
+        "text": "**Browser for web nodes** – the browser that [[node:openWeb]], [[node:webClick]], [[node:webType]], [[node:webRead]], [[node:webScroll]], [[node:webWait]], [[node:webKey]] control. Scripts need no edits when you change it."
+      },
+      {
+        "kind": "p",
+        "text": "*Automatic* (default): if Wisp is open with the **Ghosthand gateway** on (⋮ menu → Options in Wisp) it uses Wisp, otherwise the app's Chrome. *App's Chrome*: Chrome / Edge / Brave on this machine with its own profile. *Wisp*: always uses Wisp – if it is not open the app opens it and waits."
+      },
+      {
+        "kind": "p",
+        "text": "On Wisp every action goes through Wisp's gateway (real events in the browser) as with **Run in background** on: it does not take over the mouse / keyboard and the window need not be in front. While connected, Wisp's toolbar shows a purple **Ghosthand** chip – click it to disconnect."
+      },
+      {
+        "kind": "tip",
+        "text": "The status box tells you whether Wisp is ready and how to fix it (not installed, not open, gateway off, version mismatch). Click *Check again* after opening Wisp."
+      }
+    ]
+  },
+  {
+    "id": "settings-secrets",
+    "group": "Settings",
+    "title": "Secrets",
+    "summary": "Store passwords / tokens so scripts can use them without exposing them.",
+    "blocks": [
+      {
+        "kind": "p",
+        "text": "Add a secret (name + value) and use it in text fields as `{{secret.<name>}}`. The value is not in the script file – sending a script to someone else does not leak the password – and every log / output / AI only sees `••••`."
+      },
+      {
+        "kind": "sample",
+        "sample": "bi-mat",
+        "text": "A sample that uses a secret to sign in."
+      }
+    ]
+  },
+  {
+    "id": "settings-perms",
+    "group": "Settings",
+    "title": "Permissions",
+    "summary": "Status of each OS permission, requesting it, opening the right System Settings page.",
+    "blocks": [
+      {
+        "kind": "p",
+        "text": "Lists the permissions the app needs, with those required by the open script first. **Grant** triggers the macOS permission prompt; **Open System Settings** opens the right page. After granting, return to the app – the tab re-checks itself. Details: [[chapter:quyen]]."
+      }
+    ]
+  },
+  {
+    "id": "settings-api",
+    "group": "Settings",
+    "title": "API",
+    "summary": "Run scripts from the command line or other programs.",
+    "blocks": [
+      {
+        "kind": "p",
+        "text": "The app accepts run commands from outside: the `ghosthand run` command line (always on – it starts the app if it is not open) and an HTTP API for other programs (enabled separately, with a token)."
+      },
+      {
+        "kind": "table",
+        "head": [
+          "Command-line option",
+          "Meaning"
+        ],
+        "rows": [
+          [
+            "`--preset \"Name\"`",
+            "A saved input value set from the Run form"
+          ],
+          [
+            "`--set KEY=VALUE`",
+            "The value of one input; repeatable, overrides the preset"
+          ],
+          [
+            "`--countdown SECONDS`",
+            "Countdown before running"
+          ],
+          [
+            "`--no-wait`",
+            "Send the command and exit at once (by default it waits for the run to finish, printing progress)"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "id": "settings-mcp",
+    "group": "Settings",
+    "title": "AI (MCP)",
+    "summary": "Turn on MCP, the AI's run level, tools, recent AI commands.",
+    "blocks": [
+      {
+        "kind": "p",
+        "text": "The MCP switch, the AI's run level, tool selection per kind of AI, a sample config for Claude Desktop and a log of recent AI commands. *Send screenshots to the AI*: turn off when your AI cannot see images – the app drops every image (screenshots, the image at node failure) from results sent to the AI, which then reads the screen as text and saves tokens. How to use: [[chapter:ai-mcp]]."
+      }
+    ]
+  },
+  {
+    "id": "settings-askai",
+    "group": "Settings",
+    "title": "Ask AI",
+    "summary": "The default AI provider for the Ask AI node.",
+    "blocks": [
+      {
+        "kind": "p",
+        "text": "Choose the provider (OpenAI and compatible services, Anthropic, Gemini, or an on-machine AI such as Ollama), the address, the model and the key (pick from the Secrets tab). Any field an Ask AI node leaves empty is taken from here; a node that chooses a different provider type uses its own and inherits nothing. Each run may cost money, and screenshots are sent out (except for an on-machine AI)."
+      }
+    ]
+  },
+  {
+    "id": "settings-servers",
+    "group": "Settings",
+    "title": "MCP servers",
+    "summary": "Add external MCP servers (file reading, GitHub, Sheets…) for the Call MCP tool node.",
+    "blocks": [
+      {
+        "kind": "p",
+        "text": "Add external MCP servers (Run command, HTTP or SSE type), see the connection status, click Reload to read the tool list, Disable / Delete when unused. The Run command type runs that command on your machine, so the first time the app asks whether you trust the configuration (and asks again if the command changes). The Library button has suggested servers grouped by area (files – Filesystem, Git; web – Fetch, Exa, Brave Search, Tavily, Firecrawl; work – GitHub, Notion, Airtable; AI – Hugging Face, Context7…) with a search box – Add pre-fills the form so you can review then Save; it needs Node.js (npx) or uv (uvx) on the machine, and a server needing a key lists the secret names you must create. Tokens are written only as `{{secret.<name>}}` (the Secrets tab). Use the tools in scripts with the Call MCP tool node; an AI via MCP cannot add / edit servers."
+      }
+    ]
+  },
+  {
+    "id": "settings-sync",
+    "group": "Settings",
+    "title": "Sync",
+    "summary": "Keep scripts, template images, settings (and secrets) the same across machines via Google Drive or an MCP server.",
+    "blocks": [
+      {
+        "kind": "p",
+        "text": "Sign in to Google once, and the app pushes / pulls through the **Ghosthand** folder in your Drive. The app only sees folders and files it created itself (the `drive.file` scope) and cannot read the rest of your Drive. You type your Google password in the browser, which the app never sees; you can **Sign out** at any time to revoke access."
+      },
+      {
+        "kind": "h",
+        "text": "What is synced"
+      },
+      {
+        "kind": "list",
+        "items": [
+          "**Scripts** – the `.json` files in the script folder, with template images and attached files (CSV, images…). Absolute paths on this machine are recorded as relative; the other machine places files in its own script folder and rewrites the paths itself.",
+          "**Settings** – only the portable parts: appearance, the run border, the AI provider (the key is just a secret name). It does **not** carry the storage folders, the API port / token, external MCP servers, or any AI permissions (MCP on, run level, disabled tools) – even a compromised cloud cannot widen your AI's permissions on this machine.",
+          "**Secrets** – off by default. Turning it on requires a **passphrase**; secrets are encrypted on your machine before going to Drive, so Google and the app cannot read them. A new machine enters the same passphrase to fetch them. **Forgetting the passphrase = losing the cloud copy** (the secrets on your machines remain). The passphrase is kept in Keychain / Credential Manager, never in any file."
+        ]
+      },
+      {
+        "kind": "h",
+        "text": "Sync via an MCP server"
+      },
+      {
+        "kind": "p",
+        "text": "Instead of Google Drive, choose **MCP server** at the top of this screen: use a server added in Settings → MCP servers as the store. Specify the root folder on the server, the read / write tool names (delete and create-folder are optional) and the path / content argument names, or choose the **Filesystem** template and point the root at a Google Drive / OneDrive / Dropbox folder installed on the machine. File content is sent as base64 so template images and the encrypted copy still go through. Click **Save and check** so the app tries connecting and reports which tools the server lacks. All sync data goes through that server – choose only a server you trust. The first time the app asks you to approve the server and each write tool; choose **always allow this tool** so automatic runs need no prompt. If the server has no delete tool, deleted files remain on the server but the app no longer uses them."
+      },
+      {
+        "kind": "h",
+        "text": "When two machines edit the same thing"
+      },
+      {
+        "kind": "p",
+        "text": "The app **never overwrites on its own**. If you click **Sync now** and hit a conflict, a dialog asks, with the edit time and machine name of both sides: **Keep this machine's copy**, **Take the cloud copy**, or **Keep both** (the cloud copy is saved as `name (other machine).json`). If you do not choose, nothing changes and it asks again next time. A script that is open with unsaved changes is not overwritten – save, then sync again."
+      },
+      {
+        "kind": "h",
+        "text": "Auto sync"
+      },
+      {
+        "kind": "p",
+        "text": "Turn on at app start, after saving a script, or on a schedule (5 minutes – 24 hours). An automatic run never opens a dialog: on a conflict it stops there, the **Sync** dot on the bottom bar turns yellow, and waits for you to click **Sync now**."
+      },
+      {
+        "kind": "h",
+        "text": "Notes"
+      },
+      {
+        "kind": "list",
+        "items": [
+          "Delete a script on this machine and the next sync deletes it from the cloud and other machines (into that machine's Trash, recoverable). Attached files are never deleted automatically.",
+          "Signing in to a different Google account makes every file count as new: identical files are skipped, differing files are asked about.",
+          "If access is revoked in the Google account, or the session expires: the app reports **sign in again needed**, and the data on this machine is untouched.",
+          "An AI (MCP) can only see the status through `sync_status` (on or not, last time, whether there are conflicts – no machine names, file names or detailed errors). An AI has no way to turn on sync, sign in, choose a store or unlock secrets – only you can, on this screen."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "settings-about",
+    "group": "Settings",
+    "title": "About",
+    "summary": "The running version, checking for and installing a new one.",
+    "blocks": [
+      {
+        "kind": "list",
+        "items": [
+          "The app asks about a new version about 5 seconds after opening; click **Check for update** to ask again.",
+          "**Update now**: downloads, verifies the sha256, installs over the old copy and reopens. macOS keeps the permissions already granted.",
+          "It does not update while a script is running or the script is unsaved.",
+          "An AI can also update (the MCP tool `update_app`) according to the AI level in Settings → MCP: *Compose only* refuses, *Ask before running* shows a prompt, *Run automatically* installs at once."
+        ]
+      }
+    ]
+  }
+]

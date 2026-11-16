@@ -3126,6 +3126,21 @@ export const vi = {
   'mp.tip': 'Trang mẫu phủ nền khi Xem trước (đúng tỷ lệ px) – cuộn thì trang trượt theo, để hình dung cuộn tới đâu',
   'mp.bg': 'Nền: {l}',
   'mp.real': 'màn hình thật',
+  'eh.not_found': 'Không thấy',
+  'eh.http_status': 'Mã HTTP lỗi',
+  'eh.network': 'Lỗi mạng',
+  'eh.mcp_error': 'Lỗi MCP',
+  'eh.ai_error': 'Lỗi AI',
+  'eh.timeout': 'Quá thời gian',
+  'eh.permission': 'Thiếu quyền',
+  'eh.invalid_input': 'Dữ liệu sai',
+  'eh.cancelled': 'Đã dừng',
+  'eh.end': 'Kết thúc báo lỗi',
+  'eh.browser': 'Lỗi trình duyệt',
+  'eh.exit_code': 'Mã thoát khác 0',
+  'eh.window_mismatch': 'Sai cửa sổ',
+  'eh.web_dialog': 'Hộp thoại JS',
+  'eh.internal': 'Lỗi nội bộ',
 } as const;
 
 export type MsgKey = keyof typeof vi;

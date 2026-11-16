@@ -1,0 +1,1706 @@
+{
+  "click": {
+    "tech": "Moves the mouse to the coordinates then clicks through the operating system's input API (macOS: CGEvent; Windows: SendInput, real pixel coordinates so it is correct at 125 % / 150 %).",
+    "accuracy": "Pixel-exact – as long as the window does not move. The point is saved relative to the region + anchor, so a resized window still follows the right button if the anchor is on the right edge.",
+    "speed": "Instant; with Human-like on, the mouse follows a curve and takes a few hundred ms longer.",
+    "good": [
+      "A window pinned with the Window node",
+      "Games / canvas with no text or elements to find"
+    ],
+    "avoid": [
+      "A button that moves with the content → [[node:clickText]] or [[node:clickElement]]",
+      "A public web page → [[node:webClick]]"
+    ],
+    "tips": [
+      "Add points quickly: open the overlay, move the mouse to the button, press F6.",
+      "Clicking several times: set the count + the gap between clicks in the node itself, no loop needed.",
+      "When several apps easily cover each other: turn on *Only in window* (`onlyInWindow` + app / title) – if the window is closed or not in front, the node reports `window_mismatch` and has not clicked / typed anything; add a [[node:window]] node first to bring it to the front."
+    ],
+    "fields": [
+      "**Point** – where to click (coordinates + anchor relative to the window)",
+      "**Mouse button** – left / right / middle",
+      "**Count** and **gap** – click several times in one node",
+      "**Human-like** – the mouse follows a curve, random delays"
+    ],
+    "samples": [
+      "click-nhieu-lan"
+    ]
+  },
+  "double": {
+    "tech": "Two consecutive clicks through the operating system's input API (like the Click node with count = 2), fast enough that the app treats it as a double-click.",
+    "accuracy": "Pixel-exact like Click; an app slow to respond may miss the double-click if the machine is busy.",
+    "speed": "Instant.",
+    "good": [
+      "Open a file / folder, select a whole word",
+      "Maximise a window by double-clicking the title bar"
+    ],
+    "avoid": [
+      "A spot whose position changes with the content → switch to [[node:clickImage]] and click by image / text / element",
+      "A web box with its own button → [[node:webClick]] is steadier"
+    ],
+    "tips": [
+      "Double-click not working: try Click then Click again with a small gap, or press Enter to open the selected item.",
+      "When several apps easily cover each other: turn on *Only in window* (`onlyInWindow` + app / title) – if the window is closed or not in front, the node reports `window_mismatch` and has not clicked / typed anything; add a [[node:window]] node first to bring it to the front."
+    ],
+    "fields": [
+      "**Point** – where to double-click (coordinates + anchor relative to the window)",
+      "**Human-like** – the mouse follows a curve to the point"
+    ],
+    "samples": [
+      "double-click"
+    ]
+  },
+  "hold": {
+    "tech": "Presses the mouse button, holds for exactly the number of milliseconds, then releases; it always releases, even if you press Stop midway.",
+    "accuracy": "Exact position; the hold time is off by a few tens of ms depending on how busy the machine is.",
+    "speed": "Exactly the hold time you set.",
+    "good": [
+      "A button that must be held to act (hold to confirm, hold to record)",
+      "Games that need the mouse held"
+    ],
+    "avoid": [
+      "Only one click needed → [[node:click]]",
+      "Dragging from one point to another → [[node:drag]]"
+    ],
+    "tips": [
+      "Set the hold time a little longer than the app requires.",
+      "When several apps easily cover each other: turn on *Only in window* (`onlyInWindow` + app / title) – if the window is closed or not in front, the node reports `window_mismatch` and has not clicked / typed anything; add a [[node:window]] node first to bring it to the front."
+    ],
+    "fields": [
+      "**Point** – where to hold",
+      "**Mouse button** – left / right / middle",
+      "**Hold time** (ms)"
+    ],
+    "samples": [
+      "giu-chuot"
+    ]
+  },
+  "drag": {
+    "tech": "Moves the mouse to point A, presses and holds, moves to point B over the set duration, then releases (it always releases when stopped). It can start from where the mouse already is, or compute point B from an offset.",
+    "accuracy": "Pixel-exact if the window does not move; an app that checks drag events strictly needs a slightly longer drag time.",
+    "speed": "The drag time set in the node.",
+    "good": [
+      "Drag a kanban card, drag a file into a folder",
+      "Drag a slider, highlight text"
+    ],
+    "avoid": [
+      "Dragging along a curve / through several points → [[node:path]]",
+      "A start point that moves → find it with [[node:clickImage]] and feed it into Drag via coordinate variables"
+    ],
+    "tips": [
+      "Drag not working: increase the drag time, or turn on Human-like so the mouse accelerates.",
+      "Dragging from where something was just found: use the option to start from where the previous node left the mouse.",
+      "When several apps easily cover each other: turn on *Only in window* (`onlyInWindow` + app / title) – if the window is closed or not in front, the node reports `window_mismatch` and has not clicked / typed anything; add a [[node:window]] node first to bring it to the front."
+    ],
+    "fields": [
+      "**Point A / B**",
+      "**Drag time** (ms)",
+      "**Start from where the mouse stopped** and **B is an offset**"
+    ],
+    "samples": [
+      "keo-tha",
+      "kanban-keo-the"
+    ]
+  },
+  "path": {
+    "tech": "Holds the mouse button and drags one continuous stroke: through the points, or a ready-made circle / rectangle / star around a centre. The time is divided by each segment's length.",
+    "accuracy": "Follows the set points / shape exactly; a drawing app that handles mouse events slowly may make the stroke rough – lengthen the draw time.",
+    "speed": "The draw time set in the node.",
+    "good": [
+      "Drawing apps, signatures, pattern-lock unlock",
+      "Dragging through several points in one stroke"
+    ],
+    "avoid": [
+      "Just a straight drag A → B → [[node:drag]]"
+    ],
+    "tips": [
+      "Preview the stroke on the overlay before running.",
+      "Turn on Human-like: each segment curves slightly, with speed-up / slow-down like a real hand.",
+      "When several apps easily cover each other: turn on *Only in window* (`onlyInWindow` + app / title) – if the window is closed or not in front, the node reports `window_mismatch` and has not clicked / typed anything; add a [[node:window]] node first to bring it to the front."
+    ],
+    "fields": [
+      "**Points** (≥ 2) or **Shape** (circle / rectangle / star + size)",
+      "**Join the last point back to the first**",
+      "**Draw time** (ms)"
+    ],
+    "samples": [
+      "ve-hinh"
+    ]
+  },
+  "scroll": {
+    "tech": "Sends mouse-wheel events (notch count, up / down / left / right) at the set point or where the mouse is.",
+    "accuracy": "How many pixels one notch scrolls is decided by the app and the OS – it does not scroll an exact fixed number of lines.",
+    "speed": "Instant per notch.",
+    "good": [
+      "See more content, a feed, a long list",
+      "Scroll a little at a time, then check with Wait / Find"
+    ],
+    "avoid": [
+      "Scrolling inside a web page frame → [[node:webScroll]] is more precise",
+      "Need to scroll until something appears → put Scroll in a loop with [[node:waitImage]]"
+    ],
+    "tips": [
+      "Scroll not working: put the point on the area to scroll so the mouse stands over that frame.",
+      "When several apps easily cover each other: turn on *Only in window* (`onlyInWindow` + app / title) – if the window is closed or not in front, the node reports `window_mismatch` and has not clicked / typed anything; add a [[node:window]] node first to bring it to the front."
+    ],
+    "fields": [
+      "**Direction** and **notches**",
+      "**Point** – where to scroll (optional)"
+    ],
+    "samples": [
+      "cuon-trang",
+      "cuon-toi-khi-thay"
+    ]
+  },
+  "type": {
+    "tech": "Two ways to enter text: type key by key, or paste through the clipboard and restore the old text. The default picks automatically: Windows without Human-like pastes, otherwise it types keys.",
+    "accuracy": "Typing keys is exact with unaccented text; a background Vietnamese input method (UniKey, EVKey…) can garble accented text when typing keys – choose Paste or turn the input method off.",
+    "speed": "Paste is almost instant; typing depends on the character count, slower with Human-like on (uneven rhythm, occasionally mistyping then deleting).",
+    "good": [
+      "Fill forms, search boxes, messages (after a Click into the field)",
+      "Enter a value from a variable, e.g. {{n3.output.text}}"
+    ],
+    "avoid": [
+      "A web field with a clear selector → [[node:webType]]",
+      "A field that blocks pasting – do not choose Paste"
+    ],
+    "tips": [
+      "To type a literal {{ write \\{{.",
+      "Vietnamese text garbled: switch the input method to Paste.",
+      "Need Enter after typing: add a [[node:key]] node.",
+      "When several apps easily cover each other: turn on *Only in window* (`onlyInWindow` + app / title) – if the window is closed or not in front, the node reports `window_mismatch` and has not clicked / typed anything; add a [[node:window]] node first to bring it to the front."
+    ],
+    "fields": [
+      "**Content** – accepts {{variables}}",
+      "**Input method** – automatic / type keys / paste"
+    ],
+    "samples": [
+      "go-chu",
+      "chu-tieng-viet"
+    ]
+  },
+  "key": {
+    "tech": "Presses a key or combination through the operating system's input API. Chord mode holds them together (Ctrl+C); sequence mode holds the modifier keys then presses the others one by one.",
+    "accuracy": "Exact key; keys only take effect on the focused window – check the window first with the Window node.",
+    "speed": "Instant.",
+    "good": [
+      "Enter to send, Tab to move between fields, Esc to close",
+      "Copy / paste, switch tab, open the machine's find box"
+    ],
+    "avoid": [
+      "Typing a whole passage → [[node:type]]",
+      "Keys for a web page whose window may lose focus → [[node:webKey]]"
+    ],
+    "tips": [
+      "Cmd (macOS) and Ctrl (Windows) differ: a script meant for both should be checked on each machine.",
+      "Key names follow robotgo: enter, tab, esc, f5, a…",
+      "When several apps easily cover each other: turn on *Only in window* (`onlyInWindow` + app / title) – if the window is closed or not in front, the node reports `window_mismatch` and has not clicked / typed anything; add a [[node:window]] node first to bring it to the front."
+    ],
+    "fields": [
+      "**Key** and **modifier keys** (cmd, ctrl, alt, shift)",
+      "**Press style** – chord / sequence"
+    ],
+    "samples": [
+      "phim-tat"
+    ]
+  },
+  "wait": {
+    "tech": "Just waits the exact number of milliseconds (Stop and pause still take effect immediately mid-wait).",
+    "accuracy": "Exactly the set time; it does not know whether the page / app is ready.",
+    "speed": "The set time – easy to wait too long or too little.",
+    "good": [
+      "A short pause between two actions",
+      "No image, text or element to wait for"
+    ],
+    "avoid": [
+      "Waiting for a page to finish loading → [[node:waitScreen]] or [[node:waitImage]]",
+      "Waiting until a set time → [[node:waitUntil]]"
+    ],
+    "tips": [
+      "Every node has a *wait after* field – put a short pause there instead of adding a node."
+    ],
+    "fields": [
+      "**Wait time** (ms)"
+    ],
+    "samples": [
+      "cho-giua-cac-click"
+    ]
+  },
+  "waitPixel": {
+    "tech": "Reads the colour of one screen point each round and compares each RGB channel to the wanted colour (with a tolerance). It does not move the mouse. Needs Screen Recording permission on macOS.",
+    "accuracy": "Exact at the chosen point; blur / colour-transition effects need a larger tolerance. A theme or window size change shifts the point.",
+    "speed": "Faster than waiting for an image – it reads only one pixel.",
+    "good": [
+      "A status light changing colour, a progress bar filling",
+      "A button turning from grey to green"
+    ],
+    "avoid": [
+      "Need to know where something with a shape appears → [[node:waitImage]]",
+      "Waiting for a page to finish loading → [[node:waitScreen]]"
+    ],
+    "tips": [
+      "On timeout the error reports the colour read at that point – use it to adjust the colour or tolerance."
+    ],
+    "fields": [
+      "**Point**",
+      "**Colour** (#RRGGBB) and **tolerance**",
+      "**Maximum wait time**"
+    ],
+    "samples": [
+      "cho-mau-pixel"
+    ]
+  },
+  "waitScreen": {
+    "tech": "Captures an area each round and compares shrunken greyscale images: still (two consecutive captures nearly identical for long enough) or changed compared with the start. Needs Screen Recording permission on macOS.",
+    "accuracy": "Good for pages / effects that change the whole area. A small spinner inside a large area changes less than 1 % – shrink the area or lower the threshold to 0.",
+    "speed": "Finishes as soon as the area settles – no extra waiting like a fixed Wait.",
+    "good": [
+      "After opening a page / clicking a button: wait for the page to finish loading",
+      "*Changed* mode right after a Click to know the app responded"
+    ],
+    "avoid": [
+      "You know exactly what will appear → [[node:waitImage]] is more reliable",
+      "An area with a running clock / ad never becomes still"
+    ],
+    "tips": [
+      "The timeout error includes the last difference % so you can adjust the threshold."
+    ],
+    "fields": [
+      "**Area** – whole screen / chosen area",
+      "**Wait type** – still or changed",
+      "**Difference threshold** and **still time**"
+    ],
+    "samples": [
+      "cho-man-hinh"
+    ]
+  },
+  "ocrRead": {
+    "tech": "Captures an area and reads all text with OCR (macOS: Vision; Windows: Tesseract with the Vietnamese pack), ordered top → bottom, left → right, dropping empty / duplicate lines. It re-reads until the area has text. Needs Screen Recording permission on macOS.",
+    "accuracy": "Large, clear text on a plain background is read almost entirely right; small text / image backgrounds may get wrong accents or characters. For normal apps and normal Chrome, [[node:pageText]] reads the text verbatim.",
+    "speed": "A few hundred ms to a few seconds depending on the area size – the smaller the area, the faster.",
+    "good": [
+      "Read a status / amount in a game, image, remote desktop, image-based PDF, then branch with [[node:switch]]",
+      "Get a list of text lines to filter with [[node:textMatch]] / loop with [[node:forEach]]"
+    ],
+    "avoid": [
+      "Just need to know whether a text appears → [[node:waitImage]] (find by text)",
+      "Text next to a fixed label → [[node:elementRead]] (find = text)",
+      "A whole-screen area: mixed with other apps' text, slow to read"
+    ],
+    "tips": [
+      "Outline the area by node: choose *Area = by node* and point at a Window / Wait for image node so the area follows the window.",
+      "Comparing text in Switch is accent-sensitive – use the phrase with the fewest accents as the anchor."
+    ],
+    "fields": [
+      "**Area** – script region / whole screen / chosen area / by node (like Screenshot)",
+      "**Output** `text` / `lines` / `count`"
+    ],
+    "samples": [
+      "doc-chu-vung"
+    ]
+  },
+  "waitUntil": {
+    "tech": "Waits until a set time by the machine clock or internet standard time (NTP). When far away it sleeps in steps of ≤ 1 s; near the time it waits in very short rounds.",
+    "accuracy": "Off by a few ms. With standard time on, a wrong machine clock is still on time; if standard time cannot be fetched it uses machine time (output ntpOffsetMs = 0).",
+    "speed": "Until the set time; Stop / pause take effect immediately while waiting.",
+    "good": [
+      "Sale hunting, booking tickets exactly when they open",
+      "Daily jobs with a loop"
+    ],
+    "avoid": [
+      "Running a whole script on a schedule → the schedule in Settings",
+      "Waiting for something to finish → the other Wait nodes"
+    ],
+    "tips": [
+      "The time has already passed when the node is reached: choose to continue, wait until tomorrow, or report an error.",
+      "The machine must stay on and not sleep while waiting."
+    ],
+    "fields": [
+      "**Set time** – HH:mm[:ss[.mmm]], optionally with a date",
+      "**If the time has passed**",
+      "**Use standard time (NTP)**"
+    ],
+    "samples": [
+      "cho-den-gio"
+    ]
+  },
+  "waitImage": {
+    "tech": "Matches a template image (captured by the app) against the screen each round, reporting the position and % match. Options: match by edges (tolerates light / dark theme changes), check the average colour to tell same-shaped buttons of different colours apart, and transparent areas of the template are not counted.",
+    "works": [
+      "Native apps, games, canvas, remote desktop – where there is no text or element to read",
+      "Any web / app, as long as it is visible on screen"
+    ],
+    "accuracy": "High with the same theme and the same zoom; a changed text size, zoom, DPI or partial covering lowers the match. Pick a moderate threshold and test on both themes.",
+    "speed": "Slower than reading elements, depending on the search area – shrink the search area to be faster. Needs Screen Recording permission on macOS.",
+    "good": [
+      "Icons, logos, buttons without text",
+      "Games / canvas, apps whose elements cannot be read"
+    ],
+    "avoid": [
+      "A button with clear text and a theme that changes often → [[node:waitText]]",
+      "A signed-in web page or an app with a UI tree → [[node:waitElement]]"
+    ],
+    "tips": [
+      "Find by AI (the AI button in the Find by field): describe it in words and the AI looks at the search-area image. Slow, costs money and the search-area image leaves the machine (except for an on-machine AI) – use only when a template image / text / element cannot find it. Needs a provider in Settings → Ask AI.",
+      "Crop the template tightly, avoiding changing backgrounds and changing numbers / text (make that part transparent).",
+      "Not found: the error reports the highest match so you can adjust the threshold.",
+      "Need to click where it was found: use [[node:clickImage]] with “by node” pointing at this node."
+    ],
+    "fields": [
+      "**Template image** (cropped with the overlay)",
+      "**Minimum match** (%)",
+      "**Compare mode** – brightness or edges, **colour tolerance**",
+      "**Search area** and **maximum wait time**"
+    ],
+    "samples": [
+      "cho-anh-logo",
+      "tim-anh-nang-cao"
+    ]
+  },
+  "waitText": {
+    "tech": "Reads the on-screen text with OCR (macOS: Vision; Windows: Tesseract with the Vietnamese pack) then looks for a line containing the wanted text. By default it ignores case, whitespace and accents.",
+    "works": [
+      "Anything with text shown on screen: web, native apps, Electron",
+      "Not usable on games / canvas drawing very stylised text"
+    ],
+    "accuracy": "Steadier than images when the theme or zoom changes. Small, blurry text, patterned backgrounds or very stylised text may be misread – use a partial match instead of the whole line.",
+    "speed": "Slower than reading elements because the whole area must be OCR'd; shrink the search area. Needs Screen Recording permission on macOS.",
+    "good": [
+      "Wait for a “Success” message, a button name to appear",
+      "Buttons with a text label, a theme that changes often"
+    ],
+    "avoid": [
+      "Icons without text → [[node:waitImage]]",
+      "Need exactly accurate text, or the content of an input box → [[node:waitElement]]"
+    ],
+    "tips": [
+      "Several matching places: set “which occurrence” in reading order.",
+      "Need to tell accents apart (e.g. “ma” and “mà”): turn on exact-accent matching.",
+      "The text to find accepts {{variables}}."
+    ],
+    "fields": [
+      "**Text to find** – accepts {{variables}}",
+      "**Whole line exactly** and **exact accents**",
+      "**Which occurrence**",
+      "**Search area**"
+    ],
+    "samples": [
+      "cho-chu",
+      "wiki-tim-bai"
+    ]
+  },
+  "waitElement": {
+    "tech": "Finds an element (button, field, text) through the operating system's UI tree (Windows: UI Automation; macOS: Accessibility) by text / label / role – no screenshot, no OCR.",
+    "works": [
+      "Normal Chrome / Edge already signed in",
+      "Native and Electron apps with accessibility support",
+      "The window must be visible on screen (not minimised, not on another virtual display)"
+    ],
+    "accuracy": "The highest: reads the exact text, the value of an input box, and icon-only buttons (if the app sets a label). An app that sets no accessibility labels or draws freely (games, canvas) has no elements.",
+    "speed": "Fast, independent of the area size. An element outside the viewport is scrolled into view automatically.",
+    "good": [
+      "A signed-in web page when you do not want to use the app's own browser",
+      "An icon-only button that has an accessibility label",
+      "Read the content of a field / a price to use in a later node"
+    ],
+    "avoid": [
+      "A public page needing no sign-in → the Web nodes (the app's Chrome) are steadier",
+      "Games / canvas → [[node:waitImage]]"
+    ],
+    "tips": [
+      "Use the pick-element button in the inspector so the app suggests a durable way to find it.",
+      "A label with a changing part (\"Messenger, 1 unread\", \"Inbox (3)\") → write only the fixed part, no double quotes: aria=Messenger. Pasting aria-label=… from DevTools also works.",
+      "Waiting forever without finding it: check that the window is visible and that the app has Accessibility permission / runs with the same privileges."
+    ],
+    "fields": [
+      "**How to find** – text / label / role",
+      "**App** – empty means the topmost app",
+      "**Which occurrence**",
+      "**Maximum wait time**"
+    ],
+    "samples": [
+      "phan-tu-doc-gia",
+      "phan-tu-bam-icon"
+    ]
+  },
+  "clickImage": {
+    "tech": "Finds, then clicks the centre of what was found (plus an offset). Choose how to find right in the node: a template image, OCR text or an Accessibility / UI Automation element – or click where an earlier Wait node already found something.",
+    "works": [
+      "Depends on the way to find: images for anything visible, text for anything with text, elements for apps with a UI tree"
+    ],
+    "accuracy": "As per the chosen way to find (see the Wait for image / text / element pages). You can add an offset to click off-centre.",
+    "speed": "As per the chosen way to find; the click is instant once found.",
+    "good": [
+      "A button that moves with the window or content",
+      "Click by a name shown on screen, e.g. “Sign in”"
+    ],
+    "avoid": [
+      "A button that always stays fixed → [[node:click]] is faster and simpler",
+      "Need to check whether something is visible and branch → Wait + If"
+    ],
+    "tips": [
+      "Not found goes out the Failed port – connect that port to an error-handling branch.",
+      "Element: the node waits for the frame to be still before clicking.",
+      "Sure it was already found by an earlier Wait node: choose “by node” to avoid searching again."
+    ],
+    "fields": [
+      "**How to find** – image / text / element, or by a wait node",
+      "**Offset** from the centre",
+      "**Mouse button** and **count**"
+    ],
+    "samples": [
+      "cho-anh-logo",
+      "click-theo-chu"
+    ]
+  },
+  "clickText": {
+    "tech": "It is Click by image / text / element with find = text: OCR (macOS: Vision; Windows: Tesseract Vietnamese) then clicks the line containing the text.",
+    "works": [
+      "Web, native apps, Electron – anything with text shown on screen"
+    ],
+    "accuracy": "Steady when the theme / zoom changes; small text or busy backgrounds may be misread. It clicks the centre of the line containing the text – for a long line add an offset.",
+    "speed": "Slower than elements because the search area is OCR'd; shrink the area to speed up.",
+    "good": [
+      "Links, buttons with a text label",
+      "A button whose position changes with the layout"
+    ],
+    "avoid": [
+      "An icon without text → Click by image",
+      "Need absolute certainty about the text → Click by element"
+    ],
+    "tips": [
+      "Text appears in several places: set “which occurrence”.",
+      "The text to find accepts {{variables}}."
+    ],
+    "fields": [
+      "**Text to find**",
+      "**Whole line exactly**, **exact accents**, **which occurrence**",
+      "**Offset**"
+    ],
+    "samples": [
+      "click-theo-chu"
+    ]
+  },
+  "clickElement": {
+    "tech": "It is Click by image / text / element with find = element: finds it through the UI tree (Windows: UI Automation; macOS: Accessibility), waits for the frame to be still, then clicks with the real mouse.",
+    "works": [
+      "Normal Chrome already signed in, native apps, Electron with accessibility support"
+    ],
+    "accuracy": "The most exact when the app sets accessibility labels; with no labels it cannot be found.",
+    "speed": "Fast, no screenshot.",
+    "good": [
+      "An icon-only button that has a label",
+      "A signed-in web page"
+    ],
+    "avoid": [
+      "Games / canvas → Click by image",
+      "A public page → [[node:webClick]]"
+    ],
+    "tips": [
+      "Use the pick-element button so the app suggests a durable way to find it (it prefers labels over order)."
+    ],
+    "fields": [
+      "**How to find the element**",
+      "**App** – empty means the topmost app",
+      "**Which occurrence**"
+    ],
+    "samples": [
+      "phan-tu-bam-icon",
+      "phan-tu-thao-tac"
+    ]
+  },
+  "findAll": {
+    "tech": "Like the Wait node but takes every match (image, text or element) and returns the count with a list of positions, in reading order (top → bottom, left → right). A template image gives at most 200 matches.",
+    "accuracy": "As per the chosen way to find; a template image merges overlapping matches. Elements only include what is visible in the viewport.",
+    "speed": "As per the chosen way to find; it looks again each cycle until the count is within the set range.",
+    "good": [
+      "Click every “Add” / “Follow” button on a page in turn",
+      "Count results to branch"
+    ],
+    "avoid": [
+      "Only one match is needed → Wait for image / text / element"
+    ],
+    "tips": [
+      "Connect Find all → [[node:forEach]] (list = items) → Click at item.x / item.y.",
+      "On timeout without the minimum count → the Failed port, with the error reporting how many were found."
+    ],
+    "fields": [
+      "**How to find** as in the Wait node",
+      "**Minimum / maximum count**"
+    ],
+    "samples": [
+      "tim-tat-ca"
+    ]
+  },
+  "if": {
+    "tech": "Evaluates one condition (text / image / colour visible, compare values) then takes the true or false port. Screen-looking conditions use the same finding as the Wait nodes. With a wait time set, it re-checks regularly until true, and on timeout counts as false.",
+    "accuracy": "As per the chosen condition (see the Wait for image / text pages). With a missing permission or a broken template image the node errors rather than taking the wrong port.",
+    "speed": "A single check is instant; with a wait time it takes at most that long.",
+    "good": [
+      "Optional work: if there is an ad close it, otherwise continue",
+      "Branch on a variable, an earlier node's result or what is on screen"
+    ],
+    "avoid": [
+      "Several states (three or more) → [[node:switch]] or [[node:switchScreen]]",
+      "Just waiting until something appears → a Wait node, no branching"
+    ],
+    "tips": [
+      "When it sees something the result has coordinates: connect [[node:clickImage]] with “by node” pointing at this If node.",
+      "Need to give the page time to appear before concluding “not there”: set a wait time instead of checking once."
+    ],
+    "fields": [
+      "**Condition** – text / image / colour visible or compare values",
+      "**Wait time** – 0 checks once"
+    ],
+    "samples": [
+      "neu-co-quang-cao"
+    ]
+  },
+  "switch": {
+    "tech": "Compares one value (usually a {{variable}}) in turn with each case: equals, contains (ignoring case) or regex. The first matching case takes its port; if none match the default port is used.",
+    "accuracy": "Exact for text / numbers already in the variable; it does not look at the screen.",
+    "speed": "Instant.",
+    "good": [
+      "Branch several ways on a run-time input or an earlier node's result",
+      "Classify text read: “Success” / “Error” / other"
+    ],
+    "avoid": [
+      "Only two branches → [[node:if]]",
+      "Deciding by what is on screen → [[node:switchScreen]]"
+    ],
+    "tips": [
+      "Case order matters: the first match wins.",
+      "Always connect the default port so the script does not stop unexpectedly."
+    ],
+    "fields": [
+      "**Value** – accepts {{variables}}",
+      "**Cases** – compare type + value"
+    ],
+    "samples": [
+      "switch-gia-tri"
+    ]
+  },
+  "switchScreen": {
+    "tech": "Captures the screen periodically, checks the cases in order (text / image / colour visible) and takes the port of the first true case. If no case is true by the timeout it takes the “none” port.",
+    "accuracy": "Per condition (as on the Wait for image / text pages). The case checked first wins when two states show at once.",
+    "speed": "Done as soon as a case is true; at most the wait time. Needs Screen Recording permission on macOS.",
+    "good": [
+      "A page that can be in several states: sign-in / already in / popup",
+      "Wait for “one of several outcomes” instead of several Wait nodes"
+    ],
+    "avoid": [
+      "Deciding by a variable → [[node:switch]]",
+      "Only one state to check → [[node:if]]"
+    ],
+    "tips": [
+      "Put the case that must be handled first (e.g. a popup covering the screen) at the top."
+    ],
+    "fields": [
+      "**Cases** – screen-looking conditions",
+      "**Wait time** and **look interval**"
+    ],
+    "samples": [
+      "switch-man-hinh"
+    ]
+  },
+  "forEach": {
+    "tech": "Repeats the loop body once for each item of a list: it loads the list on first entry, each entry takes the next item out the “item” port, and when finished goes out the “done” port. Source: lines of text, a JSON array, a .csv or .xlsx file (the first row is the column names).",
+    "accuracy": "Reads the source data exactly; a broken file or a bad JSON array makes the node error and stops the script. An empty list goes out “done” at once.",
+    "speed": "Only the time of the nodes in the loop body.",
+    "good": [
+      "Do the same job for each Excel / CSV row",
+      "Click every spot Find all found, in turn"
+    ],
+    "avoid": [
+      "Repeating a fixed N times or until something appears → [[node:counter]] or the script's loop"
+    ],
+    "tips": [
+      "The end of the loop body must connect an edge back to this node.",
+      "Read the item: {{nX.output.item}} (text) or {{nX.output.item.column_name}} (a table row); {{nX.output.index}} counts from 1.",
+      "One script loop runs at most 10000 node executions – a very long list must be split.",
+      "The Preview button in the inspector shows the list that was read at once."
+    ],
+    "fields": [
+      "**Source** – text / JSON array / file",
+      "**Sheet** (xlsx)"
+    ],
+    "samples": [
+      "lap-danh-sach"
+    ]
+  },
+  "counter": {
+    "tech": "Counts passes through it within the loop: from pass 1 up to the limit it leaves the “Remaining” port, the next pass leaves the “Exhausted” port, then it counts again from 0.",
+    "accuracy": "Counts the exact number of passes through the node within one run loop.",
+    "speed": "Instant.",
+    "good": [
+      "Limit retries: button not found → Counter → scroll and search again; when exhausted, report an error",
+      "Do something every N times"
+    ],
+    "avoid": [
+      "Going through an existing list → [[node:forEach]]"
+    ],
+    "tips": [
+      "Place it on the loop's return path; connect the “Exhausted” port to an [[node:end]] that reports failure."
+    ],
+    "fields": [
+      "**Maximum count**"
+    ],
+    "samples": [
+      "dem-vong-lap"
+    ]
+  },
+  "end": {
+    "tech": "Ends the run loop with a success or failure status plus a message (accepts {{variables}}). Failure stops the whole script and reports the error code “end”; success with loops remaining runs the next loop.",
+    "accuracy": "Not applicable.",
+    "speed": "Instant.",
+    "good": [
+      "End an error branch with a clear message",
+      "End early once enough work is done"
+    ],
+    "avoid": [
+      "The end of a normal branch: no End node is needed, the script finishes by itself when the edges run out"
+    ],
+    "tips": [
+      "A success message is shown to the user when the run finishes and is in the output.",
+      "A failure message should state the cause with variables, e.g. “Button not found at row {{n2.output.index}}”."
+    ],
+    "fields": [
+      "**Status** – success / failure",
+      "**Message**"
+    ],
+    "samples": [
+      "ket-thuc-that-bai"
+    ]
+  },
+  "setVar": {
+    "tech": "Sets or adds to a variable that later nodes read as {{vars.name}}. Assign accepts {{variables}}; add treats an unset value as 0. Variables reset at each run loop.",
+    "accuracy": "Not applicable.",
+    "speed": "Instant.",
+    "good": [
+      "Keep a result for use in many later nodes",
+      "A counter / running total within a loop"
+    ],
+    "avoid": [
+      "Computing from numbers read → [[node:calc]]",
+      "Just using the result of the node right before → use {{nX.output.…}} directly"
+    ],
+    "tips": [
+      "The variable vanishes after each loop – to keep it longer write it to a file.",
+      "Adding a value that is text with a unit (e.g. “1,200 đ”): convert it to a number first with a text-processing node."
+    ],
+    "fields": [
+      "**Variable name**",
+      "**Operation** – assign / add",
+      "**Value** – accepts {{variables}}"
+    ],
+    "samples": [
+      "dat-bien"
+    ]
+  },
+  "calc": {
+    "tech": "A hand-written calculator (Go and TS share a test suite): add, subtract, multiply, divide, comparisons, and / or / not, round / floor / ceil / abs / min / max. A text variable inserted becomes a string automatically.",
+    "accuracy": "Results are rounded to 10 decimal places. Dividing by 0 or a wrong type makes the node error and stops the script.",
+    "speed": "Instant.",
+    "good": [
+      "Add / compare numbers read from the screen or an API",
+      "Compute a complex condition then branch on the result"
+    ],
+    "avoid": [
+      "Taking a number from text like “1,234,000 đ” → use a text-processing node first, then Calculate"
+    ],
+    "tips": [
+      "Decimals use a dot.",
+      "Branch on the result: [[node:if]] comparing {{nX.output.value}} with true."
+    ],
+    "fields": [
+      "**Expression**"
+    ],
+    "samples": [
+      "tinh-toan"
+    ]
+  },
+  "open": {
+    "tech": "Opens a URL in the operating system's default browser, or opens a file / application with its associated program (macOS: open; Windows: ShellExecute). The URL accepts {{variables}}.",
+    "accuracy": "It only opens – it does not know whether the page has finished loading, and it does not read the page content.",
+    "speed": "Almost instant; the page / app shows a few hundred ms to a few seconds later.",
+    "good": [
+      "The start of a script: open a page, an Excel file, an application",
+      "A page needing an account already signed in on normal Chrome"
+    ],
+    "avoid": [
+      "A page for the Web nodes to control → [[node:openWeb]] (the app's own Chrome)",
+      "Changing the page in an existing tab → [[node:browserGo]]"
+    ],
+    "tips": [
+      "After an Open node add a Wait node (image / text / [[node:waitScreen]]) before clicking.",
+      "The window just opened (or the window of an already-open app) is brought to the front – later type / click nodes go to the right app.",
+      "To be able to close this tab later: connect [[node:browserTab]] by the tab the Open node opened."
+    ],
+    "fields": [
+      "**Open** – URL, file or application",
+      "**Browser** – choose the browser when opening a URL"
+    ],
+    "samples": [
+      "mo-url"
+    ]
+  },
+  "openWeb": {
+    "tech": "Starts the app's own Chrome (or Edge / Brave) with its own profile and a DevTools control port (CDP); the Web nodes talk to the page through that port, so they read the HTML directly and do not look at the screen.",
+    "accuracy": "Very high: finds elements by text / label / CSS instead of pixels. Pages that block bots, captchas or canvas cannot be read – use the *Test page* button.",
+    "speed": "Opening the browser takes a few seconds the first time; later runs reuse the open window.",
+    "good": [
+      "Public web pages, forms, tables, feeds",
+      "Background running: a covered / minimised window keeps running"
+    ],
+    "avoid": [
+      "A page needing an account signed in on normal Chrome → [[node:clickElement]] (Accessibility) or sign in once in the app's Chrome",
+      "Games / canvas → [[node:clickImage]]"
+    ],
+    "tips": [
+      "The app's profile keeps your sign-in between runs: signing in by hand once is enough.",
+      "Click the globe *Test page* button before writing the script to learn whether the page is blocked.",
+      "With Wisp: [[chapter:settings-browser]] choose Wisp (or Automatic when Wisp is open) – the web nodes run on Wisp and do not take over the mouse."
+    ],
+    "fields": [
+      "**URL** – accepts {{variables}}",
+      "**Wait for load** – wait until the page settles before continuing"
+    ],
+    "samples": [
+      "web-dang-nhap"
+    ]
+  },
+  "window": {
+    "tech": "Lists and controls windows through the OS API (macOS: Accessibility + CoreGraphics; Windows: Win32). Finds a window by app name and title.",
+    "accuracy": "Exact when the app name / title is right. Frames are set by presets computed from each display's work area.",
+    "speed": "Instant; *wait for open / close* lasts until the window appears or the time runs out.",
+    "good": [
+      "The start of a script: bring the window to the front and set its position + size so coordinates / template images do not drift",
+      "Wait for a dialog window to open or close"
+    ],
+    "avoid": [
+      "Only need to know whether an app is running → [[node:app]]",
+      "A window inside a web page → the web nodes"
+    ],
+    "tips": [
+      "Set the size with a preset (left half, right half, centre…) then click using coordinates anchored to the window.",
+      "The overlay draws the target frame so you can preview where the window will sit."
+    ],
+    "fields": [
+      "**Action** – bring to front / wait for open / wait for close / set frame / minimise / close",
+      "**Window** – choose from the open list or type the app name + title"
+    ],
+    "samples": [
+      "cua-so-dat-co"
+    ]
+  },
+  "app": {
+    "tech": "Asks the OS for the list of application processes; quitting uses a polite close request, while *force quit* ends the process. System apps are blocked.",
+    "accuracy": "By application name / id – it does not look at the screen.",
+    "speed": "Instant; waiting to open / quit lasts until the state changes or the time runs out.",
+    "good": [
+      "Check whether an app is running then branch (Yes / No ports)",
+      "Quit the app at the end of a script"
+    ],
+    "avoid": [
+      "Need to operate inside a window → [[node:window]]",
+      "Look at a process's CPU / RAM → [[node:process]]"
+    ],
+    "tips": [
+      "To open an app: an [[node:open]] node, then an App node set to *wait for running*.",
+      "*Force quit* and *close window* are dangerous actions – the app asks for confirmation per script."
+    ],
+    "fields": [
+      "**Action** – check / wait for running / wait for quit / quit / force quit",
+      "**Application** – choose from the running list"
+    ],
+    "samples": [
+      "ung-dung-mo-dong"
+    ]
+  },
+  "browserTab": {
+    "tech": "Controls the tabs of the Chrome / Edge / Brave / Cốc Cốc you use every day: macOS through JXA `osascript`, Windows through UI Automation. It closes exactly the tab an Open node opened, by tab id.",
+    "accuracy": "By tab URL / title. Needs Automation permission for the browser (macOS).",
+    "speed": "A few tens to a few hundred ms per command.",
+    "good": [
+      "Read the URL / title of the tab you are viewing then branch",
+      "Clean up tabs after a run: close the tab an Open node opened"
+    ],
+    "avoid": [
+      "Controlling page content through the DOM → [[node:openWeb]] + web nodes",
+      "Changing the page in a tab → [[node:browserGo]]"
+    ],
+    "tips": [
+      "List the tabs into the output then [[node:forEach]] over each tab.",
+      "An Open node remembers its tab when a Tab node points at it."
+    ],
+    "fields": [
+      "**Action** – read / list / switch / open / close / reload / wait",
+      "**Browser** and **tab** – by URL, title, id or Open node"
+    ],
+    "samples": [
+      "tab-trinh-duyet"
+    ]
+  },
+  "browserGo": {
+    "tech": "Changes the current tab's address through AppleScript (macOS) / UI Automation (Windows) then waits for the tab to report it has loaded.",
+    "accuracy": "Reliable for changing the page; the load wait follows the browser's state, not the content.",
+    "speed": "As fast as the page loads.",
+    "good": [
+      "Visit several pages in turn in the same tab, with URLs built from variables",
+      "Want to keep normal Chrome's sign-in"
+    ],
+    "avoid": [
+      "Opening a new tab → [[node:open]]",
+      "A page that needs DOM reading → [[node:openWeb]]"
+    ],
+    "tips": [
+      "After this node connect [[node:pageText]] or [[node:readTable]] to read the page that just loaded."
+    ],
+    "fields": [
+      "**URL** – accepts {{variables}}",
+      "**Wait for load** – up to how long"
+    ],
+    "samples": [
+      "tab-trinh-duyet"
+    ]
+  },
+  "browserNorm": {
+    "tech": "Sets a standard state for the browser window: leaves full screen, sets the window size, resets zoom to 100 %, closes small popups.",
+    "accuracy": "Keeps coordinates and template images from drifting between runs.",
+    "speed": "A few hundred ms.",
+    "good": [
+      "Right after an Open node, before clicking by coordinates / image / text"
+    ],
+    "avoid": [
+      "Not needed if you already use web nodes or Accessibility elements (independent of window size)"
+    ],
+    "tips": [
+      "Use the same size as when the template image was captured.",
+      "When window sizing is on you must choose the target: the Open node's tab, or the browser + tab by title / URL – so it does not resize the wrong window you are using."
+    ],
+    "fields": [
+      "**Window size**",
+      "**Zoom 100 %**",
+      "**Leave full screen**"
+    ],
+    "samples": [
+      "chuan-hoa-trinh-duyet"
+    ]
+  },
+  "savePdf": {
+    "tech": "Sends Cmd+P (Windows: Ctrl+P) to Chrome / Edge, clicks the print dialog's Save button (read through Accessibility / UI Automation), types the path into the save-file dialog, then waits for the file to be written.",
+    "accuracy": "Depends on the browser's print dialog: the print destination must be *Save as PDF*.",
+    "speed": "A few seconds.",
+    "good": [
+      "Save invoices, reports, signed-in pages as PDF"
+    ],
+    "avoid": [
+      "A non-Chromium browser (Firefox, Safari)",
+      "Need the page's text → [[node:pageText]]"
+    ],
+    "tips": [
+      "The file name accepts {{variables}}; an existing file of the same name is overwritten.",
+      "The result goes in the output `path`."
+    ],
+    "fields": [
+      "**Folder + file name**",
+      "**Browser**"
+    ],
+    "samples": [
+      "luu-pdf"
+    ]
+  },
+  "elementAction": {
+    "tech": "Calls the element's own action directly through the Accessibility tree (macOS AX / Windows UIA): click, fill a value, tick, select – without the real mouse.",
+    "accuracy": "High when the element has a clear name / role; a custom field may not accept the value – use [[node:type]].",
+    "speed": "Fast (reads the tree once, then calls).",
+    "good": [
+      "Fill forms, tick boxes without grabbing the mouse",
+      "A covered window still works"
+    ],
+    "avoid": [
+      "An element that only accepts the real mouse → [[node:clickElement]]",
+      "A public web page → [[node:webType]]"
+    ],
+    "tips": [
+      "Use *Pick on screen* and *Try find* in the inspector to get the right query."
+    ],
+    "fields": [
+      "**Action** – click / fill / tick / select",
+      "**Find by** – text / label / role + Nth occurrence"
+    ],
+    "samples": [
+      "phan-tu-thao-tac"
+    ]
+  },
+  "elementRead": {
+    "tech": "Finds an element in the Accessibility tree then reads its text / value (no OCR); optionally reads the text next to a label.",
+    "accuracy": "Verbatim text – more exact than OCR; it cannot read where the app does not expose its element tree.",
+    "speed": "Fast.",
+    "good": [
+      "Get a price, a balance on a signed-in page in normal Chrome",
+      "Read an input box in an app"
+    ],
+    "avoid": [
+      "A web page in the app's Chrome → [[node:webRead]]",
+      "A screen with no tree (game, remote) → [[node:waitText]]"
+    ],
+    "tips": [
+      "Reading text next to a label: choose the label then take the adjacent value.",
+      "Connect [[node:textNumber]] to extract a number."
+    ],
+    "fields": [
+      "**Find by**",
+      "**Read** – text / value / next to a label",
+      "**Filter pattern / take number**"
+    ],
+    "samples": [
+      "phan-tu-doc-gia"
+    ]
+  },
+  "readTable": {
+    "tech": "Reads a table / grid through the Accessibility tree into rows + columns; optionally writes .csv / .xlsx.",
+    "accuracy": "Exact to the cell content; a virtualised table (only the visible part is drawn) can only be read where visible.",
+    "speed": "Fast; a long table depends on the number of cells.",
+    "good": [
+      "Get an order table / price table then [[node:forEach]] each row",
+      "Save a table as an Excel file"
+    ],
+    "avoid": [
+      "A table in the app's Chrome → [[node:webRead]]"
+    ],
+    "tips": [
+      "The outputs `rows` / `items` / `columns` can be used right away in later nodes."
+    ],
+    "fields": [
+      "**Table** – choose the table",
+      "**Write to file** – .csv / .xlsx"
+    ],
+    "samples": [
+      "phan-tu-doc-bang"
+    ]
+  },
+  "readDocument": {
+    "tech": "Reads the content of an edit box / document through Accessibility (Windows: UI Automation – Word / Notepad through TextPattern), keeping line breaks; or only the selected part.",
+    "accuracy": "Verbatim.",
+    "speed": "Fast.",
+    "good": [
+      "Get a note in TextEdit / Notepad / Word then split into lines"
+    ],
+    "avoid": [
+      "A web page → [[node:pageText]]"
+    ],
+    "tips": [
+      "Select a passage by hand or with Cmd/Ctrl+A, then turn on *selected part only*."
+    ],
+    "fields": [
+      "**Selected part only**"
+    ],
+    "samples": [
+      "doc-tai-lieu"
+    ]
+  },
+  "pageText": {
+    "tech": "Walks the Accessibility tree of a window / one frame and gathers all visible text.",
+    "accuracy": "Verbatim, no OCR.",
+    "speed": "Fast.",
+    "good": [
+      "Get a whole page / a list on a signed-in page then split into lines"
+    ],
+    "avoid": [
+      "Need the text of one spot → [[node:elementRead]]"
+    ],
+    "tips": [
+      "Connect [[node:textSplit]] / [[node:textMatch]] to extract data."
+    ],
+    "fields": [
+      "**Scope** – the whole window or one frame",
+      "**Output** `text` / `lines` / `count`"
+    ],
+    "samples": [
+      "phan-tu-doc-chu-trang"
+    ]
+  },
+  "waitUIEvent": {
+    "tech": "Re-reads the Accessibility tree every 200 ms to detect a new window, a change of the topmost window, a new element or a changed value.",
+    "accuracy": "More reliable than waiting for an image: independent of the look.",
+    "speed": "Detected within ~200 ms.",
+    "good": [
+      "A button that opens a slow-to-appear dialog",
+      "Wait for an app to open a new window"
+    ],
+    "avoid": [
+      "Waiting by text / image on screen → [[node:waitText]], [[node:waitImage]]"
+    ],
+    "tips": [
+      "Set the wait time just long enough to report errors early."
+    ],
+    "fields": [
+      "**Event**",
+      "**Wait time**"
+    ],
+    "samples": [
+      "cho-su-kien-giao-dien"
+    ]
+  },
+  "waitDownload": {
+    "tech": "Scans the downloads folder for a new file matching the name pattern, waits until the temporary suffix (.crdownload, .part) is gone and the size stops changing.",
+    "accuracy": "Very reliable for files downloaded by a browser.",
+    "speed": "As fast as the download.",
+    "good": [
+      "After a Download / Export file button on the web, then open or read the file"
+    ],
+    "avoid": [
+      "Calling a file-download API directly → [[node:http]]"
+    ],
+    "tips": [
+      "The outputs `path` / `name` / `size` are used by the file / zip nodes."
+    ],
+    "fields": [
+      "**Name pattern**",
+      "**Folder**",
+      "**Wait time**"
+    ],
+    "samples": [
+      "cho-tai-xong"
+    ]
+  },
+  "webWait": {
+    "tech": "Runs through the app's Chrome (CDP): finds an element in the HTML, including same-origin iframes, then acts with browser events; a covered window still works.",
+    "accuracy": "Very high: by text / label / CSS, independent of pixels or theme.",
+    "speed": "Faster than waiting for an image; it waits for the frame to be still before concluding.",
+    "good": [
+      "Wait for the page to load, wait for search results",
+      "Wait for an element to disappear (a spinner)"
+    ],
+    "avoid": [
+      "A bot-blocking page / canvas → [[node:waitImage]]"
+    ],
+    "tips": [
+      "Try a selector with *Try find*, get one with *Pick element on page*.",
+      "A label with a changing part (\"Messenger, 1 unread\", \"Inbox (3)\") → write only the fixed part, no double quotes: aria=Messenger. Pasting aria-label=… from DevTools also works.",
+      "A page that opens an alert / confirm / prompt box: by default the node fails at once with `web_dialog` carrying the box text; to continue, set **JS dialog** (webDialog) *Click OK* / *Click Cancel* – the box text is in the output `dialogText`."
+    ],
+    "fields": [
+      "**Find by** – text / aria / role / label / css / xpath",
+      "**Appears / disappears**",
+      "**Scope** – the whole page or a dialog",
+      "**JS dialog**"
+    ],
+    "samples": [
+      "web-bam-nut-chay",
+      "web-hop-thoai-js"
+    ]
+  },
+  "webClick": {
+    "tech": "Runs through the app's Chrome (CDP): finds an element in the HTML, including same-origin iframes, then acts with browser events; a covered window still works.",
+    "accuracy": "Very high: by text / label / CSS, independent of pixels or theme.",
+    "speed": "Fast; it tries hovering before clicking to be sure of hitting the element.",
+    "good": [
+      "A page whose layout / theme changes often and breaks template images",
+      "Click a button inside a dialog (*dialog* scope)"
+    ],
+    "avoid": [
+      "A page needing normal sign-in → [[node:clickElement]]"
+    ],
+    "tips": [
+      "After clicking, the node waits for the page to settle (up to 3 s) before continuing; outputs `navigated` (moved to another page / URL changed), `url`, `popup` (URL of a newly opened tab) – connect [[node:if]] to branch when a click does not change the page.",
+      "Several elements with the same text: set *Nth occurrence* or limit it to a dialog.",
+      "A page that opens an alert / confirm / prompt box: by default the node fails at once with `web_dialog` carrying the box text; to continue, set **JS dialog** (webDialog) *Click OK* / *Click Cancel* – the box text is in the output `dialogText`."
+    ],
+    "fields": [
+      "**Find by**",
+      "**Nth occurrence**",
+      "**Scope**",
+      "**JS dialog**"
+    ],
+    "samples": [
+      "web-hop-thoai-form",
+      "web-hop-thoai-js"
+    ]
+  },
+  "webType": {
+    "tech": "Runs through the app's Chrome (CDP): finds an element in the HTML, including same-origin iframes, then acts with browser events; a covered window still works.",
+    "accuracy": "Very high: by text / label / CSS, independent of pixels or theme.",
+    "speed": "Fast; typing goes through browser events.",
+    "good": [
+      "Fill forms, search boxes, comments"
+    ],
+    "avoid": [
+      "An app outside the browser → [[node:type]] or [[node:elementAction]]"
+    ],
+    "tips": [
+      "After typing, the node waits for the page to settle like [[node:webClick]]; outputs `navigated`, `url`, `popup` (e.g. Enter submitting the form to another page).",
+      "Turn on clearing the old text before typing.",
+      "A hard-to-fill field: try [[node:webKey]].",
+      "A page that opens an alert / confirm / prompt box: by default the node fails at once with `web_dialog` carrying the box text; to continue, set **JS dialog** (webDialog) *Click OK* / *Click Cancel* – the box text is in the output `dialogText`."
+    ],
+    "fields": [
+      "**Input field**",
+      "**Text** – accepts {{variables}}",
+      "**Clear old text**",
+      "**JS dialog**"
+    ],
+    "samples": [
+      "web-dang-nhap"
+    ]
+  },
+  "webRead": {
+    "tech": "Runs through the app's Chrome (CDP): finds an element in the HTML, including same-origin iframes, then acts with browser events; a covered window still works.",
+    "accuracy": "Very high: by text / label / CSS, independent of pixels or theme.",
+    "speed": "Fast.",
+    "good": [
+      "Get a price, an order code, a balance, a link into a variable"
+    ],
+    "avoid": [
+      "Text in an app outside the browser → [[node:elementRead]]"
+    ],
+    "tips": [
+      "Read attributes such as href, src, value.",
+      "Connect [[node:textNumber]] to extract a number.",
+      "A page that opens an alert / confirm / prompt box: by default the node fails at once with `web_dialog` carrying the box text; to continue, set **JS dialog** (webDialog) *Click OK* / *Click Cancel* – the box text is in the output `dialogText`."
+    ],
+    "fields": [
+      "**Find by**",
+      "**Read** – text / value / attribute",
+      "**JS dialog**"
+    ],
+    "samples": [
+      "web-lich-su-don"
+    ]
+  },
+  "webKey": {
+    "tech": "Sends keys into the app's Chrome tab through CDP – the browser need not be in front and the real keyboard is not touched.",
+    "accuracy": "Reliable: the key lands on the right page.",
+    "speed": "Instant.",
+    "good": [
+      "Esc to close a dialog, Tab to the next field, Enter to submit a form"
+    ],
+    "avoid": [
+      "OS shortcuts → [[node:key]]"
+    ],
+    "tips": [
+      "Use it when clicking a button does nothing but Enter works.",
+      "After pressing, it waits for the page to settle like [[node:webClick]]; outputs `navigated`, `url`, `popup`."
+    ],
+    "fields": [
+      "**Key / combination**"
+    ],
+    "samples": [
+      "web-phim-tren-trang"
+    ]
+  },
+  "webScroll": {
+    "tech": "Runs through the app's Chrome (CDP): finds an element in the HTML, including same-origin iframes, then acts with browser events; a covered window still works.",
+    "accuracy": "Very high: by text / label / CSS, independent of pixels or theme.",
+    "speed": "Fast; scrolls smoothly in steps.",
+    "good": [
+      "Bring a button at the bottom of the page into view",
+      "Scroll a feed until an element appears"
+    ],
+    "avoid": [
+      "Scrolling an app outside the browser → [[node:scroll]]"
+    ],
+    "tips": [
+      "Scrolling inside its own frame: choose that frame instead of scrolling the whole page.",
+      "A page that opens an alert / confirm / prompt box: by default the node fails at once with `web_dialog` carrying the box text; to continue, set **JS dialog** (webDialog) *Click OK* / *Click Cancel* – the box text is in the output `dialogText`."
+    ],
+    "fields": [
+      "**Scroll type** – to an element / inside a frame / until seen",
+      "**Attempt limit**",
+      "**JS dialog**"
+    ],
+    "samples": [
+      "web-feed-cuon",
+      "web-cuon-trong-khung"
+    ]
+  },
+  "screenshot": {
+    "tech": "Captures the screen through the OS API (macOS needs Screen Recording permission), crops to the area and saves a PNG; it can also copy to the clipboard.",
+    "accuracy": "The screen's real pixels.",
+    "speed": "A few tens to a few hundred ms.",
+    "good": [
+      "Save evidence after placing an order / transferring money",
+      "Capture a result to send on through [[node:http]] or [[node:clipboard]]"
+    ],
+    "avoid": [
+      "Only need text on screen → [[node:waitText]] (no image to save)",
+      "Capturing a background web tab → the AI uses the `screenshot` tool"
+    ],
+    "tips": [
+      "The output `path` is for later nodes; files never overwrite each other.",
+      "Change the image folder in Settings → Storage."
+    ],
+    "fields": [
+      "**Area** – script region / whole screen / fixed / where the previous node found something",
+      "**Copy to clipboard**"
+    ],
+    "samples": [
+      "chup-man-hinh"
+    ]
+  },
+  "clipboard": {
+    "tech": "Reads / writes the operating system clipboard (text or a PNG image).",
+    "accuracy": "Verbatim; an image is written from a file.",
+    "speed": "Instant.",
+    "good": [
+      "Copy / paste a large amount of text faster than typing key by key",
+      "Copy an image just captured to paste into a chat"
+    ],
+    "avoid": [
+      "Typing a little text → [[node:type]] (does not touch your clipboard)"
+    ],
+    "tips": [
+      "Combine with [[node:key]] Cmd/Ctrl+C and Cmd/Ctrl+V.",
+      "It overwrites the current clipboard – do not use it while you are copying by hand."
+    ],
+    "fields": [
+      "**Action** – read text / write text / write image",
+      "**Text** – accepts {{variables}}"
+    ],
+    "samples": [
+      "clipboard-copy-dan"
+    ]
+  },
+  "http": {
+    "tech": "Makes HTTP calls from your machine (GET / POST / PUT / PATCH / DELETE) with parameters, headers, a JSON / form body; reads JSON into the output.",
+    "accuracy": "As per the server's response; the status code is in the output.",
+    "speed": "Depends on the network and server.",
+    "good": [
+      "Fetch data / send an order / report results to Telegram, a webhook",
+      "Call an API instead of operating the UI"
+    ],
+    "avoid": [
+      "An API needing a complicated browser sign-in → act on the page with web nodes"
+    ],
+    "tips": [
+      "Keep API keys in Settings → Secrets and call `{{secret.<name>}}` – the value is masked in results.",
+      "Read nested JSON fields with a path in the output."
+    ],
+    "fields": [
+      "**Method + URL**",
+      "**Headers / parameters / body**",
+      "**Wait time**"
+    ],
+    "samples": [
+      "http-goi-api",
+      "chup-gui-http"
+    ]
+  },
+  "file": {
+    "tech": "File operations through the operating system: write text, append a .csv / .xlsx row, create a folder, delete to the Trash, empty the Trash.",
+    "accuracy": "Exact; deleting always goes to the Trash (recoverable) unless you choose empty the Trash.",
+    "speed": "Fast.",
+    "good": [
+      "Write each loop's log / result to Excel",
+      "Clean up old screenshots"
+    ],
+    "avoid": [
+      "Reading a table from a page → [[node:readTable]]"
+    ],
+    "tips": [
+      "Delete and empty the Trash are dangerous actions – the app asks for confirmation.",
+      "The file name accepts {{variables}}."
+    ],
+    "fields": [
+      "**Action** – write / append row / create folder / delete / empty",
+      "**Path**"
+    ],
+    "samples": [
+      "tep-thu-muc"
+    ]
+  },
+  "system": {
+    "tech": "Adjusts the speaker volume through the operating system's audio API.",
+    "accuracy": "Level 0–100.",
+    "speed": "Instant.",
+    "good": [
+      "Turn music to a comfortable level, mute before a meeting"
+    ],
+    "avoid": [
+      "Changing the speaker / microphone, playing an alert sound → [[node:display]]"
+    ],
+    "tips": [
+      "Read the current level so you can restore it at the end of the script."
+    ],
+    "fields": [
+      "**Action** – set level / raise / lower / mute / unmute"
+    ],
+    "samples": [
+      "he-thong-am-luong"
+    ]
+  },
+  "display": {
+    "tech": "Controls the OS display / audio: light / dark mode, brightness, the default speaker / microphone device, playing an alert sound; or reads the state.",
+    "accuracy": "As per the OS API; some machines do not allow changing brightness.",
+    "speed": "Instant.",
+    "good": [
+      "Switch to headphones before a call",
+      "Play a sound when done"
+    ],
+    "avoid": [
+      "Only adjusting the volume → [[node:system]]",
+      "Showing a text notification → [[node:notify]]"
+    ],
+    "tips": [
+      "Read the state then branch with [[node:if]]."
+    ],
+    "fields": [
+      "**Action** – dark mode / brightness / audio device / alert sound / read"
+    ],
+    "samples": [
+      "man-hinh-am-thanh"
+    ]
+  },
+  "power": {
+    "tech": "Calls the operating system's power commands: lock the screen, turn off the display, sleep, log out, shut down, restart; or keep the machine awake while running.",
+    "accuracy": "Certain, but an action that ends the session needs your consent and has a countdown so you can cancel.",
+    "speed": "Instant after the countdown.",
+    "good": [
+      "Shut down when a long overnight job finishes",
+      "Keep the machine from sleeping during a long run"
+    ],
+    "avoid": [
+      "Only want to say it is done → [[node:notify]]"
+    ],
+    "tips": [
+      "Put the power node at the end, after everything that needs the machine on.",
+      "The countdown gives you time to press Cancel."
+    ],
+    "fields": [
+      "**Action**",
+      "**Countdown**",
+      "**Keep awake**"
+    ],
+    "samples": [
+      "nguon"
+    ]
+  },
+  "notify": {
+    "tech": "Shows an operating system notification (macOS Notification Center, Windows toast) with a title + content.",
+    "accuracy": "Shows text only, no buttons yet.",
+    "speed": "Instant.",
+    "good": [
+      "Say the script is done / needs attention while the app is minimised"
+    ],
+    "avoid": [
+      "Remote notification → [[node:http]] calling Telegram / a webhook",
+      "Need a person to press Approve / Deny midway → [[node:askUser]]"
+    ],
+    "tips": [
+      "The title and content accept {{variables}}."
+    ],
+    "fields": [
+      "**Title**",
+      "**Content**"
+    ],
+    "samples": [
+      "thong-bao"
+    ]
+  },
+  "askUser": {
+    "tech": "Pauses the flow; the mini bar expands into a question card (question, list of items, optional input box, Approve / Deny buttons) with a system notification; when on the main screen a dialog appears in the middle.",
+    "accuracy": "Certain – it continues only when you click, and on timeout it takes the Timed out port.",
+    "speed": "Waits until you answer (Wait up to; 0 = wait forever).",
+    "good": [
+      "Approve beforehand work that is hard to undo: sending messages / emails, deleting, paying",
+      "Enter a code only you know midway (OTP, captcha) in the input box"
+    ],
+    "avoid": [
+      "Scheduled / CLI / API runs with nobody at the machine – the node goes straight out the Timed out port",
+      "Only need to inform, no answer needed → [[node:notify]]",
+      "A value known when you press Run → a script input"
+    ],
+    "tips": [
+      "The question and the item list accept {{variables}} – e.g. a list of emails read by an earlier node, one item per line.",
+      "Text typed in the input box is in the output text, e.g. {{n3.output.text}}.",
+      "While an AI runs: the AI only sees the question (needs_input) and reminds you – it does not answer for you.",
+      "Touching the mouse to answer does not pause the script."
+    ],
+    "fields": [
+      "**Question** (`message`)",
+      "**Item list** (`askItems`, one item per line)",
+      "**Has input box** (`askInput`)",
+      "**Wait up to** (`timeoutMs`, 0 = wait forever)"
+    ],
+    "samples": [
+      "hoi-nguoi-dung"
+    ]
+  },
+  "zip": {
+    "tech": "Compresses a folder / files into a .zip by a name pattern, or extracts a .zip; extraction blocks zip slip (it never writes outside the target folder).",
+    "accuracy": "Contents stay intact.",
+    "speed": "Depends on the size.",
+    "good": [
+      "Package results before sending",
+      "Open a package that was just downloaded ([[node:waitDownload]])"
+    ],
+    "avoid": [
+      "Only need to copy a file → [[node:shell]]"
+    ],
+    "tips": [
+      "The name pattern accepts {{variables}}, e.g. a date-time from [[node:textNumber]]."
+    ],
+    "fields": [
+      "**Action** – compress / extract",
+      "**Source + destination**"
+    ],
+    "samples": [
+      "nen-giai-nen"
+    ]
+  },
+  "inputSource": {
+    "tech": "Reads / changes the operating system's input method (macOS Input Source, Windows layout); warns when Unikey / EVKey is running.",
+    "accuracy": "As per the OS; Unikey / EVKey type accents themselves so they are only reported, not controllable.",
+    "speed": "Instant.",
+    "good": [
+      "Set ABC before typing so accents are not garbled",
+      "Branch by the input method in use"
+    ],
+    "avoid": [
+      "Turning Vietnamese typing on / off with the typing app's shortcut → the [[node:key]] node"
+    ],
+    "tips": [
+      "Place it right before [[node:type]]."
+    ],
+    "fields": [
+      "**Action** – read / change",
+      "**Input method**"
+    ],
+    "samples": [
+      "bo-go"
+    ]
+  },
+  "process": {
+    "tech": "Reads a process's CPU / RAM through the OS API; lists, waits for it to run / quit / become idle.",
+    "accuracy": "A measurement at the moment of reading; CPU is sampled over a short interval.",
+    "speed": "A few hundred ms.",
+    "good": [
+      "Wait for a render / export to finish",
+      "Stop when an app uses too much RAM"
+    ],
+    "avoid": [
+      "Only need to know whether an app is running → [[node:app]]"
+    ],
+    "tips": [
+      "Wait for *idle* instead of a fixed wait."
+    ],
+    "fields": [
+      "**Action** – read / list / wait for running / wait for quit / wait for idle",
+      "**Process**"
+    ],
+    "samples": [
+      "tien-trinh"
+    ]
+  },
+  "sysInfo": {
+    "tech": "Reads the battery, CPU / RAM, free disk, display, network and machine name once.",
+    "accuracy": "An instant measurement.",
+    "speed": "Instant.",
+    "good": [
+      "Stop when the battery is low, warn when the disk is nearly full, wait when the network is lost"
+    ],
+    "avoid": [
+      "Watching a single process → [[node:process]]"
+    ],
+    "tips": [
+      "Connect [[node:if]] or [[node:calc]] to compare with a threshold."
+    ],
+    "fields": [
+      "**Output** battery / cpu / ram / disk / network / machine name"
+    ],
+    "samples": [
+      "thong-tin-may"
+    ]
+  },
+  "osShortcut": {
+    "tech": "Runs a Shortcut in macOS's Shortcuts app, passing text in and taking text back. macOS only.",
+    "accuracy": "As per the Shortcut you created.",
+    "speed": "As per the Shortcut.",
+    "good": [
+      "Reuse work already built as a Shortcut"
+    ],
+    "avoid": [
+      "Windows → [[node:shell]]"
+    ],
+    "tips": [
+      "Try the Shortcut in the Shortcuts app first."
+    ],
+    "fields": [
+      "**Shortcut name**",
+      "**Text input**"
+    ],
+    "samples": [
+      "os-shortcut"
+    ]
+  },
+  "shell": {
+    "tech": "Runs a command through the shell / PowerShell / AppleScript, taking the printed text and exit code.",
+    "accuracy": "As per the command; a non-zero exit code is reported as an error.",
+    "speed": "As per the command.",
+    "good": [
+      "Work with no dedicated node yet, batch renaming, calling command-line tools"
+    ],
+    "avoid": [
+      "If a dedicated node does that job (files, zip, process) use that node"
+    ],
+    "tips": [
+      "Each command content must be approved by you – changing the command asks again. A command that only calls a script file (`sh x.sh`, `python3 y.py`) also asks again if the file's content changes.",
+      "The printed text goes to the output for further filtering."
+    ],
+    "fields": [
+      "**Command type**",
+      "**Command content**",
+      "**Wait time**"
+    ],
+    "samples": [
+      "chay-lenh"
+    ]
+  },
+  "textMatch": {
+    "tech": "Matches a regular expression (regex) in text, taking the first match or every match; no match leaves the *No match* port.",
+    "accuracy": "Exact per the pattern / rules; it does not guess.",
+    "speed": "Instant.",
+    "good": [
+      "Extract an order code, a phone number, an email from a long passage"
+    ],
+    "avoid": [
+      "Content on screen that is not yet text → read it first with [[node:waitText]] or [[node:elementRead]]"
+    ],
+    "tips": [
+      "There is a Try it button in the inspector."
+    ],
+    "fields": [
+      "**Regex pattern**",
+      "**First / every match**"
+    ],
+    "samples": [
+      "xu-ly-chu"
+    ]
+  },
+  "textSplit": {
+    "tech": "Splits text into a list by comma, semicolon or each line.",
+    "accuracy": "Exact per the pattern / rules; it does not guess.",
+    "speed": "Instant.",
+    "good": [
+      "Keywords “a, b, c” → [[node:forEach]] does each one"
+    ],
+    "avoid": [
+      "Content on screen that is not yet text → read it first with [[node:waitText]] or [[node:elementRead]]"
+    ],
+    "tips": [
+      "Feed the list output straight into Loop over list."
+    ],
+    "fields": [
+      "**Separator**"
+    ],
+    "samples": [
+      "xu-ly-chu"
+    ]
+  },
+  "textClean": {
+    "tech": "Cleans text: replace text, remove accents, change case, remove extra whitespace.",
+    "accuracy": "Exact per the pattern / rules; it does not guess.",
+    "speed": "Instant.",
+    "good": [
+      "Turn “Đà Nẵng” into “da-nang” for a URL",
+      "Normalise before comparing"
+    ],
+    "avoid": [
+      "Content on screen that is not yet text → read it first with [[node:waitText]] or [[node:elementRead]]"
+    ],
+    "tips": [
+      "Do several steps in a row with several nodes."
+    ],
+    "fields": [
+      "**Action**",
+      "**Text to replace**"
+    ],
+    "samples": [
+      "xu-ly-chu"
+    ]
+  },
+  "textNumber": {
+    "tech": "Takes a number from text like “1,234,000 đ”, writes a number with thousands separators, or reads and rewrites a date-time.",
+    "accuracy": "Exact per the pattern / rules; it does not guess.",
+    "speed": "Instant.",
+    "good": [
+      "Read a price → take the number → [[node:calc]] compares with a threshold",
+      "Put today's date in a file name"
+    ],
+    "avoid": [
+      "Content on screen that is not yet text → read it first with [[node:waitText]] or [[node:elementRead]]"
+    ],
+    "tips": [
+      "Adjust the thousands / decimal separators to match the number style."
+    ],
+    "fields": [
+      "**Action** – take number / write number / date-time",
+      "**Format**"
+    ],
+    "samples": [
+      "xu-ly-chu"
+    ]
+  },
+  "askAI": {
+    "tech": "Sends a question (with a screenshot or an image file if you like) to an AI provider over HTTPS: OpenAI and every compatible service (OpenRouter, Ollama, LM Studio) or Anthropic. It returns text, or decoded JSON.",
+    "accuracy": "Depends on the model: good at understanding / classifying / drafting text, but it can be wrong – do not let an AI decide something irreversible without a checking step. Images need a model with vision.",
+    "speed": "1–20 seconds each time depending on the model and network; an on-machine AI depends on the hardware.",
+    "good": [
+      "Understand text taken from the screen / a web page then classify it (does it need a reply, whose order is this)",
+      "Draft a reply then type it into the compose box",
+      "Look at a screenshot when OCR / template images are not enough"
+    ],
+    "avoid": [
+      "Work with a dedicated and more accurate node: pattern filter, split text, calculate, number & date",
+      "Sending sensitive information to an outside service – use an on-machine AI (address http://localhost:11434/v1)",
+      "Following the AI's text as a command – the result is only data"
+    ],
+    "tips": [
+      "Write the key only as {{secret.name}} – stored in Settings → Secrets; pasting a key directly into the node is rejected.",
+      "Set the default provider in Settings → Ask AI: any field the node leaves empty (provider, address, model, key) is taken from there, so you do not repeat it in each node. A node choosing a different type from the default uses its own.",
+      "Need structured data: choose the JSON answer type, read {{n2.output.json.<field>}}, branch with an If / Switch node.",
+      "Fill in a Fallback value so the flow still runs without an AI (missing key, no network): the node takes the success port with skipped = true.",
+      "Each run costs money (except an on-machine AI) and the screenshot is sent out – remember this when placing it in a loop."
+    ],
+    "fields": [
+      "**Question**",
+      "**Provider** · **Address** · **Model** · **Key**",
+      "**Attach image**",
+      "**Answer type**",
+      "**Fallback value**"
+    ],
+    "samples": [
+      "hoi-ai"
+    ]
+  },
+  "mcpTool": {
+    "tech": "Calls a tool of an external MCP server (Model Context Protocol) added in Settings → MCP servers: it runs a process on this machine (stdio) or connects to a remote HTTP server. Arguments are JSON per the tool's description; it returns text, JSON and images / sound (saved as temp files).",
+    "accuracy": "The server decides – the app only passes the arguments and returns the result verbatim. A tool that reports an error → the node takes the fail port (mcp_error).",
+    "speed": "The first time each server starts a process (a few seconds with npx / uvx); later calls reuse the connection. By default it waits at most 60 seconds.",
+    "good": [
+      "Fetch data / do work the app has no node for: read files, look up GitHub, Google Sheets, web search, send a Telegram message",
+      "Feed a tool's result (text, json) into the text-processing nodes, Loop over list, Ask AI"
+    ],
+    "avoid": [
+      "Work that already has a dedicated node (HTTP, File / folder, Ask AI) – fewer dependencies",
+      "Following text the tool returns as a command – the result is only data, even if it is written like an order",
+      "Pasting a token into the arguments – use {{secret.name}}"
+    ],
+    "tips": [
+      "The first time each server, the app asks whether you trust the configuration (command / URL); a tool that writes, deletes or touches an outside service asks each time or “always allow this tool”. Refused → the node fails with permission.",
+      "For repeated work: pre-fill the server / tool / arguments then click Save as my node – next time find it under Mine when adding a node (Edit / Delete in the description panel). A node dropped onto the canvas is still a normal Call MCP tool.",
+      "A script only stores the server id – opened on a machine that has not added that server, the node reports a missing server, and the file still opens normally.",
+      "Arguments accept {{variables}}: the value is escaped as a JSON string, so put the variable inside quotes: {\"q\":\"{{n1.output.text}}\"}.",
+      "Read results: {{n2.output.text}}, {{n2.output.json.<field>}}; images the tool returns are in {{n2.output.content}} (with a path)."
+    ],
+    "fields": [
+      "**Server** · **Tool**",
+      "**Arguments (JSON)**",
+      "**Wait time**"
+    ],
+    "samples": [
+      "goi-tool-mcp"
+    ]
+  }
+}

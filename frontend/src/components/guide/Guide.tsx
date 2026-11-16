@@ -1,7 +1,8 @@
 // Modal Hướng dẫn nối app: mở qua guideNav (nút ?, F1, "Xem hướng dẫn"), nhớ trang trước để Quay lại, mở mẫu thử qua scriptFile (trang sân thử mở ở Mẫu thử như thường).
 import { useEffect, useState } from 'react';
 import { Samples } from '../../../wailsjs/go/app/App';
-import { CHAPTERS, NODE_GUIDES } from '../../guide/content';
+import { CHAPTERS, guideContent } from '../../guide/content';
+import { useLang } from '../../i18n';
 import type { GuidePage } from '../../guide/types';
 import { onOpenGuide } from '../../guideNav';
 import { openSample } from '../../scriptFile';
@@ -13,6 +14,8 @@ import { GUIDE_NODES } from './nodes';
 const HOME: GuidePage = { chapter: CHAPTERS[0].id };
 
 export default function Guide() {
+  const lang = useLang();
+  const content = guideContent(lang);
   const [open, setOpen] = useState(false);
   const [history, setHistory] = useState<GuidePage[]>([HOME]);
   const { only } = usePlatform();
@@ -37,7 +40,7 @@ export default function Guide() {
   };
   if (!open) return null;
   return (
-    <GuideDialog chapters={CHAPTERS} nodes={GUIDE_NODES} guides={NODE_GUIDES} only={only} page={page}
+    <GuideDialog chapters={content.chapters} nodes={GUIDE_NODES} guides={content.nodes} only={only} page={page}
       onNav={nav} onBack={history.length > 1 ? () => setHistory((h) => h.slice(0, -1)) : undefined}
       onSample={inWails ? onSample : undefined} onClose={() => setOpen(false)} />
   );

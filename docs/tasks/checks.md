@@ -688,3 +688,8 @@ Người dùng chốt 2026-10-18: việc qua Chrome của app làm sau cùng –
 - [ ] English: chạy một kịch bản mẫu → thanh mini, Nhật ký chạy, tab *Tất cả output*, thanh trạng thái, menu chuột phải node (Chạy đến / Ghim output) đều tiếng Anh; dòng chi tiết thẻ node (vd Chờ ảnh, Cuộn, Chụp màn hình) tiếng Anh
 - [ ] English: bảng *Thêm node*, *Đổi loại node*, *Thử trang trên Chrome của app*, Xem trước trên màn hình (bong bóng mô phỏng, chọn nền trang mẫu) không còn chữ Việt sót; mô tả output hiện đúng ở inspector / gợi ý biến `{{…}}`
 - [ ] Đổi lại tiếng Việt: mọi chỗ trên giữ nguyên như trước (không đổi chữ)
+
+### 64 L5 – Hướng dẫn tiếng Anh · [phase3/64-ngon-ngu-vi-en.md](phase3/64-ngon-ngu-vi-en.md)
+
+- [ ] English: mở Hướng dẫn (F1) → mục lục, các chương, vài trang node (Click, Chờ ảnh, Gọi tool MCP) hiện tiếng Anh; link `[[node:…]]` / `[[chapter:…]]` và nút *Open sample* vẫn bấm được; đổi sang Tiếng Việt thì về lại bản Việt
+- [ ] English: một lần chạy lỗi (vd Chờ chữ không có) → hộp lỗi trong Nhật ký chạy hiện thêm dòng giải thích tiếng Anh dưới lời báo tiếng Việt; tiếng Việt thì không có dòng đó

@@ -1,5 +1,6 @@
 // Bảng Nhật ký dưới canvas (bước 20 F5): mỗi dòng một lần chạy node (StepResult). Bấm dòng → chọn node trên canvas
 // và mở chi tiết (output / lỗi / log / ảnh lúc lỗi). Thu gọn được còn một dòng tiêu đề; nhiều vòng thì có dòng chia vòng.
+import ErrorHint from './ErrorHint';
 import { useT } from '../../i18n';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { StepIcon } from '../icons';
@@ -106,7 +107,7 @@ function Detail({ r, refName, loadShot }: { r: RunRow; refName: string; loadShot
   }, [r.shot, loadShot]);
   return (
     <div className="flex w-[340px] flex-none flex-col gap-2 overflow-y-auto border-t border-l border-line p-3 max-[1100px]:w-[280px]">
-      {r.error && <div className="rounded-control bg-danger-soft px-2.5 py-2 text-[13px] text-danger-text"><span className="font-mono text-xs">{r.error.code}</span> · {r.error.message}
+      {r.error && <div className="rounded-control bg-danger-soft px-2.5 py-2 text-[13px] text-danger-text"><span className="font-mono text-xs">{r.error.code}</span> · {r.error.message}<ErrorHint code={r.error.code} />
         <PermLink detail={r.error.detail} /></div>}
       {elementMissOf(r.error?.detail) && <ElementMissView miss={elementMissOf(r.error?.detail)!} />}
       {shot && (

@@ -1,5 +1,6 @@
 // Bảng chi tiết một lần chạy node trên cây (bước 60 V7): lỗi, ảnh lúc lỗi, VÀO (giá trị đã thay biến, biểu thức, lần chạy
 // nguồn – bấm để nhảy tới), RA (bảng output + lần chạy dùng tiếp), đi tiếp, chuỗi truy ngược dữ liệu, log. Chỉ hiển thị.
+import ErrorHint from '../flow/ErrorHint';
 import { useEffect, useState } from 'react';
 import { useT } from '../../i18n';
 import { StepIcon } from '../icons';
@@ -47,7 +48,7 @@ export default function RunTreeDetail({ i, results, rows, steps, sources, onJump
           </div>
         </div>
       </div>
-      {r.error && <div className="rounded-control bg-danger-soft px-2.5 py-2 text-[13px] text-danger-text"><span className="font-mono text-xs">{r.error.code}</span> · {r.error.message}</div>}
+      {r.error && <div className="rounded-control bg-danger-soft px-2.5 py-2 text-[13px] text-danger-text"><span className="font-mono text-xs">{r.error.code}</span> · {r.error.message}<ErrorHint code={r.error.code} /></div>}
       {miss && <ElementMissView miss={miss} />}
       {r.shot && loadShot && <Shot shot={r.shot} load={loadShot} />}
       <section className="flex flex-col gap-1.5">

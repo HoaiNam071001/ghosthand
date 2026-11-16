@@ -1,5 +1,6 @@
 // Popover khi rê thẻ trên cây lần chạy (bước 60 V7): VÀO (giá trị đã thay biến + lần chạy nguồn), RA (giá trị + lần chạy
 // dùng nó), lỗi nếu có. Chỉ hiển thị.
+import ErrorHint from '../flow/ErrorHint';
 import { useT } from '../../i18n';
 import { valueText } from '../../flow/runOutputs';
 import type { DataSource } from '../../flow/runTree';
@@ -34,7 +35,7 @@ export default function RunTreePop({ i, results, steps, sources }: { i: number; 
         const u = users(k);
         return <Row key={k} k={k} v={valueText(v)} tone="text-ok" note={u.length ? `→ ${u.join(', ')}` : undefined} mono />;
       }) : <span className="text-faint">{t('rt.popNoOut')}</span>}
-      {r.error && <div className="rounded-md bg-danger-soft px-2 py-1 text-danger-text"><span className="font-mono text-[11px]">{r.error.code}</span> · {r.error.message}</div>}
+      {r.error && <div className="rounded-md bg-danger-soft px-2 py-1 text-danger-text"><span className="font-mono text-[11px]">{r.error.code}</span> · {r.error.message}<ErrorHint code={r.error.code} /></div>}
     </div>
   );
 }
