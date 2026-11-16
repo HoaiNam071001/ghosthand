@@ -14,7 +14,9 @@ export const webBasicNote = () => tr('web.basicNote');
 // label= – ô nhập của nhãn (label for / aria-labelledby, không có thì ô đầu tiên sau nhãn trong khối form – 46 A3).
 export type SelectorKind = 'text' | 'aria' | 'role' | 'label' | 'css' | 'xpath';
 export const SELECTOR_KINDS: SelectorKind[] = ['text', 'aria', 'role', 'label', 'css', 'xpath'];
-export const SELECTOR_LABEL: Record<SelectorKind, string> = { text: 'chữ', aria: 'aria', role: 'vai trò', label: 'ô của nhãn', css: 'CSS', xpath: 'XPath' };
+export const SELECTOR_LABEL: Record<SelectorKind, string> = {
+  get text() { return tr('wb.sel.text'); }, aria: 'aria', get role() { return tr('wb.sel.role'); }, get label() { return tr('wb.sel.label'); }, css: 'CSS', xpath: 'XPath',
+};
 // name: role – tên truy cập phải chứa (role=button[name="Gửi"], kiểu Playwright).
 export interface Selector { by: SelectorKind; value: string; exact?: boolean; name?: string }
 
@@ -50,17 +52,17 @@ export const selectorLines = (selectors: string[] | undefined) => (selectors ?? 
 export function fmtSelectors(selectors: string[] | undefined): string {
   const lines = selectorLines(selectors);
   const first = lines.length ? parseSelector(lines[0]) : null;
-  if (!first) return 'chưa nhập cách tìm phần tử';
+  if (!first) return tr('el.noSelector');
   const what = first.by === 'text' || first.by === 'aria' || first.by === 'label' ? `“${first.value}”`
     : first.by === 'role' && first.name ? `${first.value} “${first.name}”` : first.value;
-  return `${SELECTOR_LABEL[first.by]} ${what}${lines.length > 1 ? ` (+${lines.length - 1} dự phòng)` : ''}`;
+  return `${SELECTOR_LABEL[first.by]} ${what}${lines.length > 1 ? ` (${tr('wb.backup', { n: lines.length - 1 })})` : ''}`;
 }
 
 // webRead: đọc gì (Step.readFrom, khớp ReadFrom trong model.go).
-export const READ_LABEL = { '': 'chữ hiển thị', value: 'giá trị ô', attr: 'thuộc tính' } as const;
+export const READ_LABEL = { get ''() { return tr('wb.read.text'); }, get value() { return tr('wb.read.value'); }, get attr() { return tr('wb.read.attr'); } } as const;
 export type ReadFrom = Exclude<keyof typeof READ_LABEL, ''>;
 // webScroll: cách cuộn (Step.scrollMode, khớp ScrollMode trong model.go).
-export const SCROLL_MODE_LABEL = { '': 'Tới phần tử', in: 'Trong phần tử', until: 'Tới khi thấy' } as const;
+export const SCROLL_MODE_LABEL = { get ''() { return tr('wb.scroll.to'); }, get in() { return tr('wb.scroll.in'); }, get until() { return tr('wb.scroll.until'); } } as const;
 export type ScrollMode = Exclude<keyof typeof SCROLL_MODE_LABEL, ''>;
 
 // Loại node web chọn được chạy nền (Step.webBackground) – webRead vốn không đụng chuột.
@@ -69,18 +71,18 @@ export const canBackground = (s: Step) => s.type === 'webWait' || s.type === 'we
 // Dòng chi tiết trên thẻ node web.
 export function fmtWebStep(s: Step): string {
   const sel = fmtSelectors(s.selectors);
-  const where = `${(s.occurrence ?? 0) > 1 ? ` · chỗ thứ ${s.occurrence}` : ''}${s.webScope === 'dialog' ? ' · trong hộp thoại' : ''}`;
-  const tail = `${where}${s.tab ? ` · tab “${s.tab}”` : ''}${s.webBackground && canBackground(s) ? ' · chạy nền' : ''} · tối đa ${fmtMs(s.timeoutMs ?? 0)}`;
-  const roll = `${SCROLL_ARROW[s.direction ?? 'down']} ${s.amount ?? 0} nấc`;
+  const where = `${(s.occurrence ?? 0) > 1 ? ` · ${tr('wb.nth', { n: s.occurrence ?? 0 })}` : ''}${s.webScope === 'dialog' ? ` · ${tr('wb.inDialog')}` : ''}`;
+  const tail = `${where}${s.tab ? ` · ${tr('wb.tab', { t: s.tab })}` : ''}${s.webBackground && canBackground(s) ? ` · ${tr('wb.bg')}` : ''} · ${tr('el.max', { t: fmtMs(s.timeoutMs ?? 0) })}`;
+  const roll = `${SCROLL_ARROW[s.direction ?? 'down']} ${tr('wb.notches', { n: s.amount ?? 0 })}`;
   switch (s.type) {
-    case 'webType': return `“${s.text}”${s.webEnter ? ' + Enter' : ''} vào ${sel}${tail}`;
-    case 'webRead': return `đọc ${s.readFrom === 'attr' ? `thuộc tính ${s.attr || '?'}` : READ_LABEL[s.readFrom ?? '']} · ${sel}${tail}`;
+    case 'webType': return tr('wb.d.type', { text: s.text, enter: s.webEnter ? ' + Enter' : '', sel }) + tail;
+    case 'webRead': return tr('wb.d.read', { what: s.readFrom === 'attr' ? tr('wb.d.attr', { a: s.attr || '?' }) : READ_LABEL[s.readFrom ?? ''], sel }) + tail;
     case 'webScroll':
-      return s.scrollMode === 'in' ? `lăn ${roll} trong ${sel}${tail}`
-        : s.scrollMode === 'until' ? `lăn ${roll} tới khi thấy ${sel}${tail}`
-        : `tới ${sel}${tail}`;
+      return s.scrollMode === 'in' ? tr('wb.d.rollIn', { roll, sel }) + tail
+        : s.scrollMode === 'until' ? tr('wb.d.rollUntil', { roll, sel }) + tail
+        : tr('wb.d.to', { sel }) + tail;
   }
-  return `${sel}${s.webGone ? ' · chờ mất' : ''}${tail}`;
+  return `${sel}${s.webGone ? ` · ${tr('wb.d.gone')}` : ''}${tail}`;
 }
 
 // Kết quả "Thử tìm" node web (engine.WebFindResult – Go internal/engine/webfind.go).
@@ -92,16 +94,16 @@ export interface WebFind {
 // Dòng kết quả Thử tìm: ok = thấy và click được ngay; warn = thấy nhưng còn vướng / không thấy. read: node Đọc –
 // cho xem giá trị sẽ đọc được.
 export function webFindText(r: WebFind, tab?: string, read?: boolean): { ok: boolean; text: string } {
-  const ms = `${read && r.found ? ` · đọc được “${r.value}”` : ''}${r.count > 1 ? ` · ${r.count} phần tử khớp, dùng cái đầu` : ''} · ${r.ms} ms`;
-  if (r.noTab) return { ok: false, text: `Không có tab nào có URL / tiêu đề chứa “${tab ?? ''}”` };
-  if (r.noDialog) return { ok: false, text: 'Trang không có hộp thoại nào đang mở (đang chỉ tìm trong hộp thoại)' };
+  const ms = `${read && r.found ? ` · ${tr('wb.f.read', { v: r.value })}` : ''}${r.count > 1 ? ` · ${tr('wb.f.many', { n: r.count })}` : ''} · ${r.ms} ms`;
+  if (r.noTab) return { ok: false, text: tr('wb.f.noTab', { t: tab ?? '' }) };
+  if (r.noDialog) return { ok: false, text: tr('wb.f.noDialog') };
   if (!r.found) {
-    return { ok: false, text: (r.hidden > 0 ? `Có ${r.hidden} phần tử khớp nhưng đang ẩn` : 'Không thấy trên tab hiện tại') + ms };
+    return { ok: false, text: (r.hidden > 0 ? tr('wb.f.hidden', { n: r.hidden }) : tr('wb.f.none')) + ms };
   }
-  const at = `“${r.selector}” tại X ${r.x + Math.round(r.w / 2)} Y ${r.y + Math.round(r.h / 2)}`;
-  if (r.covered) return { ok: false, text: `Thấy ${at} nhưng đang bị ${r.covered} che${ms}` };
-  if (r.offView) return { ok: true, text: `Thấy ${at} – ngoài khung nhìn, lúc click sẽ lăn chuột tới${ms}` };
-  return { ok: true, text: `Thấy ${at}${ms}` };
+  const at = tr('wb.f.at', { sel: r.selector, x: r.x + Math.round(r.w / 2), y: r.y + Math.round(r.h / 2) });
+  if (r.covered) return { ok: false, text: tr('wb.f.covered', { at, by: r.covered }) + ms };
+  if (r.offView) return { ok: true, text: tr('wb.f.offView', { at }) + ms };
+  return { ok: true, text: tr('wb.f.seen', { at }) + ms };
 }
 
 // Trạng thái Chrome của app (web.Status – Go internal/web/status.go).
@@ -115,12 +117,12 @@ export const loginUrl = (st: BrowserState | null) => {
 
 // null = chưa hỏi.
 export function browserStatusText(st: BrowserState | null): string {
-  if (!st) return 'Chrome của app: đang kiểm tra…';
-  if (st.login) return 'Chrome của app: đang mở để đăng nhập – đăng nhập xong bấm Xong';
-  if (!st.open) return 'Chrome của app: chưa mở';
+  if (!st) return tr('wb.st.checking');
+  if (st.login) return tr('wb.st.login');
+  if (!st.open) return tr('wb.st.closed');
   const top = st.tabs[0];
-  const name = top ? ` · tab đang dùng “${top.title || top.url}”` : '';
-  return `Chrome của app: đang mở, ${st.tabs.length} tab${name}`;
+  const name = top ? ` · ${tr('wb.st.tab', { t: top.title || top.url })}` : '';
+  return tr('wb.st.open', { n: st.tabs.length }) + name;
 }
 
 // Nhãn hay đổi theo trạng thái ("Messenger" ↔ "Messenger, 1 unread", "Hộp thư (3)") – như model.StableLabel (Go),
