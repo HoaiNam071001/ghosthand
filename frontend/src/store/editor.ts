@@ -1,6 +1,7 @@
 // Lõi store kịch bản đang soạn: state, đăng ký nghe, hoàn tác / làm lại, thay cả kịch bản.
 // Dùng chung giữa các màn (MainScreen, OverlayScreen không cùng mount). Các thao tác theo nghiệp vụ nằm ở module bên cạnh
 // (nodes, points, multi) và chỉ đổi state qua `setEditor` / `updateScript` ở đây. Lưu / mở file: scriptFile.ts.
+import { tr } from '../i18n/lang';
 import { useSyncExternalStore } from 'react';
 import { ScreenBounds } from '../../wailsjs/go/app/App';
 import { Point, Rect, Script } from '../types';
@@ -99,14 +100,14 @@ const restore = (script: Script, past: Script[], future: Script[], notice: strin
 
 export function undo() {
   const prev = state.past.at(-1);
-  if (!prev) return setNotice('Không còn gì để hoàn tác');
-  restore(prev, state.past.slice(0, -1), [state.script, ...state.future], 'Đã hoàn tác');
+  if (!prev) return setNotice(tr('ed.noUndo'));
+  restore(prev, state.past.slice(0, -1), [state.script, ...state.future], tr('ed.undone'));
 }
 
 export function redo() {
   const next = state.future[0];
-  if (!next) return setNotice('Không còn gì để làm lại');
-  restore(next, [...state.past, state.script], state.future.slice(1), 'Đã làm lại');
+  if (!next) return setNotice(tr('ed.noRedo'));
+  restore(next, [...state.past, state.script], state.future.slice(1), tr('ed.redone'));
 }
 
 // Cmd/Ctrl+Z hoàn tác, + Shift + Z (hoặc Ctrl+Y) làm lại – mọi màn; trong ô nhập để trình duyệt tự hoàn tác chữ.

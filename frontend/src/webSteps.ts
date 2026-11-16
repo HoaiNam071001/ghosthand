@@ -1,5 +1,6 @@
 // Node web (bước 25d D3) – phía giao diện: trạng thái Chrome của app, Thử tìm (khung trên overlay như ảnh mẫu),
 // Chọn phần tử trên trang. Tìm / sinh selector ở Go (webapi.go, internal/web).
+import { tr } from './i18n/lang';
 import { useSyncExternalStore } from 'react';
 import { BrowserStatus, CancelPick, FindElement, FinishWebLogin, OpenAppBrowser, PickElement, StartWebLogin } from '../wailsjs/go/app/App';
 import { model } from '../wailsjs/go/models';
@@ -76,7 +77,7 @@ export async function testWebFind(stepId: string) {
   try {
     const r = (await FindElement(model.Script.createFrom(getEditor().script), stepId)) as WebFind;
     set({ finds: { ...state.finds, [stepId]: r }, busy: '' });
-    const label = r.found ? (r.covered ? 'thấy · bị che' : 'thấy') + ` · ${r.selector}` : undefined;
+    const label = r.found ? (r.covered ? tr('ws3.coveredFound') : tr('ws3.found')) + ` · ${r.selector}` : undefined;
     showFind(stepId, r.found ? { found: webFindText(r).ok, score: 100, x: r.x, y: r.y, w: r.w, h: r.h, area: { x: r.x, y: r.y, w: r.w, h: r.h }, ms: r.ms, label } : null);
   } catch (e) {
     set({ busy: '', error: errorText(e) });
@@ -93,7 +94,7 @@ export async function pickElement(stepId: string) {
     const p = await PickElement(tab.includes('{{') ? '' : tab);
     if (stepOf(stepId)) {
       updateStep(stepId, { selectors: p.selectors });
-      setNotice(`Đã chọn ${p.text ? `“${p.text.slice(0, 40)}”` : 'phần tử'} – ${p.selectors.length} cách tìm`);
+      setNotice(tr('ws3.picked', { what: p.text ? `“${p.text.slice(0, 40)}”` : tr('ws3.element'), n: p.selectors.length }));
     }
     const { [stepId]: _, ...finds } = state.finds;
     set({ picking: '', finds });

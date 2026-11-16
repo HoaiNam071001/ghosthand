@@ -1,5 +1,6 @@
 // Nối / bỏ nối dữ liệu giữa node (bước 60): kéo output sang ô của node khác. Phép trên node ở flow/dataLinks.ts –
 // ở đây ghép với state, hoàn tác và thông báo.
+import { tr } from '../i18n/lang';
 import { dataSlots, linkBlock, linkSlot, unlinkSlot } from '../flow/dataLinks';
 import { getEditor, setNotice, updateScript } from './editor';
 
@@ -9,22 +10,22 @@ const find = (id: string) => getEditor().script.steps.find((s) => s.id === id);
 export function linkData(fromId: string, key: string, toId: string, slot: string): string | null {
   const sc = getEditor().script;
   const from = find(fromId), to = find(toId);
-  if (!from || !to) return 'không thấy node';
+  if (!from || !to) return tr('dl.noNode');
   const why = linkBlock(sc, fromId, toId);
   if (why) {
-    setNotice(`Không nối được ${from.ref}.${key} → ${to.ref}: ${why}`);
+    setNotice(tr('dl.fail', { a: `${from.ref}.${key}`, b: to.ref, why }));
     return why;
   }
   const before = dataSlots(to).find((s) => s.name === slot);
-  if (!before) return 'ô không nhận biến';
+  if (!before) return tr('dl.noSlot');
   const next = linkSlot(to, slot, from.ref, key);
   updateScript({ steps: sc.steps.map((s) => (s.id === toId ? next : s)) });
-  const had = before.num && before.text.trim() ? ` (thay ${before.text.trim()})` : '';
+  const had = before.num && before.text.trim() ? ` (${tr('dl.replace', { t: before.text.trim() })})` : '';
   // điểm vừa chuyển sang toạ độ từ biến: trục kia còn trống thì nhắc (kiểm tra sẽ báo thiếu)
   const other = /^points\[(\d+)\]\.(x|y)Var$/.exec(slot);
   const p = other && next.points[Number(other[1])];
-  const lack = p && !(other[2] === 'x' ? p.yVar : p.xVar) ? ` · nối tiếp ${other[2] === 'x' ? 'Y' : 'X'}` : '';
-  setNotice(`Đã nối ${from.ref}.${key} → ${to.ref} · ${before.label}${had}${lack} – Ctrl+Z để hoàn tác`);
+  const lack = p && !(other[2] === 'x' ? p.yVar : p.xVar) ? ` · ${tr('dl.lack', { axis: other[2] === 'x' ? 'Y' : 'X' })}` : '';
+  setNotice(tr('dl.linked', { a: `${from.ref}.${key}`, b: to.ref, label: before.label, extra: `${had}${lack}` }));
   return null;
 }
 
@@ -35,5 +36,5 @@ export function unlinkData(stepId: string, slot: string, ref: string, key = '') 
   if (!s) return;
   const label = dataSlots(s).find((x) => x.name === slot)?.label ?? slot;
   updateScript({ steps: sc.steps.map((x) => (x.id === stepId ? unlinkSlot(x, slot, ref, key) : x)) });
-  setNotice(`Đã bỏ nối ${ref}${key ? `.${key}` : ''} khỏi ${s.ref} · ${label}`);
+  setNotice(tr('dl.unlinked', { a: `${ref}${key ? `.${key}` : ''}`, b: s.ref, label }));
 }

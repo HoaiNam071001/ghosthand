@@ -1,5 +1,6 @@
 // Chế độ "Ánh xạ 4 mốc" của công cụ Chọn nhiều (bước 30): 4 núm ở góc khung bao các điểm đang chọn = mốc cũ,
 // kéo từng núm tới chỗ mới → xem trước phối cảnh (homography 4 → 4), Enter áp dụng, Esc thoát. Toán ở transform.ts.
+import { tr } from '../i18n';
 import { MouseEvent as ReactMouseEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { bbox, corners, homography, Mat } from '../transform';
 import { transformSelected } from '../store';
@@ -21,7 +22,7 @@ export function useQuadMode(toScreen: (client: Point) => Point) {
   const apply = useCallback(() => {
     const q = quadRef.current;
     const m = q && homography(q.src, q.dst);
-    if (m && transformSelected(m, 'ánh xạ 4 mốc')) setQuad(null);
+    if (m && transformSelected(m, tr('mu.quad'))) setQuad(null);
   }, []);
   const grab = (e: ReactMouseEvent, i: number) => {
     e.stopPropagation();

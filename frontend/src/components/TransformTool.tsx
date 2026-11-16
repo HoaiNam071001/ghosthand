@@ -1,6 +1,7 @@
 // Công cụ "Chọn nhiều" trên overlay (bước 30): khung biến đổi quanh các điểm đang chọn + thanh ô nhập số + hộp ánh xạ
 // khi đổi vùng. Toán ở transform.ts; ghi điểm (giữ neo, B "lệch so với A", điểm ra ngoài vùng) ở scriptStore.ts.
 // Mọi phép tính làm trên toạ độ màn hình thật; khung vẽ theo toạ độ cửa sổ qua toClient.
+import { tr } from '../i18n';
 import { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from 'react';
 import { safeArea } from '../windowMode';
 import {
@@ -195,7 +196,7 @@ export function TransformBar({ points, tf, setTf, frame, onQuad }: {
     window.addEventListener('mouseup', up);
   };
   const applyTf = () => {
-    if (dirty && transformSelected(fromParams(tf, c), 'biến đổi')) setTf(NO_TF);
+    if (dirty && transformSelected(fromParams(tf, c), tr('mu.transform'))) setTf(NO_TF);
   };
   const doAlign = (op: AlignOp, what: string) => {
     const out = align(ps, op);

@@ -1,4 +1,5 @@
 // Nhúng kịch bản khác (bước 39 G2): Go ghép (script.Embed), ở đây áp kết quả vào kịch bản đang soạn qua updateScript.
+import { tr } from '../i18n/lang';
 import { EmbedSample, EmbedScriptFile } from '../../wailsjs/go/app/App';
 import { model } from '../../wailsjs/go/models';
 import { Script } from '../types';
@@ -17,10 +18,10 @@ async function embed(run: (parent: model.Script) => Promise<unknown>) {
     const renamed = Object.entries(res.renamedInput ?? {}).map(([a, b]) => `${a} → ${b}`);
     setEditor({
       picked: groups?.find((g) => g.id === res.groupId)?.members ?? [],
-      notice: `Đã nhúng ${res.nodes} node – nối khung vào flow để chạy${renamed.length ? `; input trùng tên đổi: ${renamed.join(', ')}` : ''}`,
+      notice: tr('emb.done', { n: res.nodes }) + (renamed.length ? `; ${tr('emb.renamed', { l: renamed.join(', ') })}` : ''),
     });
   } catch (e) {
-    setEditor({ notice: `Không nhúng được: ${errText(e)}` });
+    setEditor({ notice: tr('emb.fail', { e: errText(e) }) });
   }
 }
 

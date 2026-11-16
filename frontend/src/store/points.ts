@@ -1,5 +1,6 @@
 // Điểm của node: đặt điểm mới / chọn lại trên overlay (click, F6), dời marker, đổi neo, kéo thả từ điểm trước / tương đối,
 // cuộn tại điểm. Node mới tạo từ điểm đi qua nodes.insertNode (nối theo insertAt).
+import { tr } from '../i18n/lang';
 import { EventsOn } from '../../wailsjs/runtime/runtime';
 import { STEP_DEFAULTS } from '../flow/defaults';
 import { anchorPoint, fmtPoint } from '../anchor';
@@ -122,7 +123,7 @@ export const setDragMode = (on: boolean) => {
 // Esc trên overlay: huỷ điểm A đang chờ. Trả false nếu không có gì để huỷ.
 export const cancelDragA = () => {
   if (!getEditor().dragA) return false;
-  setEditor({ dragA: null, notice: 'Đã huỷ điểm A' });
+  setEditor({ dragA: null, notice: tr('pt2.cancelA') });
   return true;
 };
 
@@ -148,19 +149,19 @@ export function placePoint(screen: Point): boolean {
     return true;
   }
   if (focusLock && !pickTarget) {
-    setNotice('Đang xem riêng một node – bấm “Chọn lại trên màn hình” để đặt điểm, hoặc “Xem tất cả”');
+    setNotice(tr('pt2.solo'));
     return false;
   }
   const rel = toRelative(screen, sc.region);
   if (!rel) {
-    setNotice(`Điểm X ${screen.x} Y ${screen.y} nằm ngoài vùng – chọn trong vùng hoặc đổi về toàn màn hình`);
+    setNotice(tr('pt2.outside', { x: screen.x, y: screen.y }));
     return false;
   }
   if (pickCond) {
     const { id, at } = pickCond;
     pickCond = null;
     updateCond(id, at, (c) => ({ ...c, points: [rel] }));
-    setEditor({ selected: id, notice: `Đã đặt điểm cho điều kiện màu: ${fmtPoint(rel)}` });
+    setEditor({ selected: id, notice: tr('pt2.cond', { p: fmtPoint(rel) }) });
     setWindowMode('main');
     return true;
   }
@@ -168,7 +169,7 @@ export function placePoint(screen: Point): boolean {
   // Kéo thả cần 2 điểm – trừ khi node đang chọn lại bắt đầu "từ điểm trước đó" (chỉ cần B).
   const wantsPair = target ? target.type === 'drag' && !target.dragFromPrev : dragMode;
   if (wantsPair && !dragA) {
-    setEditor({ dragA: screen, notice: `Điểm A: ${fmtPoint(rel)} – chọn điểm B (Esc để huỷ)` });
+    setEditor({ dragA: screen, notice: tr('pt2.a', { p: fmtPoint(rel) }) });
     return true;
   }
   const a = wantsPair ? dragA! : null;
@@ -188,11 +189,11 @@ export function placePoint(screen: Point): boolean {
   if (a) {
     const relA = toRelative(a, sc.region)!;
     const step = makeStep({ id: newId(), type: 'drag', ...STEP_DEFAULTS.drag, points: [relA, rel] });
-    insertNode(step, (ref) => `Đã thêm ${ref}: kéo A ${fmtPoint(relA)} → B ${fmtPoint(rel)}`);
+    insertNode(step, (ref) => tr('pt2.dragAdded', { ref, a: fmtPoint(relA), b: fmtPoint(rel) }));
     return true;
   }
   const step = makeStep({ id: newId(), type: pointType, ...STEP_DEFAULTS[pointType], points: [rel] });
-  insertNode(step, (ref) => `Đã thêm ${ref}: ${STEP_LABEL[pointType].toLowerCase()} ${fmtPoint(rel)}`);
+  insertNode(step, (ref) => tr('pt2.added', { ref, what: STEP_LABEL[pointType].toLowerCase(), p: fmtPoint(rel) }));
   return true;
 }
 
@@ -203,16 +204,16 @@ export function placeStroke(screen: Point[]): boolean {
   if (!target) return false;
   const points = simplifyStroke(screen).map((p) => toRelative(p, sc.region));
   if (points.length < 2) {
-    setNotice('Nét vẽ quá ngắn – kéo dài hơn rồi thả chuột');
+    setNotice(tr('pt2.short'));
     return false;
   }
   if (points.some((p) => !p)) {
-    setNotice('Nét vẽ đi ra ngoài vùng – vẽ trong vùng hoặc đổi về toàn màn hình');
+    setNotice(tr('pt2.strokeOut'));
     return false;
   }
   pickTarget = null;
   updateStep(target.id, { points: points as StepPoint[], shape: undefined, shapeW: undefined, shapeH: undefined });
-  setEditor({ selected: target.id, notice: `Đã vẽ ${points.length} điểm cho ${target.ref}` });
+  setEditor({ selected: target.id, notice: tr('pt2.drawn', { n: points.length, ref: target.ref }) });
   setWindowMode('main');
   return true;
 }
@@ -224,7 +225,7 @@ export function movePoint(id: string, index: number, screen: Point): boolean {
   if (!step) return false;
   const rel = toRelative(screen, sc.region, step.points[index], step);
   if (!rel) {
-    setNotice(`Điểm X ${screen.x} Y ${screen.y} nằm ngoài vùng – giữ vị trí cũ`);
+    setNotice(tr('pt2.keepOld', { x: screen.x, y: screen.y }));
     return false;
   }
   const label = step.type === 'drag' ? `${step.ref}${index === 0 ? 'A' : 'B'}` : step.ref;
@@ -233,13 +234,13 @@ export function movePoint(id: string, index: number, screen: Point): boolean {
   if (step.type === 'drag' && index === 1 && step.dragRelative) {
     const start = endpoints(sc, sc.region).get(id)?.start;
     if (!start) {
-      setNotice(`${step.ref}: chưa xác định được điểm bắt đầu – giữ vị trí cũ`);
+      setNotice(tr('pt2.noStart', { ref: step.ref }));
       return false;
     }
     value = { x: screen.x - start.x, y: screen.y - start.y };
   }
   updateStep(id, { points: step.points.map((p, i) => (i === index ? value : p)) });
-  setEditor({ selected: id, notice: `Đã đặt điểm ${label}: ${fmtPoint(value)}` });
+  setEditor({ selected: id, notice: tr('pt2.set', { label, p: fmtPoint(value) }) });
   return true;
 }
 

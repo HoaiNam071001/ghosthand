@@ -1,5 +1,6 @@
 // Chờ ảnh / click theo ảnh / chờ pixel (bước 25) – phía giao diện: khoanh ảnh mẫu trên overlay, thử tìm trên màn hình,
 // lấy màu pixel, quyền chụp màn hình (macOS). Engine + so khớp ở Go (internal/engine, internal/vision, imageapi.go).
+import { tr } from './i18n/lang';
 import { useSyncExternalStore } from 'react';
 import { CaptureTemplate, FindImage, PickElementAt, PixelColorAt, RequestScreenCapture, ScreenCaptureAllowed, TestNode } from '../wailsjs/go/app/App';
 import { EventsOn } from '../wailsjs/runtime/runtime';
@@ -87,18 +88,18 @@ export function addElementStep(type: 'waitImage' | 'clickImage') {
 export async function applyCapture(r: Rect): Promise<string | null> {
   if (capturesRect()) {
     updateStep(captureTarget!, { shotArea: 'rect', shotRect: r });
-    setNotice(`Đã chọn vùng chụp ${r.w} × ${r.h}`);
+    setNotice(tr('is2.region', { w: r.w, h: r.h }));
     captureTarget = null;
     await setWindowMode('main');
     return null;
   }
-  if (!inWails) return 'Chỉ chụp được trong app';
+  if (!inWails) return tr('is2.appOnly');
   try {
     const shot = await CaptureTemplate(model.Rect.createFrom(r));
     if (captureCond && captureTarget && getEditor().script.steps.some((s) => s.id === captureTarget)) {
       updateCond(captureTarget, captureCond, (c) => ({ ...c, template: shot.png, templateScale: shot.scale }));
       dropTest(captureTarget);
-      setNotice(`Đã lưu ảnh mẫu ${shot.w} × ${shot.h} cho điều kiện`);
+      setNotice(tr('is2.tplCond', { w: shot.w, h: shot.h }));
       captureTarget = captureCond = null;
       await setWindowMode('main');
       return null;
@@ -109,7 +110,7 @@ export async function applyCapture(r: Rect): Promise<string | null> {
     updateStep(id, { template: shot.png, templateScale: shot.scale });
     const { [id]: _, ...finds } = state.finds;
     set({ finds });
-    setNotice(`Đã lưu ảnh mẫu ${shot.w} × ${shot.h}`);
+    setNotice(tr('is2.tpl', { w: shot.w, h: shot.h }));
     captureTarget = null;
     await setWindowMode('main');
     return null;
@@ -142,7 +143,7 @@ export function pickElement(stepId: string) {
       updateStep(stepId, { selectors: r.selectors, occurrence: r.occurrence > 1 ? r.occurrence : undefined });
       const b = r.box;
       set({ busy: '', suggestions: { ...state.suggestions, [stepId]: r.suggestions ?? [] }, finds: { ...state.finds, [stepId]: { found: true, score: 100, x: b.x, y: b.y, w: b.w, h: b.h, area: b, ms: 0, label: r.role } } });
-      setNotice(`Đã chọn ${r.role}${r.name ? ` “${r.name}”` : ''} – cách tìm: ${r.selectors[0]}`);
+      setNotice(tr('is2.picked', { what: `${r.role}${r.name ? ` “${r.name}”` : ''}`, sel: r.selectors[0] }));
     } catch (e) {
       set({ busy: '', error: errorText(e) });
     }
@@ -189,7 +190,7 @@ export async function pickCondColor(stepId: string, at: CondAt) {
     const p = toScreen(p0, script.region);
     const color = await PixelColorAt(p.x, p.y);
     updateCond(stepId, at, (c) => ({ ...c, color }));
-    setNotice(`Màu tại X ${p.x} Y ${p.y}: ${color}`);
+    setNotice(tr('is2.color', { x: p.x, y: p.y, c: color }));
     set({ busy: '' });
   } catch (e) {
     set({ busy: '', error: errorText(e) });
@@ -205,7 +206,7 @@ export async function pickColor(stepId: string) {
     const p = toScreen(s.points[0], script.region, s);
     const color = await PixelColorAt(p.x, p.y);
     updateStep(stepId, { color });
-    setNotice(`Màu tại X ${p.x} Y ${p.y}: ${color}`);
+    setNotice(tr('is2.color', { x: p.x, y: p.y, c: color }));
     set({ busy: '' });
   } catch (e) {
     set({ busy: '', error: errorText(e) });

@@ -1,5 +1,6 @@
 // Ghi macro (bước 24): Go bắt chuột / phím toàn cục, F9 dừng (event record:done); ở đây ghép kết quả vào kịch bản
 // qua updateScript như Nhúng kịch bản.
+import { tr } from '../i18n/lang';
 import { useSyncExternalStore } from 'react';
 import { FinishRecording, StartRecording, StopRecording } from '../../wailsjs/go/app/App';
 import { EventsOn } from '../../wailsjs/runtime/runtime';
@@ -15,15 +16,15 @@ type Embedded = { script: Script; groupId: string; nodes: number };
 async function finish() {
   try {
     const res = (await FinishRecording(model.Script.createFrom(getEditor().script))) as Embedded;
-    if (!res.nodes) return setEditor({ notice: 'Không ghi được thao tác nào' });
+    if (!res.nodes) return setEditor({ notice: tr('rec.none') });
     const { steps, edges, start, inputs, groups } = res.script;
     updateScript({ steps, edges, start, inputs, groups });
     setEditor({
       picked: groups?.find((g) => g.id === res.groupId)?.members ?? [],
-      notice: `Đã ghi ${res.nodes} node – nối khung vào flow để chạy`,
+      notice: tr('rec.done', { n: res.nodes }),
     });
   } catch (e) {
-    setEditor({ notice: `Không ghi được: ${errText(e)}` });
+    setEditor({ notice: tr('rec.fail', { e: errText(e) }) });
   }
 }
 
@@ -52,6 +53,6 @@ export async function startRecording() {
     setRecording({ since: Date.now() });
     await setWindowMode('minibar');
   } catch (e) {
-    setEditor({ notice: `Không ghi được: ${errText(e)}` });
+    setEditor({ notice: tr('rec.fail', { e: errText(e) }) });
   }
 }

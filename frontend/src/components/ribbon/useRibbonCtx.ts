@@ -1,6 +1,6 @@
 // Nối ribbon với store / Go (bước 63): đọc trạng thái kịch bản, chạy, xem → RibbonCtx cho model.ts. Mọi sửa kịch bản đi qua hàm của store.
 import { useMemo } from 'react';
-import { useT } from '../../i18n';
+import { tr, useT } from '../../i18n';
 import { StopScript } from '../../../wailsjs/go/app/App';
 import {
   copySelected, duplicateStep, getEditor, groupPicked, insertAfterSelected, pasteClip, redo, removeSteps, selectNodes, setNotice, setStart, startRecording, toggleStep, undo, useEditor,
@@ -50,12 +50,12 @@ export function useRibbonActions(): RibbonActions {
     record: () => void startRecording(),
     history: () => setRunsDialog(true),
     bundle: () => {
-      if (!latestRun) return setNotice('Chưa có lần chạy nào để xuất gói báo lỗi');
-      exportRunBundle(latestRun).then((p) => p && setNotice(`Đã xuất gói lỗi ${p}`)).catch((e) => setNotice(errorText(e)));
+      if (!latestRun) return setNotice(tr('rib.noRun'));
+      exportRunBundle(latestRun).then((p) => p && setNotice(tr('rib.exported', { p }))).catch((e) => setNotice(errorText(e)));
     },
     card: (card) => {
       setFlowPrefs({ card });
-      if (card === 'full') setNotice('Thẻ Đầy đủ cao hơn – thẻ chồng nhau thì bấm Xếp lại tự động ở tab Xem');
+      if (card === 'full') setNotice(tr('rib.tall'));
     },
     detail: (detail) => setFlowPrefs({ detail }),
     pin: setInspectorPinned,

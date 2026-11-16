@@ -1,4 +1,5 @@
 // Khung nhóm node (bước 39 G1): nhóm lại / bỏ nhóm / thu gọn / đổi tên / dời cả cụm. Phép tính ở flow/groups.ts.
+import { tr } from '../i18n/lang';
 import { addGroup, nextGroupName, patchGroup, removeGroup, shiftPositions } from '../flow/groups';
 import { getEditor, setEditor, updateScript } from './editor';
 import { newId, removeSteps } from './nodes';
@@ -11,12 +12,12 @@ export function groupPicked() {
   if (ids.length < 2) return;
   const name = nextGroupName(script().groups);
   updateScript({ groups: addGroup(script().groups, ids, { id: `g${newId()}`, name }) });
-  setEditor({ picked: [], notice: `Đã nhóm ${ids.length} node thành “${name}”` });
+  setEditor({ picked: [], notice: tr('grp.done', { n: ids.length, name }) });
 }
 
 export function ungroup(id: string) {
   updateScript({ groups: removeGroup(script().groups, id) });
-  setEditor({ notice: 'Đã bỏ nhóm – node giữ nguyên chỗ' });
+  setEditor({ notice: tr('grp.un') });
 }
 
 // Xoá cả khung lẫn node thành viên (kèm cạnh) – một lần hoàn tác.

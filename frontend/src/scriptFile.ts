@@ -1,5 +1,6 @@
 // Lưu / mở kịch bản (bước 21) – nối scriptStore với storage.go: Lưu / Lưu thành / Mở / Kịch bản mới / Mở gần đây,
 // bản nháp tự lưu (mở lại app vẫn còn) và hỏi lưu trước khi bỏ thay đổi (đổi kịch bản, đóng app).
+import { tr } from './i18n/lang';
 import { useSyncExternalStore } from 'react';
 import { EventsOn } from '../wailsjs/runtime/runtime';
 import {
@@ -60,7 +61,7 @@ export async function save(as = false): Promise<boolean> {
     if (!res.path) return false;
     // còn sửa trong lúc hộp thoại mở thì vẫn "chưa lưu" phần sửa đó
     revision = res.revision;
-    markSaved(res.path, res.script.name, `Đã lưu ${fileName(res.path)}`, getEditor().script !== script);
+    markSaved(res.path, res.script.name, tr('sf2.saved', { f: fileName(res.path) }), getEditor().script !== script);
     setFs({ error: '' });
     refreshRecent();
     await flushDraft(); // nháp khớp file ngay – đóng app liền sau đó cũng không bị báo "chưa lưu"
@@ -76,13 +77,13 @@ export async function save(as = false): Promise<boolean> {
 async function run(p: Pending) {
   try {
     revision = 0;
-    if (p.action === 'new') return replaceScript(fromGo(await NewScript()), null, false, 'Kịch bản mới');
+    if (p.action === 'new') return replaceScript(fromGo(await NewScript()), null, false, tr('sf2.new'));
     // mẫu thử (bước 33): bản sao chưa có file – Lưu sẽ hỏi chỗ lưu, mẫu gốc không đổi
-    if (p.action === 'sample') return replaceScript(fromGo(await OpenSample(p.id)), null, false, `Đã mở mẫu “${p.name}”`);
+    if (p.action === 'sample') return replaceScript(fromGo(await OpenSample(p.id)), null, false, tr('sf2.sample', { n: p.name }));
     const res = p.action === 'open' ? await OpenScript() : p.action === 'import' ? await ImportPack() : await OpenScriptPath(p.path);
     if (!res.path) return; // huỷ hộp thoại
     revision = res.revision;
-    replaceScript(fromGo(res.script), res.path, false, p.action === 'import' ? `Đã nhập gói – lưu ở ${res.path}` : `Đã mở ${fileName(res.path)}`);
+    replaceScript(fromGo(res.script), res.path, false, p.action === 'import' ? tr('sf2.imported', { p: res.path }) : tr('sf2.opened', { f: fileName(res.path) }));
     setFs({ error: '' });
   } catch (e) {
     setFs({ error: errText(e) });
@@ -108,9 +109,9 @@ export async function exportPack() {
   try {
     const res = await ExportPack(toGo(getEditor().script));
     if (!res.path) return; // huỷ hộp thoại
-    const files = res.files?.length ? ` kèm ${res.files.length} file` : '';
-    const miss = res.missing?.length ? ` – không tìm thấy ${res.missing.join(', ')} (người nhận phải chọn lại file)` : '';
-    setNotice(`Đã xuất gói ${fileName(res.path)}${files}${miss}`);
+    const files = res.files?.length ? ` ${tr('sf2.withFiles', { n: res.files.length })}` : '';
+    const miss = res.missing?.length ? ` – ${tr('sf2.missing', { l: res.missing.join(', ') })}` : '';
+    setNotice(tr('sf2.exported', { f: fileName(res.path) }) + files + miss);
     setFs({ error: '' });
   } catch (e) {
     setFs({ error: errText(e) });
@@ -140,7 +141,7 @@ async function onScriptChanged(c: { path: string; revision: number }) {
   try {
     const res = await OpenScriptPath(path);
     revision = res.revision;
-    reloadScript(fromGo(res.script), `${fileName(path)} vừa được sửa từ ngoài app – đã nạp lại (Ctrl+Z lấy lại bản trước)`);
+    reloadScript(fromGo(res.script), tr('sf2.reloaded', { f: fileName(path) }));
   } catch (e) {
     setFs({ error: errText(e) });
   }
@@ -159,7 +160,7 @@ async function flushDraft() {
     await SaveDraft(store.Draft.createFrom({ script: e.script, path: e.path ?? '', dirty: e.dirty, savedAt: 0 }));
     setFs({ draftAt: Date.now() });
   } catch (err) {
-    setFs({ error: `Không ghi được bản nháp: ${errText(err)}` });
+    setFs({ error: tr('sf2.draftFail', { e: errText(err) }) });
   }
 }
 
@@ -182,7 +183,7 @@ async function init() {
   try {
     const d = await LoadDraft();
     if (d) {
-      replaceScript(fromGo(d.script), d.path || null, d.dirty, d.dirty ? 'Đã khôi phục bản nháp chưa lưu' : '');
+      replaceScript(fromGo(d.script), d.path || null, d.dirty, d.dirty ? tr('sf2.restored') : '');
       setFs({ draftAt: d.savedAt || null });
     } else {
       replaceScript(fromGo(await NewScript()), null, false);
@@ -210,6 +211,6 @@ if (inWails) {
   // Có bản mới trên GitHub (kiểm tra lúc mở app): báo nhẹ, xem chi tiết ở Cài đặt → Giới thiệu
   EventsOn('update:available', (info: update.Info) => {
     setUpdateInfo(info);
-    setNotice(`Có bản mới v${info.latest} – xem ở Cài đặt → Giới thiệu`);
+    setNotice(tr('sf2.update', { v: info.latest }));
   });
 }

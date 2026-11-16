@@ -1,4 +1,5 @@
 // Chọn nhiều điểm + biến đổi hàng loạt (bước 30) và đổi vùng kèm cách xử lý các điểm.
+import { tr } from '../i18n/lang';
 import { anchorPoint, insideBounds } from '../anchor';
 import { apply, IDENTITY, Mat, rectToRect, translate } from '../transform';
 import { Point, Rect, Script, Step } from '../types';
@@ -36,7 +37,7 @@ export function selectToolKey(key: string, mod: boolean, shift: boolean): boolea
   const d = ({ ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] } as Record<string, number[]>)[key];
   if (!d || !getEditor().multi.length) return false;
   const k = shift ? 10 : 1;
-  transformSelected(translate(d[0] * k, d[1] * k), 'di chuyển');
+  transformSelected(translate(d[0] * k, d[1] * k), tr('mu.move'));
   return true;
 }
 
@@ -99,11 +100,11 @@ export function transformSelected(m: Mat, what: string): boolean {
   if (!n) return false;
   const r = transformedSteps(m);
   if (r.outside) {
-    setNotice(`${r.outside} điểm sẽ ra ngoài vùng – không áp dụng ${what}`);
+    setNotice(tr('mu.outsideApply', { n: r.outside, what }));
     return false;
   }
   updateScript({ steps: r.steps });
-  setNotice(`Đã ${what} ${n} điểm – ${navigator.platform.startsWith('Mac') ? '⌘' : 'Ctrl+'}Z để hoàn tác`);
+  setNotice(tr('mu.done', { what, n, undo: `${navigator.platform.startsWith('Mac') ? '⌘' : 'Ctrl+'}Z` }));
   return true;
 }
 
@@ -135,9 +136,9 @@ export function moveSelectedTo(next: Map<string, Point>, what: string) {
       return { x: Math.round(q.x) - start.x, y: Math.round(q.y) - start.y };
     }),
   }));
-  if (outside) return setNotice(`${outside} điểm sẽ ra ngoài vùng – không ${what}`);
+  if (outside) return setNotice(tr('mu.outside', { n: outside, what }));
   updateScript({ steps });
-  setNotice(`Đã ${what} ${next.size} điểm`);
+  setNotice(tr('mu.doneShort', { what, n: next.size }));
 }
 
 // ---- Đổi vùng: cách xử lý các điểm (bước 30) ----
@@ -169,7 +170,7 @@ export function mappingOutside(to: Rect | null, mode: RegionMapMode) {
 export function setRegionMapped(to: Rect | null, mode: RegionMapMode) {
   const { steps } = regionMapping(to, mode);
   updateScript({ region: to, steps });
-  setNotice(to ? `Đã đổi vùng ${to.w} × ${to.h}` : 'Đã về toàn màn hình');
+  setNotice(to ? tr('mu.region', { w: to.w, h: to.h }) : tr('mu.full'));
 }
 
 // Đổi vùng; điểm lưu theo neo nên mỗi điểm bám theo cạnh / góc nó neo. null = toàn màn hình.

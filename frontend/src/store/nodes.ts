@@ -1,5 +1,6 @@
 // Node và cạnh của flow (bước 20): thêm / sửa / xoá / nhân bản node, nối / cắt cạnh, node bắt đầu, vị trí trên canvas.
 // Phép trên đồ thị là hàm thuần ở flow/edit.ts – ở đây chỉ ghép với state, hoàn tác và thông báo.
+import { tr } from '../i18n/lang';
 import { anchorPoint, usesVar } from '../anchor';
 import {
   Clip, connect, copyNodes, disconnect, InsertAt, insertNode as insertInto, nextRef, pasteNodes, pruneEdges, removeEdge as dropEdge, removeNode,
@@ -55,7 +56,7 @@ export function addStep(type: Extract<StepType, 'wait' | 'type' | 'key' | 'scrol
     : type === 'waitPixel' ? { points: [centerPoint(script().region)] }
     : type === 'path' ? { points: [-150, 0, 150].map((x, i) => ({ x, y: i === 1 ? -100 : 0, ax: 'center' as const, ay: 'center' as const })) } // 3 điểm neo giữa – kéo marker để sửa
     : {};
-  insertNode(makeStep({ id: newId(), type, ...STEP_DEFAULTS[type], ...dynamic, ...patch }), (ref) => `Đã thêm ${ref}`);
+  insertNode(makeStep({ id: newId(), type, ...STEP_DEFAULTS[type], ...dynamic, ...patch }), (ref) => tr('nd.added', { ref }));
   clearInsertAt();
 }
 
@@ -97,10 +98,10 @@ export function duplicateStep(id: string) {
   if (!c) return;
   const r = pasteNodes(sc, c, newId, { x: 24, y: 24 });
   updateScript({ steps: r.steps });
-  setEditor({ selected: r.ids[0], notice: `Đã nhân bản ${refOf(id)} thành ${refOf(r.ids[0])} (chưa nối)` });
+  setEditor({ selected: r.ids[0], notice: tr('nd.dup', { a: refOf(id), b: refOf(r.ids[0]) }) });
 }
 
-const undoKey = () => `${navigator.platform.startsWith('Mac') ? '⌘' : 'Ctrl+'}Z để hoàn tác`;
+const undoKey = () => tr('nd.undo', { k: `${navigator.platform.startsWith('Mac') ? '⌘' : 'Ctrl+'}Z` });
 
 // Xoá các node kèm cạnh vào / ra – một lần hoàn tác (⌘Z / Ctrl+Z).
 export function removeSteps(ids: string[]) {
@@ -112,7 +113,7 @@ export function removeSteps(ids: string[]) {
   for (const id of del) g = removeNode(g, id);
   updateScript({ steps: g.nodes, edges: g.edges, start: g.start, groups: dropMembers(sc.groups, del) });
   const { selected, picked } = getEditor();
-  setEditor({ selected: del.includes(selected) ? '' : selected, picked: picked.filter((id) => !del.includes(id)), notice: `Đã xoá ${label} – ${undoKey()}` });
+  setEditor({ selected: del.includes(selected) ? '' : selected, picked: picked.filter((id) => !del.includes(id)), notice: tr('nd.deleted', { label, undo: undoKey() }) });
 }
 export const removeStep = (id: string) => removeSteps([id]);
 
@@ -130,18 +131,18 @@ let pasteCount = 0;
 
 export function copySelected() {
   const c = copyNodes(script(), targetIds());
-  if (!c) return setNotice('Chưa chọn node nào để chép');
+  if (!c) return setNotice(tr('nd.noSel'));
   clip = c;
   pasteCount = 0;
-  setNotice(`Đã chép ${c.steps.length} node`);
+  setNotice(tr('nd.copied', { n: c.steps.length }));
 }
 
 export function pasteClip() {
-  if (!clip) return setNotice('Chưa chép node nào');
+  if (!clip) return setNotice(tr('nd.noClip'));
   pasteCount++;
   const r = pasteNodes(script(), clip, newId, { x: 40 * pasteCount, y: 40 * pasteCount });
   updateScript({ steps: r.steps, edges: r.edges, start: r.start });
-  setEditor({ selected: r.ids[0], picked: r.ids.length > 1 ? r.ids : [], multi: [], notice: `Đã dán ${r.ids.length} node – ${undoKey()}` });
+  setEditor({ selected: r.ids[0], picked: r.ids.length > 1 ? r.ids : [], multi: [], notice: tr('nd.pasted', { n: r.ids.length, undo: undoKey() }) });
 }
 
 // Đổi loại node, bổ sung dữ liệu loại mới cần: điểm (click/double/hold 1, kéo thả 2 – B lệch A 100 px), số click ≥ 1.
@@ -197,7 +198,7 @@ export const removeEdge = (id: string) => updateScript({ edges: dropEdge(script(
 
 export function setStart(id: string) {
   updateScript({ start: id });
-  setNotice(`${refOf(id)} là node bắt đầu`);
+  setNotice(tr('nd.start', { ref: refOf(id) }));
 }
 
 export const moveNode = (id: string, pos: Point) => setSteps(script().steps.map((s) => (s.id === id ? { ...s, pos } : s)));
@@ -208,6 +209,6 @@ export function applyLayout(pos: Positions, silent = false) {
   if (silent) patchScriptSilently(patch);
   else {
     updateScript(patch);
-    setNotice('Đã sắp xếp lại các node');
+    setNotice(tr('nd.arranged'));
   }
 }
