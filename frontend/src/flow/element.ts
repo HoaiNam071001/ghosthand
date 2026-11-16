@@ -71,6 +71,6 @@ export function patternError(pattern?: string): string {
     new RegExp(pattern.replace(/^\(\?[imsU]+\)/, ''));
     return '';
   } catch {
-    return 'Mẫu lọc sai cú pháp (thiếu ngoặc, ký tự đặc biệt chưa có \\ đứng trước…)';
+    return tr('fx.pattern');
   }
 }

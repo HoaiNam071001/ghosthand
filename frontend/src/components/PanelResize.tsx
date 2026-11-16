@@ -1,4 +1,5 @@
 // Kéo mép để đổi bề rộng cột (inspector) – nhớ trên máy (localStorage); bấm đúp mép = về mặc định.
+import { useT } from '../i18n';
 import { PointerEvent, useEffect, useState } from 'react';
 
 export function usePanelWidth(key: string, def: number, min: number, max: number) {
@@ -24,6 +25,7 @@ export function usePanelWidth(key: string, def: number, min: number, max: number
 export function ResizeHandle({ edge, width, onWidth, onReset, label }: {
   edge: 'left' | 'right'; width: number; onWidth: (w: number) => void; onReset: () => void; label: string;
 }) {
+  const t = useT();
   const [drag, setDrag] = useState(false);
   const down = (e: PointerEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -43,7 +45,7 @@ export function ResizeHandle({ edge, width, onWidth, onReset, label }: {
     document.body.style.cursor = 'col-resize';
   };
   return (
-    <div role="separator" aria-orientation="vertical" aria-label={label} title={`${label} – kéo để đổi bề rộng, bấm đúp về mặc định`}
+    <div role="separator" aria-orientation="vertical" aria-label={label} title={t('pr.tip', { l: label })}
       onPointerDown={down} onDoubleClick={onReset}
       className={`absolute top-0 bottom-0 z-20 w-[7px] cursor-col-resize ${edge === 'right' ? '-right-[4px]' : '-left-[4px]'} group`}>
       <span className={`absolute inset-y-0 left-[3px] w-px transition-colors ${drag ? 'bg-accent' : 'group-hover:bg-accent/60'}`} />

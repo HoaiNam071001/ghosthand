@@ -1,5 +1,6 @@
 // Dòng Hẹn giờ trong Cài đặt chạy (bước 22) – nối scheduleStore: hẹn giờ của file đang mở, hộp thoại đặt / sửa / bỏ.
 // Kịch bản chưa lưu thành file thì không hẹn được (hẹn giờ khoá theo đường dẫn file).
+import { useT } from '../i18n';
 import { useState } from 'react';
 import { WindowMinimise } from '../../wailsjs/runtime/runtime';
 import { GetInputMemory } from '../../wailsjs/go/app/App';
@@ -9,6 +10,7 @@ import { removeSchedule, saveSchedule, scheduleOf, useSchedules } from '../sched
 import ScheduleDialog, { Schedule, ScheduleRow } from './ScheduleDialog';
 
 export default function ScheduleSetting() {
+  const t = useT();
   const { path } = useEditor();
   const value = scheduleOf(useSchedules(), path);
   const [open, setOpen] = useState(false);
@@ -38,7 +40,7 @@ export default function ScheduleSetting() {
 
   return (
     <>
-      <ScheduleRow value={value} onEdit={edit} disabledHint={path ? undefined : 'Lưu kịch bản thành file trước rồi mới hẹn giờ'} />
+      <ScheduleRow value={value} onEdit={edit} disabledHint={path ? undefined : t('scx.needFile')} />
       {open && <ScheduleDialog value={value} presets={presets} onSave={save} onRemove={remove} onClose={() => setOpen(false)} error={error} />}
     </>
   );

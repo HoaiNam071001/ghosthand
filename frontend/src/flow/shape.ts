@@ -1,7 +1,7 @@
 // Node Vẽ đường (bước 35 N7) – đỉnh hình (cùng công thức ShapePoints, internal/model/shape.go – test chung
 // testdata/shapes.json), nhãn hình, dòng chi tiết thẻ. Chạy ở internal/engine/draw.go.
 import type { Point, Step } from '../types';
-import { tr } from '../i18n/lang';
+import { getLang, tr } from '../i18n/lang';
 
 // '' = đường gấp khúc qua các điểm (khớp model.Shapes)
 export type Shape = '' | 'circle' | 'rect' | 'star';
@@ -34,8 +34,8 @@ export function pathVertices(s: Pick<Step, 'shape' | 'shapeW' | 'shapeH' | 'clos
 }
 
 export function fmtPath(s: Pick<Step, 'shape' | 'shapeW' | 'shapeH' | 'points' | 'closed' | 'dragMs'>): string {
-  const sec = `${(s.dragMs / 1000).toLocaleString('vi-VN', { maximumFractionDigits: 1 })} s`;
-  if (!s.shape) return `${s.points.length} điểm${s.closed ? ' · khép kín' : ''} · ${sec}`;
+  const sec = `${(s.dragMs / 1000).toLocaleString(getLang() === 'en' ? 'en-US' : 'vi-VN', { maximumFractionDigits: 1 })} s`;
+  if (!s.shape) return tr('fx.path.pts', { n: s.points.length, closed: s.closed ? tr('fx.path.closed') : '', s: sec });
   const name = SHAPES.find((x) => x.id === s.shape)?.label.toLowerCase();
   const size = s.shape === 'rect' || (s.shapeH && s.shapeH !== s.shapeW) ? `${s.shapeW ?? 0} × ${s.shapeH || s.shapeW || 0}` : `${s.shapeW ?? 0}`;
   return `${name} ${size} px · ${sec}`;

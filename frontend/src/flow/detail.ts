@@ -1,4 +1,5 @@
 // Dòng chi tiết thẻ node hành động (vị trí / nội dung / cách tìm) – flow/view.ts ghép thêm thời gian chờ sau node.
+import { tr } from '../i18n/lang';
 import { fmtAxis, fmtPoint, usesVar } from '../anchor';
 import { fmtKey } from '../keys';
 import { fmtOcrRead, fmtShot } from './shot';
@@ -36,14 +37,14 @@ const fmtPair = (p: StepPoint) => (usesVar(p) ? `${p.xVar}, ${p.yVar}` : `${fmtA
 // refOf: id node → mã (n2) để ghi nguồn chỗ thấy của click theo ảnh.
 export const fmtPos = (s: Step, refOf: (id: string) => string = () => '?') =>
   s.type === 'drag'
-    ? `${s.dragFromPrev ? 'Từ điểm trước' : `A ${fmtPair(s.points[0])}`} → ${
+    ? `${s.dragFromPrev ? tr('dtl.fromPrev') : `A ${fmtPair(s.points[0])}`} → ${
       s.dragRelative ? `Δ ${usesVar(s.points[1]) ? fmtPair(s.points[1]) : `${fmtSigned(s.points[1].x)},${fmtSigned(s.points[1].y)}`}` : `B ${fmtPair(s.points[1])}`}`
     : s.type === 'type' ? `"${s.text}"`
     : s.type === 'key' ? fmtKey(s)
-    : s.type === 'webKey' ? `${fmtKey(s)}${s.tab ? ` · tab “${s.tab}”` : ''} · Chrome của app`
-    : s.type === 'scroll' ? `${SCROLL_ARROW[s.direction ?? 'down']} ${numVarOf(s, 'amount') !== undefined ? `${numVarOf(s, 'amount')} nấc` // nấc từ biến: chỉ biết lúc chạy
-      : `${s.amount ?? 0} nấc ≈ ${(s.amount ?? 0) * SCROLL_NOTCH_PX} px`} ${s.points[0] ? `tại ${fmtPoint(s.points[0])}` : 'tại chuột'}`
-    : s.type === 'open' ? `${s.target || '—'}${s.webBrowser ? ' · Chrome của app' : s.app ? ` · ${s.app}` : ''}`
+    : s.type === 'webKey' ? `${fmtKey(s)}${s.tab ? tr('dtl.tab', { t: s.tab }) : ''}${tr('dtl.appChrome')}`
+    : s.type === 'scroll' ? `${SCROLL_ARROW[s.direction ?? 'down']} ${numVarOf(s, 'amount') !== undefined ? tr('dtl.notches', { n: numVarOf(s, 'amount') ?? '' }) // nấc từ biến: chỉ biết lúc chạy
+      : tr('dtl.notchPx', { n: s.amount ?? 0, px: (s.amount ?? 0) * SCROLL_NOTCH_PX })} ${s.points[0] ? tr('dtl.atPt', { p: fmtPoint(s.points[0]) }) : tr('dtl.atMouse')}`
+    : s.type === 'open' ? `${s.target || '—'}${s.webBrowser ? tr('dtl.appChrome') : s.app ? ` · ${s.app}` : ''}`
     : isWebStep(s.type) ? fmtWebStep(s)
     : s.type === 'screenshot' ? fmtShot(s, refOf)
     : s.type === 'waitScreen' ? fmtWaitScreen(s, refOf)
@@ -53,7 +54,7 @@ export const fmtPos = (s: Step, refOf: (id: string) => string = () => '?') =>
     : s.type === 'file' ? fmtFile(s)
     : s.type === 'system' ? fmtSystem(s)
     : s.type === 'shell' ? fmtShell(s)
-    : s.type === 'sysInfo' ? (s.filePath?.trim() ? `ổ ${s.filePath.trim()}` : 'pin · CPU · RAM · ổ · mạng')
+    : s.type === 'sysInfo' ? (s.filePath?.trim() ? tr('dtl.disk', { d: s.filePath.trim() }) : tr('dtl.sys'))
     : s.type === 'power' ? fmtPower(s)
     : s.type === 'display' ? fmtDisplay(s)
     : s.type === 'notify' ? fmtNotify(s)
@@ -80,15 +81,15 @@ export const fmtPos = (s: Step, refOf: (id: string) => string = () => '?') =>
     : s.type === 'waitDownload' ? fmtWaitDownload(s)
     : s.type === 'readTable' ? fmtReadTable(s)
     : s.type === 'waitImage' || s.type === 'findAll' || (s.type === 'clickImage' && s.imageSource === 'search')
-      ? `${s.type === 'clickImage' ? 'tự tìm · ' : s.type === 'findAll' ? `${countRange(s)} chỗ · ` : ''}${s.findBy === 'element' ? fmtElement(s) : s.findBy === 'ai'
-        ? (s.findText?.trim() ? `AI tìm “${s.findText}” · tối đa ${fmtMs(s.timeoutMs ?? 0)}` : 'chưa mô tả phần tử cho AI')
+      ? `${s.type === 'clickImage' ? tr('dtl.auto') : s.type === 'findAll' ? tr('dtl.places', { n: countRange(s) }) : ''}${s.findBy === 'element' ? fmtElement(s) : s.findBy === 'ai'
+        ? (s.findText?.trim() ? tr('dtl.ai', { t: s.findText, m: fmtMs(s.timeoutMs ?? 0) }) : tr('dtl.aiNo'))
         : s.findBy === 'text'
-        ? (s.findText?.trim() ? `chữ “${s.findText}”${(s.occurrence ?? 0) > 1 ? ` (chỗ thứ ${s.occurrence})` : ''} · tối đa ${fmtMs(s.timeoutMs ?? 0)}` : 'chưa nhập chữ cần tìm')
-        : s.template ? `khớp ≥ ${s.threshold}%${matchTags(s)} · tối đa ${fmtMs(s.timeoutMs ?? 0)}` : 'chưa có ảnh mẫu'}`
-    : s.type === 'clickImage' ? `chỗ ${s.imageFrom ? refOf(s.imageFrom) : '(chưa chọn node)'} thấy${s.dx || s.dy ? ` ${fmtSigned(s.dx ?? 0)},${fmtSigned(s.dy ?? 0)}` : ''}`
-    : s.type === 'waitPixel' && s.points[0] ? `${fmtPoint(s.points[0])} = ${s.color} ±${s.tolerance} · tối đa ${fmtMs(s.timeoutMs ?? 0)}`
+        ? (s.findText?.trim() ? tr('dtl.text', { t: s.findText, o: (s.occurrence ?? 0) > 1 ? tr('dtl.occ', { n: s.occurrence ?? 0 }) : '', m: fmtMs(s.timeoutMs ?? 0) }) : tr('dtl.textNo'))
+        : s.template ? tr('dtl.match', { th: s.threshold ?? 0, tags: matchTags(s), m: fmtMs(s.timeoutMs ?? 0) }) : tr('dtl.noTpl')}`
+    : s.type === 'clickImage' ? tr('dtl.from', { r: s.imageFrom ? refOf(s.imageFrom) : tr('fx.noNode'), d: s.dx || s.dy ? ` ${fmtSigned(s.dx ?? 0)},${fmtSigned(s.dy ?? 0)}` : '' })
+    : s.type === 'waitPixel' && s.points[0] ? tr('dtl.pixel', { p: fmtPoint(s.points[0]), c: s.color ?? '', t: s.tolerance ?? 0, m: fmtMs(s.timeoutMs ?? 0) })
     : s.points[0] ? fmtPoint(s.points[0]) : '—';
 
 // matchTags – cách so ảnh mẫu khác mặc định (bước 40): " · so viền", " · màu ±15%".
 export const matchTags = (s: { matchMode?: string; colorTol?: number }) =>
-  `${s.matchMode === 'edge' ? ' · so viền' : ''}${s.colorTol ? ` · màu ±${s.colorTol}%` : ''}`;
+  `${s.matchMode === 'edge' ? tr('dtl.edge') : ''}${s.colorTol ? tr('dtl.colorTol', { n: s.colorTol }) : ''}`;

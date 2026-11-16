@@ -1,9 +1,11 @@
 // Thao tác giống người (bước 34) – nhãn mức, chữ giải thích, node nào áp dụng. Công thức chạy ở internal/humanize (Go).
+import { tr } from '../i18n/lang';
 import { isWebStep } from './web';
 import type { HumanLevel, Step } from '../types';
 
 export const HUMAN_LEVELS: { id: HumanLevel; label: string }[] = [
-  { id: 'off', label: 'Tắt' }, { id: 'low', label: 'Thấp' }, { id: 'medium', label: 'Vừa' }, { id: 'high', label: 'Cao' },
+  { id: 'off', get label() { return tr('fx.hm.off'); } }, { id: 'low', get label() { return tr('fx.hm.low'); } },
+  { id: 'medium', get label() { return tr('fx.hm.medium'); } }, { id: 'high', get label() { return tr('fx.hm.high'); } },
 ];
 
 export const humanLabel = (lv: HumanLevel) => HUMAN_LEVELS.find((l) => l.id === lv)?.label ?? lv;
@@ -15,10 +17,10 @@ export const effectiveHuman = (script?: HumanLevel, node?: HumanLevel): HumanLev
 // Mô tả mỗi mức (khớp profiles trong internal/humanize/profile.go).
 export function humanHint(lv: HumanLevel): string {
   switch (lv) {
-    case 'low': return 'Chuột đi đường hơi cong, nhanh; click giữ 40–80 ms; gõ / cuộn nhịp hơi lệch';
-    case 'medium': return 'Chuột đi đường cong, tăng rồi giảm tốc, đôi khi đi lố rồi chỉnh; click giữ 60–150 ms, bấm lệch quanh tâm; gõ / cuộn nhịp không đều';
-    case 'high': return 'Như Vừa nhưng chậm, cong hơn, hay ngừng; đôi khi gõ nhầm rồi xoá';
-    default: return 'Chuột nhảy thẳng tới đích, click / gõ / cuộn nhanh nhất';
+    case 'low': return tr('fx.hh.low');
+    case 'medium': return tr('fx.hh.medium');
+    case 'high': return tr('fx.hh.high');
+    default: return tr('fx.hh.off');
   }
 }
 

@@ -1,5 +1,7 @@
 // Dữ liệu giữa các node (bước 60): ô nào của node nhận biến, biến đó trỏ node nào, nối / bỏ nối output → ô.
 // Logic thuần – thẻ node (VÀO / RA), dây dữ liệu, tab Dữ liệu ở inspector và cây lần chạy dùng chung.
+import type { MsgKey } from '../i18n/vi';
+import { tr } from '../i18n/lang';
 import type { NumVarField, Step } from '../types';
 import { flowOrder, FlowShape } from './model';
 import { mapVarText } from './varText';
@@ -22,16 +24,17 @@ export function varRefs(text: string): VarRef[] {
 }
 export const varExpr = (ref: string, key: string) => `{{${ref}.output.${key}}}`;
 
-const LABEL: Record<string, string> = {
-  text: 'Chữ', findText: 'Chữ cần tìm', selectors: 'Selector', elementApp: 'App', filePath: 'Đường dẫn', filePattern: 'Mẫu tên file',
-  value: 'Giá trị', target: 'Mở', url: 'URL', tab: 'Tab', message: 'Lời nhắn', left: 'Vế trái', right: 'Vế phải', match: 'Khớp',
-  xVar: 'X', yVar: 'Y', winApp: 'App cửa sổ', winTitle: 'Tiêu đề cửa sổ', body: 'Thân', query: 'Query', headers: 'Header', form: 'Form',
-  pattern: 'Mẫu', replaceFrom: 'Thay chữ', replaceTo: 'Bằng chữ', prompt: 'Câu hỏi', at: 'Lúc', sheet: 'Sheet', cells: 'Ô', appName: 'App',
-  mcpArgs: 'Đối số', notifyTitle: 'Tiêu đề', saveDir: 'Thư mục', fileName: 'Tên file', zipTo: 'Nén vào', procName: 'Tiến trình',
+const LABEL: Record<string, MsgKey | string> = {
+  text: 'dl.text', findText: 'dl.findText', selectors: 'dl.selectors', elementApp: 'dl.app', filePath: 'dl.filePath', filePattern: 'dl.filePattern',
+  value: 'dl.value', target: 'dl.target', url: 'URL', tab: 'dl.tab', message: 'dl.message', left: 'dl.left', right: 'dl.right', match: 'dl.match',
+  xVar: 'X', yVar: 'Y', winApp: 'dl.winApp', winTitle: 'dl.winTitle', body: 'dl.body', query: 'Query', headers: 'Header', form: 'Form',
+  pattern: 'dl.pattern', replaceFrom: 'dl.replaceFrom', replaceTo: 'dl.replaceTo', prompt: 'dl.prompt', at: 'dl.at', sheet: 'Sheet', cells: 'dl.cells', appName: 'dl.app',
+  mcpArgs: 'dl.mcpArgs', notifyTitle: 'dl.notifyTitle', saveDir: 'dl.saveDir', fileName: 'dl.fileName', zipTo: 'dl.zipTo', procName: 'dl.procName',
 };
-const NUM_LABEL: Record<NumVarField, string> = {
-  clicks: 'Số click', clickInterval: 'Nghỉ giữa click', holdMs: 'Giữ', dragMs: 'Thời gian kéo', delayAfter: 'Chờ sau', jitterMs: 'Lệch thời gian',
-  jitterPx: 'Lệch toạ độ', amount: 'Lượng cuộn', timeoutMs: 'Chờ tối đa', threshold: 'Độ giống',
+const labelOf = (k: string) => { const v = LABEL[k]; return v === undefined ? k : v.startsWith('dl.') ? tr(v as MsgKey) : v; };
+const NUM_LABEL: Record<NumVarField, MsgKey> = {
+  clicks: 'dl.n.clicks', clickInterval: 'dl.n.clickInterval', holdMs: 'dl.n.holdMs', dragMs: 'dl.n.dragMs', delayAfter: 'dl.n.delayAfter', jitterMs: 'dl.n.jitterMs',
+  jitterPx: 'dl.n.jitterPx', amount: 'dl.n.amount', timeoutMs: 'dl.n.timeoutMs', threshold: 'dl.n.threshold',
 };
 
 // Tên đường dẫn kiểu Go: points[0].xVar, cond.conds[1].left
@@ -39,11 +42,11 @@ const pathName = (path: (string | number)[]) => path.map((p, i) => (typeof p ===
 
 function slotLabel(path: (string | number)[], s: Step): string {
   const last = path[path.length - 1];
-  if (path[0] === 'numVars' && typeof path[1] === 'number') return NUM_LABEL[s.numVars![path[1]].field] ?? 'Số';
+  if (path[0] === 'numVars' && typeof path[1] === 'number') { const k = NUM_LABEL[s.numVars![path[1]].field]; return k ? tr(k) : tr('dl.num'); }
   const key = typeof last === 'number' ? String(path[path.length - 2]) : last;
-  const base = LABEL[key] ?? key;
+  const base = labelOf(key);
   const idx = path.filter((p): p is number => typeof p === 'number');
-  if (path[0] === 'points' && (s.points.length > 1)) return `${base} điểm ${idx[0] + 1}`;
+  if (path[0] === 'points' && (s.points.length > 1)) return tr('dl.point', { b: base, n: idx[0] + 1 });
   if (path[0] === 'cases') return `Case ${idx[0] + 1}${key === 'match' ? '' : ` · ${base}`}`;
   return typeof last === 'number' && idx.length ? `${base} ${idx[idx.length - 1] + 1}` : base;
 }
@@ -116,11 +119,11 @@ export function unlinkSlot(s: Step, slotName: string, ref: string, key = ''): St
 
 // Chỉ nối từ node chạy trước sang node chạy sau (thứ tự flowOrder) – lý do khi không được.
 export function linkBlock(sc: FlowShape, fromId: string, toId: string): string | null {
-  if (fromId === toId) return 'không nối node vào chính nó';
+  if (fromId === toId) return tr('dl.noSelf');
   const ord = flowOrder(sc);
   const a = ord.indexOf(fromId), b = ord.indexOf(toId);
-  if (a < 0 || b < 0) return 'node chưa nối vào luồng chạy';
-  return b < a ? 'node này chạy trước – lúc đó chưa có dữ liệu để nối' : null;
+  if (a < 0 || b < 0) return tr('dl.noFlow');
+  return b < a ? tr('dl.before') : null;
 }
 
 // Nơi dùng output của node ref: node nào, ô nào, key nào.

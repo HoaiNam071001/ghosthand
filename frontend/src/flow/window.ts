@@ -78,7 +78,7 @@ type WinView = Pick<Step, 'winOp' | 'winApp' | 'winTitle' | 'winPreset' | 'winRe
 // "Zalo · “Tin nhắn”"
 export function windowTarget(s: Pick<Step, 'winApp' | 'winTitle'>): string {
   const t = s.winTitle ? `“${s.winTitle}”` : '';
-  return [s.winApp, t].filter(Boolean).join(' · ') || 'chưa chọn cửa sổ';
+  return [s.winApp, t].filter(Boolean).join(' · ') || tr('fx.win.none');
 }
 
 // Dòng chi tiết thẻ: "Zalo → trái 1280 × 800"
@@ -88,7 +88,7 @@ export function fmtWindow(s: WinView): string {
   if (op !== 'setBounds') return `${who} → ${(WIN_OPS.find((o) => o.id === op)?.label ?? op).toLowerCase()}`;
   const r = s.winRect;
   const size = r && r.w > 0 && r.h > 0 ? ` ${r.w} × ${r.h}` : '';
-  const where = s.winPreset === 'full' ? 'đầy màn' : !s.winPreset ? `${r?.x ?? 0}, ${r?.y ?? 0}${size}`
+  const where = s.winPreset === 'full' ? tr('fx.win.full') : !s.winPreset ? `${r?.x ?? 0}, ${r?.y ?? 0}${size}`
     : `${WIN_PRESETS.find((p) => p.id === s.winPreset)!.label.toLowerCase()}${size}`;
-  return `${who} → ${where}${s.display ? ` · màn ${s.display}` : ''}`;
+  return `${who} → ${where}${s.display ? tr('fx.win.onScreen', { n: s.display }) : ''}`;
 }

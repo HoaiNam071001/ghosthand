@@ -1,3 +1,4 @@
+import { tr } from '../i18n/lang';
 // Node Gọi tool MCP (bước 55 M4): dựng form từ inputSchema (JSON Schema) của tool. Phần không dựng được → ô JSON của chính trường đó.
 // Đối số lưu một chỗ: chuỗi JSON object ở Step.mcpArgs; hàm ở đây chỉ đọc / ghi từng trường.
 
@@ -68,7 +69,7 @@ export function parseNumberInput(text: string, integer: boolean): number | strin
   return Number.isFinite(n) && (!integer || Number.isInteger(n)) ? n : t;
 }
 
-export const numberError = (v: unknown) => (typeof v === 'string' ? 'Phải là số – biến số đặt trong ô JSON: {"n":{{n1.output.value}}}' : '');
+export const numberError = (v: unknown) => (typeof v === 'string' ? tr('ms.num') : '');
 
 // stringList ↔ nhiều dòng
 export const listToText = (v: unknown): string => (Array.isArray(v) ? v.map(String).join('\n') : '');

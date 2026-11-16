@@ -1,5 +1,6 @@
 // Khung nhóm node (bước 39 G1): hàm thuần trên Script.groups + hình học khung. Nhóm chỉ là lớp vẽ – node vẫn phẳng
 // trong steps, engine / biến không biết tới (Go: internal/script/groups.go kiểm tra thành viên).
+import { tr } from '../i18n/lang';
 import { nodeHeight, NODE_W } from '../components/flow/model';
 import type { FlowGroupView } from '../components/flow/model';
 import type { Group } from '../types';
@@ -33,8 +34,8 @@ export const patchGroup = (groups: Group[] | undefined, id: string, patch: Parti
 export function nextGroupName(groups: Group[] | undefined): string {
   const used = new Set((groups ?? []).map((g) => g.name));
   let n = 1;
-  while (used.has(`Nhóm ${n}`)) n++;
-  return `Nhóm ${n}`;
+  while (used.has(tr('fx.grp.name', { n }))) n++;
+  return tr('fx.grp.name', { n });
 }
 
 export type GroupNode = { id: string; ports: string[] };

@@ -1,4 +1,5 @@
 // Thanh mini khi đang chạy (design v2, artboard MiniBar) – cửa sổ nhỏ always-on-top, 540×96 (window.go)
+import { tr, useT } from '../i18n';
 import { useEffect, useReducer, useState } from 'react';
 import { PauseScript, ResumeScript, StepScript, StopScript } from '../../wailsjs/go/app/App';
 import { Quit } from '../../wailsjs/runtime/runtime';
@@ -41,6 +42,7 @@ function RecordBar({ since }: { since: number }) {
 }
 
 function RunBar() {
+  const t = useT();
   const engine = useEngine();
   const { steps } = useScript();
   const p = engine.progress ?? (inWails ? null : sample);
@@ -74,16 +76,16 @@ function RunBar() {
 
   return (
     <MiniBarView progress={progress} paused={paused} countdown={engine.countdown} icon={cur?.type ?? 'click'}
-      title={!running ? (engine.lastError ? `Lỗi – ${engine.lastError}` : engine.source === 'user' ? 'Chưa chạy' : 'Đã chạy xong')
-        : counting ? `Bắt đầu sau ${engine.countdown} giây…`
-        : !p ? 'Đang bắt đầu…'
+      title={!running ? (engine.lastError ? t('mb.err', { e: engine.lastError }) : engine.source === 'user' ? t('mb.notRun') : t('mb.finished'))
+        : counting ? t('mb.startIn', { n: engine.countdown })
+        : !p ? t('mb.starting')
         : runTitle(p, waitNow, Date.now())}
       lines={[
         ...(p?.nodeId ? [progressNode(p, engine.foreign ? progressSteps(p) : steps)] : []),
         ...(p?.counter || p?.retry || (w && (w.kind === 'image' || w.kind === 'pixel'))
-          ? [[p.counter && counterText(p.counter), p.retry && `thử lại ${p.retry} / ${p.retries}`, w && (w.kind === 'image' || w.kind === 'pixel') && `khớp nhất ${w.best}%`].filter(Boolean).join('   ')] : []),
-        `vòng ${p?.loop ?? 0} / ${p && p.loops > 0 ? p.loops : '∞'}   ${p?.clicks ?? 0} click   ${fmtElapsed(elapsed)}`,
-        ...(engine.preset ? [`bộ giá trị: ${engine.preset}`] : [])]}
+          ? [[p.counter && counterText(p.counter), p.retry && t('mb.retry', { a: p.retry, b: p.retries ?? 0 }), w && (w.kind === 'image' || w.kind === 'pixel') && t('mb.best', { n: w.best ?? 0 })].filter(Boolean).join('   ')] : []),
+        t('mb.loop', { a: p?.loop ?? 0, b: p && p.loops > 0 ? p.loops : '∞', c: p?.clicks ?? 0, t: fmtElapsed(elapsed) }),
+        ...(engine.preset ? [t('mb.preset', { p: engine.preset })] : [])]}
       canPause={running && !counting} onPause={() => (paused ? ResumeScript() : PauseScript())} onStop={stop}
       onStep={paused && p?.break ? () => StepScript() : undefined} onClose={inWails ? Quit : undefined} ai={ai} capturing={capturing} idle={!running} />
   );
@@ -100,6 +102,7 @@ export function MiniBarView({ title, lines, icon, progress, paused, countdown, c
   canPause: boolean; onPause: () => void; onStop: () => void; onStep?: () => void; onClose?: () => void;
   ai?: { level: AiLevel; onLevel: (l: AiLevel) => void }; aiOpen?: boolean; capturing?: boolean; idle?: boolean;
 }) {
+  const t = useT();
   const counting = countdown > 0;
   const [open, setOpen] = useState(aiOpen);
   return (
@@ -124,31 +127,31 @@ export function MiniBarView({ title, lines, icon, progress, paused, countdown, c
       <div className="flex min-w-0 flex-1 flex-col gap-[3px]">
         <div className="flex min-w-0 items-center gap-2">
           <span className="truncate font-semibold">{title}</span>
-          {capturing && <span className="h-2 w-2 flex-none animate-pulse rounded-full bg-danger" role="status" aria-label="AI vừa chụp màn hình" title="AI vừa chụp / đọc màn hình" />}
+          {capturing && <span className="h-2 w-2 flex-none animate-pulse rounded-full bg-danger" role="status" aria-label={t('mb.aiShotL')} title={t('mb.aiShot')} />}
           {ai && <AiChip level={ai.level} open={open} onToggle={() => setOpen(!open)} />}
         </div>
         {ai && open ? <AiLevelRow level={ai.level} onLevel={(l) => { ai.onLevel(l); setOpen(false); }} />
           : lines.map((l) => <span key={l} className="whitespace-pre font-mono text-xs text-muted">{l}</span>)}
       </div>
       {onStep && (
-        <button aria-label="Chạy node kế rồi dừng" title="Chạy node kế rồi dừng (F10)" onClick={onStep}
+        <button aria-label={t('mb.stepL')} title={t('mb.stepTip')} onClick={onStep}
           className="grid h-11 w-11 place-items-center rounded-[9px] border border-line bg-surface hover:bg-hover"><StepOver /></button>
       )}
-      <button aria-label={paused ? 'Tiếp tục' : 'Tạm dừng'} title={onStep ? 'Chạy tiếp tới điểm dừng sau' : undefined} disabled={!canPause} onClick={onPause}
+      <button aria-label={paused ? t('mb.resume') : t('mb.pause')} title={onStep ? t('mb.toBp') : undefined} disabled={!canPause} onClick={onPause}
         className="grid h-11 w-11 place-items-center rounded-[9px] border border-line bg-surface hover:bg-hover disabled:opacity-40">
         {paused ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}
       </button>
       {idle ? (
         <>
-          <button onClick={onStop} className="flex h-11 items-center rounded-[9px] border border-line bg-surface px-3.5 font-semibold hover:bg-hover">Mở app</button>
-          <button aria-label="Đóng" title="Đóng Ghosthand" onClick={onClose}
+          <button onClick={onStop} className="flex h-11 items-center rounded-[9px] border border-line bg-surface px-3.5 font-semibold hover:bg-hover">{t('mb.openApp')}</button>
+          <button aria-label={t('mb.close')} title={t('mb.closeTip')} onClick={onClose}
             className="grid h-11 w-11 flex-none place-items-center rounded-[9px] text-muted hover:bg-hover hover:text-ink">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden><path d="M2 2l10 10M12 2L2 12" /></svg>
           </button>
         </>
       ) : (
         <button onClick={onStop} className="btn-danger-soft flex h-11 items-center gap-2 rounded-[9px] px-3.5 font-semibold">
-          <Stop className="h-2.5 w-2.5" />Dừng <span className="font-mono text-[11px] font-normal opacity-75">F8</span>
+          <Stop className="h-2.5 w-2.5" />{t('mb.stop')} <span className="font-mono text-[11px] font-normal opacity-75">F8</span>
         </button>
       )}
     </div>

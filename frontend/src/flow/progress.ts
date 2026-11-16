@@ -1,5 +1,6 @@
 // Chữ thanh mini theo tiến độ engine (Progress – internal/engine/engine.go): node đang chạy, node trước + cổng đã đi,
 // lượt node Đếm. Hàm thuần – MiniBar gọi, test ở progress.test.ts.
+import { tr } from '../i18n/lang';
 import type { Progress } from '../engineStore';
 import { makeStep, stepLabel, type Step, type StepType } from '../types';
 import { PORT_SUCCESS } from './model';
@@ -27,4 +28,4 @@ export const isForeignRun = (source: string, runPath: string | undefined, editor
 export const progressSteps = (p: Pick<Progress, 'nodeId' | 'ref' | 'type' | 'name'>): Step[] =>
   p.nodeId && p.type ? [makeStep({ id: p.nodeId, ref: p.ref, type: p.type as StepType, name: p.name })] : [];
 
-export const counterText = (c: NonNullable<Progress['counter']>) => `lượt ${c.ref} ${c.count} / ${c.max}`;
+export const counterText = (c: NonNullable<Progress['counter']>) => tr('fx.counter', { ref: c.ref, c: c.count, m: c.max });

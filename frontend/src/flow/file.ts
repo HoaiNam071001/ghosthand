@@ -17,18 +17,18 @@ export const folderOf = (p: string) => (/[^\\/]\.[A-Za-z0-9]{1,5}$/.test(p.trim(
 const base = (p?: string) => (p ?? '').trim().replace(/[\\/]+$/, '').split(/[\\/]/).pop() || '';
 
 export function fmtFile(s: Pick<Step, 'fileOp' | 'filePath' | 'fileAppend' | 'cells' | 'filePattern'>): string {
-  const name = base(s.filePath) || '(chưa chọn)';
+  const name = base(s.filePath) || tr('fx.os.none');
   switch (s.fileOp) {
-    case 'row': return `thêm dòng ${(s.cells ?? []).length} ô → ${name}`;
-    case 'mkdir': return `tạo thư mục ${name}`;
-    case 'trash': return `xoá ${s.filePattern?.trim() || '(chưa có mẫu)'} trong ${name} → Thùng rác`;
-    case 'emptyTrash': return 'dọn Thùng rác (xoá hẳn)';
+    case 'row': return tr('fx.file.row', { n: (s.cells ?? []).length, f: name });
+    case 'mkdir': return tr('fx.file.mkdir', { f: name });
+    case 'trash': return tr('fx.file.trash', { p: s.filePattern?.trim() || tr('fx.file.noPat'), f: name });
+    case 'emptyTrash': return tr('fx.file.empty');
   }
-  return `${s.fileAppend ? 'thêm vào cuối' : 'ghi'} ${name}`;
+  return tr(s.fileAppend ? 'fx.file.append' : 'fx.file.write', { f: name });
 }
 
 // Dòng chi tiết node Chờ tải xong: *.pdf trong Downloads · tối đa 60 s
 export function fmtWaitDownload(s: Pick<Step, 'filePath' | 'filePattern' | 'timeoutMs'>): string {
   const dir = base(s.filePath) || 'Downloads';
-  return `${s.filePattern?.trim() || 'file mới bất kỳ'} trong ${dir} · tối đa ${fmtMs(s.timeoutMs ?? 0)}`;
+  return tr('fx.file.wait', { p: s.filePattern?.trim() || tr('fx.file.any'), d: dir, t: fmtMs(s.timeoutMs ?? 0) });
 }

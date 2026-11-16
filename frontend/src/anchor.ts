@@ -1,6 +1,7 @@
 // Neo điểm theo cạnh vùng (bước 29) – phải khớp internal/script/anchor.go.
 // Mỗi trục neo riêng: start = cách cạnh trái / trên, end = cách cạnh phải / dưới (lưu số dương, hiện dấu −),
 // center = lệch so với giữa (có dấu), ratio = theo tỷ lệ cạnh, đơn vị 1/10000 (5000 = 50%).
+import { tr } from './i18n/lang';
 import type { Anchor, Point, Rect, StepPoint } from './types';
 
 export const RATIO_SCALE = 10000;
@@ -51,7 +52,7 @@ const pct = (v: number) => `${Number((v / 100).toFixed(2))}%`;
 export function fmtAxis(v: number, a: Anchor | undefined) {
   switch (axisOf(a)) {
     case 'end': return `−${v}`;
-    case 'center': return `giữa${v >= 0 ? '+' : '−'}${Math.abs(v)}`;
+    case 'center': return `${tr('an.mid')}${v >= 0 ? '+' : '−'}${Math.abs(v)}`;
     case 'ratio': return pct(v);
     default: return `+${v}`;
   }
@@ -64,23 +65,25 @@ export const fmtPoint = (p: StepPoint) =>
   usesVar(p) ? `X ${p.xVar || '?'}  Y ${p.yVar || '?'}` : `X ${fmtAxis(p.x, p.ax)}  Y ${fmtAxis(p.y, p.ay)}`;
 
 // Tên neo ngắn cho đầu khối Vị trí (design v3): "neo trên-trái", "neo dưới-phải", "neo giữa", "theo %".
-const SIDE: Record<'x' | 'y', Record<Exclude<Anchor, 'ratio'>, string>> = {
-  x: { start: 'trái', center: 'giữa', end: 'phải' },
-  y: { start: 'trên', center: 'giữa', end: 'dưới' },
-};
+const SIDE = (): Record<'x' | 'y', Record<Exclude<Anchor, 'ratio'>, string>> => ({
+  x: { start: tr('an.left'), center: tr('an.mid'), end: tr('an.right') },
+  y: { start: tr('an.top'), center: tr('an.mid'), end: tr('an.bottom') },
+});
 export function anchorName({ ax, ay }: Pick<StepPoint, 'ax' | 'ay'>): string {
   const x = axisOf(ax), y = axisOf(ay);
-  if (x === 'ratio' || y === 'ratio') return 'theo %';
-  if (x === 'center' && y === 'center') return 'neo tâm';
-  return `neo ${SIDE.y[y]}-${SIDE.x[x]}`;
+  if (x === 'ratio' || y === 'ratio') return tr('an.pct');
+  if (x === 'center' && y === 'center') return tr('an.center');
+  return tr('an.name', { y: SIDE().y[y], x: SIDE().x[x] });
 }
 
 // Tóm tắt khoảng cách một dòng (hàng sơ đồ thu gọn): "cách trái 812, trên 436", "giữa ngang +20, cách dưới 10", "50% · 25%".
-export function anchorSummary({ x, y, ax, ay }: StepPoint): string {
-  const part = (n: number, a: Anchor, k: 'x' | 'y') =>
-    a === 'ratio' ? pct(n) : a === 'center' ? `giữa ${k === 'x' ? 'ngang' : 'dọc'} ${n >= 0 ? '+' : '−'}${Math.abs(n)}` : `cách ${SIDE[k][a]} ${n}`;
-  const px = part(x, axisOf(ax), 'x'), py = part(y, axisOf(ay), 'y');
-  return axisOf(ax) === 'ratio' ? `${px} · ${py}` : `${px}, ${py.replace(/^cách /, axisOf(ay) === axisOf(ax) ? '' : 'cách ')}`;
+export function anchorSummary({ x, y, ax, ay }: StepPoint) {
+  const side = SIDE();
+  const part = (n: number, a: Anchor, k: 'x' | 'y', short = false) =>
+    a === 'ratio' ? pct(n) : a === 'center' ? `${k === 'x' ? tr('an.midH') : tr('an.midV')} ${n >= 0 ? '+' : '−'}${Math.abs(n)}`
+      : short ? `${side[k][a]} ${n}` : tr('an.far', { s: side[k][a], n });
+  const px = part(x, axisOf(ax), 'x');
+  return axisOf(ax) === 'ratio' ? `${px} · ${part(y, axisOf(ay), 'y')}` : `${px}, ${part(y, axisOf(ay), 'y', axisOf(ay) === axisOf(ax))}`;
 }
 
 // Khung tính toạ độ điểm của node: coordSpace "absolute" = gốc (0,0) của màn hình, còn lại là khung b (vùng hoặc màn hình).

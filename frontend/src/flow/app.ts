@@ -44,5 +44,5 @@ export function appChoices(apps: AppInfo[]): AppInfo[] {
 export function fmtApp(s: Pick<Step, 'appOp' | 'appName' | 'appForce'>): string {
   const op = s.appOp ?? '';
   const label = (APP_OPS.find((o) => o.id === op)?.label ?? op).toLowerCase();
-  return `${s.appName?.trim() || 'chưa nhập app'} → ${label}${op === 'quit' && s.appForce ? ', quá giờ thì buộc thoát' : ''}`;
+  return `${s.appName?.trim() || tr('fx.app.none')} → ${label}${op === 'quit' && s.appForce ? tr('fx.app.force') : ''}`;
 }

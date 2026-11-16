@@ -1,5 +1,6 @@
 // Kết quả lần chạy (StepResult[] – event engine:node hoặc lịch sử chạy) → dữ liệu hiển thị: trạng thái từng thẻ,
 // cạnh đã đi, dòng bảng Nhật ký (bước 20 F5). Hàm thuần, test ở run.test.ts.
+import { getLang, tr } from '../i18n/lang';
 import type { LogLine, RunRow, RunState } from '../components/flow/model';
 import type { Edge, Step, StepResult } from '../types';
 
@@ -58,7 +59,7 @@ export function runRows(results: StepResult[], steps: Pick<Step, 'id' | 'ref'>[]
       loop: r.loop,
       status: r.status,
       port: r.port || undefined,
-      next: to ? refs.get(to) ?? '?' : r.status === 'cancelled' ? undefined : r.status === 'fail' ? 'dừng' : r.port ? 'hết' : undefined,
+      next: to ? refs.get(to) ?? '?' : r.status === 'cancelled' ? undefined : r.status === 'fail' ? tr('rn.stop') : r.port ? tr('rn.end') : undefined,
       ms: r.durationMs,
       attempts: r.attempts,
       output: r.output && Object.keys(r.output).length ? r.output : undefined,
@@ -84,11 +85,11 @@ export function runHead(
   const at = sum?.startedAt ?? results[0]?.startedAt;
   const d = at ? new Date(at) : null;
   const when = d && !isNaN(d.getTime()) ? clockOf(at!) : '';
-  const title = live ? `lần chạy ${when}` : `lịch sử · ${when} ${d ? `${two(d.getDate())}/${two(d.getMonth() + 1)}` : ''}`;
+  const title = live ? tr('rn.liveTitle', { w: when }) : tr('rn.histTitle', { w: when, d: d ? `${two(d.getDate())}/${two(d.getMonth() + 1)}` : '' });
   const n = sum?.nodes ?? results.length;
-  if (!sum) return { title, summary: running ? `Đang chạy · ${n} node` : `${n} node`, tone: running ? 'running' : 'muted' };
-  const took = `${n} node · ${(sum.durationMs / 1000).toFixed(1).replace('.', ',')} s`;
-  if (sum.status === 'fail') return { title, summary: `Thất bại · ${sum.error ?? ''}`, tone: 'fail' };
-  if (sum.status === 'stopped') return { title, summary: `Đã dừng · ${took}`, tone: 'muted' };
-  return { title, summary: `Thành công${sum.message ? ` · ${sum.message}` : ''} · ${took}`, tone: 'ok' };
+  if (!sum) return { title, summary: running ? tr('rn.running', { n }) : tr('rn.nodes', { n }), tone: running ? 'running' : 'muted' };
+  const took = tr('rn.took', { n, s: (sum.durationMs / 1000).toFixed(1).replace('.', getLang() === 'en' ? '.' : ',') });
+  if (sum.status === 'fail') return { title, summary: tr('rn.failed', { e: sum.error ?? '' }), tone: 'fail' };
+  if (sum.status === 'stopped') return { title, summary: tr('rn.stopped', { t: took }), tone: 'muted' };
+  return { title, summary: tr('rn.ok', { m: sum.message ? ` · ${sum.message}` : '', t: took }), tone: 'ok' };
 }

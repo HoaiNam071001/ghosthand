@@ -1,4 +1,5 @@
 // Hình học vẽ trên overlay (toạ độ cửa sổ): marker, đường neo, mũi tên cuộn, nét node Vẽ đường, chỗ đặt nút khoanh ảnh.
+import { tr } from '../i18n/lang';
 import { fmtAxis } from '../anchor';
 import { Point, Rect, Step, StepPoint } from '../types';
 import { SCROLL_ARROW, scrollDelta } from '../scroll';
@@ -90,7 +91,7 @@ export function scrollArrowsOf(steps: Step[], ends: Ends, toClient: ToClient, wi
     const tip = { x: clamp(raw.x, win.w), y: clamp(raw.y, win.h) };
     return [{
       id: s.id, a: toClient(at), tip, cut: tip.x !== raw.x || tip.y !== raw.y,
-      text: `${s.ref}: cuộn ${SCROLL_ARROW[s.direction ?? 'down']} ${s.amount} nấc ≈ ${Math.abs(d.x || d.y)} px`,
+      text: tr('gm.scroll', { r: s.ref, a: SCROLL_ARROW[s.direction ?? 'down'], n: s.amount ?? 0, px: Math.abs(d.x || d.y) }),
     }];
   });
 }

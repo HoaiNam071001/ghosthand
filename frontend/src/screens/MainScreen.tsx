@@ -1,5 +1,6 @@
 // Màn soạn kịch bản (bước 63, layout ribbon kiểu Word): thanh tiêu đề (truy cập nhanh + tên kịch bản) → ribbon theo tab → canvas flow
 // với inspector nổi / ghim → status bar (thanh zoom). Thư viện, mẫu thử, lịch sử, cài đặt nằm ở trang Tệp (components/backstage).
+import { useT } from '../i18n';
 import { useEffect, useState } from 'react';
 import { StatusBar } from '../components/AppChrome';
 import { MousePos } from '../../wailsjs/go/app/App';
@@ -39,6 +40,7 @@ const modKey = isMac ? '⌘' : 'Ctrl+';
 const clock = (ms: number) => new Date(ms).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
 export default function MainScreen() {
+  const t = useT();
   useSyncPulled();
   const { script, selected, notice, dirty, path, countdown: editorCountdown, past, future } = useEditor();
   const { draftAt, error: fileError } = useFile();
@@ -83,8 +85,8 @@ export default function MainScreen() {
   return (
     // h-screen + từng vùng tự cuộn: thanh tiêu đề và status bar luôn nằm trong cửa sổ.
     <div className="flex h-screen flex-col overflow-hidden bg-bg text-ink">
-      <TitleBar name={script.name} nameTitle={path ?? 'Chưa lưu thành file'} unsaved={dirty} modKey={modKey}
-        unsavedTitle={`Có thay đổi chưa lưu xuống file (${modKey}S) – bản nháp vẫn tự lưu trên máy`}
+      <TitleBar name={script.name} nameTitle={path ?? t('mn.unsavedFile')} unsaved={dirty} modKey={modKey}
+        unsavedTitle={t('mn.unsavedTip', { k: modKey })}
         canUndo={past.length > 0} canRedo={future.length > 0} onSave={() => save()} onUndo={undo} onRedo={redo} onSettings={openSettingsDialog} />
 
       <div className="relative flex min-h-0 flex-1 flex-col">
@@ -101,15 +103,15 @@ export default function MainScreen() {
 
       <StatusBar running={running} mouse={mouse ? `X ${mouse.x} Y ${mouse.y}` : 'X — Y —'}
         end={<ZoomBar zoom={zoom} onZoom={requestZoom} onIn={() => sendCanvas('zoomIn')} onOut={() => sendCanvas('zoomOut')} onFit={() => sendCanvas('fit')} onReset={() => sendCanvas('zoom100')} />}>
-        <span>{steps.length} node</span>
+        <span>{t('mn.nodeCount', { n: steps.length })}</span>
         {hotkeyError && <span className="text-danger-text">{hotkeyError}</span>}
-        {lastError && <span className="text-danger-text">Lỗi lần chạy trước: {lastError}</span>}
-        {endMessage && <span className="text-ok" title="Lời nhắn của node Kết thúc">Xong: {endMessage}</span>}
+        {lastError && <span className="text-danger-text">{t('mn.lastErr', { e: lastError })}</span>}
+        {endMessage && <span className="text-ok" title={t('mn.endTip')}>{t('mn.done', { m: endMessage })}</span>}
         {stopReason && <span>{STOP_REASON[stopReason] ?? stopReason}</span>}
         {fileError && <span className="text-danger-text">{fileError}</span>}
         {notice && <span className="text-accent-text">{notice}</span>}
         <SyncChipHost />
-        {draftAt && dirty && <span title="Bản nháp lưu trên máy – mở lại app vẫn còn">Bản nháp tự lưu lúc <span className="font-mono">{clock(draftAt)}</span></span>}
+        {draftAt && dirty && <span title={t('mn.draftTip')}>{t('mn.draftAt')} <span className="font-mono">{clock(draftAt)}</span></span>}
       </StatusBar>
       <SaveChangesDialog />
       <DangerConfirmDialog />

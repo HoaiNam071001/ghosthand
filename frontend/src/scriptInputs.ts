@@ -1,6 +1,7 @@
 // Input của kịch bản (bước 21b) – thao tác trên store: ghim trường, tạo / sửa / xoá input, tính bước nào dùng input.
 // Giá trị thật áp lúc chạy ở Go (script.ResolveInputs, internal/script/inputs.go). Trường đã ghim luôn giữ bằng giá trị mặc định của input,
 // nên Xem trước / overlay không cần resolve vẫn đúng với lần chạy dùng mặc định.
+import { tr } from './i18n/lang';
 import { mapVarText } from './flow/varText';
 import { flowOrder } from './flow/model';
 import { getEditor, updateScript } from './store';
@@ -9,17 +10,17 @@ import { InputView, isValidKey, splitVars, varsIn } from './components/inputs/mo
 import type { RunSection } from './components/inputs/RunDialog';
 
 const PIN: Record<PinField, { key: string; label: string; type: InputType; min?: number }> = {
-  clicks: { key: 'clicks', label: 'Số click', type: 'number', min: 1 },
-  clickInterval: { key: 'click_interval', label: 'Giữa các click', type: 'ms' },
-  holdMs: { key: 'hold_ms', label: 'Giữ chuột trong', type: 'ms' },
-  dragMs: { key: 'drag_ms', label: 'Thời gian kéo', type: 'ms' },
-  delayAfter: { key: 'delay', label: 'Chờ sau bước', type: 'ms' },
-  jitterMs: { key: 'jitter_ms', label: 'Ngẫu nhiên thời gian', type: 'ms' },
-  jitterPx: { key: 'jitter_px', label: 'Ngẫu nhiên vị trí', type: 'number' },
-  amount: { key: 'scroll', label: 'Số nấc cuộn', type: 'number', min: 1 },
-  timeoutMs: { key: 'timeout', label: 'Chờ tối đa', type: 'ms', min: 1 },
-  threshold: { key: 'threshold', label: 'Độ khớp tối thiểu (%)', type: 'number', min: 1 },
-  enabled: { key: 'enabled', label: 'Bật bước', type: 'bool' },
+  clicks: { key: 'clicks', get label() { return tr('sx.clicks'); }, type: 'number', min: 1 },
+  clickInterval: { key: 'click_interval', get label() { return tr('sx.clickInterval'); }, type: 'ms' },
+  holdMs: { key: 'hold_ms', get label() { return tr('sx.holdMs'); }, type: 'ms' },
+  dragMs: { key: 'drag_ms', get label() { return tr('sx.dragMs'); }, type: 'ms' },
+  delayAfter: { key: 'delay', get label() { return tr('sx.delayAfter'); }, type: 'ms' },
+  jitterMs: { key: 'jitter_ms', get label() { return tr('sx.jitterMs'); }, type: 'ms' },
+  jitterPx: { key: 'jitter_px', get label() { return tr('sx.jitterPx'); }, type: 'number' },
+  amount: { key: 'scroll', get label() { return tr('sx.amount'); }, type: 'number', min: 1 },
+  timeoutMs: { key: 'timeout', get label() { return tr('sx.timeoutMs'); }, type: 'ms', min: 1 },
+  threshold: { key: 'threshold', get label() { return tr('sx.threshold'); }, type: 'number', min: 1 },
+  enabled: { key: 'enabled', get label() { return tr('sx.enabled'); }, type: 'bool' },
 };
 
 // Kiểu input ghim được vào trường (khớp inputKind trong internal/script/inputs.go).
@@ -114,7 +115,7 @@ export function pinField(id: string, field: PinField): string | undefined {
   const p = PIN[field];
   const n = sc.steps.indexOf(s) + 1;
   const key = uniqueKey(`${p.key}_${n}`, inputsOf(sc));
-  const label = `${field === 'delayAfter' && s.type === 'wait' ? 'Thời gian chờ' : p.label} (B${n})`;
+  const label = `${field === 'delayAfter' && s.type === 'wait' ? tr('sx.wait') : p.label} (B${n})`;
   setInputs([...inputsOf(sc), { key, label, type: p.type, default: s[field] as InputValue, min: p.min, targets: [{ stepId: id, field }] }]);
   return key;
 }
@@ -170,8 +171,8 @@ export function updateInput(key: string, patch: Partial<ScriptInput>): string | 
   const cur = inputsOf(sc).find((i) => i.key === key);
   if (!cur) return null;
   if (patch.key !== undefined && patch.key !== key) {
-    if (!isValidKey(patch.key)) return 'Key chỉ gồm chữ không dấu, số, _ và không bắt đầu bằng số';
-    if (inputsOf(sc).some((i) => i.key === patch.key)) return `Đã có input ${patch.key}`;
+    if (!isValidKey(patch.key)) return tr('sx.badKey');
+    if (inputsOf(sc).some((i) => i.key === patch.key)) return tr('sx.dupKey', { k: patch.key });
   }
   let next: ScriptInput = { ...cur, ...patch };
   if (patch.type && kindOf(patch.type) !== kindOf(cur.type)) {
@@ -208,7 +209,7 @@ export function runSections(sc: Script): RunSection[] {
     if (!g) {
       g = {
         steps: steps.length ? steps.map((s) => stepNo(sc, s.id)).join(', ') : '—',
-        title: steps.length ? [...new Set(steps.map((s) => stepLabel(s)))].join(', ') : 'Chưa bước nào dùng',
+        title: steps.length ? [...new Set(steps.map((s) => stepLabel(s)))].join(', ') : tr('sx.noStep'),
         keys: [],
         template: steps.find((s) => s.type === 'type')?.text,
         order: steps.length ? flowOrder(sc).indexOf(steps[0].id) : Infinity,

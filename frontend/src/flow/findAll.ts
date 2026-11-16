@@ -1,4 +1,5 @@
 // Node Tìm tất cả (bước 42 G3, engine/findall.go): chữ hiển thị số chỗ cần thấy và kết quả Thử tìm.
+import { tr } from '../i18n/lang';
 import type { Step } from '../types';
 
 type Counts = Pick<Step, 'minCount' | 'maxCount'>;
@@ -15,6 +16,6 @@ export const countOK = (s: Counts, n: number) => n >= Math.max(s.minCount ?? 0, 
 export function findAllSummary(f: { count?: number; ms?: number; fromRun?: boolean }, s: Counts): string {
   const n = f.count ?? 0;
   const ms = f.ms ? ` · ${f.ms} ms` : '';
-  if (f.fromRun) return `Lần chạy trước hết giờ – thấy ${n} chỗ, cần ${countRange(s)}`;
-  return countOK(s, n) ? `Thấy ${n} chỗ${ms}` : `Thấy ${n} chỗ – cần ${countRange(s)}${ms}`;
+  if (f.fromRun) return tr('fx.fa.prev', { n, r: countRange(s) });
+  return countOK(s, n) ? tr('fx.fa.ok', { n, ms }) : tr('fx.fa.bad', { n, r: countRange(s), ms });
 }

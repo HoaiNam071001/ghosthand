@@ -1,5 +1,6 @@
 // Nút ⋯ trong ô nhập của inspector (design v3 FieldKit): rê vào ô mới hiện, bấm mở menu tuỳ chọn của ô
 // (dùng biến, đặt làm input, về mặc định, giải thích). Chỉ hiển thị – mục do nơi dùng truyền vào.
+import { useT } from '../i18n';
 import { CSSProperties, useState } from 'react';
 import { usePopover } from './usePopover';
 
@@ -17,6 +18,7 @@ const Dots = () => (
 
 // help: chữ "Ô này dùng để làm gì" ở cuối menu. Menu đặt fixed theo nút – inspector cuộn (overflow) sẽ cắt nếu absolute.
 export function FieldMenu({ items, help }: { items: FieldMenuItem[]; help?: string }) {
+  const t = useT();
   const { open, setOpen, ref } = usePopover();
   const [pos, setPos] = useState<CSSProperties>({});
   if (!items.length && !help) return null;
@@ -28,7 +30,7 @@ export function FieldMenu({ items, help }: { items: FieldMenuItem[]; help?: stri
   };
   return (
     <div ref={ref} className="flex-none">
-      <button type="button" onClick={toggle} aria-label="Tuỳ chọn ô" aria-expanded={open} aria-haspopup="menu"
+      <button type="button" onClick={toggle} aria-label={t('fm.opts')} aria-expanded={open} aria-haspopup="menu"
         className={`grid h-[26px] w-[26px] place-items-center rounded-[5px] ${open ? 'bg-accent-soft text-accent-text' : 'bg-soft text-muted opacity-0 group-hover/field:opacity-100 focus-visible:opacity-100 hover:text-ink'}`}>
         <Dots />
       </button>

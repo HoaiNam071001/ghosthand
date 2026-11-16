@@ -1,6 +1,7 @@
 // Ô chữ có biến {{key}} (artboard StepInputs): tô biến bằng var-token, gõ "{{" mở gợi ý input rồi kết quả node khác
 // ({{n2.output.x}}, bước 20) – ↑↓ Enter / Tab chèn, Esc đóng, cuối danh sách "+ Tạo input mới…". Cách làm: textarea chữ trong suốt đặt trên một lớp vẽ cùng nội dung
 // (cùng font mono, cùng padding) – biến chỉ đổi màu nền / chữ, không đổi độ rộng nên con trỏ luôn khớp.
+import { useT } from '../../i18n';
 import { KeyboardEvent, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { isValidKey, ScriptInput, splitVars, varsIn } from './model';
 
@@ -24,6 +25,7 @@ const openVar = (text: string, caret: number) => {
 const MAX_NODE_VARS = 8; // chưa gõ gì thì chỉ hiện vài biến node đầu – gõ mã node (n2) để lọc
 
 export default function VarTextInput({ value, onChange, inputs, nodeVars = [], onCreateInput, rows = 3, placeholder, compact = false }: Props) {
+  const t = useT();
   const ta = useRef<HTMLTextAreaElement>(null);
   const mirror = useRef<HTMLDivElement>(null);
   const [caret, setCaret] = useState(0);
@@ -128,7 +130,7 @@ export default function VarTextInput({ value, onChange, inputs, nodeVars = [], o
                 {matches.length > 0 && <div className="mx-1 my-0.5 h-px bg-line" />}
                 <button role="option" aria-selected={sel === matches.length} onClick={() => choose(matches.length)} onMouseEnter={() => setSel(matches.length)}
                   className={`h-9 rounded-[7px] px-2.5 text-left text-[13px] ${sel === matches.length ? 'bg-hover' : ''}`}>
-                  + Tạo input mới{canCreate ? <> <span className="font-mono text-accent-text">{open!.typed}</span></> : '…'}
+                  {t('vt.create')}{canCreate ? <> <span className="font-mono text-accent-text">{open!.typed}</span></> : '…'}
                 </button>
               </>
             )}
@@ -138,9 +140,9 @@ export default function VarTextInput({ value, onChange, inputs, nodeVars = [], o
       {/* chưa có biến thì không nhắc "gõ {{" ở đây – nhãn ô đã ghi (design v3, đỡ lặp dưới mọi ô) */}
       {((!compact && used.length > 0) || badNodes.length > 0 || unknown.length > 0) && <span className="flex items-center gap-1.5 text-xs text-muted">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><circle cx="12" cy="12" r="9" /><path d="M12 8h.01M11 12h1v4h1" /></svg>
-        {badNodes.length ? <span className="text-danger-text">Không có node {[...new Set(badNodes)].join(', ')}</span>
-          : unknown.length ? <span className="text-danger-text">Biến chưa có trong tab Input: {unknown.join(', ')}</span>
-          : `${used.length} biến, tự thêm vào tab Input`}
+        {badNodes.length ? <span className="text-danger-text">{t('vt.noNode', { n: [...new Set(badNodes)].join(', ') })}</span>
+          : unknown.length ? <span className="text-danger-text">{t('vt.unknown', { v: unknown.join(', ') })}</span>
+          : t('vt.used', { n: used.length })}
       </span>}
     </div>
   );

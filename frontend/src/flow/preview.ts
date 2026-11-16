@@ -2,6 +2,7 @@
 // success / Đúng / case đầu), Đếm chạy 1 lượt rồi Hết lượt, Lặp qua danh sách (chọn Mỗi phần tử) 1 lượt rồi Hết danh
 // sách, vòng lặp không có Đếm thì dừng sau 2 lần.
 // Hàm thuần – Simulation gọi từng node, test ở preview.test.ts.
+import { tr } from '../i18n/lang';
 import type { PortView } from '../components/flow/model';
 import type { Script, Step } from '../types';
 import { edgeOut, orderedSteps, PORT_FAIL, PORT_SUCCESS, portsOf } from './model';
@@ -61,8 +62,8 @@ export function previewHop(sc: Flow, s: Step, choices: BranchChoices, w: Walk): 
 
 // Chữ một chặng trên đường đã đi: "n2", "n2 ✗", "n4 Sai", "n5 (1/10)", "n5 hết lượt".
 export function hopText(h: Hop, s: Step): string {
-  if (h.count) return `${s.ref} ${h.port === 'next' ? `(${h.count.n}/${h.count.max})` : 'hết lượt'}`;
-  if (h.item !== undefined) return `${s.ref} ${h.item ? `(phần tử ${h.item})` : 'hết danh sách'}`;
+  if (h.count) return `${s.ref} ${h.port === 'next' ? `(${h.count.n}/${h.count.max})` : tr('pv.count')}`;
+  if (h.item !== undefined) return `${s.ref} ${h.item ? `(${tr('pv.item', { n: h.item })})` : tr('pv.itemEnd')}`;
   if (h.port === PORT_SUCCESS || !h.port) return s.ref;
   if (h.port === PORT_FAIL) return `${s.ref} ✗`;
   return `${s.ref} ${portView(h.port, s).label}`;
@@ -76,9 +77,9 @@ export const routeText = (hops: string[]) =>
 // Chữ khi xem trước dừng (cuối lượt).
 export function stopText(h: Hop | undefined, s: Step | undefined): string {
   switch (h?.stop) {
-    case 'end': return s?.endStatus === 'fail' ? `Kết thúc ở ${s.ref} – báo lỗi` : `Kết thúc ở ${s?.ref}`;
-    case 'fail': return `${s?.ref} thất bại, không có nhánh Thất bại – dừng báo lỗi`;
-    case 'loop': return `Dừng xem trước: lặp lại ở ${s?.ref} mà không có node Đếm`;
+    case 'end': return s?.endStatus === 'fail' ? tr('pv.endFail', { r: s.ref }) : tr('pv.end', { r: s?.ref ?? '' });
+    case 'fail': return tr('pv.fail', { r: s?.ref ?? '' });
+    case 'loop': return tr('pv.loop', { r: s?.ref ?? '' });
   }
-  return 'Xong 1 vòng';
+  return tr('pv.done');
 }

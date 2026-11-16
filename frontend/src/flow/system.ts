@@ -13,10 +13,10 @@ export const sysHasLevel = (op?: string) => op === 'volume' || op === 'volumeUp'
 export function fmtSystem(s: Pick<Step, 'sysOp' | 'volume'>): string {
   const step = s.volume || 10;
   switch (s.sysOp) {
-    case 'volumeUp': return `âm lượng +${step} %`;
-    case 'volumeDown': return `âm lượng −${step} %`;
-    case 'mute': return 'tắt tiếng';
-    case 'unmute': return 'bật tiếng';
+    case 'volumeUp': return tr('fx.sys.up', { n: step });
+    case 'volumeDown': return tr('fx.sys.down', { n: step });
+    case 'mute': return tr('fx.sys.mute');
+    case 'unmute': return tr('fx.sys.unmute');
   }
-  return `âm lượng = ${s.volume ?? 0} %`;
+  return tr('fx.sys.set', { n: s.volume ?? 0 });
 }

@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react';
+import { tr } from './i18n/lang';
 import { DangerCheck, RunScript, ValidateScript } from '../wailsjs/go/app/App';
 import { askDanger } from './dangerConfirm';
 import { askPerm } from './permConfirm';
@@ -150,6 +151,6 @@ export const fmtElapsed = (ms: number) => {
 };
 
 export const STOP_REASON: Record<string, string> = {
-  f8: 'Đã dừng bằng F8',
-  corner: 'Dừng khẩn cấp: chuột chạm góc màn hình',
+  get f8() { return tr('mn.stopF8'); },
+  get corner() { return tr('mn.stopCorner'); },
 };

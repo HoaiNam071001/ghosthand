@@ -2,6 +2,7 @@
 // Các phần: Lưu trữ – thư mục kịch bản / ảnh (bước 41, settings/StorageSettings), Màn hình – cạnh đặt thanh overlay (bước 49) + viền lúc đang chạy (58 D5, settings/OverlaySettings), Trình duyệt – Chrome của app / Wisp cho node web (bước 62, settings/WebBrowserSettings),
 // Bí mật – kho mật khẩu / token (bước 43 S10, settings/SecretsSettings), Quyền – quyền hệ điều hành (bước 48, settings/PermSettings), API – dòng lệnh + API local (bước 22, settings/ApiSettings), AI qua MCP (bước 31, settings/McpSettings), MCP server – server ngoài node Gọi tool MCP dùng (bước 55, settings/McpServersSettings), Đồng bộ – Google Drive (bước 54, settings/SyncSettings), Giới thiệu – phiên bản + kiểm tra bản mới (settings/AboutSettings).
 // Mở ở tab nào / mục nào: shellStore (openSettings trong settingsNav.ts).
+import { tr } from '../i18n/lang';
 import { useEffect, useState } from 'react';
 import { useT } from '../i18n';
 import {
@@ -88,7 +89,7 @@ export default function AppSettings() {
       .catch((e) => setError(errorText(e)));
   };
   const pick = (key: StorageKey, from: string) =>
-    PickFolder('Chọn thư mục', from).then((dir) => dir && saveStorage(key, dir)).catch((e) => setError(errorText(e)));
+    PickFolder(tr('as.pickFolder'), from).then((dir) => dir && saveStorage(key, dir)).catch((e) => setError(errorText(e)));
   const openDir = (dir: string) => OpenFolder(dir).then(() => setError('')).catch((e) => setError(errorText(e)));
 
   const section = (t: typeof tab) => {

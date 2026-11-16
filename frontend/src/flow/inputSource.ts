@@ -9,6 +9,6 @@ export const IME_DEFAULT_HOTKEY = 'ctrl+shift'; // khớp model.InputDefaultHotk
 
 // Dòng chi tiết thẻ: "đổi sang ABC" / "đọc bộ gõ đang dùng"
 export function fmtInputSource(s: Pick<Step, 'inputOp' | 'inputLayout' | 'inputHotkey'>): string {
-  if (s.inputOp === 'toggleIME') return `bấm ${s.inputHotkey?.trim() || IME_DEFAULT_HOTKEY} (đảo bật / tắt tiếng Việt)`;
-  return s.inputOp === 'set' ? `đổi sang ${s.inputLayout?.trim() || 'chưa nhập bộ gõ'}` : 'đọc bộ gõ đang dùng';
+  if (s.inputOp === 'toggleIME') return tr('fx.ime.toggle', { k: s.inputHotkey?.trim() || IME_DEFAULT_HOTKEY });
+  return s.inputOp === 'set' ? tr('fx.ime.set', { l: s.inputLayout?.trim() || tr('fx.ime.noLayout') }) : tr('fx.ime.read');
 }

@@ -1,4 +1,5 @@
 // Dữ liệu hiển thị của khối VÀO / RA trên thẻ node + dây dữ liệu trên canvas (bước 60 V3). Logic thuần.
+import { tr } from '../i18n/lang';
 import type { Step, StepResult } from '../types';
 import { dataSlots, usedKeys } from './dataLinks';
 import { valueText } from './runOutputs';
@@ -29,7 +30,7 @@ export function dataPins(s: Step, steps: Step[], last?: StepResult, used = usedK
     const run = last?.input?.[sl.name];
     const linked = sl.refs.length > 0;
     const value = run !== undefined ? valueText(run)
-      : linked ? sl.refs.map((r) => `${r.ref}.${r.key}`).join(' + ') : sl.text.trim() || 'trống';
+      : linked ? sl.refs.map((r) => `${r.ref}.${r.key}`).join(' + ') : sl.text.trim() || tr('dv.empty');
     return { id: sl.name, label: sl.label, value: short(value), ran: run !== undefined, linked, src: sl.refs[0]?.ref, tip: sl.text || undefined };
   });
   const out = last?.output;

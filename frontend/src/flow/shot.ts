@@ -25,20 +25,20 @@ export function hasFoundBox(s: Pick<Step, 'type' | 'imageSource' | 'webGone' | '
 
 // Nhãn vùng chụp (dùng chung với Chờ màn hình). refOf: id node → mã (n2).
 export function shotAreaLabel(s: Step, refOf: (id: string) => string): string {
-  return s.shotArea === 'screen' ? (s.display ? `màn ${s.display}` : 'cả màn')
-    : s.shotArea === 'rect' ? (s.shotRect ? `vùng ${s.shotRect.w} × ${s.shotRect.h} tại ${s.shotRect.x}, ${s.shotRect.y}` : 'chưa chọn vùng')
-    : s.shotArea === 'node' ? `chỗ ${s.imageFrom ? refOf(s.imageFrom) : '(chưa chọn node)'} thấy`
-    : 'vùng kịch bản';
+  return s.shotArea === 'screen' ? (s.display ? tr('fx.shot.screenN', { n: s.display }) : tr('fx.shot.wholeScreen'))
+    : s.shotArea === 'rect' ? (s.shotRect ? tr('fx.shot.rect', { w: s.shotRect.w, h: s.shotRect.h, x: s.shotRect.x, y: s.shotRect.y }) : tr('fx.shot.noRect'))
+    : s.shotArea === 'node' ? tr('fx.shot.node', { r: s.imageFrom ? refOf(s.imageFrom) : tr('fx.noNode') })
+    : tr('fx.shot.script');
 }
 
 // Dòng chi tiết thẻ: vùng · tên file · clipboard.
 export function fmtShot(s: Step, refOf: (id: string) => string): string {
   const area = shotAreaLabel(s, refOf);
-  const name = s.fileName?.trim() ? `${s.fileName.trim().replace(/\.png$/i, '')}.png` : 'tên theo giờ';
-  return `${area} → ${name}${s.toClipboard ? ' · chép clipboard' : ''}`;
+  const name = s.fileName?.trim() ? `${s.fileName.trim().replace(/\.png$/i, '')}.png` : tr('fx.shot.autoName');
+  return `${area} → ${name}${s.toClipboard ? tr('fx.shot.clip') : ''}`;
 }
 
 // Node Đọc chữ vùng (bước 28 R1, engine/ocrread.go) – dòng chi tiết thẻ: vùng · tối đa.
 export function fmtOcrRead(s: Step, refOf: (id: string) => string): string {
-  return `${shotAreaLabel(s, refOf)} · tối đa ${fmtMs(s.timeoutMs ?? 0)}`;
+  return tr('fx.shot.max', { a: shotAreaLabel(s, refOf), t: fmtMs(s.timeoutMs ?? 0) });
 }

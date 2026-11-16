@@ -1,4 +1,5 @@
 // Lệnh curl dán từ DevTools ("Copy as cURL") / tài liệu API → các trường của node HTTP (bước 50 E3). Thuần chữ, không chạy gì.
+import { tr } from '../i18n/lang';
 import type { KV, Step } from '../types';
 import { HTTP_METHODS, type BodyType, type HttpMethod } from './http';
 
@@ -51,7 +52,7 @@ const pairs = (s: string): KV[] => s.split('&').filter(Boolean).map((p) => {
 export function parseCurl(input: string): CurlResult {
   const args = shellSplit(input.trim());
   if (args[0]?.toLowerCase() === 'curl') args.shift();
-  else return { error: 'Lệnh phải bắt đầu bằng curl' };
+  else return { error: tr('cu.start') };
   let url = '', method = '';
   const headers: KV[] = [], data: string[] = [], forms: KV[] = [], notes: string[] = [];
   let user = '';
@@ -73,7 +74,7 @@ export function parseCurl(input: string): CurlResult {
     else if (a.startsWith('-')) { /* cờ không giá trị: -L -s -k --compressed -i … bỏ qua */ }
     else if (!url) url = a;
   }
-  if (!url) return { error: 'Không thấy URL trong lệnh curl' };
+  if (!url) return { error: tr('cu.noUrl') };
   if (user) headers.push({ key: 'Authorization', value: `Basic ${btoa(unescape(encodeURIComponent(user)))}` });
 
   let query: KV[] | undefined;
@@ -88,15 +89,15 @@ export function parseCurl(input: string): CurlResult {
   const body = data.join('&');
   let bodyType: BodyType = '';
   let form: KV[] | undefined, text: string | undefined;
-  if (forms.length) { bodyType = 'form'; form = forms; notes.push('-F gửi multipart – node gửi dạng form thường, kiểm tra lại với API'); }
+  if (forms.length) { bodyType = 'form'; form = forms; notes.push(tr('cu.form')); }
   else if (body) {
     if (ctype.includes('json') || /^\s*[{[]/.test(body)) { bodyType = 'json'; text = body; }
     else if (ctype.includes('x-www-form-urlencoded') || (!ctype && /^[^=&\s]+=/.test(body))) { bodyType = 'form'; form = pairs(body); }
     else { bodyType = 'text'; text = body; }
   }
   let m = method || (bodyType ? 'POST' : 'GET');
-  if (!HTTP_METHODS.includes(m as HttpMethod)) { notes.push(`Method ${m} chưa hỗ trợ – đặt GET`); m = 'GET'; }
-  if (headers.some((h) => /^sec-|^:/.test(h.key.toLowerCase()))) notes.push('Có header của trình duyệt (sec-…) – xoá bớt nếu API không cần');
+  if (!HTTP_METHODS.includes(m as HttpMethod)) { notes.push(tr('cu.method', { m })); m = 'GET'; }
+  if (headers.some((h) => /^sec-|^:/.test(h.key.toLowerCase()))) notes.push(tr('cu.sec'));
   return {
     patch: {
       method: m as HttpMethod, url, query: query?.length ? query : undefined, headers: headers.length ? headers : undefined,

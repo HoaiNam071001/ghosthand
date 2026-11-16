@@ -1,14 +1,15 @@
+import { tr } from './i18n/lang';
 // Thử trang trên Chrome của app (bước 44) – chữ + tông màu theo kết luận web.PageCheck.verdict (khớp web.Page* trong Go).
 export type Verdict = 'ok' | 'captcha' | 'blocked' | 'canvas' | 'empty' | 'loading';
 export type Tone = 'ok' | 'warn' | 'danger';
 
 const VERDICTS: Record<Verdict, { title: string; hint: string; tone: Tone }> = {
-  ok: { title: 'Dùng được node web', hint: 'Không thấy captcha – node web (Chờ / Click / Gõ phần tử web) chính xác nhất cho trang này', tone: 'ok' },
-  captcha: { title: 'Có captcha', hint: 'Trang kiểm tra “bạn là người” – nên dùng node ảnh / chữ trên trình duyệt thường', tone: 'warn' },
-  blocked: { title: 'Trang chặn truy cập', hint: 'Trang không cho trình duyệt của app vào – dùng node ảnh / chữ trên trình duyệt thường', tone: 'danger' },
-  canvas: { title: 'Nội dung vẽ trong canvas', hint: 'Game / trang vẽ bằng canvas – node web không thấy nút bên trong, dùng node ảnh / chữ', tone: 'warn' },
-  empty: { title: 'Không đọc được gì', hint: 'Trang trống – Dò lại khi trang đã hiện, hoặc dùng node ảnh / chữ', tone: 'warn' },
-  loading: { title: 'Trang chưa tải xong', hint: 'Trang tải lâu – chờ trang hiện xong trên Chrome rồi bấm Dò lại (không tải lại trang)', tone: 'warn' },
+  ok: { get title() { return tr('pg.ok.t'); }, get hint() { return tr('pg.ok.h'); }, tone: 'ok' },
+  captcha: { get title() { return tr('pg.cap.t'); }, get hint() { return tr('pg.cap.h'); }, tone: 'warn' },
+  blocked: { get title() { return tr('pg.blk.t'); }, get hint() { return tr('pg.blk.h'); }, tone: 'danger' },
+  canvas: { get title() { return tr('pg.cnv.t'); }, get hint() { return tr('pg.cnv.h'); }, tone: 'warn' },
+  empty: { get title() { return tr('pg.emp.t'); }, get hint() { return tr('pg.emp.h'); }, tone: 'warn' },
+  loading: { get title() { return tr('pg.ldg.t'); }, get hint() { return tr('pg.ldg.h'); }, tone: 'warn' },
 };
 
 /** Chữ + tông của kết luận; giá trị lạ coi như trống. */
