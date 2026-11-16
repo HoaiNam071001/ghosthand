@@ -1,5 +1,6 @@
 // Nút Chạy tách đôi + menu cách chạy khác (design v3, artboard RunMenu): trái Chạy / Dừng (F8), phải ▾ mở menu
 // (chạy từ node đang chọn, chạy từng node, xem trước, ghi thao tác…). Chỉ hiển thị – việc của từng mục do màn truyền vào.
+import { useT } from '../i18n';
 import { usePopover } from './usePopover';
 import { Play, Stop } from './icons';
 
@@ -17,6 +18,7 @@ export type RunMenuItem = {
 export function RunButton({ running, disabled, title, onRun, items, compact, badge }: {
   running: boolean; disabled?: boolean; title?: string; onRun: (e: { shiftKey: boolean }) => void; items: RunMenuItem[]; compact?: boolean; badge?: string; // badge: số lần lặp hiện cạnh chữ Chạy
 }) {
+  const t = useT();
   const { open, setOpen, ref } = usePopover();
   const main = items.filter((it) => !it.minor);
   const minor = items.filter((it) => it.minor);
@@ -26,10 +28,10 @@ export function RunButton({ running, disabled, title, onRun, items, compact, bad
       {/* style inline: btn-primary / btn-danger-soft tự đặt cả 4 viền – hai nửa dính nhau, ngăn bằng vạch sáng mờ */}
       <button onClick={onRun} disabled={disabled} title={title} style={{ borderRightWidth: 0 }}
         className={`${half} gap-[9px] rounded-l-control px-3.5 font-semibold ${running ? 'btn-danger-soft' : 'btn-primary'}`}>
-        {running ? <><Stop className="h-2.5 w-2.5" />Dừng</> : <><Play className="h-2.5 w-2.5" />Chạy{badge && <span className="rounded-full bg-white/25 px-1.5 font-mono text-[11px] font-semibold" title="Số lần lặp kịch bản">{badge}</span>}</>}
+        {running ? <><Stop className="h-2.5 w-2.5" />{t('rm.stop')}</> : <><Play className="h-2.5 w-2.5" />{t('rd.run')}{badge && <span className="rounded-full bg-white/25 px-1.5 font-mono text-[11px] font-semibold" title={t('rm.loops')}>{badge}</span>}</>}
         <span className="font-mono text-[11px] font-normal opacity-80">F8</span>
       </button>
-      <button onClick={() => setOpen(!open)} aria-label="Cách chạy khác" aria-expanded={open} aria-haspopup="menu"
+      <button onClick={() => setOpen(!open)} aria-label={t('rm.more')} aria-expanded={open} aria-haspopup="menu"
         style={{ borderLeftColor: 'rgb(255 255 255 / 0.3)' }}
         className={`${half} w-[30px] justify-center rounded-r-control ${running ? 'btn-danger-soft' : 'btn-primary'}`}>
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden><path d="M6 9l6 6 6-6" /></svg>

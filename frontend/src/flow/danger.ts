@@ -1,24 +1,25 @@
 // Thao tác nguy hiểm cần người dùng đồng ý trước lần chạy đầu (script.DangerOps – internal/script/danger.go): xoá file
 // vào / dọn Thùng rác, buộc thoát app, thoát app có buộc thoát khi quá giờ, đóng cửa sổ.
 
+import { tr } from '../i18n/lang';
 import { STEP_LABEL } from '../types';
 
 // Khớp script.DangerOp.
 export type DangerOp = { ref: string; op: string; folder?: string; pattern?: string; target?: string; lang?: string; script?: string; dir?: string; file?: string; fileHash?: string };
 
-const POWER_TEXT: Record<string, string> = { sleep: 'Cho máy ngủ', logout: 'Đăng xuất', shutdown: 'Tắt máy', restart: 'Khởi động lại máy' };
+const POWER_TEXT: Record<string, string> = { get sleep() { return tr('dg.sleep'); }, get logout() { return tr('dg.logout'); }, get shutdown() { return tr('dg.shutdown'); }, get restart() { return tr('dg.restart'); } };
 
 // Câu cho hộp xác nhận.
 export function dangerOpText(d: DangerOp): string {
   switch (d.op) {
-    case 'emptyTrash': return 'Dọn Thùng rác – xoá hẳn mọi thứ trong Thùng rác, không khôi phục được';
-    case 'trash': return `Chuyển các file khớp “${d.pattern}” trong ${d.folder} vào Thùng rác (khôi phục được)`;
-    case 'forceQuit': return `Buộc thoát ${d.target} – mất dữ liệu chưa lưu`;
-    case 'quit': return `Thoát ${d.target}, quá giờ chưa thoát thì buộc thoát – mất dữ liệu chưa lưu`;
-    case 'shell': return `Chạy lệnh${d.lang ? ` ${d.lang}` : ''}${d.dir ? ` trong ${d.dir}` : ''}${d.file ? ` – gọi file ${d.file} (sửa file thì hỏi lại)` : ''} – lệnh có toàn quyền như bạn trên máy này`;
-    case 'power': return `${POWER_TEXT[d.target ?? ''] ?? 'Thao tác nguồn'} – mất công việc chưa lưu; đếm ngược để huỷ bằng Dừng`;
-    case 'marked': return `Node ${d.ref} (${STEP_LABEL[d.target as keyof typeof STEP_LABEL] ?? d.target}) – bạn đã đánh dấu là ghi / xoá dữ liệu`;
-    case 'close': return `Đóng cửa sổ ${d.target} (app có thể hỏi lưu)`;
+    case 'emptyTrash': return tr('dg.emptyTrash');
+    case 'trash': return tr('dg.trash', { p: d.pattern ?? '', f: d.folder ?? '' });
+    case 'forceQuit': return tr('dg.forceQuit', { t: d.target ?? '' });
+    case 'quit': return tr('dg.quit', { t: d.target ?? '' });
+    case 'shell': return tr('dg.shell', { lang: d.lang ? ` ${d.lang}` : '', dir: d.dir ? ` ${tr('dg.shellIn', { d: d.dir })}` : '', file: d.file ? ` – ${tr('dg.shellFile', { f: d.file })}` : '' });
+    case 'power': return tr('dg.power', { what: POWER_TEXT[d.target ?? ''] ?? tr('dg.powerOp') });
+    case 'marked': return tr('dg.marked', { ref: d.ref, kind: STEP_LABEL[d.target as keyof typeof STEP_LABEL] ?? d.target ?? '' });
+    case 'close': return tr('dg.close', { t: d.target ?? '' });
   }
   return d.op;
 }
@@ -32,8 +33,8 @@ export const dangerScript = (d: DangerOp) => (d.op === 'shell' ? d.script ?? '' 
 // Tiêu đề hộp xác nhận theo nhóm thao tác.
 export function dangerTitle(ops: DangerOp[]): string {
   const file = ops.every((o) => o.op === 'trash' || o.op === 'emptyTrash');
-  if (ops.every((o) => o.op === 'power')) return 'Kịch bản này sẽ tác động nguồn máy';
-  if (ops.every((o) => o.op === 'shell')) return 'Kịch bản này sẽ chạy lệnh trên máy';
+  if (ops.every((o) => o.op === 'power')) return tr('dg.t.power');
+  if (ops.every((o) => o.op === 'shell')) return tr('dg.t.shell');
   const app = ops.every((o) => o.op === 'quit' || o.op === 'forceQuit' || o.op === 'close');
-  return file ? 'Kịch bản này sẽ xoá file' : app ? 'Kịch bản này sẽ thoát app / đóng cửa sổ' : 'Kịch bản có thao tác cần xác nhận';
+  return file ? tr('dg.t.file') : app ? tr('dg.t.app') : tr('dg.t.other');
 }

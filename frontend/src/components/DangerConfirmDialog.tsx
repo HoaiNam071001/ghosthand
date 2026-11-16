@@ -1,11 +1,13 @@
 // Xác nhận thao tác nguy hiểm trước lần chạy đầu (xoá file, buộc thoát app, đóng cửa sổ) – liệt kê từng node làm gì.
 // Enter = Chạy, Esc = Huỷ.
+import { useT } from '../i18n';
 import { useEffect } from 'react';
 import { answerDanger, useDangerAsk } from '../dangerConfirm';
 import { dangerOpText, dangerScript, dangerTitle, isPermanent } from '../flow/danger';
 import { Power, Trash } from './icons';
 
 export default function DangerConfirmDialog() {
+  const t = useT();
   const ask = useDangerAsk();
   useEffect(() => {
     if (!ask) return;
@@ -38,12 +40,12 @@ export default function DangerConfirmDialog() {
                     {dangerScript(o) && <pre className="mt-1 max-h-40 overflow-auto whitespace-pre-wrap break-all rounded-control bg-field px-2 py-1.5 font-mono text-xs text-ink">{dangerScript(o)}</pre>}</span></li>
               ))}
             </ul>
-            <span className="text-xs text-muted">Đồng ý một lần – lần sau chạy không hỏi lại, trừ khi đổi thư mục / mẫu tên / app / cửa sổ / nội dung lệnh.{ask.ops.some((o) => o.op === 'emptyTrash') ? ' Dọn Thùng rác xoá cả file không phải do kịch bản tạo.' : ''}</span>
+            <span className="text-xs text-muted">{t('dd.note')}{ask.ops.some((o) => o.op === 'emptyTrash') ? ' ' + t('dd.trash') : ''}</span>
           </div>
         </div>
         <div className="flex items-center gap-2 border-t border-line bg-chrome px-[18px] py-3">
-          <button onClick={() => answerDanger(false)} className="ml-auto h-9 rounded-control border border-line bg-surface px-3.5 hover:bg-hover">Huỷ <span className="font-mono text-[11px] text-muted">Esc</span></button>
-          <button autoFocus onClick={() => answerDanger(true)} className="btn-danger-soft h-9 rounded-control px-4 font-semibold">{files ? 'Cho phép xoá và chạy' : 'Cho phép và chạy'}</button>
+          <button onClick={() => answerDanger(false)} className="ml-auto h-9 rounded-control border border-line bg-surface px-3.5 hover:bg-hover">{t('msc.cancel')} <span className="font-mono text-[11px] text-muted">Esc</span></button>
+          <button autoFocus onClick={() => answerDanger(true)} className="btn-danger-soft h-9 rounded-control px-4 font-semibold">{files ? t('dd.allowDelete') : t('dd.allow')}</button>
         </div>
       </div>
     </div>
