@@ -1,5 +1,7 @@
 // Danh sách nhóm / loại node của bảng chọn node (Thêm node + Đổi loại node). Dữ liệu thuần: tên, từ khoá, mô tả, hành động thêm.
 // type: loại node thuần để dùng cho Đổi loại node (biến thể như Click theo chữ không có type nên không hiện khi đổi loại).
+import { tr } from '../../i18n/lang';
+import type { MsgKey } from '../../i18n/vi';
 import type { PaletteGroup } from '../PaletteView';
 import { addControl, addPointStep, addStep } from '../../store';
 import { WEB_BASIC_NOTE } from '../../flow/web';
@@ -7,7 +9,7 @@ import { NODE_INFO } from '../../flow/nodeInfo';
 import { addElementStep, addImageStep, addTextStep } from '../../imageSteps';
 
 // Nhóm theo flow/category (cùng màu thẻ node) – tên nhóm lấy từ CATEGORIES
-export const GROUPS: PaletteGroup[] = [
+const RAW_GROUPS: PaletteGroup[] = [
   {
     cat: 'mouse', items: [
       { icon: 'click', label: 'Click', info: NODE_INFO.click, key: 'click', keywords: 'bam nhan chuot trai phai', type: 'click', run: () => addPointStep('click') },
@@ -108,3 +110,13 @@ export const GROUPS: PaletteGroup[] = [
   },
 ];
 
+// Nhãn đọc lúc dùng (getter) để đổi ngôn ngữ có hiệu lực ngay; khoá riêng 'pal.*' khi nhãn bảng khác tên loại node.
+const PAL = new Set(["clickImage","waitText","waitElement","http","osShortcut","system","openWeb"]);
+export const GROUPS: PaletteGroup[] = RAW_GROUPS.map((g) => ({
+  ...g,
+  items: g.items.map((it) => {
+    const k = it.key as string | undefined;
+    if (!k) return it;
+    return Object.defineProperty({ ...it }, 'label', { enumerable: true, get: () => tr((PAL.has(k) ? 'pal.' + k : 'node.' + k) as MsgKey) });
+  }),
+}));

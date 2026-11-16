@@ -2,6 +2,8 @@ import { model } from '../wailsjs/go/models';
 import type { AdvancedFields, TextFields } from './stepAdvanced';
 import { TEXT_TYPES, type TextType } from './flow/textNodes';
 import type { ReadFrom, ScrollMode } from './flow/web';
+import { tr } from './i18n/lang';
+import type { MsgKey } from './i18n/vi';
 
 // Neo của một trục (anchor.ts, khớp internal/script/anchor.go): bỏ trống = start (cách cạnh trái / trên).
 export type Anchor = 'start' | 'center' | 'end' | 'ratio';
@@ -265,79 +267,16 @@ export const makeStep = (p: Partial<Step> & Pick<Step, 'id' | 'type'>): Step => 
 // Tên hiện cho một bước cụ thể: Chờ ảnh / Click theo ảnh đang tìm theo chữ / phần tử thì là "Chờ chữ" / "Click theo chữ"…
 export function stepLabel(s: Step): string {
   if (s.findBy && (s.type === 'waitImage' || (s.type === 'clickImage' && s.imageSource === 'search'))) {
-    const what = s.findBy === 'text' ? 'chữ' : s.findBy === 'ai' ? 'AI tìm' : 'phần tử';
-    return s.type === 'waitImage' ? `Chờ ${what}` : `Click theo ${what}`;
+    const what = tr(s.findBy === 'text' ? 'node.by.text' : s.findBy === 'ai' ? 'node.by.ai' : 'node.by.element');
+    return tr(s.type === 'waitImage' ? 'node.waitBy' : 'node.clickBy', { what });
   }
   return STEP_LABEL[s.type];
 }
 
-export const STEP_LABEL: Record<StepType, string> = {
-  click: 'Click',
-  double: 'Double click',
-  hold: 'Giữ chuột',
-  drag: 'Kéo thả',
-  wait: 'Chờ',
-  type: 'Gõ chữ',
-  key: 'Phím tắt',
-  scroll: 'Cuộn',
-  open: 'Mở URL / app',
-  waitImage: 'Chờ ảnh',
-  clickImage: 'Click theo ảnh',
-  waitPixel: 'Chờ màu pixel',
-  waitScreen: 'Chờ màn hình',
-  ocrRead: 'Đọc chữ vùng',
-  waitDownload: 'Chờ tải xong',
-  shell: 'Chạy lệnh',
-  osShortcut: 'Shortcuts hệ điều hành',
-  sysInfo: 'Thông tin máy',
-  process: 'Tiến trình',
-  inputSource: 'Bộ gõ',
-  zip: 'Nén / giải nén',
-  notify: 'Thông báo hệ thống',
-  askAI: 'Hỏi AI',
-  mcpTool: 'Gọi tool MCP',
-  askUser: 'Hỏi người dùng',
-  power: 'Nguồn',
-  display: 'Màn hình / âm thanh',
-  elementAction: 'Thao tác phần tử',
-  readDocument: 'Đọc tài liệu',
-  waitUIEvent: 'Chờ sự kiện giao diện',
-  findAll: 'Tìm tất cả',
-  screenshot: 'Chụp màn hình',
-  clipboard: 'Clipboard',
-  http: 'HTTP',
-  file: 'Tệp / thư mục',
-  system: 'Hệ thống',
-  window: 'Cửa sổ',
-  app: 'Ứng dụng',
-  browserTab: 'Tab trình duyệt',
-  browserGo: 'Đi tới URL',
-  browserNorm: 'Chuẩn hoá trình duyệt',
-  savePdf: 'Lưu trang ra PDF',
-  waitUntil: 'Chờ đến giờ',
-  path: 'Vẽ đường',
-  webWait: 'Chờ phần tử web',
-  webClick: 'Click phần tử web',
-  webType: 'Gõ vào ô web',
-  webRead: 'Đọc phần tử web',
-  elementRead: 'Đọc phần tử',
-  pageText: 'Đọc chữ trang',
-  readTable: 'Đọc bảng',
-  webScroll: 'Cuộn trang web',
-  webKey: 'Phím trên trang web',
-  if: 'Nếu',
-  switch: 'Switch theo giá trị',
-  switchScreen: 'Switch theo màn hình',
-  counter: 'Đếm',
-  forEach: 'Lặp qua danh sách',
-  end: 'Kết thúc',
-  setVar: 'Đặt biến',
-  calc: 'Tính toán',
-  textMatch: 'Lọc mẫu',
-  textSplit: 'Tách chữ',
-  textClean: 'Làm sạch chữ',
-  textNumber: 'Số & ngày',
-};
+// Tên loại node theo ngôn ngữ hiện tại: getter để đọc đúng lúc (đổi ngôn ngữ không cần dựng lại); Object.keys vẫn liệt kê đủ loại.
+export const STEP_LABEL = Object.defineProperties({} as Record<StepType, string>, Object.fromEntries(
+  ['click', 'double', 'hold', 'drag', 'wait', 'type', 'key', 'scroll', 'open', 'waitImage', 'clickImage', 'waitPixel', 'waitScreen', 'ocrRead', 'waitDownload', 'shell', 'osShortcut', 'sysInfo', 'process', 'inputSource', 'zip', 'notify', 'askAI', 'mcpTool', 'askUser', 'power', 'display', 'elementAction', 'readDocument', 'waitUIEvent', 'findAll', 'screenshot', 'clipboard', 'http', 'file', 'system', 'window', 'app', 'browserTab', 'browserGo', 'browserNorm', 'savePdf', 'waitUntil', 'path', 'webWait', 'webClick', 'webType', 'webRead', 'elementRead', 'pageText', 'readTable', 'webScroll', 'webKey', 'if', 'switch', 'switchScreen', 'counter', 'forEach', 'end', 'setVar', 'calc', 'textMatch', 'textSplit', 'textClean', 'textNumber'].map((k) => [k, { enumerable: true, get: () => tr(`node.${k}` as MsgKey) }]),
+));
 
 export const fmtMs = (ms: number) => (ms >= 1000 ? `${ms / 1000} s` : `${ms} ms`);
 // Biểu thức biến của trường số (F5c) – undefined = trường dùng số cố định.
