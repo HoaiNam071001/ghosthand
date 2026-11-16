@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import NumInput from '../NumInput';
 import { updateStep } from '../../store';
 import { Step } from '../../types';
-import { browserStatusText, parseSelector, selectorLines, WEB_BASIC_NOTE, webFindText } from '../../flow/web';
+import { browserStatusText, parseSelector, selectorLines, webBasicNote, webFindText } from '../../flow/web';
 import { cancelPick, finishWebLogin, openAppBrowser, pickElement, refreshBrowser, startWebLogin, testWebFind, useWebState } from '../../webSteps';
 import { inWails, openOverlay } from '../../windowMode';
 import { WebTools } from './WebTools';
@@ -38,7 +38,7 @@ export function WebFields({ step: s }: { step: Step }) {
       {s.type === 'webScroll' && <WebScrollFields step={s} />}
       <SelectorsField step={s} label={selectorsLabel(s)} value={s.selectors} onChange={(selectors) => set({ selectors })}
         placeholder={'text=Xem lịch sử\naria=Lịch sử\ncss=#history'} emptyText="Chưa nhập cách tìm – chạy sẽ báo lỗi"
-        help={'text= chữ trên trang (chứa, không phân biệt hoa thường; text="Gửi" = đúng cả chuỗi), aria= nhãn aria-label, role=button[name="Gửi"] vai trò + tên, label=Ngày sinh ô nhập của nhãn, css=, xpath=. Ưu tiên chữ / aria / role – tránh class tự sinh kiểu x1n2onr6. ' + WEB_BASIC_NOTE} />
+        help={'text= chữ trên trang (chứa, không phân biệt hoa thường; text="Gửi" = đúng cả chuỗi), aria= nhãn aria-label, role=button[name="Gửi"] vai trò + tên, label=Ngày sinh ô nhập của nhãn, css=, xpath=. Ưu tiên chữ / aria / role – tránh class tự sinh kiểu x1n2onr6. ' + webBasicNote()} />
       <WebTabField step={s} />
       <WebScopeField step={s} />
       {s.type === 'webClick' && <WebClickFields step={s} />}

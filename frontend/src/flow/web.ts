@@ -1,4 +1,5 @@
 import { fmtMs, type Step, type StepType } from '../types';
+import { tr } from '../i18n/lang';
 import { SCROLL_ARROW } from '../scroll';
 
 // Node web (bước 25d) – tìm phần tử bằng HTML qua Chrome của app.
@@ -6,7 +7,7 @@ export const WEB_TYPES = ['webWait', 'webClick', 'webType', 'webRead', 'webScrol
 export type WebType = typeof WEB_TYPES[number];
 export const isWebStep = (t: StepType): t is WebType => (WEB_TYPES as readonly StepType[]).includes(t);
 // Ghi chú phạm vi – bảng thêm node, inspector node web và node Mở bằng Chrome của app dùng chung (quyết định 2026-10-18, bước 36).
-export const WEB_BASIC_NOTE = 'Trang cần đăng nhập (Gmail, Facebook…): nút Đăng nhập ở node web mở Chrome của app như Chrome thường để đăng nhập, xong bấm Xong. Trang vẫn hỏi captcha khi chạy thì dùng Chrome thường + Click theo ảnh / chữ.';
+export const webBasicNote = () => tr('web.basicNote');
 
 // Selector của node web – cùng công thức ParseSelector (internal/model/web.go), test chung testdata/selectors.json.
 // Một dòng Step.selectors = "<cách>=<giá trị>", không tiền tố = text; text / aria trong nháy kép = đúng cả chuỗi.

@@ -4,7 +4,7 @@ import { tr } from '../../i18n/lang';
 import type { MsgKey } from '../../i18n/vi';
 import type { PaletteGroup } from '../PaletteView';
 import { addControl, addPointStep, addStep } from '../../store';
-import { WEB_BASIC_NOTE } from '../../flow/web';
+import { webBasicNote } from '../../flow/web';
 import { NODE_INFO } from '../../flow/nodeInfo';
 import { addElementStep, addImageStep, addTextStep } from '../../imageSteps';
 
@@ -98,7 +98,7 @@ const RAW_GROUPS: PaletteGroup[] = [
   },
   {
     // bước 25d: tìm phần tử bằng HTML qua Chrome của app, bấm bằng chuột thật – để cuối, chỉ cho trang cơ bản
-    cat: 'web', note: WEB_BASIC_NOTE, items: [
+    cat: 'web', get note() { return webBasicNote(); }, items: [
       { icon: 'open', label: 'Mở trang (Chrome của app)', info: NODE_INFO.openWeb, key: 'openWeb', keywords: 'web url trinh duyet chrome dieu khien dom html', run: () => addStep('open', { webBrowser: true }) },
       { icon: 'webWait', label: 'Chờ phần tử web', info: NODE_INFO.webWait, key: 'webWait', keywords: 'web dom html selector css xpath aria role cho xuat hien mat', type: 'webWait', run: () => addStep('webWait') },
       { icon: 'webClick', label: 'Click phần tử web', info: NODE_INFO.webClick, key: 'webClick', keywords: 'web dom html selector css xpath aria role nut bam click', type: 'webClick', run: () => addStep('webClick') },
@@ -112,11 +112,11 @@ const RAW_GROUPS: PaletteGroup[] = [
 
 // Nhãn đọc lúc dùng (getter) để đổi ngôn ngữ có hiệu lực ngay; khoá riêng 'pal.*' khi nhãn bảng khác tên loại node.
 const PAL = new Set(["clickImage","waitText","waitElement","http","osShortcut","system","openWeb"]);
-export const GROUPS: PaletteGroup[] = RAW_GROUPS.map((g) => ({
+export const GROUPS: PaletteGroup[] = RAW_GROUPS.map((g) => Object.defineProperty({
   ...g,
   items: g.items.map((it) => {
     const k = it.key as string | undefined;
     if (!k) return it;
     return Object.defineProperty({ ...it }, 'label', { enumerable: true, get: () => tr((PAL.has(k) ? 'pal.' + k : 'node.' + k) as MsgKey) });
   }),
-}));
+}, 'note', { enumerable: true, get: () => g.note }));

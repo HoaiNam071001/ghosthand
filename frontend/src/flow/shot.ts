@@ -2,11 +2,12 @@
 // Chạy ở internal/engine/shot.go; HasFoundBox (internal/script/flowcheck.go) cùng công thức hasFoundBox.
 import { fmtMs, type Step } from '../types';
 import { windowHasBox } from './window';
+import { tr } from '../i18n/lang';
 
 // '' = vùng của kịch bản (khớp model.ShotAreas)
 export type ShotArea = '' | 'screen' | 'rect' | 'node';
 export const SHOT_AREAS: { id: ShotArea; label: string }[] = [
-  { id: '', label: 'Vùng kịch bản' }, { id: 'screen', label: 'Cả màn' }, { id: 'rect', label: 'Vùng cố định' }, { id: 'node', label: 'Chỗ node thấy' },
+  { id: '', get label() { return tr('shot.area.0'); } }, { id: 'screen', get label() { return tr('shot.area.1'); } }, { id: 'rect', get label() { return tr('shot.area.2'); } }, { id: 'node', get label() { return tr('shot.area.3'); } },
 ];
 
 // Node có khung chỗ thấy trên màn hình (output x, y = tâm, w, h): chờ ảnh / chữ, click theo ảnh tự tìm, Nếu / Switch theo

@@ -1,12 +1,13 @@
 // Node Tệp / thư mục (bước 35 N4) – nhãn thao tác, dòng chi tiết thẻ. Chạy ở internal/engine/file.go; thao tác xoá
 // cần xác nhận (flow/danger.ts – script.DangerOps).
 import { fmtMs, type Step } from '../types';
+import { tr } from '../i18n/lang';
 
 // '' = ghi chữ (khớp model.FileOps)
 export type FileOp = '' | 'row' | 'mkdir' | 'trash' | 'emptyTrash';
 export const FILE_OPS: { id: FileOp; label: string }[] = [
-  { id: '', label: 'Ghi chữ vào file' }, { id: 'row', label: 'Thêm dòng vào bảng (.csv / .xlsx)' }, { id: 'mkdir', label: 'Tạo thư mục' },
-  { id: 'trash', label: 'Xoá file vào Thùng rác' }, { id: 'emptyTrash', label: 'Dọn Thùng rác' },
+  { id: '', get label() { return tr('file.op.0'); } }, { id: 'row', get label() { return tr('file.op.1'); } }, { id: 'mkdir', get label() { return tr('file.op.2'); } },
+  { id: 'trash', get label() { return tr('file.op.3'); } }, { id: 'emptyTrash', get label() { return tr('file.op.4'); } },
 ];
 export const isDeleteOp = (op?: string) => op === 'trash' || op === 'emptyTrash';
 
