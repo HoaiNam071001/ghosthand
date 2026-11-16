@@ -681,3 +681,10 @@ Người dùng chốt 2026-10-18: việc qua Chrome của app làm sau cùng –
 - [ ] (C9) Tự đồng bộ qua MCP: chưa cho "luôn cho" tool ghi thì lượt tự động **không** bật hộp hỏi (chấm báo chưa kết nối/không chạy); sau khi bấm *Đồng bộ ngay* và chọn *luôn cho* thì lượt tự động chạy; đổi thư mục gốc / server → lần đồng bộ sau coi như kho mới (file giống nhau bỏ qua, khác nhau hỏi), không xoá gì ở máy; chuyển về *Google Drive* lưu ngay
 - [ ] (C10) AI gọi `sync_status` thấy `on/backend/loggedIn/lastAt/failed/conflicts`, không thấy tên máy hay đường dẫn; không có tool nào khác về đồng bộ trong `tools/list`
 - [ ] `#demo-sync?backend=mcp` (cả `?theme=dark`): form ánh xạ không vỡ ở 2 theme, hẹp cửa sổ không tràn
+
+### 64 L4 – Ngôn ngữ VI / EN (đợt 2) · [phase3/64-ngon-ngu-vi-en.md](phase3/64-ngon-ngu-vi-en.md)
+
+- [ ] Đặt ngôn ngữ English (nút VI / EN trên thanh tiêu đề): mở từng loại node (Nếu, Switch, Đếm, Lặp qua danh sách, Tính toán, Lọc mẫu, Tách chữ, Làm sạch chữ, Số & ngày) → inspector không còn chữ tiếng Việt, nút *Thử node* / *Chạy thử* / *Đọc thử* đúng chữ
+- [ ] English: chạy một kịch bản mẫu → thanh mini, Nhật ký chạy, tab *Tất cả output*, thanh trạng thái, menu chuột phải node (Chạy đến / Ghim output) đều tiếng Anh; dòng chi tiết thẻ node (vd Chờ ảnh, Cuộn, Chụp màn hình) tiếng Anh
+- [ ] English: bảng *Thêm node*, *Đổi loại node*, *Thử trang trên Chrome của app*, Xem trước trên màn hình (bong bóng mô phỏng, chọn nền trang mẫu) không còn chữ Việt sót; mô tả output hiện đúng ở inspector / gợi ý biến `{{…}}`
+- [ ] Đổi lại tiếng Việt: mọi chỗ trên giữ nguyên như trước (không đổi chữ)

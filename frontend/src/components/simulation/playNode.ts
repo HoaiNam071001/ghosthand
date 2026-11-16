@@ -1,5 +1,6 @@
 // Xem trước một node: con trỏ giả bay / click / kéo / cuộn hoặc bong bóng chữ theo loại node.
 // Simulation (useSimulation) giữ state + đi theo đồ thị, gọi hàm này cho từng node.
+import { tr } from '../../i18n/lang';
 import { boundsOf, refOf, type Ends } from '../../store';
 import { fmtSelectors } from '../../flow/web';
 import { fmtOcrRead, fmtShot } from '../../flow/shot';
@@ -54,44 +55,44 @@ export type Player = {
 // Chữ bong bóng cho node không di chuột (null: node có diễn riêng).
 function bubbleOf(s: Step): string | null {
   switch (s.type) {
-    case 'open': return `Mở ${s.target}${s.app ? ` bằng ${s.app}` : ''}`;
+    case 'open': return tr('pnd.open', { t: s.target ?? '', a: s.app ? tr('pnd.openWith', { a: s.app }) : '' });
     case 'clickImage':
-      return `Click theo ${s.imageSource === 'search' && s.findBy === 'text' ? `chữ “${s.findText}”` : 'ảnh'}${s.imageSource === 'search' ? ' (tự tìm)' : ''} – vị trí biết khi chạy thật`;
+      return tr('pnd.click', { w: s.imageSource === 'search' && s.findBy === 'text' ? tr('pnd.byText', { t: s.findText ?? '' }) : tr('pnd.byImage'), s: s.imageSource === 'search' ? tr('pnd.auto') : '' });
     case 'webWait': case 'webClick': case 'webType': case 'webRead': case 'webScroll':
-      return `${stepLabel(s)}: ${fmtSelectors(s.selectors)} – vị trí biết khi chạy thật`;
-    case 'waitUntil': return `⏰ Chờ ${fmtWaitUntil(s)} – xem trước không chờ thật`;
-    case 'power': return `⏻ Nguồn: ${fmtPower(s)} – xem trước không tác động máy`;
-    case 'display': return `🖥 Màn hình / âm thanh: ${fmtDisplay(s)} – xem trước không đổi thật`;
-    case 'askAI': return `✨ Hỏi AI: ${fmtAskAI(s)} – xem trước không gọi AI`;
-    case 'mcpTool': return `🔌 MCP: ${fmtMCPTool(s)} – xem trước không gọi tool`;
-    case 'notify': return `🔔 Thông báo: ${fmtNotify(s)} – xem trước không hiện thật`;
-    case 'askUser': return `❓ Hỏi: ${fmtAskUser(s)} – xem trước không hỏi thật`;
-    case 'zip': return `🗜 ${fmtZip(s)} – xem trước không nén / giải nén thật`;
-    case 'inputSource': return `⌨ Bộ gõ: ${fmtInputSource(s)} – xem trước không đổi thật`;
-    case 'process': return `⚙ Tiến trình ${fmtProcess(s)} – xem trước không đọc thật`;
-    case 'sysInfo': return '🖥 Đọc thông tin máy – xem trước không đọc thật';
-    case 'osShortcut': return `⚡ Shortcut ${fmtOSShortcut(s)} – xem trước không chạy thật`;
-    case 'shell': return `⌨ Chạy lệnh ${fmtShell(s)} – xem trước không chạy thật`;
+      return tr('pnd.web', { l: stepLabel(s), s: fmtSelectors(s.selectors) });
+    case 'waitUntil': return tr('pnd.waitUntil', { v: fmtWaitUntil(s) });
+    case 'power': return tr('pnd.power', { v: fmtPower(s) });
+    case 'display': return tr('pnd.display', { v: fmtDisplay(s) });
+    case 'askAI': return tr('pnd.askAI', { v: fmtAskAI(s) });
+    case 'mcpTool': return tr('pnd.mcp', { v: fmtMCPTool(s) });
+    case 'notify': return tr('pnd.notify', { v: fmtNotify(s) });
+    case 'askUser': return tr('pnd.askUser', { v: fmtAskUser(s) });
+    case 'zip': return tr('pnd.zip', { v: fmtZip(s) });
+    case 'inputSource': return tr('pnd.ime', { v: fmtInputSource(s) });
+    case 'process': return tr('pnd.proc', { v: fmtProcess(s) });
+    case 'sysInfo': return tr('pnd.sys');
+    case 'osShortcut': return tr('pnd.osShortcut', { v: fmtOSShortcut(s) });
+    case 'shell': return tr('pnd.shell', { v: fmtShell(s) });
     case 'system': return `🔊 ${fmtSystem(s)}`;
-    case 'app': return `🧩 Ứng dụng: ${fmtApp(s)} – xem trước không đụng app thật`;
-    case 'elementAction': return `🖱 Thao tác phần tử: ${fmtElementAction(s)} – xem trước không thao tác thật`;
-    case 'waitUIEvent': return `👁 Chờ sự kiện ${fmtWaitUIEvent(s)} – xem trước không chờ thật`;
-    case 'waitDownload': return `⬇ Chờ tải xong ${fmtWaitDownload(s)} – xem trước không chờ thật`;
-    case 'readTable': return `▦ Đọc bảng: ${fmtReadTable(s)} – bảng biết khi chạy thật`;
-    case 'readDocument': return `📝 Đọc tài liệu: ${fmtReadDocument(s)} – chữ biết khi chạy thật`;
-    case 'pageText': return `📄 Đọc chữ trang: ${fmtPageText(s)} – chữ biết khi chạy thật`;
-    case 'savePdf': return `📄 Lưu trang ra PDF: ${fmtSavePdf(s, refOf)} – xem trước không đụng trình duyệt thật`;
-    case 'browserGo': return `🗂 Đi tới URL: ${fmtBrowserGo(s, refOf)} – xem trước không đụng trình duyệt thật`;
-    case 'browserNorm': return `🗂 Chuẩn hoá trình duyệt: ${fmtBrowserNorm(s, refOf)} – xem trước không đụng trình duyệt thật`;
-    case 'browserTab': return `🗂 Tab trình duyệt: ${fmtBrowserTab(s, refOf)} – xem trước không đụng trình duyệt thật`;
-    case 'window': return `🪟 Cửa sổ: ${fmtWindow(s)} – xem trước không đổi cửa sổ thật`;
+    case 'app': return tr('pnd.app', { v: fmtApp(s) });
+    case 'elementAction': return tr('pnd.elAct', { v: fmtElementAction(s) });
+    case 'waitUIEvent': return tr('pnd.uiEv', { v: fmtWaitUIEvent(s) });
+    case 'waitDownload': return tr('pnd.dl', { v: fmtWaitDownload(s) });
+    case 'readTable': return tr('pnd.table', { v: fmtReadTable(s) });
+    case 'readDocument': return tr('pnd.doc', { v: fmtReadDocument(s) });
+    case 'pageText': return tr('pnd.pageText', { v: fmtPageText(s) });
+    case 'savePdf': return tr('pnd.pdf', { v: fmtSavePdf(s, refOf) });
+    case 'browserGo': return tr('pnd.go', { v: fmtBrowserGo(s, refOf) });
+    case 'browserNorm': return tr('pnd.norm', { v: fmtBrowserNorm(s, refOf) });
+    case 'browserTab': return tr('pnd.tab', { v: fmtBrowserTab(s, refOf) });
+    case 'window': return tr('pnd.win', { v: fmtWindow(s) });
     case 'file': return `📄 ${fmtFile(s)}`;
-    case 'http': return `🌐 ${fmtHTTP(s)} – kết quả biết khi chạy thật`;
-    case 'clipboard': return `📋 Clipboard: ${fmtClip(s)}`;
-    case 'waitScreen': return `⏳ Chờ màn hình ${fmtWaitScreen(s, refOf)} – xem trước không chờ thật`;
-    case 'ocrRead': return `🔤 Đọc chữ ${fmtOcrRead(s, refOf)} – xem trước không đọc thật`;
-    case 'findAll': return `🔍 Tìm tất cả ${fmtPos(s, refOf)} – số chỗ biết khi chạy thật`;
-    case 'screenshot': return `📷 Chụp ${fmtShot(s, refOf)}`;
+    case 'http': return tr('pnd.http', { v: fmtHTTP(s) });
+    case 'clipboard': return tr('pnd.clip', { v: fmtClip(s) });
+    case 'waitScreen': return tr('pnd.waitScr', { v: fmtWaitScreen(s, refOf) });
+    case 'ocrRead': return tr('pnd.ocr', { v: fmtOcrRead(s, refOf) });
+    case 'findAll': return tr('pnd.findAll', { v: fmtPos(s, refOf) });
+    case 'screenshot': return tr('pnd.shot', { v: fmtShot(s, refOf) });
   }
   return null;
 }
@@ -118,7 +119,7 @@ export async function playNode(s: Step, e: Ends | undefined, p: Player) {
       return;
     case 'hold':
       if (e?.start) await p.travel(e.start, s);
-      p.patch({ pressed: true, bubble: `Giữ ${s.holdMs} ms` });
+      p.patch({ pressed: true, bubble: tr('pnd.hold', { n: s.holdMs }) });
       p.ripple(p.pos!, s.holdMs);
       await p.wait(s.holdMs);
       p.patch({ pressed: false, bubble: '' });
@@ -148,16 +149,16 @@ export async function playNode(s: Step, e: Ends | undefined, p: Player) {
       }
       return;
     case 'key': case 'webKey':
-      p.patch({ bubble: `⌨ ${fmtKey(s)}${s.type === 'webKey' ? ' (Chrome của app)' : ''}` });
+      p.patch({ bubble: `⌨ ${fmtKey(s)}${s.type === 'webKey' ? tr('pnd.keyApp') : ''}` });
       return p.wait(KEY_SHOW_MS);
     case 'scroll': return playScroll(s, e, p);
     case 'waitImage':
       // không biết trước ảnh hiện lúc nào – chờ tượng trưng (≤ 1 s), ghi rõ ngưỡng / thời gian chờ tối đa
-      p.patch({ bubble: s.findBy === 'text' ? `Chờ chữ “${s.findText}” (tối đa ${(s.timeoutMs ?? 0) / 1000} s)` : `Chờ ảnh (khớp ≥ ${s.threshold}%, tối đa ${(s.timeoutMs ?? 0) / 1000} s)` });
+      p.patch({ bubble: s.findBy === 'text' ? tr('pnd.waitText', { t: s.findText ?? '', s: (s.timeoutMs ?? 0) / 1000 }) : tr('pnd.waitImg', { th: s.threshold ?? 0, s: (s.timeoutMs ?? 0) / 1000 }) });
       return p.wait(Math.min(s.timeoutMs ?? 0, 1000));
     case 'waitPixel':
       if (e?.start) await p.travel(e.start, s);
-      p.patch({ bubble: `Chờ màu ${s.color} ±${s.tolerance}` });
+      p.patch({ bubble: tr('pnd.waitPx', { c: s.color ?? '', t: s.tolerance ?? 0 }) });
       return p.wait(Math.min(s.timeoutMs ?? 0, 800));
     case 'wait':
       return;

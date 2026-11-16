@@ -1,5 +1,7 @@
 // Trang mẫu cho "trang thu nhỏ" khi Xem trước bước cuộn: vẽ khối theo kích thước thật (px của trang) rồi thu nhỏ theo
 // tỷ lệ s – nhờ vậy 1500 px trên danh sách thấy được ≈ 23 dòng, trên feed ≈ 3 bài. Chọn kiểu ở thanh công cụ Xem trước.
+import { useT } from '../i18n';
+import { getLang, tr } from '../i18n/lang';
 import { ReactNode, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { usePopover } from './usePopover';
 import { useTheme } from '../theme';
@@ -8,13 +10,13 @@ export type PageKind = 'text' | 'web' | 'list' | 'grid' | 'feed' | 'table' | 'no
 
 // unit: chiều cao (px thật) một "đơn vị" để đếm – dòng chữ, dòng danh sách, hàng ô, bài, hàng bảng
 export const PAGE_KINDS: { id: PageKind; label: string; hint: string; unit: number; unitName: string }[] = [
-  { id: 'text', label: 'Văn bản', hint: 'Bài viết, tài liệu', unit: 24, unitName: 'dòng chữ' },
-  { id: 'web', label: 'Trang web', hint: 'Đầu trang, ảnh lớn, các khối nội dung', unit: 0, unitName: '' },
-  { id: 'list', label: 'Danh sách', hint: 'Tin nhắn, danh bạ, kết quả tìm kiếm', unit: 64, unitName: 'dòng danh sách' },
-  { id: 'grid', label: 'Lưới', hint: 'Sản phẩm, ảnh, video', unit: 300, unitName: 'hàng ô' },
-  { id: 'feed', label: 'Feed', hint: 'Bài đăng mạng xã hội', unit: 520, unitName: 'bài đăng' },
-  { id: 'table', label: 'Bảng', hint: 'Bảng tính, bảng dữ liệu', unit: 36, unitName: 'hàng bảng' },
-  { id: 'none', label: 'Không', hint: 'Nhìn màn hình thật, chỉ có trang thu nhỏ', unit: 0, unitName: '' },
+  { id: 'text', get label() { return tr('mp.text'); }, get hint() { return tr('mp.textH'); }, unit: 24, get unitName() { return tr('mp.textU'); } },
+  { id: 'web', get label() { return tr('mp.web'); }, get hint() { return tr('mp.webH'); }, unit: 0, unitName: '' },
+  { id: 'list', get label() { return tr('mp.list'); }, get hint() { return tr('mp.listH'); }, unit: 64, get unitName() { return tr('mp.listU'); } },
+  { id: 'grid', get label() { return tr('mp.grid'); }, get hint() { return tr('mp.gridH'); }, unit: 300, get unitName() { return tr('mp.gridU'); } },
+  { id: 'feed', get label() { return tr('mp.feed'); }, get hint() { return tr('mp.feedH'); }, unit: 520, get unitName() { return tr('mp.feedU'); } },
+  { id: 'table', get label() { return tr('mp.table'); }, get hint() { return tr('mp.tableH'); }, unit: 36, get unitName() { return tr('mp.tableU'); } },
+  { id: 'none', get label() { return tr('mp.none'); }, get hint() { return tr('mp.noneH'); }, unit: 0, unitName: '' },
 ];
 
 // ---- kiểu trang đang chọn (nhớ trên máy, lỗi storage thì dùng mặc định) ----
@@ -45,7 +47,7 @@ export function unitText(k: PageKind, dist: number) {
   const u = PAGE_KINDS.find((x) => x.id === k)!;
   if (!u.unit) return '';
   const n = dist / u.unit;
-  return `≈ ${n < 10 ? n.toLocaleString('vi-VN', { maximumFractionDigits: 1 }) : Math.round(n)} ${u.unitName}`;
+  return `≈ ${n < 10 ? n.toLocaleString(getLang() === 'en' ? 'en-US' : 'vi-VN', { maximumFractionDigits: 1 }) : Math.round(n)} ${u.unitName}`;
 }
 
 // ---- vẽ ----
@@ -101,7 +103,7 @@ function blocks(k: PageKind, W: number, L: number, C: Palette): ReactNode[] {
       y = 540;
       while (y < L) {
         bar(`s${i}`, pad, y, W * 0.3, 24, C.dark, 5);
-        num(`sn${i}`, pad + W * 0.3 + 16, y + 19, `Mục ${i + 1}`);
+        num(`sn${i}`, pad + W * 0.3 + 16, y + 19, tr('mp.item', { n: i + 1 }));
         y += 56;
         const cols = 3, gap = 24, cw = (W - 2 * pad - gap * (cols - 1)) / cols;
         for (let c = 0; c < cols; c++) {
@@ -150,7 +152,7 @@ function blocks(k: PageKind, W: number, L: number, C: Palette): ReactNode[] {
         out.push(<rect key={`f${i}`} x={fx} y={y} width={fw} height={500} rx={10} fill={C.card} stroke={C.line} strokeWidth={2} />);
         out.push(<circle key={`fa${i}`} cx={fx + 36} cy={y + 36} r={20} fill={C.img} />);
         bar(`fn${i}`, fx + 68, y + 28, 140, 12, C.dark);
-        num(`fnn${i}`, fx + fw - 16, y + 42, `Bài ${i + 1}`, 'end');
+        num(`fnn${i}`, fx + fw - 16, y + 42, tr('mp.post', { n: i + 1 }), 'end');
         lines(`ft${i}`, fx + 16, y + 76, fw - 32, 2);
         bar(`fi${i}`, fx, y + 130, fw, 300, C.img, 0);
         for (let j = 0; j < 3; j++) bar(`fb${i}-${j}`, fx + 16 + j * (fw / 3), y + 455, fw / 5, 12, C.soft);
@@ -189,14 +191,15 @@ export function MockPage({ kind: k, W, L, s, horizontal = false }: { kind: PageK
 
 // Nút chọn kiểu trang trên thanh công cụ Xem trước (HUD tối): danh sách kèm hình thu nhỏ từng kiểu.
 export function PageKindPicker({ className = '' }: { className?: string }) {
+  const t = useT();
   const k = usePageKind();
   const { open, setOpen, ref } = usePopover({ escOnly: true });
   const cur = PAGE_KINDS.find((x) => x.id === k)!;
   return (
     <div ref={ref} className="relative">
-      <button onClick={() => setOpen(!open)} aria-expanded={open} title="Trang mẫu phủ nền khi Xem trước (đúng tỷ lệ px) – cuộn thì trang trượt theo, để hình dung cuộn tới đâu"
+      <button onClick={() => setOpen(!open)} aria-expanded={open} title={t('mp.tip')}
         className={`${className} ${open ? 'bg-white/14 text-white' : 'hover:bg-white/6'}`}>
-        {k !== 'none' && <Thumb kind={k} size={18} />}Nền: {cur.label}
+        {k !== 'none' && <Thumb kind={k} size={18} />}{t('mp.bg', { l: cur.label })}
       </button>
       {open && (
         <div role="menu" className="absolute top-full left-1/2 z-40 mt-2 grid w-[392px] -translate-x-1/2 grid-cols-3 gap-1.5 rounded-xl border border-white/12 bg-[rgb(24_27_36/.97)] p-2 shadow-[0_12px_32px_rgb(0_0_0/.45)]">
@@ -204,7 +207,7 @@ export function PageKindPicker({ className = '' }: { className?: string }) {
             <button key={x.id} role="menuitemradio" aria-checked={x.id === k} onClick={() => { setPageKind(x.id); setOpen(false); }}
               className={`flex min-w-0 flex-col items-center gap-1.5 rounded-lg p-2 text-center ${x.id === k ? 'bg-white/14 ring-2 ring-accent' : 'hover:bg-white/8'}`}>
               {x.id === 'none'
-                ? <span className="grid h-[55px] w-[74px] place-items-center rounded-[3px] border border-dashed border-white/30 text-[11px] text-white/50">màn hình thật</span>
+                ? <span className="grid h-[55px] w-[74px] place-items-center rounded-[3px] border border-dashed border-white/30 text-[11px] text-white/50">{t('mp.real')}</span>
                 : <Thumb kind={x.id} size={74} />}
               <span className="text-[13px] font-semibold text-white">{x.label}</span>
               <span className="w-full text-[11px] leading-tight whitespace-normal text-white/55">{x.hint}</span>
