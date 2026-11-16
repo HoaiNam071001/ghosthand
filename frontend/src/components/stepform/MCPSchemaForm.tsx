@@ -1,5 +1,6 @@
 // Form đối số của node Gọi tool MCP, dựng từ inputSchema (bước 55 M4). Chỉ hiển thị: đối số nằm ở chuỗi JSON `args`,
 // mỗi ô sửa một trường qua setArg (flow/mcpSchema.ts). Ô chữ nhận {{biến}}.
+import { useT } from '../../i18n';
 import Select from '../Select';
 import { Switch } from '../Switch';
 import VarTextInput from '../inputs/VarTextInput';
@@ -12,6 +13,7 @@ type VarProps = Pick<ComponentProps<typeof VarTextInput>, 'inputs' | 'nodeVars' 
 type Props = { fields: SchemaField[]; args: string; onChange: (args: string) => void; varProps: VarProps };
 
 export default function MCPSchemaForm({ fields, args, onChange, varProps }: Props) {
+  const t = useT();
   const cur = parseArgs(args) ?? {};
   const put = (name: string, v: unknown) => onChange(setArg(args, name, v));
   return (
@@ -32,10 +34,10 @@ export default function MCPSchemaForm({ fields, args, onChange, varProps }: Prop
             {f.kind === 'boolean' && <Switch on={v === true} onChange={(on) => put(f.name, on)} label={f.name} />}
             {f.kind === 'enum' && (
               <Select value={typeof v === 'string' ? v : ''} className={selectBox} aria-label={f.name} onChange={(t) => put(f.name, t || undefined)}
-                options={[{ value: '', label: '(không chọn)' }, ...f.options.map((o) => ({ value: o, label: o }))]} />
+                options={[{ value: '', label: t('msf.none') }, ...f.options.map((o) => ({ value: o, label: o }))]} />
             )}
             {f.kind === 'stringList' && (
-              <textarea className={`${fieldBox} font-mono`} rows={3} aria-label={f.name} placeholder="mỗi dòng một giá trị" spellCheck={false}
+              <textarea className={`${fieldBox} font-mono`} rows={3} aria-label={f.name} placeholder={t('msf.perLine')} spellCheck={false}
                 value={listToText(v)} onChange={(e) => put(f.name, textToList(e.target.value))} />
             )}
             {f.kind === 'json' && <JSONCell name={f.name} value={v} onChange={(x) => put(f.name, x)} />}

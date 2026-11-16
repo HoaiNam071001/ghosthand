@@ -1,11 +1,12 @@
 // Node Chờ đến giờ (bước 35 N6) – đọc giờ hẹn (cùng công thức ParseAt, internal/script/at.go – test chung
 // testdata/wait_until.json), xem trước "còn bao lâu", đếm ngược trên thanh mini. Chạy ở internal/engine/waituntil.go.
 import type { Step } from '../types';
+import { tr } from '../i18n/lang';
 
 // '' = đi tiếp ngay (khớp model.PassedModes)
 export type IfPassed = '' | 'tomorrow' | 'fail';
 export const PASSED_MODES: { id: IfPassed; label: string }[] = [
-  { id: '', label: 'Đi tiếp' }, { id: 'tomorrow', label: 'Đợi ngày mai' }, { id: 'fail', label: 'Thất bại' },
+  { id: '', get label() { return tr('until.passed.0'); } }, { id: 'tomorrow', get label() { return tr('until.passed.1'); } }, { id: 'fail', get label() { return tr('until.passed.2'); } },
 ];
 
 const AT_RE = /^\s*(?:(\d{4})-(\d{1,2})-(\d{1,2})|(\d{1,2})\/(\d{1,2})\/(\d{4}))?\s*(\d{1,2}):(\d{2})(?::(\d{2})(?:[.,](\d{1,3}))?)?\s*$/;

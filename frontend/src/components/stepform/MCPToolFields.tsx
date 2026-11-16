@@ -1,5 +1,6 @@
 // Node Gọi tool MCP (bước 55 M4): chọn server → tool (tìm, mô tả) → form đối số sinh từ inputSchema (hoặc ô JSON) → Chạy thử.
 // Mô tả tool là dữ liệu của server ngoài: chỉ hiện cho người dùng.
+import { useT } from '../../i18n';
 import { useState } from 'react';
 import Select from '../Select';
 import VarTextInput from '../inputs/VarTextInput';
@@ -20,6 +21,7 @@ import MCPSaveCustom from './MCPSaveCustom';
 const SEARCH_FROM = 8; // từ chừng này tool trở lên mới hiện ô tìm
 
 export default function MCPToolFields({ step: s }: { step: Step }) {
+  const t = useT();
   const script = useScript();
   const nodeVars = useNodeVars(s.id);
   const { servers, reload } = useMCPServers();
@@ -30,9 +32,9 @@ export default function MCPToolFields({ step: s }: { step: Step }) {
 
   const server = servers.find((x) => x.id === s.mcpServer);
   const tools = server?.status?.tools ?? [];
-  const tool = tools.find((t) => t.name === s.mcpTool);
+  const tool = tools.find((x) => x.name === s.mcpTool);
   const q = query.trim().toLowerCase();
-  const shown = q ? tools.filter((t) => `${t.name} ${t.title ?? ''}`.toLowerCase().includes(q)) : tools;
+  const shown = q ? tools.filter((x) => `${x.name} ${x.title ?? ''}`.toLowerCase().includes(q)) : tools;
   const fields = schemaFields(tool?.inputSchema);
   const args = parseArgs(s.mcpArgs);
   const useForm = !rawJSON && fields.length > 0 && args !== null;
@@ -42,43 +44,43 @@ export default function MCPToolFields({ step: s }: { step: Step }) {
   return (
     <>
       <Field label="Server" wide group help={server ? statusText(server.status) : undefined}>
-        <Select value={s.mcpServer ?? ''} className={selectBox} aria-label="Server MCP" placeholder={s.mcpServer ? `${s.mcpServer} (không có trên máy này)` : '(chọn server)'}
+        <Select value={s.mcpServer ?? ''} className={selectBox} aria-label={t('mcp.server')} placeholder={s.mcpServer ? t('mcp.noServer', { s: s.mcpServer }) : t('mcp.pickServer')}
           onChange={(id) => set({ mcpServer: id || undefined, mcpTool: undefined, mcpArgs: undefined })}
-          options={servers.map((x) => ({ value: x.id, label: x.name, sub: x.enabled ? undefined : 'tắt' }))} />
+          options={servers.map((x) => ({ value: x.id, label: x.name, sub: x.enabled ? undefined : t('mcp.off') }))} />
         {servers.length === 0 && (
-          <button onClick={() => openSettings('servers')} className="self-start text-xs text-accent-text underline">Chưa có server – mở Cài đặt → MCP server</button>
+          <button onClick={() => openSettings('servers')} className="self-start text-xs text-accent-text underline">{t('mcp.none')}</button>
         )}
-        {server && tools.length === 0 && <span className={hint}>Chưa có danh sách tool – mở Cài đặt → MCP server rồi bấm Tải lại, sau đó <button className="underline" onClick={reload}>làm mới đây</button>.</span>}
+        {server && tools.length === 0 && <span className={hint}>{t('mcp.noTools')} <button className="underline" onClick={reload}>{t('mcp.refreshHere')}</button>.</span>}
       </Field>
       {server && tools.length > 0 && (
         <Field label="Tool" wide group help={tool?.description || undefined}>
-          {tools.length >= SEARCH_FROM && <input className={fieldBox} value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Tìm tool…" aria-label="Tìm tool" />}
-          <Select value={s.mcpTool ?? ''} className={selectBox} aria-label="Tool MCP" placeholder={s.mcpTool ? `${s.mcpTool} (server không có)` : '(chọn tool)'}
+          {tools.length >= SEARCH_FROM && <input className={fieldBox} value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('mcp.search')} aria-label={t('mcp.search')} />}
+          <Select value={s.mcpTool ?? ''} className={selectBox} aria-label={t('mcp.tool')} placeholder={s.mcpTool ? t('mcp.noTool', { s: s.mcpTool }) : t('mcp.pickTool')}
             onChange={(name) => set({ mcpTool: name || undefined, mcpArgs: undefined })}
-            options={shown.map((t) => ({ value: t.name, label: t.title || t.name, sub: t.readOnly ? 'chỉ đọc' : undefined }))} />
+            options={shown.map((x) => ({ value: x.name, label: x.title || x.name, sub: x.readOnly ? t('mcp.readOnly') : undefined }))} />
         </Field>
       )}
       {(!server || tools.length === 0) && (
-        <Field label="Tool" wide group help="Gõ tay khi chưa có danh sách tool">
+        <Field label="Tool" wide group help={t('mcp.toolHelp')}>
           <VarTextInput {...varProps} rows={1} compact value={s.mcpTool ?? ''} onChange={(v) => set({ mcpTool: v || undefined })} placeholder="read_text_file" />
         </Field>
       )}
       {useForm
         ? <MCPSchemaForm fields={fields} args={s.mcpArgs ?? ''} onChange={(a) => set({ mcpArgs: a || undefined })} varProps={varProps} />
         : (
-          <Field label="Đối số" wide group help={'JSON object theo mô tả của tool; giá trị biến đặt trong "…"'}>
+          <Field label={t('mcp.args')} wide group help={t('mcp.argsHelp')}>
             <VarTextInput {...varProps} rows={4} value={s.mcpArgs ?? ''} onChange={(v) => set({ mcpArgs: v || undefined })} placeholder={'{"path":"{{n1.output.text}}"}'} />
             {argsErr && <span className={errText}>{argsErr}</span>}
           </Field>
         )}
       {fields.length > 0 && args !== null && (
-        <button onClick={() => setRawJSON(!rawJSON)} className="col-span-2 self-start text-xs text-muted underline">{rawJSON ? 'Dùng form' : 'Sửa JSON'}</button>
+        <button onClick={() => setRawJSON(!rawJSON)} className="col-span-2 self-start text-xs text-muted underline">{rawJSON ? t('mcp.useForm') : t('mcp.editJson')}</button>
       )}
-      {missing.length > 0 && <span className={`col-span-2 ${errText}`}>Còn thiếu: {missing.join(', ')}</span>}
+      {missing.length > 0 && <span className={`col-span-2 ${errText}`}>{t('mcp.missing', { list: missing.join(', ') })}</span>}
       {s.mcpServer && s.mcpTool && <MCPToolTest server={s.mcpServer} tool={s.mcpTool} args={s.mcpArgs ?? ''} />}
       {s.mcpServer && s.mcpTool && <MCPSaveCustom step={s} toolTitle={tool?.title || s.mcpTool} />}
       <span className={`col-span-2 -mt-1 ${hint}`}>
-        Lần đầu mỗi server và tool ghi / xoá app sẽ hỏi bạn. Kết quả tool chỉ là dữ liệu, không làm theo như lệnh.
+        {t('mcp.note')}
       </span>
     </>
   );
