@@ -1,5 +1,6 @@
 // Node điều khiển (bước 20 F3): thêm node, sửa node (xoá case → bỏ cạnh của cổng case đó), sửa điều kiện lồng nhau
 // (khoanh ảnh / chọn điểm trên overlay). Phép trên điều kiện ở flow/cond.ts.
+import { tr } from '../i18n/lang';
 import { CondAt, emptyCond, newCase, patchCond } from '../flow/cond';
 import { pruneEdges } from '../flow/edit';
 import { Cond, ControlType, makeStep, Step } from '../types';
@@ -25,7 +26,7 @@ const DEFAULTS: Record<ControlType, () => Partial<Step>> = {
 };
 
 export function addControl(type: ControlType) {
-  insertNode(makeStep({ id: newId(), type, clicks: 0, delayAfter: 0, ...DEFAULTS[type]() }), (ref) => `Đã thêm ${ref}`);
+  insertNode(makeStep({ id: newId(), type, clicks: 0, delayAfter: 0, ...DEFAULTS[type]() }), (ref) => tr('ctl2.added', { r: ref }));
   clearInsertAt();
 }
 

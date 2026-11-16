@@ -1,4 +1,5 @@
 import { Point } from '../../types';
+import { useT } from '../../i18n';
 import { SCROLL_ARROW } from '../../scroll';
 import { fmtScreens } from '../steps/ScrollMap';
 import { MockPage, unitText, usePageKind } from '../MockPage';
@@ -10,6 +11,7 @@ import type { SimState } from '../Simulation';
 const PAGE_MAX = { w: 120, h: 240 };
 
 export default function ScrollProgress({ sc, toClient }: { sc: NonNullable<SimState['scroll']>; toClient: (p: Point) => Point }) {
+  const t = useT();
   const kind = usePageKind();
   const vertical = sc.dir === 'up' || sc.dir === 'down';
   const sign = sc.dir === 'down' || sc.dir === 'right' ? 1 : -1;
@@ -43,7 +45,7 @@ export default function ScrollProgress({ sc, toClient }: { sc: NonNullable<SimSt
       </svg>
       <div className="absolute flex flex-col items-center gap-1.5 rounded-xl border border-white/15 bg-[rgb(20_22_30/.88)] p-2.5 shadow-[0_8px_24px_rgb(0_0_0/.4)]"
         style={{ left, top }}>
-        <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} aria-label="Trang đang cuộn tới đâu">
+        <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} aria-label={t('sm.scrollAria')}>
           <MockPage kind={kind} W={across} L={pageLen} s={s} horizontal={!vertical} />
           {/* vạch mỗi màn */}
           {Array.from({ length: Math.floor(pageLen / view) }, (_, i) => (i + 1) * V).filter((v) => v < L - 1).map((v) => (
@@ -57,7 +59,7 @@ export default function ScrollProgress({ sc, toClient }: { sc: NonNullable<SimSt
         </svg>
         <span className="text-center font-mono text-[11px] leading-tight text-white">
           {SCROLL_ARROW[sc.dir]} {done.toLocaleString('vi-VN')} / {sc.dist.toLocaleString('vi-VN')} px
-          <br /><span className="text-white/60">{fmtScreens(done / view)} / {fmtScreens(sc.dist / view)} màn</span>
+          <br /><span className="text-white/60">{fmtScreens(done / view)} / {fmtScreens(sc.dist / view)} {t('sm.screens')}</span>
           {vertical && unitText(kind, sc.dist) && <><br /><span className="text-white/60">{unitText(kind, sc.dist)}</span></>}
         </span>
       </div>

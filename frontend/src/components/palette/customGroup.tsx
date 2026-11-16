@@ -1,4 +1,5 @@
 // Mục "Của tôi" của bảng thêm node (bước 55 M5): mỗi node của tôi = một node Gọi tool MCP điền sẵn server / tool / đối số + tên.
+import { tr } from '../../i18n/lang';
 import { useCallback, useEffect, useState } from 'react';
 import { ListCustomNodes } from '../../../wailsjs/go/app/App';
 import { store } from '../../../wailsjs/go/models';
@@ -19,9 +20,9 @@ export function useCustomNodes() {
 export function customGroup(list: store.CustomNode[], reload: () => void): PaletteGroup | null {
   if (list.length === 0) return null;
   return {
-    cat: 'data', title: 'Của tôi', items: list.map((n) => ({
+    cat: 'data', title: tr('cg.mine'), items: list.map((n) => ({
       icon: customIcon(n.icon), label: n.name, keywords: `cua toi custom mcp ${n.server} ${n.tool}`,
-      info: { desc: `Gọi tool MCP “${n.tool}” của server ${n.server} với đối số đã điền sẵn.`, use: 'Node bạn đã lưu từ một node Gọi tool MCP.' },
+      info: { desc: tr('cg.desc', { t: n.tool, s: n.server }), use: tr('cg.use') },
       run: () => addStep('mcpTool', { name: n.name, mcpServer: n.server, mcpTool: n.tool, mcpArgs: n.args || undefined }),
       extra: <CustomNodeEdit node={n} onChanged={reload} />,
     })),

@@ -1,4 +1,5 @@
 // Trang một loại node trong Hướng dẫn (chỉ hiển thị): hoạt hoạ lớn + làm gì / dùng khi (flow/nodeInfo) + phần riêng của nodes.json.
+import { useT } from '../../i18n';
 import { tr } from '../../i18n/lang';
 import { ReactNode } from 'react';
 import { outputsOf } from '../../flow/view';
@@ -11,6 +12,7 @@ import { Blocks, GuideCtx, Inline, SampleRow, Scene } from './GuideBlocks';
 export function GuideNodePage({ k, label, icon, type, info, guide, os, ctx }: {
   k: InfoKey; type?: string; label: string; icon: StepIconName; info: NodeInfo; guide?: NodeGuide; os?: string; ctx: GuideCtx;
 }) {
+  const tx = useT();
   const t = (s: string) => <Inline text={s} ctx={ctx} />;
   return (
     <>
@@ -26,18 +28,18 @@ export function GuideNodePage({ k, label, icon, type, info, guide, os, ctx }: {
         </div>
       </div>
       {guide && <>
-        <Facts rows={[['Công nghệ', guide.tech], ['Độ chính xác', guide.accuracy], ['Tốc độ', guide.speed]]} t={t} />
-        <ListSection title="Chạy được với" items={guide.works} t={t} />
-        <ListSection title="Nên dùng khi" items={guide.good} t={t} />
-        <ListSection title="Không nên dùng khi" items={guide.avoid} t={t} />
-        <ListSection title="Trường quan trọng" items={guide.fields} t={t} />
-        <ListSection title="Mẹo / lỗi hay gặp" items={guide.tips} t={t} />
+        <Facts rows={[[tx('gd.tech'), guide.tech], [tx('gd.acc'), guide.accuracy], [tx('gd.speed'), guide.speed]]} t={t} />
+        <ListSection title={tx('gd.works')} items={guide.works} t={t} />
+        <ListSection title={tx('gd.good')} items={guide.good} t={t} />
+        <ListSection title={tx('gd.avoid')} items={guide.avoid} t={t} />
+        <ListSection title={tx('gd.fields')} items={guide.fields} t={t} />
+        <ListSection title={tx('gd.tips')} items={guide.tips} t={t} />
         <Outputs type={type ?? k} />
         {guide.blocks && <Blocks blocks={guide.blocks} ctx={ctx} />}
-        {guide.samples?.map((id) => <SampleRow key={id} id={id} text="Kịch bản mẫu dùng node này" onSample={ctx.onSample} />)}
+        {guide.samples?.map((id) => <SampleRow key={id} id={id} text={tx('gd.sample')} onSample={ctx.onSample} />)}
       </>}
       {!guide && <Outputs type={type ?? k} />}
-      {!guide && <p className="text-xs text-muted">Trang chi tiết của node này (công nghệ, độ chính xác, mẹo, ví dụ) đang được viết.</p>}
+      {!guide && <p className="text-xs text-muted">{tx('gd.writing')}</p>}
     </>
   );
 }

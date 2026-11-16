@@ -10,9 +10,10 @@ export const inHandle = (slot: string) => `i:${slot}`;
 
 // Khối VÀO / RA (thẻ Đầy đủ)
 export function DataBlock({ pins }: { pins: DataPins }) {
+  const t = useT();
   return (
     <>
-      {pins.ins.length > 0 && <Section title="VÀO" align="left">{pins.ins.map((p) => <PinRow key={p.id} pin={p} side="in" />)}</Section>}
+      {pins.ins.length > 0 && <Section title={t('nd.in')} align="left">{pins.ins.map((p) => <PinRow key={p.id} pin={p} side="in" />)}</Section>}
       {pins.outs.length > 0 && <Section title="RA" align="right">{pins.outs.map((p) => <PinRow key={p.id} pin={p} side="out" />)}</Section>}
     </>
   );
@@ -51,7 +52,7 @@ export function DataFan({ pins, side, height, block }: { pins: DataPins; side: '
     <>
       {pins.ins.length > 0 && (
         <div className="flow-fan flow-fan-in nodrag" style={{ top: height / 2 }}>
-          <span className="px-1 text-[9.5px] font-bold tracking-[.08em] text-faint">VÀO</span>
+          <span className="px-1 text-[9.5px] font-bold tracking-[.08em] text-faint">{t('nd.in')}</span>
           {pins.ins.map((p, i) => <FanChip key={p.id} pin={p} side="in" i={i} />)}
         </div>
       )}

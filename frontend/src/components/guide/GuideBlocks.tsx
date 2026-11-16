@@ -1,4 +1,5 @@
 // Khối nội dung Hướng dẫn (chỉ hiển thị): đoạn, danh sách, bảng, mẹo / cảnh báo, hoạt hoạ node, nút Mở mẫu thử.
+import { useT } from '../../i18n';
 import { ReactNode } from 'react';
 import type { InfoKey } from '../../flow/nodeInfo';
 import { parseInline } from '../../guide/inline';
@@ -59,9 +60,10 @@ function GuideTable({ b, t }: { b: Block; t: (s?: string) => ReactNode }) {
 }
 
 function Callout({ tone, children }: { tone: 'tip' | 'warn'; children: ReactNode }) {
+  const t = useT();
   return (
     <div className={`rounded-card border-l-[3px] px-3 py-2 ${tone === 'tip' ? 'border-accent bg-accent-soft' : 'border-warn bg-soft'}`}>
-      <span className={`mr-1.5 font-semibold ${tone === 'tip' ? 'text-accent-text' : 'text-warn'}`}>{tone === 'tip' ? 'Mẹo:' : 'Lưu ý:'}</span>{children}
+      <span className={`mr-1.5 font-semibold ${tone === 'tip' ? 'text-accent-text' : 'text-warn'}`}>{tone === 'tip' ? t('gd.tip') : t('gd.note')}</span>{children}
     </div>
   );
 }
@@ -78,11 +80,12 @@ export function Scene({ k, caption, big }: { k: InfoKey; caption?: ReactNode; bi
 }
 
 export function SampleRow({ id, text, onSample }: { id: string; text?: ReactNode; onSample?: (id: string) => void }) {
+  const t = useT();
   return (
     <div className="flex items-center gap-3 rounded-card border border-line bg-bg px-3 py-2">
       <span className="min-w-0 flex-1">{text}<span className="ml-1.5 font-mono text-[11px] text-muted">{id}</span></span>
-      <button disabled={!onSample} onClick={() => onSample?.(id)} title={onSample ? 'Mở kịch bản mẫu trên canvas' : 'Cần chạy trong app'}
-        className="h-8 flex-none rounded-control border border-line bg-surface px-3 text-[12.5px] font-medium enabled:hover:bg-hover disabled:opacity-60">Mở mẫu thử</button>
+      <button disabled={!onSample} onClick={() => onSample?.(id)} title={onSample ? t('gd.openSampleTip') : t('gd.needApp')}
+        className="h-8 flex-none rounded-control border border-line bg-surface px-3 text-[12.5px] font-medium enabled:hover:bg-hover disabled:opacity-60">{t('gd.openSample')}</button>
     </div>
   );
 }

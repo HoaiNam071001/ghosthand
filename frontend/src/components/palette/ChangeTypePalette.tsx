@@ -1,4 +1,5 @@
 // Đổi loại node từ inspector: cùng bảng với Thêm node (có hoạt hoạ minh hoạ) nhưng chỉ các loại node thuần và bấm là đổi node đang chọn.
+import { useT } from '../../i18n';
 import { useMemo } from 'react';
 import { PaletteView } from '../PaletteView';
 import { GROUPS } from './groups';
@@ -6,6 +7,7 @@ import { changeStepType } from '../../store';
 import type { Step } from '../../types';
 
 export default function ChangeTypePalette({ step, onClose }: { step: Step; onClose: () => void }) {
+  const t = useT();
   const groups = useMemo(() => GROUPS
     .map((g) => ({
       ...g, note: undefined,
@@ -13,8 +15,8 @@ export default function ChangeTypePalette({ step, onClose }: { step: Step; onClo
     }))
     .filter((g) => g.items.length > 0), [step.id]);
   return (
-    <PaletteView groups={groups} onClose={onClose} label="Đổi loại node"
-      context={<>Đổi loại của <span className="font-mono">{step.ref}</span> – cài đặt chung (vị trí, thời gian, nối cạnh) được giữ</>}
-      footer={<span><span className="font-mono">Enter</span> đổi sang loại này</span>} />
+    <PaletteView groups={groups} onClose={onClose} label={t('ct.title')}
+      context={<>{t('ct.ctxA')} <span className="font-mono">{step.ref}</span> {t('ct.ctxB')}</>}
+      footer={<span><span className="font-mono">Enter</span> {t('ct.enter')}</span>} />
   );
 }

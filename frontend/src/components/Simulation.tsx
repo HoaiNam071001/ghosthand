@@ -1,5 +1,6 @@
 // Xem trước kịch bản: con trỏ giả chạy theo các node trên overlay, không điều khiển chuột thật. Đi theo đồ thị từ start:
 // node rẽ nhánh theo menu Nhánh (flow/preview.ts), từng node diễn ở simulation/playNode.ts.
+import { tr } from '../i18n/lang';
 import { useEffect, useRef, useState } from 'react';
 import { endpoints } from '../store';
 import { BranchChoices, hopText, newWalk, previewHop, routeText, stopText, type Hop } from '../flow/preview';
@@ -68,7 +69,7 @@ export function useSimulation(sc: Pick<Script, 'steps' | 'start' | 'edges' | 'hu
 
   const stop = () => {
     token.current++;
-    setSim((s) => ({ ...s, running: false, pressed: false, bubble: '', label: s.step ? 'Đã dừng' : '' }));
+    setSim((s) => ({ ...s, running: false, pressed: false, bubble: '', label: s.step ? tr('sm.stopped') : '' }));
   };
 
   const start = async () => {
@@ -158,7 +159,7 @@ export function useSimulation(sc: Pick<Script, 'steps' | 'start' | 'edges' | 'hu
         patch({ step: s.id, label: `${s.ref} · ${stepLabel(s)}${s.type === 'click' && s.clicks > 1 ? ` ×${s.clicks}` : ''}`, bubble: '' });
         if (s.enabled) {
           await playNode(s, ends.get(s.id), pl);
-          if (s.delayAfter > 0) patch((st) => ({ bubble: st.bubble || `Chờ ${s.delayAfter} ms` }));
+          if (s.delayAfter > 0) patch((st) => ({ bubble: st.bubble || tr('sm.wait', { n: s.delayAfter }) }));
           await wait(s.delayAfter);
           patch({ bubble: '' });
         }

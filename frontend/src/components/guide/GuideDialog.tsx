@@ -1,4 +1,5 @@
 // Modal Hướng dẫn (bước 51, chỉ hiển thị): mục lục trái, chương / trang node phải. Nối store ở Guide.tsx; màn mẫu #demo-guide dùng thẳng.
+import { useT } from '../../i18n';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { InfoKey, NODE_INFO } from '../../flow/nodeInfo';
 import { onlyLabel, OnlyOS } from '../../flow/platform';
@@ -15,6 +16,7 @@ export function GuideDialog({ chapters, nodes, guides, only, page, onNav, onBack
   chapters: Chapter[]; nodes: GuideNodeMeta[]; guides: Partial<Record<InfoKey, NodeGuide>>; only: OnlyOS;
   page: GuidePage; onNav: (p: GuidePage) => void; onBack?: () => void; onSample?: (id: string) => void; onClose: () => void;
 }) {
+  const t = useT();
   const [q, setQ] = useState('');
   const label = useMemo(() => {
     const n = new Map(nodes.map((x) => [x.key as string, x.label]));
@@ -31,11 +33,11 @@ export function GuideDialog({ chapters, nodes, guides, only, page, onNav, onBack
   const node = 'node' in page ? nodes.find((n) => n.key === page.node) : undefined;
   return (
     <div className="fixed inset-0 z-40 flex items-start justify-center bg-black/25 px-4 pt-[5vh]" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div role="dialog" aria-modal="true" aria-label="Hướng dẫn" className="flex h-[86vh] w-[980px] max-w-full flex-col overflow-hidden rounded-panel border border-line bg-surface text-[13px] text-ink shadow-[0_16px_48px_rgb(0_0_0/.22)]">
+      <div role="dialog" aria-modal="true" aria-label={t('gd.title')} className="flex h-[86vh] w-[980px] max-w-full flex-col overflow-hidden rounded-panel border border-line bg-surface text-[13px] text-ink shadow-[0_16px_48px_rgb(0_0_0/.22)]">
         <div className="flex flex-none items-center gap-2 border-b border-line px-4 py-2.5">
-          {onBack && <button onClick={onBack} aria-label="Quay lại" title="Quay lại trang trước" className="rounded-md px-2 py-1 text-muted hover:bg-hover hover:text-ink">←</button>}
-          <div className="text-base font-semibold">Hướng dẫn</div>
-          <button onClick={onClose} aria-label="Đóng" className="ml-auto rounded-md px-2 py-1 text-muted hover:bg-hover hover:text-ink">✕</button>
+          {onBack && <button onClick={onBack} aria-label={t('gd.back')} title={t('gd.backTip')} className="rounded-md px-2 py-1 text-muted hover:bg-hover hover:text-ink">←</button>}
+          <div className="text-base font-semibold">{t('gd.title')}</div>
+          <button onClick={onClose} aria-label={t('gd.close')} className="ml-auto rounded-md px-2 py-1 text-muted hover:bg-hover hover:text-ink">✕</button>
         </div>
         <div className="flex min-h-0 flex-1">
           <GuideToc entries={shown} current={page} q={q} onQ={setQ} onPick={onNav} />
@@ -47,7 +49,7 @@ export function GuideDialog({ chapters, nodes, guides, only, page, onNav, onBack
             </>}
             {node && <GuideNodePage k={node.key} label={node.label} icon={node.icon} type={node.type} info={NODE_INFO[node.key]} guide={guides[node.key]}
               os={onlyLabel(only, node.type ?? node.key)} ctx={ctx} />}
-            {!chapter && !node && <p className="text-muted">Không có trang này.</p>}
+            {!chapter && !node && <p className="text-muted">{t('gd.noPage')}</p>}
           </div>
         </div>
       </div>

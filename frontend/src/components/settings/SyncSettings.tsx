@@ -1,4 +1,5 @@
 // Cài đặt → Đồng bộ (bước 54 C8/C9): nối Go (đăng nhập Google / MCP server, phạm vi, cụm mật khẩu) với SyncPanel (chỉ hiển thị).
+import { tr } from '../../i18n/lang';
 import { useEffect, useState } from 'react';
 import {
   CheckSyncMCP, ClearSyncPassphrase, GetSyncSettings, ListMCPServers, SetSyncPassphrase, SetSyncSettings, SyncLogin, SyncLogout, SyncMCPPresets, SyncNow,
@@ -64,7 +65,7 @@ export default function SyncSettings() {
     setCheck(null);
     SetSyncSettings(toGo(cfg, draft))
       .then(() => CheckSyncMCP(mcpmap.Mapping.createFrom(draft.mcp)))
-      .then((missing) => setCheck(missing?.length ? { ok: false, text: `Server không có tool: ${missing.join(', ')}` } : { ok: true, text: 'Đã lưu – server có đủ tool.' }))
+      .then((missing) => setCheck(missing?.length ? { ok: false, text: tr('sy.noTool', { l: missing.join(', ') }) } : { ok: true, text: tr('sy.saved') }))
       .catch((e) => setCheck({ ok: false, text: errorText(e) }))
       .finally(() => { setBusy(false); void refreshSyncStatus(); load(); });
   };

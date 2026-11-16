@@ -1,3 +1,4 @@
+import { tr } from '../../i18n/lang';
 // Nhóm "AI thử" ở thư viện (61 M5) – phần tính, không React.
 
 const DAY_MS = 24 * 3600 * 1000;
@@ -10,4 +11,4 @@ export function daysLeft(lastUsed: number, days: number, now: number): number | 
 
 // trialNote – dòng giải thích dưới nhóm.
 export const trialNote = (days: number) =>
-  days > 0 ? `Tự vào Thùng rác sau ${days} ngày không mở. Lưu tay (${navigator.platform.startsWith('Mac') ? '⌘' : 'Ctrl+'}S) để giữ lại.` : 'Không tự dọn (Cài đặt → AI (MCP)).';
+  days > 0 ? tr('tr2.trash', { d: days, k: navigator.platform.startsWith('Mac') ? '⌘' : 'Ctrl+' }) : tr('tr2.never');
