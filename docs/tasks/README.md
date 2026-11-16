@@ -41,7 +41,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 | Dùng AI gọn hơn | Trạng thái đầu phiên ngắn, `ghosthand test` chạy nhiều kịch bản ra bảng gọn, kiểm tra môi trường trước khi chạy, `browserNorm` bắt buộc chọn đích, tự dọn kịch bản thử của AI | [61](phase3/61-dung-ai-gon.md) |
 | 🧪 | Wisp làm trình duyệt node web | Cài đặt → Trình duyệt (Tự động / Chrome của app / Wisp), node web chạy qua cổng Ghosthand của Wisp (sự kiện thật, không chiếm chuột), tự mở Wisp | [62](phase3/62-trinh-duyet-wisp.md) |
 | 🧪 | Layout ribbon kiểu Word | Thanh tiêu đề + ribbon theo tab gom mọi nút, trang Tệp (thư viện, lịch sử, Cài đặt), dưới chỉ còn canvas + inspector nổi, viền resize quanh cửa sổ | [63](phase3/63-layout-ribbon.md) |
-| ⬜ | Ngôn ngữ vi / en | Nút chọn Tiếng Việt / English ở Cài đặt + ribbon Xem, đổi ngay; dịch theo đợt (khung → form node → Hướng dẫn); MCP giữ tiếng Việt | [64](phase3/64-ngon-ngu-vi-en.md) |
+| 🧪 | Ngôn ngữ vi / en | Nút chọn Tiếng Việt / English ở Cài đặt + ribbon Xem, đổi ngay; dịch theo đợt (khung → form node → Hướng dẫn); MCP giữ tiếng Việt | [64](phase3/64-ngon-ngu-vi-en.md) |
 
 ### Node hành động
 
