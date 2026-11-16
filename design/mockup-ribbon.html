@@ -63,12 +63,13 @@ svg.i{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-widt
 
 /* hàng 3: thân ribbon */
 .ribbon{display:flex;align-items:stretch;gap:0;background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line);
-  height:94px;padding:6px 8px 0;flex:none;overflow-x:auto;position:relative}
+  height:98px;padding:6px 36px 0 8px;flex:none;overflow-x:auto;overflow-y:hidden;position:relative}
 .collapsed .ribbon{display:none}
 .grp{display:flex;flex-direction:column;padding:0 8px;border-right:1px solid var(--line);flex:none}
 .grp .body{flex:1;display:flex;gap:2px;align-items:flex-start}
-.grp .lbl{text-align:center;font-size:11px;color:var(--faint);padding:2px 0 4px}
-.big{width:58px;height:64px;border-radius:7px;display:flex;flex-direction:column;align-items:center;gap:5px;padding-top:7px;font-size:11.5px;text-align:center;line-height:1.15}
+.grp .lbl{white-space:nowrap;text-align:center;font-size:11px;color:var(--faint);padding:2px 0 4px}
+.big{min-width:52px;max-width:92px;height:66px;padding:7px 8px 0;border-radius:7px;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11.5px;text-align:center;line-height:1.15;flex:none}
+.big>b{font-weight:400;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .big svg.i{width:24px;height:24px;stroke-width:1.5}
 .big:hover,.sm:hover{background:var(--hover)}
 .col{display:flex;flex-direction:column;gap:1px}
@@ -76,7 +77,7 @@ svg.i{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-widt
 .sm svg.i{width:14px;height:14px}
 .on{background:var(--accent-soft)!important;color:var(--accent-text)}
 .c-mouse{color:var(--mouse)}.c-kb{color:var(--kb)}.c-wait{color:var(--wait)}.c-flow{color:var(--flow)}.c-web{color:var(--web)}.c-data{color:var(--data)}
-.pin{position:absolute;right:6px;bottom:4px}
+.pin{position:sticky;right:0;align-self:flex-end;margin-left:auto;flex:none}
 
 /* main */
 .main{flex:1;position:relative;background-color:var(--canvas);background-image:radial-gradient(var(--dot) 1.2px,transparent 1.3px);background-size:20px 20px;overflow:hidden}
@@ -115,6 +116,18 @@ svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .bs-nav hr{border:0;border-top:1px solid rgb(255 255 255/.25);margin:6px 4px}
 .bs-body{flex:1;padding:22px 28px;overflow:auto}
 .bs-body h2{margin:0 0 14px;font-size:20px}
+.bs-body[hidden]{display:none}
+.set{display:flex;gap:20px;max-width:860px}
+.set-nav{width:170px;display:flex;flex-direction:column;gap:2px;flex:none}
+.set-nav button{text-align:left;padding:7px 10px;border-radius:7px;color:var(--muted)}
+.set-nav button:hover{background:var(--hover)}.set-nav .cur{background:var(--accent-soft);color:var(--accent-text);font-weight:600}
+.set-body{flex:1;display:flex;flex-direction:column;gap:14px}
+.seg{display:inline-flex;align-self:flex-start;background:var(--soft);border-radius:8px;padding:3px;gap:2px}
+.seg button{padding:4px 12px;border-radius:6px;color:var(--muted)}.seg .cur{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgb(0 0 0/.15)}
+.srow{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.srow p{margin:2px 0 0;color:var(--muted);font-size:12px}
+.sw{width:34px;height:20px;border-radius:99px;background:var(--accent);position:relative;flex:none}.sw::after{content:"";position:absolute;right:3px;top:3px;width:14px;height:14px;border-radius:99px;background:var(--on-accent)}
+.sw.off{background:var(--line-strong)}.sw.off::after{right:auto;left:3px}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:22px}
 .card{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px}
 .card .th{height:64px;border-radius:7px;background-color:var(--canvas);background-image:radial-gradient(var(--dot) 1px,transparent 1.2px);background-size:10px 10px;display:grid;place-items:center}
@@ -153,7 +166,7 @@ svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
     <div class="resize"></div>
     <span class="badge" style="left:6px;top:6px">1</span>
     <span class="badge" style="left:132px;top:8px">2</span>
-    <span class="badge" style="right:40px;top:120px">3</span>
+    <span class="badge" style="left:8px;top:112px">3</span>
     <span class="badge" style="right:300px;top:44px">4</span>
     <span class="badge" style="left:260px;top:220px">5</span>
     <span class="badge" style="right:330px;top:190px">6</span>
@@ -170,6 +183,7 @@ svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
       <div class="docname">vang-voi-051126 <span class="unsaved"><span class="dot"></span>Chưa lưu</span></div>
       <div class="search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m20 20-4-4"/></svg>Tìm lệnh, node… (Alt+Q)</div>
       <button class="ib" title="Hướng dẫn (F1)" data-i="help"></button>
+      <button class="ib" title="Cài đặt (Ctrl+,)" data-i="gear" data-go="settings:storage"></button>
       <button class="wbtn">—</button><button class="wbtn">▢</button><button class="wbtn x">✕</button>
     </div>
 
@@ -233,12 +247,12 @@ svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
     <div class="back">
       <nav class="bs-nav">
         <button id="bsBack">← Quay lại</button><hr>
-        <button class="cur">Trang đầu</button><button>Mới</button><button>Mở…</button><button>Mẫu thử</button><hr>
+        <button class="cur" data-page="home">Trang đầu</button><button>Mới</button><button>Mở…</button><button>Mẫu thử</button><hr>
         <button>Lưu</button><button>Lưu thành…</button><button>Nhúng kịch bản…</button><button>Gói báo lỗi (.zip)</button><hr>
         <button>Lịch sử chạy</button><button>Thùng rác</button>
-        <button style="margin-top:auto">Cài đặt</button>
+        <button style="margin-top:auto" data-page="settings">Cài đặt</button>
       </nav>
-      <div class="bs-body">
+      <div class="bs-body" data-pg="home">
         <h2>Mới</h2>
         <div class="cards">
           <div class="card"><div class="th" style="font-size:24px;color:var(--muted)">+</div><b>Kịch bản trống</b></div>
@@ -254,6 +268,17 @@ svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
         <div class="row"><span class="dot" style="background:var(--ok)"></span>Chạy tay · vang-voi-051126<span class="t mono">17:15 26/10</span></div>
         <div class="row"><span class="dot" style="background:var(--danger)"></span>Chạy tay · vang-voi-051126 – lỗi ở n2<span class="t mono">17:13 26/10</span></div>
       </div>
+
+      <div class="bs-body" data-pg="settings" hidden>
+        <h2>Cài đặt</h2>
+        <div class="set">
+          <nav class="set-nav" id="setNav"></nav>
+          <div class="set-body">
+            <div class="seg" id="setTabs"></div>
+            <div id="setPane" style="display:flex;flex-direction:column;gap:8px"></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -268,7 +293,8 @@ svg.edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
     <div class="note"><h3><em>5</em>Main chỉ còn canvas</h3><p>Bỏ thanh thư viện trái, nút zoom / thanh công cụ nổi trên canvas. Canvas chiếm hết phần dưới để kéo thả; minimap nổi góc phải, có thể ẩn ở tab Xem.</p></div>
     <div class="note"><h3><em>6</em>Inspector kiểu task pane</h3><p>Chỉ hiện khi chọn node (Esc / ✕ để ẩn). Mặc định <b>nổi</b> trên canvas; bấm ghim để <b>dính cạnh phải</b> (canvas co lại). Kéo mép trái đổi bề rộng.</p></div>
     <div class="note"><h3><em>7</em>Status bar kiểu Word</h3><p>Trạng thái, toạ độ chuột, số node, thông báo; bên phải là thanh <b>zoom</b> (− ━●━ + 100%, vừa màn hình) thay cụm nút zoom trên canvas.</p></div>
-    <div class="note"><h3><em>Tệp</em>Trang Tệp (backstage)</h3><p>Thư viện kịch bản, Mở gần đây, Mẫu thử, Lịch sử chạy, Thùng rác, Lưu / xuất gói, Cài đặt – gom vào trang toàn màn hình như Word thay cho thanh bên trái.</p></div>
+    <div class="note"><h3><em>Tệp</em>Trang Tệp (backstage)</h3><p>Thư viện kịch bản, Mở gần đây, Mẫu thử, Lịch sử chạy, Thùng rác, Lưu / xuất gói – gom vào trang toàn màn hình như Word thay cho thanh bên trái.</p></div>
+    <div class="note"><h3><em>⚙</em>Cài đặt</h3><p>Giữ nguyên nội dung Cài đặt cũ (6 mục: Lưu trữ, Khi chạy, Bảo mật, AI, API, Giới thiệu + tab con), chỉ chuyển chỗ: thành trang <b>Tệp → Cài đặt</b> thay cho modal. Mở nhanh bằng nút ⚙ trên thanh tiêu đề, <b>Ctrl+,</b>, hoặc ribbon <b>Công cụ → Cài đặt / MCP</b>.</p></div>
   </div>
 </div>
 
@@ -303,7 +329,7 @@ monitor:'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16
 plug:'<path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0zM12 17v5"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
 zip:'<path d="M6 3h9l4 4v14H6z"/><path d="M11 3v2M11 7v2M11 11v2"/>'};
 const ic=(k,c='')=>`<span class="${c}"><svg class="i" viewBox="0 0 24 24">${P[k]||''}</svg></span>`;
-const big=(k,t,c,cls='')=>`<button class="big ${cls}">${ic(k,c)}${t}</button>`;
+const big=(k,t,c,cls='',go='')=>`<button class="big ${cls}" ${go?`data-go="${go}"`:''}>${ic(k,c)}<b>${t}</b></button>`;
 const sm=(k,t,c,cls='')=>`<button class="sm ${cls}">${ic(k,c)}${t}</button>`;
 const col=(...a)=>`<div class="col">${a.join('')}</div>`;
 const grp=(l,...a)=>`<div class="grp"><div class="body">${a.join('')}</div><div class="lbl">${l}</div></div>`;
@@ -313,14 +339,14 @@ home:grp('Bộ nhớ tạm',big('paste','Dán'),col(sm('cut','Cắt'),sm('copy',
   grp('Chọn',big('box','Chọn vùng','', 'on'),col(sm('all','Chọn tất cả'),sm('target','Đến node…')))+
   grp('Nhóm',big('group','Gom nhóm'),col(sm('ungroup','Bỏ nhóm'),sm('color','Màu nhóm')))+
   grp('Node',col(sm('power','Bật / tắt node'),sm('flag','Đặt làm bắt đầu'),sm('vars','Đổi tên ref')))+
-  grp('Kiểm tra',big('check','Kiểm tra flow')),
+  grp('Kiểm tra',big('check','Kiểm tra')),
 insert:grp('Chuột',big('click','Click','c-mouse'),col(sm('drag','Kéo','c-mouse'),sm('scroll','Cuộn','c-mouse')))+
   grp('Phím',big('type','Gõ chữ','c-kb'),col(sm('key','Phím tắt','c-kb')))+
   grp('Chờ',big('image','Chờ ảnh','c-wait'),col(sm('eye','Chờ chữ','c-wait'),sm('clock','Chờ','c-wait')))+
   grp('Luồng',big('branch','Rẽ nhánh','c-flow'),col(sm('loop','Lặp','c-flow'),sm('stop','Kết thúc','c-flow'),sm('sub','Kịch bản con','c-flow')))+
   grp('Web',big('tab','Tab trình duyệt','c-web'),col(sm('web','Phần tử web','c-web')))+
   grp('Ứng dụng · Dữ liệu',col(sm('app','Mở app'),sm('vars','Đặt biến','c-data'),sm('log','Đọc file','c-data')))+
-  grp('Tất cả',big('grid','Mọi loại node…')),
+  grp('Tất cả',big('grid','Tất cả node')),
 run:grp('Chạy',big('play','Chạy (F8)'),col(sm('from','Chạy từ node chọn'),sm('ghost','Chạy nền'),sm('stop','Dừng')))+
   grp('Lặp',col(sm('loop','Số vòng: 1'),sm('clock','Đếm ngược: 3 s')))+
   grp('Thử',big('eye','Xem trước'),col(sm('ai','AI thử'),sm('web','Thử trang')))+
@@ -333,12 +359,12 @@ view:grp('Kiểu thẻ',big('card','Gọn','','on'),big('full','Đầy đủ'))+
   grp('Cửa sổ',col(sm('ghost','Thanh mini'),sm('monitor','Overlay toàn màn hình'))),
 tools:grp('Màn hình',big('target','Lấy toạ độ'),col(sm('pick','Lấy màu'),sm('image','Chụp vùng')))+
   grp('Trang web',big('monitor','Kiểm tra trang'),col(sm('web','Trình duyệt…')))+
-  grp('AI',big('plug','MCP server'))+
-  grp('Ứng dụng',big('gear','Cài đặt'),col(sm('help','Hướng dẫn (F1)')))
+  grp('AI',big('plug','MCP','','','settings:ai'))+
+  grp('Ứng dụng',big('gear','Cài đặt','','','settings:storage'),col(sm('help','Hướng dẫn (F1)')))
 };
 const rib=document.getElementById('ribbon'),win=document.getElementById('win');
 function setTab(t){
-  if(t==='file'){win.classList.add('backstage');return}
+  if(t==='file'){showPage('home');return}
   document.querySelectorAll('.tab[data-tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===t));
   rib.innerHTML=R[t]+`<button class="ib pin" title="Thu gọn ribbon (Ctrl+F1)" id="col">⌃</button>`;
   document.getElementById('col').onclick=()=>win.classList.add('collapsed');
@@ -357,6 +383,33 @@ document.getElementById('pinPane').onclick=dock;tp.onclick=dock;
 const tog=(id,fn)=>{const b=document.getElementById(id);b.onclick=()=>{const v=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',v);fn(v)}};
 tog('tResize',v=>win.classList.toggle('show-resize',v));tog('tBadge',v=>document.body.classList.toggle('nobadge',!v));
 document.getElementById('tTheme').onclick=()=>{const h=document.documentElement;h.dataset.theme=h.dataset.theme==='dark'?'light':'dark'};
+
+// trang Tệp + Cài đặt (6 mục như Cài đặt cũ: SettingsNav.tsx)
+const SET=[['storage','Lưu trữ',['Thư mục','Đồng bộ']],['run','Khi chạy',['Màn hình','Trình duyệt']],['security','Bảo mật',['Bí mật','Quyền']],
+ ['ai','AI',['AI điều khiển app (MCP)','Hỏi AI','MCP server ngoài']],['api','API',['API']],['about','Giới thiệu',['Giới thiệu']]];
+const SAMPLE={'Thư mục':[['Thư mục kịch bản','~/Documents/Ghosthand','Đổi…'],['Thùng rác','Tự xoá sau 30 ngày','sel']],
+ 'Đồng bộ':[['Đồng bộ qua thư mục','Chép kịch bản sang máy khác','off']],
+ 'Màn hình':[['Thanh mini khi chạy','Cạnh trên màn hình','sel'],['Viền màn hình khi chạy','Mảnh','sel'],['Đếm ngược trước khi chạy','3 s','sel']],
+ 'Trình duyệt':[['Trình duyệt cho node web','Tự động / Chrome của app / Wisp','sel']],
+ 'Bí mật':[['Mật khẩu, token…','Dùng trong kịch bản bằng {{secret.tên}}','Thêm']],'Quyền':[['Accessibility','Đã cấp','ok'],['Screen Recording','Đã cấp','ok']],
+ 'AI điều khiển app (MCP)':[['Bật MCP server','AI (Claude, Cursor…) soạn và chạy kịch bản',''],['Chế độ chạy','Hỏi trước khi chạy','sel']],
+ 'Hỏi AI':[['Nhà cung cấp','AI trên máy','sel']],'MCP server ngoài':[['Danh sách server','Chưa có','Thêm']],
+ 'API':[['API cục bộ','http://127.0.0.1:…','off']],'Giới thiệu':[['Ghosthand','Phiên bản 1.x · kiểm tra bản mới','Kiểm tra']]};
+const setNav=document.getElementById('setNav'),setTabs=document.getElementById('setTabs'),setPane=document.getElementById('setPane');
+function ctl(c){return c==='off'?'<span class="sw off"></span>':c===''?'<span class="sw"></span>':c==='sel'?'<span class="inp" style="width:120px">Chọn <span>▾</span></span>':c==='ok'?'<span style="color:var(--ok)">✓</span>':`<button class="chip">${c}</button>`}
+function showSetting(id,sub=0){const g=SET.find(x=>x[0]===id);
+  setNav.innerHTML=SET.map(x=>`<button class="${x[0]===id?'cur':''}" data-s="${x[0]}">${x[1]}</button>`).join('');
+  setTabs.style.display=g[2].length>1?'':'none';
+  setTabs.innerHTML=g[2].map((t,k)=>`<button class="${k===sub?'cur':''}" data-k="${k}">${t}</button>`).join('');
+  setPane.innerHTML=(SAMPLE[g[2][sub]]||[]).map(r=>`<div class="srow"><div><b>${r[0]}</b><p>${r[1]}</p></div>${ctl(r[2])}</div>`).join('');
+  setNav.querySelectorAll('button').forEach(b=>b.onclick=()=>showSetting(b.dataset.s));
+  setTabs.querySelectorAll('button').forEach(b=>b.onclick=()=>showSetting(id,+b.dataset.k));}
+function showPage(pg,set){win.classList.add('backstage');
+  document.querySelectorAll('[data-pg]').forEach(e=>e.hidden=e.dataset.pg!==pg);
+  document.querySelectorAll('.bs-nav [data-page]').forEach(b=>b.classList.toggle('cur',b.dataset.page===pg));
+  if(pg==='settings')showSetting(set||'storage');}
+document.querySelectorAll('.bs-nav [data-page]').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){const[pg,s]=g.dataset.go.split(':');showPage(pg==='settings'?'settings':pg,s)}});
 </script>
 </body>
 </html>
