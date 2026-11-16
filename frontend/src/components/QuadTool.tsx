@@ -1,6 +1,6 @@
 // Chế độ "Ánh xạ 4 mốc" của công cụ Chọn nhiều (bước 30): 4 núm ở góc khung bao các điểm đang chọn = mốc cũ,
 // kéo từng núm tới chỗ mới → xem trước phối cảnh (homography 4 → 4), Enter áp dụng, Esc thoát. Toán ở transform.ts.
-import { tr } from '../i18n';
+import { tr, useT } from '../i18n';
 import { MouseEvent as ReactMouseEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { bbox, corners, homography, Mat } from '../transform';
 import { transformSelected } from '../store';
@@ -63,12 +63,13 @@ export function useQuadMode(toScreen: (client: Point) => Point) {
 
 // Thanh nhỏ thay thanh ô nhập số khi đang ở chế độ 4 mốc.
 export function QuadBar({ dirty, onApply, onExit }: { dirty: boolean; onApply: () => void; onExit: () => void }) {
+  const t = useT();
   return (
     <div data-ui className="absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-3 whitespace-nowrap rounded-xl border border-hud-line bg-hud px-3 py-2.5 text-[13px] text-hud-text shadow-[0_12px_32px_rgb(0_0_0/.4)]">
-      <span>Ánh xạ 4 mốc: kéo từng núm 1–4 tới vị trí mới</span>
-      <button onClick={onExit} className="h-8 rounded-md px-2.5 hover:bg-white/10">Thoát <span className="font-mono text-[11px] opacity-70">Esc</span></button>
+      <span>{t('tt.quadBar')}</span>
+      <button onClick={onExit} className="h-8 rounded-md px-2.5 hover:bg-white/10">{t('tt.exit')} <span className="font-mono text-[11px] opacity-70">Esc</span></button>
       <button onClick={onApply} disabled={!dirty} className="btn-primary h-8 rounded-md px-3 font-semibold disabled:opacity-50">
-        Áp dụng <span className="font-mono text-[11px] font-normal opacity-70">Enter</span>
+        {t('tt.apply')} <span className="font-mono text-[11px] font-normal opacity-70">Enter</span>
       </button>
     </div>
   );
@@ -78,6 +79,7 @@ export function QuadBar({ dirty, onApply, onExit }: { dirty: boolean; onApply: (
 export function QuadHandles({ dst, toClient, grab }: {
   dst: Point[]; toClient: (p: Point) => Point; grab: (e: ReactMouseEvent, i: number) => void;
 }) {
+  const t = useT();
   const pts = dst.map(toClient);
   return (
     <>
@@ -85,7 +87,7 @@ export function QuadHandles({ dst, toClient, grab }: {
         <polygon points={pts.map((p) => `${p.x},${p.y}`).join(' ')} className="fill-accent/10 stroke-accent" strokeWidth="1.5" strokeDasharray="5 4" />
       </svg>
       {pts.map((p, i) => (
-        <span key={i} data-ui onMouseDown={(e) => grab(e, i)} title={`Mốc ${i + 1} – kéo tới vị trí mới`} style={{ left: p.x, top: p.y }}
+        <span key={i} data-ui onMouseDown={(e) => grab(e, i)} title={t('tt.handle', { n: i + 1 })} style={{ left: p.x, top: p.y }}
           className="absolute grid h-6 w-6 -translate-x-1/2 -translate-y-1/2 cursor-move place-items-center rounded-full border-2 border-accent bg-white font-mono text-[11px] font-bold text-black">
           {i + 1}
         </span>

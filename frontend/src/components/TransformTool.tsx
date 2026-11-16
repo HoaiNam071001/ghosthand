@@ -1,7 +1,8 @@
 // Công cụ "Chọn nhiều" trên overlay (bước 30): khung biến đổi quanh các điểm đang chọn + thanh ô nhập số + hộp ánh xạ
 // khi đổi vùng. Toán ở transform.ts; ghi điểm (giữ neo, B "lệch so với A", điểm ra ngoài vùng) ở scriptStore.ts.
 // Mọi phép tính làm trên toạ độ màn hình thật; khung vẽ theo toạ độ cửa sổ qua toClient.
-import { tr } from '../i18n';
+import type { MsgKey } from '../i18n/vi';
+import { tr, useT } from '../i18n';
 import { MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from 'react';
 import { safeArea } from '../windowMode';
 import {
@@ -25,7 +26,7 @@ const CURSOR: Record<string, string> = {
 };
 
 type Kind = 'move' | 'scale' | 'rotate' | 'skew' | 'persp';
-const VERB: Record<Kind, string> = { move: 'di chuyển', scale: 'co giãn', rotate: 'xoay', skew: 'xiên', persp: 'biến dạng phối cảnh' };
+const VERB: Record<Kind, MsgKey> = { move: 'mu.move', scale: 'tt.scale', rotate: 'tt.rotate', skew: 'tt.skew', persp: 'tt.persp' };
 type Gesture = { kind: Kind; fx: number; fy: number; box: Rect; m0: Point; moved: boolean };
 
 const at = (r: Rect, fx: number, fy: number): Point => ({ x: r.x + r.w * fx, y: r.y + r.h * fy });
@@ -91,7 +92,7 @@ export function useTransformGesture(toScreen: (client: Point) => Point) {
     const onUp = () => {
       const cur = g.current;
       g.current = null;
-      if (cur?.moved && liveRef.current) transformSelected(liveRef.current, VERB[cur.kind]);
+      if (cur?.moved && liveRef.current) transformSelected(liveRef.current, tr(VERB[cur.kind]));
       update(null);
     };
     window.addEventListener('mousemove', onMove);
@@ -134,21 +135,22 @@ export function TransformFrame({ box, toClient, begin, bad, single }: {
   bad: boolean; // có điểm ra ngoài vùng
   single: boolean; // một điểm / mọi điểm thẳng hàng: chỉ di chuyển
 }) {
+  const t = useT();
   const r = frameRect(box, toClient);
   const color = bad ? 'border-danger' : 'border-accent';
   return (
     <div data-ui className="absolute" style={{ left: r.x, top: r.y, width: r.w, height: r.h }}>
-      <div onMouseDown={(e) => begin(e, 'move', box)} title="Kéo để di chuyển (Shift: chỉ ngang / dọc) · phím mũi tên 1 px, Shift 10 px"
+      <div onMouseDown={(e) => begin(e, 'move', box)} title={t('tt.dragMove')}
         className={`absolute inset-0 cursor-move border ${color} ${bad ? 'bg-danger/10' : 'bg-accent/5'}`} />
       {!single && HANDLES.map(([fx, fy]) => (
         <span key={`${fx},${fy}`} onMouseDown={(e) => begin(e, 'scale', box, fx, fy)} style={{ left: `${fx * 100}%`, top: `${fy * 100}%`, cursor: CURSOR[`${fx},${fy}`] }}
-          title={fx === 0.5 || fy === 0.5 ? `Co giãn (Shift giữ tỷ lệ, Alt từ tâm) · ${modKeyName} + kéo: xiên` : `Co giãn (Shift giữ tỷ lệ, Alt từ tâm) · ${modKeyName} + kéo: phối cảnh`}
+          title={t(fx === 0.5 || fy === 0.5 ? 'tt.scaleSkew' : 'tt.scalePersp', { k: modKeyName })}
           className={`absolute h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-[2px] border-[1.5px] ${color} bg-white`} />
       ))}
       {!single && (
         <>
           <span className={`pointer-events-none absolute -top-7 left-1/2 h-7 w-px -translate-x-1/2 ${bad ? 'bg-danger' : 'bg-accent'}`} />
-          <span onMouseDown={(e) => begin(e, 'rotate', box)} title="Kéo để xoay (Shift: bước 15°)"
+          <span onMouseDown={(e) => begin(e, 'rotate', box)} title={t('tt.dragRotate')}
             className={`absolute -top-9 left-1/2 h-4 w-4 -translate-x-1/2 cursor-grab rounded-full border-[1.5px] ${color} bg-white`} />
         </>
       )}
@@ -177,6 +179,7 @@ export function TransformBar({ points, tf, setTf, frame, onQuad }: {
   onQuad: () => void; // vào chế độ ánh xạ 4 mốc
   frame: Rect; // khung biến đổi (toạ độ cửa sổ) – thanh tránh đè lên
 }) {
+  const t = useT();
   const ps = [...points.values()];
   const c = center(bbox(ps));
   const dirty = !isNoTf(tf);
@@ -221,38 +224,38 @@ export function TransformBar({ points, tf, setTf, frame, onQuad }: {
   return (
     <div data-ui style={pos ? { left: pos.x, top: pos.y } : { top: barTop(frame) }}
       className={`absolute ${pos ? '' : 'left-1/2 -translate-x-1/2'} flex items-end gap-3 whitespace-nowrap rounded-xl border border-hud-line bg-hud px-3 py-2.5 text-hud-text shadow-[0_12px_32px_rgb(0_0_0/.4)]`}>
-      <span onMouseDown={grab} title="Kéo để dời thanh" className="flex cursor-grab items-center gap-1.5 self-center pr-1 text-[13px] active:cursor-grabbing">
+      <span onMouseDown={grab} title={t('tt.dragBar')} className="flex cursor-grab items-center gap-1.5 self-center pr-1 text-[13px] active:cursor-grabbing">
         <svg width="8" height="14" viewBox="0 0 8 14" className="text-hud-text/50" aria-hidden>
           {[2, 7, 12].flatMap((y) => [2, 6].map((x) => <circle key={`${x}${y}`} cx={x} cy={y} r="1.2" fill="currentColor" />))}
         </svg>
-        <span><b className="text-white">{ps.length}</b> điểm</span>
+        <span><b className="text-white">{ps.length}</b> {t('tt.points')}</span>
       </span>
       {num('dx', 'ΔX', 'px')}{num('dy', 'ΔY', 'px')}
-      {num('sx', 'Rộng', '%')}{num('sy', 'Cao', '%')}
-      {num('rot', 'Xoay', '°')}
-      {num('kx', 'Xiên X', '°')}{num('ky', 'Xiên Y', '°')}
+      {num('sx', t('pa.width'), '%')}{num('sy', t('pa.height'), '%')}
+      {num('rot', t('tt.rotLabel'), '°')}
+      {num('kx', t('tt.skewX'), '°')}{num('ky', t('tt.skewY'), '°')}
       <span className="h-8 w-px self-end bg-white/16" />
-      <div className="flex flex-col gap-0.5 text-[11px] text-hud-text/60">Căn / chia đều / lật
+      <div className="flex flex-col gap-0.5 text-[11px] text-hud-text/60">{t('tt.align')}
         <div className="flex">
-          {ico('M4 4v16M8 8h10M8 16h6', 'Căn trái', () => doAlign('left', 'căn trái'))}
-          {ico('M12 4v16M6 8h12M8 16h8', 'Căn giữa ngang', () => doAlign('hcenter', 'căn giữa'))}
-          {ico('M20 4v16M6 8h10M10 16h6', 'Căn phải', () => doAlign('right', 'căn phải'))}
-          {ico('M4 4h16M8 8v10M16 8v6', 'Căn trên', () => doAlign('top', 'căn trên'))}
-          {ico('M4 12h16M8 6v12M16 8v8', 'Căn giữa dọc', () => doAlign('vcenter', 'căn giữa'))}
-          {ico('M4 20h16M8 6v10M16 10v6', 'Căn dưới', () => doAlign('bottom', 'căn dưới'))}
-          {ico('M4 6v12M12 6v12M20 6v12', 'Chia đều ngang', () => doAlign('hdist', 'chia đều'))}
-          {ico('M6 4h12M6 12h12M6 20h12', 'Chia đều dọc', () => doAlign('vdist', 'chia đều'))}
-          {ico('M12 3v18M8 7l-4 5 4 5M16 7l4 5-4 5', 'Lật ngang', () => doAlign('flipH', 'lật'))}
-          {ico('M3 12h18M7 8l5-4 5 4M7 16l5 4 5-4', 'Lật dọc', () => doAlign('flipV', 'lật'))}
+          {ico('M4 4v16M8 8h10M8 16h6', t('tt.left'), () => doAlign('left', t('tt.left').toLowerCase()))}
+          {ico('M12 4v16M6 8h12M8 16h8', t('tt.hcenter'), () => doAlign('hcenter', t('tt.center').toLowerCase()))}
+          {ico('M20 4v16M6 8h10M10 16h6', t('tt.right'), () => doAlign('right', t('tt.right').toLowerCase()))}
+          {ico('M4 4h16M8 8v10M16 8v6', t('tt.top'), () => doAlign('top', t('tt.top').toLowerCase()))}
+          {ico('M4 12h16M8 6v12M16 8v8', t('tt.vcenter'), () => doAlign('vcenter', t('tt.center').toLowerCase()))}
+          {ico('M4 20h16M8 6v10M16 10v6', t('tt.bottom'), () => doAlign('bottom', t('tt.bottom').toLowerCase()))}
+          {ico('M4 6v12M12 6v12M20 6v12', t('tt.hdist'), () => doAlign('hdist', t('tt.dist')))}
+          {ico('M6 4h12M6 12h12M6 20h12', t('tt.vdist'), () => doAlign('vdist', t('tt.dist')))}
+          {ico('M12 3v18M8 7l-4 5 4 5M16 7l4 5-4 5', t('tt.flipH'), () => doAlign('flipH', t('tt.flip')))}
+          {ico('M3 12h18M7 8l5-4 5 4M7 16l5 4 5-4', t('tt.flipV'), () => doAlign('flipV', t('tt.flip')))}
         </div>
       </div>
       <span className="h-8 w-px self-end bg-white/16" />
-      <button onClick={onQuad} disabled={ps.length < 2} title="Kéo 4 góc khung tới 4 vị trí mới (phối cảnh)"
-        className="h-8 self-end rounded-md px-2.5 text-[13px] enabled:hover:bg-white/10 disabled:opacity-30">4 mốc</button>
+      <button onClick={onQuad} disabled={ps.length < 2} title={t('tt.quadTip')}
+        className="h-8 self-end rounded-md px-2.5 text-[13px] enabled:hover:bg-white/10 disabled:opacity-30">{t('tt.quad')}</button>
       <div className="flex gap-1.5">
-        <button onClick={() => setTf(NO_TF)} disabled={!dirty} className="h-8 rounded-md px-2.5 text-[13px] enabled:hover:bg-white/10 disabled:opacity-40">Bỏ</button>
+        <button onClick={() => setTf(NO_TF)} disabled={!dirty} className="h-8 rounded-md px-2.5 text-[13px] enabled:hover:bg-white/10 disabled:opacity-40">{t('tt.drop')}</button>
         <button onClick={applyTf} disabled={!dirty} className="btn-primary h-8 rounded-md px-3 text-[13px] font-semibold disabled:opacity-50">
-          Áp dụng <span className="font-mono text-[11px] font-normal opacity-70">Enter</span>
+          {t('tt.apply')} <span className="font-mono text-[11px] font-normal opacity-70">Enter</span>
         </button>
       </div>
     </div>
@@ -260,10 +263,10 @@ export function TransformBar({ points, tf, setTf, frame, onQuad }: {
 }
 
 // Vùng đổi khi đã có điểm: hỏi cách xử lý – xem trước ngay trên overlay theo cách đang chọn.
-export const MAP_MODES: { id: RegionMapMode; title: string; hint: string }[] = [
-  { id: 'anchor', title: 'Giữ theo neo', hint: 'Mỗi điểm giữ khoảng cách tới góc / cạnh đang neo (bước 29)' },
-  { id: 'scale', title: 'Co giãn theo vùng', hint: 'Giữ tỷ lệ vị trí trong vùng: điểm ở giữa vùng cũ vẫn ở giữa vùng mới' },
-  { id: 'screen', title: 'Giữ nguyên chỗ trên màn hình', hint: 'Toạ độ thật không đổi, chỉ tính lại theo vùng mới' },
+export const MAP_MODES: { id: RegionMapMode; title: MsgKey; hint: MsgKey }[] = [
+  { id: 'anchor', title: 'tt.m.anchor', hint: 'tt.m.anchorHint' },
+  { id: 'scale', title: 'tt.m.scale', hint: 'tt.m.scaleHint' },
+  { id: 'screen', title: 'tt.m.screen', hint: 'tt.m.screenHint' },
 ];
 
 export function MapDialog({ from, to, target, mode, setMode, onApply, onCancel }: {
@@ -271,6 +274,7 @@ export function MapDialog({ from, to, target, mode, setMode, onApply, onCancel }
   target: Rect | null; // vùng mới như sẽ lưu (null = toàn màn hình)
   mode: RegionMapMode; setMode: (m: RegionMapMode) => void; onApply: () => void; onCancel: () => void;
 }) {
+  const t = useT();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onCancel();
@@ -284,10 +288,10 @@ export function MapDialog({ from, to, target, mode, setMode, onApply, onCancel }
   }, [onApply, onCancel]);
   return (
     <div data-ui className="absolute top-[52px] left-2 w-[420px]"> {/* bên trái – chừa giữa màn hình để xem trước các điểm */}
-      <div role="dialog" aria-label="Đổi vùng" className="flex flex-col gap-3 rounded-panel border border-line bg-surface p-4 text-ink shadow-[0_16px_48px_rgb(0_0_0/.4)]">
+      <div role="dialog" aria-label={t('tt.region')} className="flex flex-col gap-3 rounded-panel border border-line bg-surface p-4 text-ink shadow-[0_16px_48px_rgb(0_0_0/.4)]">
         <div>
-          <div className="text-base font-semibold">Đổi vùng – xử lý các điểm thế nào?</div>
-          <div className="font-mono text-[13px] text-muted">{from.w} × {from.h} → {to.w} × {to.h} · marker đang hiện theo cách đã chọn</div>
+          <div className="text-base font-semibold">{t('tt.regionAsk')}</div>
+          <div className="font-mono text-[13px] text-muted">{from.w} × {from.h} → {to.w} × {to.h} · {t('tt.markerNote')}</div>
         </div>
         {MAP_MODES.map((m) => {
           const out = mappingOutside(target, m.id);
@@ -295,16 +299,16 @@ export function MapDialog({ from, to, target, mode, setMode, onApply, onCancel }
             <label key={m.id} className={`flex cursor-pointer gap-3 rounded-card p-3 ${mode === m.id ? 'ring-selected' : 'border border-line'}`}>
               <input type="radio" name="map" checked={mode === m.id} onChange={() => setMode(m.id)} className="mt-1 accent-accent" />
               <span className="flex flex-col gap-0.5">
-                <span className="font-semibold">{m.title}</span>
-                <span className="text-xs text-muted">{m.hint}</span>
-                {out > 0 && <span className="text-xs text-warn">{out} điểm sẽ nằm ngoài vùng mới</span>}
+                <span className="font-semibold">{t(m.title)}</span>
+                <span className="text-xs text-muted">{t(m.hint)}</span>
+                {out > 0 && <span className="text-xs text-warn">{t('tt.outside', { n: out })}</span>}
               </span>
             </label>
           );
         })}
         <div className="flex justify-end gap-2 pt-1">
-          <button onClick={onCancel} className="h-9 rounded-control border border-line px-3.5 hover:bg-hover">Giữ vùng cũ</button>
-          <button onClick={onApply} className="btn-primary h-9 rounded-control px-4 font-semibold">Đổi vùng <span className="font-mono text-[11px] font-normal opacity-70">Enter</span></button>
+          <button onClick={onCancel} className="h-9 rounded-control border border-line px-3.5 hover:bg-hover">{t('tt.keep')}</button>
+          <button onClick={onApply} className="btn-primary h-9 rounded-control px-4 font-semibold">{t('tt.region')} <span className="font-mono text-[11px] font-normal opacity-70">Enter</span></button>
         </div>
       </div>
     </div>
