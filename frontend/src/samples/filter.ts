@@ -1,6 +1,8 @@
 // Lọc danh sách kịch bản mẫu (bước 33) – logic thuần cho hộp thoại Mẫu thử.
 import { fold } from '../fold';
 import { STEP_LABEL, StepType } from '../types';
+import { tr } from '../i18n/lang';
+import type { MsgKey } from '../i18n/vi';
 
 // Khớp samples.Info bên Go (internal/samples).
 export type Sample = {
@@ -44,4 +46,4 @@ export function stepCounts(list: Sample[]): { type: string; count: number }[] {
     .sort((a, b) => (order.indexOf(a.type) + 1 || 999) - (order.indexOf(b.type) + 1 || 999));
 }
 
-export const levelText = (l: number) => ['', 'Dễ', 'Vừa', 'Khó'][l] ?? '';
+export const levelText = (l: number) => (l >= 1 && l <= 3 ? tr(`smp.lv${l}` as MsgKey) : '');

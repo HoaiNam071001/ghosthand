@@ -2,7 +2,7 @@
 // dòng xem output / lỗi / ảnh lúc lỗi ngay trong hộp thoại). "Xem trên flow" mới đóng hộp thoại, mở bảng Nhật ký và
 // tô đường đã đi trên canvas. Xoá lần đang chọn / xoá hết (bước 41 – RunsDelete). Xuất gói lỗi (56 D2).
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLang } from '../../i18n';
+import { tr, useLang, useT } from '../../i18n';
 import RunLog from '../flow/RunLog';
 import { deleteRuns, exportRunBundle, fetchRun, openRun, RunSummary, runShotUrl, useRunLog } from '../../runStore';
 import { errorText } from '../../engineStore';
@@ -23,7 +23,7 @@ export default function RunsDialog({ onClose }: { onClose: () => void }) {
   }, [onClose]);
   return (
     <div className="fixed inset-0 z-40 flex items-start justify-center bg-black/25 px-4 pt-[6vh]" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div role="dialog" aria-label="Lịch sử chạy" className="flex h-[86vh] w-[1240px] max-w-full flex-col overflow-hidden rounded-panel border border-line bg-surface text-ink shadow-[0_16px_48px_rgb(0_0_0/.22)]">
+      <div role="dialog" aria-label={tr('runs.title')} className="flex h-[86vh] w-[1240px] max-w-full flex-col overflow-hidden rounded-panel border border-line bg-surface text-ink shadow-[0_16px_48px_rgb(0_0_0/.22)]">
         <RunsBody onClose={onClose} closable />
       </div>
     </div>
@@ -32,6 +32,7 @@ export default function RunsDialog({ onClose }: { onClose: () => void }) {
 
 // onClose chạy khi "Xem trên flow" (đóng hộp thoại / trang Tệp rồi mở nhật ký dưới canvas); closable: có nút ✕ (hộp thoại; trang Tệp thì không).
 export function RunsBody({ onClose, closable = false }: { onClose: () => void; closable?: boolean }) {
+  const t = useT();
   const { history, stats } = useRunLog();
   const { script } = useEditor();
   const [sel, setSel] = useState(history[0]?.id ?? '');
@@ -58,7 +59,7 @@ export function RunsBody({ onClose, closable = false }: { onClose: () => void; c
     deleteRuns(id).then(() => { setSel(next || ''); setError(''); }).catch((e) => setError(errorText(e)));
   };
   const exportBundle = () => {
-    exportRunBundle(sel).then((p) => { if (p) { setError(''); setNotice(`Đã xuất gói lỗi ${p}`); } }).catch((e) => setError(errorText(e)));
+    exportRunBundle(sel).then((p) => { if (p) { setError(''); setNotice(t('runs.exported', { path: p })); } }).catch((e) => setError(errorText(e)));
   };
   const view = () => {
     onClose();
@@ -68,18 +69,18 @@ export function RunsBody({ onClose, closable = false }: { onClose: () => void; c
     <>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-line px-[18px] py-3 [&>button]:shrink-0 [&>button]:whitespace-nowrap">
           <div className="min-w-[260px] flex-1">
-            <div className="text-base font-semibold">Lịch sử chạy</div>
-            <div className="text-[13px] text-muted">{script.name} · {history.length} lần đã lưu – chọn một lần để xem nhật ký</div>
-            {statsLine && <div className="text-xs text-muted" title="Tính từ các lần chạy đã lưu – lần bị dừng không tính vào tỷ lệ thành công">{statsLine}</div>}
+            <div className="text-base font-semibold">{t('runs.title')}</div>
+            <div className="text-[13px] text-muted">{t('runs.sub', { name: script.name, n: history.length })}</div>
+            {statsLine && <div className="text-xs text-muted" title={t('runs.statsTip')}>{statsLine}</div>}
             {error && <div className="text-[13px] text-danger-text">{error}</div>}
           </div>
-          <Segmented label="Kiểu xem lần chạy" value={as} onChange={setAs} options={[{ id: 'tree', label: 'Cây' }, { id: 'list', label: 'Danh sách' }]} />
+          <Segmented label={t('runs.viewKind')} value={as} onChange={setAs} options={[{ id: 'tree', label: t('runs.tree') }, { id: 'list', label: t('runs.list') }]} />
           <button disabled={!sel} onClick={exportBundle} className="h-8 rounded-control border border-line px-2.5 text-[13px] enabled:hover:bg-hover disabled:opacity-50"
-            title="Một file .zip để gửi báo lỗi: kịch bản, kết quả từng node, ảnh lúc lỗi, phiên bản app / hệ điều hành – bí mật được che">Xuất gói lỗi…</button>
+            title={t('runs.exportTip')}>{t('runs.export')}</button>
           <RunsDelete count={history.length} canDelete={!!sel} onDelete={() => remove(sel)} onClear={() => remove('')} />
           <button disabled={!run} onClick={view} className="btn-primary h-8 rounded-control px-3 text-[13px] font-semibold disabled:opacity-50"
-            title="Đóng hộp thoại, mở nhật ký dưới canvas và tô đường đã đi">Xem trên flow</button>
-          {closable && <button onClick={onClose} aria-label="Đóng" className="h-8 w-8 rounded-control text-muted hover:bg-hover hover:text-ink">✕</button>}
+            title={t('runs.viewFlowTip')}>{t('runs.viewFlow')}</button>
+          {closable && <button onClick={onClose} aria-label={t('smp.close')} className="h-8 w-8 rounded-control text-muted hover:bg-hover hover:text-ink">✕</button>}
         </div>
         <div className="flex min-h-0 flex-1">
           <ol className="w-[260px] flex-none overflow-y-auto border-r border-line p-1.5">
@@ -99,14 +100,14 @@ export function RunsBody({ onClose, closable = false }: { onClose: () => void; c
                 </li>
               );
             })}
-            {!history.length && <li className="px-3 py-2 text-[13px] text-muted">Chưa có lần chạy nào</li>}
+            {!history.length && <li className="px-3 py-2 text-[13px] text-muted">{t('runs.empty')}</li>}
           </ol>
           <div className="min-w-0 flex-1">
             {head && as === 'tree' && run ? <RunTreeView key={sel} results={run.results} steps={script.steps} edges={script.edges} loadShot={loadShot} />
               : head ? (
               <RunLog key={sel} fill title={head.title} summary={head.summary} tone={head.tone} rows={rows} nodes={views} selected={null}
                 onSelect={() => {}} loadShot={loadShot} />
-            ) : <p className="grid h-full place-items-center text-muted">{sel ? 'Đang đọc…' : 'Chọn một lần chạy'}</p>}
+            ) : <p className="grid h-full place-items-center text-muted">{sel ? t('runs.reading') : t('runs.pick')}</p>}
           </div>
         </div>
     </>

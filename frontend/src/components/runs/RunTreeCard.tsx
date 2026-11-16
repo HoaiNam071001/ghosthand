@@ -1,5 +1,6 @@
 // Thẻ một lần chạy node trên cây lần chạy (bước 60 V7): đầu thẻ màu nhóm (icon, tên, thời gian, mã, trạng thái), dòng phụ
 // (cổng → node kế / tóm tắt lượt), pill giá trị VÀO trên thẻ / RA dưới thẻ (kiểu Luôn hiện). Chỉ hiển thị.
+import { useT } from '../../i18n';
 import { StepIcon } from '../icons';
 import { fmtMs } from '../flow/PortField';
 import { TREE } from '../../flow/runTree';
@@ -16,6 +17,7 @@ export type CardProps = {
 };
 
 export default function RunTreeCard(p: CardProps) {
+  const t = useT();
   const ring = p.sel ? 'ring-selected z-[4]' : p.lin ? 'border border-data' : p.status === 'fail' ? 'border border-danger' : 'border border-line';
   return (
     <div role="button" tabIndex={0} aria-label={p.text.title} data-card={p.k}
@@ -38,8 +40,8 @@ export default function RunTreeCard(p: CardProps) {
       <div className="flex h-5 items-center gap-1.5 overflow-hidden whitespace-nowrap px-2.5 text-[11px] text-muted">
         <span className={`min-w-0 truncate ${p.text.subFail ? 'text-danger-text' : ''}`}>{p.text.sub}</span>
         {p.toggle && (
-          <button onClick={(e) => { e.stopPropagation(); p.toggle!.onToggle(); }} aria-expanded={p.toggle.open} title={p.toggle.open ? 'Thu nhánh' : 'Mở nhánh'}
-            className="ml-auto flex-none rounded-[5px] bg-accent-soft px-1.5 text-[10.5px] leading-4 text-accent-text">{p.toggle.open ? '▾' : '▸'} {p.toggle.count} node</button>
+          <button onClick={(e) => { e.stopPropagation(); p.toggle!.onToggle(); }} aria-expanded={p.toggle.open} title={t(p.toggle.open ? 'rt.collapse' : 'rt.expand')}
+            className="ml-auto flex-none rounded-[5px] bg-accent-soft px-1.5 text-[10.5px] leading-4 text-accent-text">{p.toggle.open ? '▾' : '▸'} {t('rt.nodes', { n: p.toggle.count })}</button>
         )}
       </div>
       {p.pills && p.outs.length > 0 && (
@@ -64,9 +66,10 @@ function PillView({ pill: x, side, k }: { pill: Pill; side: 'in' | 'out'; k: str
 }
 
 function Status({ s }: { s: 'ok' | 'fail' | 'warn' }) {
+  const t = useT();
   const cls = s === 'ok' ? 'bg-ok/15 text-ok' : 'bg-danger-soft text-danger-text';
   return (
-    <span className={`grid h-3.5 w-3.5 flex-none place-items-center rounded-full text-[9px] font-bold ${cls}`} aria-label={s === 'ok' ? 'Thành công' : s === 'fail' ? 'Thất bại' : 'Có lỗi bên trong'}>
+    <span className={`grid h-3.5 w-3.5 flex-none place-items-center rounded-full text-[9px] font-bold ${cls}`} aria-label={t(s === 'ok' ? 'port.success' : s === 'fail' ? 'port.fail' : 'rt.stInner')}>
       {s === 'ok' ? '✓' : s === 'fail' ? '✕' : '!'}
     </span>
   );

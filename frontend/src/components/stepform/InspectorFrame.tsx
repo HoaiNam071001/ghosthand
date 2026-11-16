@@ -3,6 +3,7 @@
 // Popover: chiều cao tối đa do khung NodePopover đặt (theo chỗ trống trong canvas).
 // Panel nổi dùng position absolute → đặt trong khung `relative` bọc canvas (MainScreen).
 import { ReactNode, useEffect } from 'react';
+import { useT } from '../../i18n';
 import { ResizeHandle, usePanelWidth } from '../PanelResize';
 import { useShell } from '../../shellStore';
 import type { DetailMode } from '../../flowPrefs';
@@ -33,11 +34,12 @@ export default function InspectorFrame({ mode, label, onClose, children }: { mod
 }
 
 function Panel({ label, children }: { label: string; children: ReactNode }) {
+  const t = useT();
   const { inspectorPinned: pinned } = useShell();
   const size = usePanelWidth('inspector-width', 340, 300, 640);
   return (
     <div className={pinned ? 'relative flex flex-none' : 'absolute top-2.5 right-2.5 bottom-2.5 z-20 flex max-w-[calc(100%-20px)] shadow-[0_12px_40px_rgb(0_0_0/.28)] rounded-[12px]'}>
-      <ResizeHandle edge="left" width={size.width} onWidth={size.setWidth} onReset={size.reset} label="Bề rộng bảng thuộc tính node" />
+      <ResizeHandle edge="left" width={size.width} onWidth={size.setWidth} onReset={size.reset} label={t('insp.widthAria')} />
       <aside aria-label={label} style={{ width: size.width }} className={`${body} max-w-full ${pinned ? 'border-l border-line' : 'rounded-[12px] border border-line'}`}>{children}</aside>
     </div>
   );

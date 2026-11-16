@@ -1,6 +1,7 @@
 // Xem một lần chạy dạng cây (bước 60 V7): thanh trên (Gọn · rê xem | Luôn hiện, mở / thu các lượt), cây cuộn được, bảng
 // chi tiết lần chạy node đang chọn bên phải. Giữ trạng thái xem (nhánh mở, lần đang chọn); dữ liệu qua props.
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useT } from '../../i18n';
 import Segmented from '../Segmented';
 import RunTree, { TreeShow } from './RunTree';
 import RunTreeDetail from './RunTreeDetail';
@@ -24,6 +25,7 @@ function defaultOpen(tree: TreeNode[]): Set<string> {
 const iterKeys = (tree: TreeNode[]): string[] => tree.flatMap((n) => [...(n.kind === 'iter' ? [n.key] : []), ...iterKeys(n.children)]);
 
 export default function RunTreeView({ results, steps, edges, loadShot }: Props) {
+  const t = useT();
   const tree = useMemo(() => buildRunTree(results, steps), [results, steps]);
   const sources = useMemo(() => dataSources(results, steps), [results, steps]);
   const rows = useMemo(() => runRows(results, steps, edges), [results, steps, edges]);
@@ -50,16 +52,16 @@ export default function RunTreeView({ results, steps, edges, loadShot }: Props) 
   };
   useEffect(() => { if (sel !== null) scrollTo(sel); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (!results.length) return <p className="grid h-full place-items-center text-muted">Lần chạy này chưa có node nào chạy xong.</p>;
+  if (!results.length) return <p className="grid h-full place-items-center text-muted">{t('rt.empty')}</p>;
   return (
     <div className="flex h-full min-h-0">
       <div className="flex min-w-0 flex-1 flex-col border-r border-line">
         <div className="flex flex-none flex-wrap items-center gap-2 border-b border-line bg-chrome px-3 py-1.5 text-xs">
-          <span className="text-muted">Giá trị</span>
-          <Segmented label="Cách hiện giá trị" value={show} onChange={setShow} options={[{ id: 'pop', label: 'Gọn · rê xem' }, { id: 'always', label: 'Luôn hiện' }]} />
+          <span className="text-muted">{t('rt.value')}</span>
+          <Segmented label={t('rt.valueLabel')} value={show} onChange={setShow} options={[{ id: 'pop', label: t('rt.valPop') }, { id: 'always', label: t('rt.valAlways') }]} />
           <span className="flex-1" />
-          <button className={btn} onClick={() => { setOpen(new Set(iterKeys(tree))); setAllIters(true); }}>Mở mọi lượt</button>
-          <button className={btn} onClick={() => { setOpen(defaultOpen(tree)); setAllIters(false); }}>Thu gọn</button>
+          <button className={btn} onClick={() => { setOpen(new Set(iterKeys(tree))); setAllIters(true); }}>{t('rt.openAll')}</button>
+          <button className={btn} onClick={() => { setOpen(defaultOpen(tree)); setAllIters(false); }}>{t('rt.fold')}</button>
         </div>
         <div ref={scroller} data-float-clip className="min-h-0 flex-1 overflow-auto bg-canvas [background-image:radial-gradient(var(--c-dot)_1.2px,transparent_1.3px)] [background-size:18px_18px]">
           <RunTree tree={tree} results={results} rows={rows} steps={steps} sources={sources} show={show} open={open} allIters={allIters}
@@ -67,9 +69,9 @@ export default function RunTreeView({ results, steps, edges, loadShot }: Props) 
             onToggle={(k) => setOpen((o) => { const n = new Set(o); if (n.has(k)) n.delete(k); else n.add(k); return n; })} />
         </div>
       </div>
-      <aside aria-label="Chi tiết lần chạy node" className="w-[350px] flex-none overflow-y-auto bg-surface p-3.5 max-[1100px]:w-[300px]">
+      <aside aria-label={t('rt.detailAria')} className="w-[350px] flex-none overflow-y-auto bg-surface p-3.5 max-[1100px]:w-[300px]">
         {sel !== null && results[sel] ? <RunTreeDetail i={sel} results={results} rows={rows} steps={steps} sources={sources} onJump={jump} loadShot={loadShot} />
-          : <p className="text-muted">Chọn một thẻ</p>}
+          : <p className="text-muted">{t('rt.pick')}</p>}
       </aside>
     </div>
   );

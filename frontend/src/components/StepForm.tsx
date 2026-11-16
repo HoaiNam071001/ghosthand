@@ -1,6 +1,7 @@
 // Inspector – cấu hình node đang chọn (design v3, cột phải), sửa trực tiếp vào store.
 // Khung: đầu (màu nhóm, tên, mã node, loại, ⓘ, bật / tắt), tab Node / Input, khối thu gọn Thiết lập → Thời gian → khối flow;
 // trường theo loại nằm ở components/stepform/.
+import { useT } from '../i18n';
 import ChangeTypePalette from './palette/ChangeTypePalette';
 import { ReactNode, useState } from 'react';
 import { Eye } from './icons';
@@ -76,6 +77,7 @@ import PermNotice from './stepform/PermNotice';
 const REF_RE = /^[A-Za-z][A-Za-z0-9_]{0,31}$/; // khớp validRef (flow.go)
 
 export default function StepForm({ step: s, mode = 'panel', onClose }: { step: Step; mode?: DetailMode; onClose?: () => void }) {
+  const t = useT();
   const script = useScript();
   const { inspectorPinned: pinned } = useShell();
   const [tab, setTab] = useState<'step' | 'inputs' | 'data'>('step');
@@ -84,40 +86,40 @@ export default function StepForm({ step: s, mode = 'panel', onClose }: { step: S
   const delay = numVarOf(s, 'delayAfter') ?? s.delayAfter;
 
   return (
-    <InspectorFrame mode={mode} label={`Thuộc tính node ${s.ref}`} onClose={onClose}>
+    <InspectorFrame mode={mode} label={t('insp.panelAria', { ref: s.ref })} onClose={onClose}>
         <InspectorHead cat={nodeCategory(s)} icon={s.type}
           name={<input value={s.name ?? ''} placeholder={stepLabel(s)} onChange={(e) => updateStep(s.id, { name: e.target.value || undefined })}
-            aria-label="Tên node" title="Tên hiện trên thẻ – bỏ trống = tên theo loại"
+            aria-label={t('insp.name')} title={t('insp.nameTip')}
             className="w-full truncate bg-transparent text-[15px] font-semibold outline-none placeholder:text-ink" />}
           sub={<><RefInput step={s} /><TypeSelect step={s} /></>}
           actions={<>
             <InfoButton info={nodeInfo(s)} onGuide={() => openGuide({ node: infoKey(s) })} />
             {atPoint && (
-              <button onClick={() => openOverlay('point', s.id)} aria-label="Xem trên màn hình"
-                title="Xem / sửa vị trí riêng node này trên màn hình – các node khác mờ đi" className={iconBtn}><Eye /></button>
+              <button onClick={() => openOverlay('point', s.id)} aria-label={t('insp.viewScreen')}
+                title={t('insp.viewScreenTip')} className={iconBtn}><Eye /></button>
             )}
-            <Switch on={s.enabled} onChange={() => toggleStep(s.id)} label="Bật node" />
+            <Switch on={s.enabled} onChange={() => toggleStep(s.id)} label={t('insp.enable')} />
             {mode === 'panel' && (
-              <button onClick={() => setInspectorPinned(!pinned)} aria-pressed={pinned} aria-label="Ghim vào cạnh phải"
-                title={pinned ? 'Bỏ ghim – bảng nổi trên canvas' : 'Ghim vào cạnh phải – canvas co lại nhường chỗ'} className={`${iconBtn} ${pinned ? 'bg-accent-soft text-accent-text' : ''}`}>
+              <button onClick={() => setInspectorPinned(!pinned)} aria-pressed={pinned} aria-label={t('insp.pin')}
+                title={pinned ? t('insp.unpinTip') : t('insp.pinTip')} className={`${iconBtn} ${pinned ? 'bg-accent-soft text-accent-text' : ''}`}>
                 <RibbonIcon name="pin" />
               </button>
             )}
-            {onClose && <button onClick={onClose} aria-label="Đóng" title="Đóng (Esc)" className={iconBtn}>✕</button>}
+            {onClose && <button onClick={onClose} aria-label={t('insp.close')} title={t('insp.closeTip')} className={iconBtn}>✕</button>}
           </>} />
 
         <div className="flex flex-none gap-4 border-b border-line" role="tablist">
-          <TabBtn active={tab === 'step'} onClick={() => setTab('step')}>Node</TabBtn>
-          <TabBtn active={tab === 'inputs'} onClick={() => setTab('inputs')} title="Các giá trị hỏi khi bấm Chạy">
+          <TabBtn active={tab === 'step'} onClick={() => setTab('step')}>{t('insp.tabNode')}</TabBtn>
+          <TabBtn active={tab === 'inputs'} onClick={() => setTab('inputs')} title={t('insp.tabInputTip')}>
             Input {!!script.inputs?.length && <span className="rounded-full bg-accent-soft px-1.5 text-[11px] font-semibold text-accent-text">{script.inputs.length}</span>}
           </TabBtn>
-          <TabBtn active={tab === 'data'} onClick={() => setTab('data')} title="Node đọc biến gì từ đâu, trả ra gì và node nào dùng">Dữ liệu</TabBtn>
+          <TabBtn active={tab === 'data'} onClick={() => setTab('data')} title={t('insp.tabDataTip')}>{t('insp.tabData')}</TabBtn>
         </div>
 
         {tab === 'inputs' ? <InputsTab /> : tab === 'data' ? <DataTab step={s} /> : <>
           <PermNotice step={s} />
           {/* node Chờ: chỉ có thời gian chờ – không hiện khối Thiết lập trống, mở sẵn khối Thời gian */}
-          {s.type !== 'wait' && <Section title="Thiết lập" scope={s.type} defaultOpen>
+          {s.type !== 'wait' && <Section title={t('insp.setup')} scope={s.type} defaultOpen>
             {isControl(s.type) ? <ControlSection step={s} /> : (
               <div className="grid grid-cols-2 gap-x-3 gap-y-2.5">
                 <TypeBody step={s} setPoint={setPoint} />
@@ -126,15 +128,15 @@ export default function StepForm({ step: s, mode = 'panel', onClose }: { step: S
           </Section>}
 
           {!isControl(s.type) && (
-            <Section title="Thời gian" scope={s.type} defaultOpen={s.type === 'wait'} summary={timingSummary(delay, numVarOf(s, 'jitterMs') ?? s.jitterMs)}>
+            <Section title={t('insp.timing')} scope={s.type} defaultOpen={s.type === 'wait'} summary={timingSummary(delay, numVarOf(s, 'jitterMs') ?? s.jitterMs)}>
               <div className="grid grid-cols-2 gap-x-3 gap-y-2.5">
-                <NumField label={s.type === 'wait' ? 'Thời gian chờ' : 'Chờ sau khi xong'} step={s} field="delayAfter" unit="ms" />
-                <NumField label="Ngẫu nhiên" step={s} field="jitterMs" unit="ms" prefix="±" />
+                <NumField label={s.type === 'wait' ? t('insp.waitTime') : t('insp.waitAfter')} step={s} field="delayAfter" unit="ms" />
+                <NumField label={t('insp.jitter')} step={s} field="jitterMs" unit="ms" prefix="±" />
                 <span className={`col-span-2 -mt-1 ${hint}`}>
                   {s.jitterMs > 0
-                    ? `Chờ ${Math.max(s.delayAfter - s.jitterMs, 0)}–${s.delayAfter + s.jitterMs} ms${s.type === 'click' && s.clicks > 1 ? ', giữa các click cũng lệch' : ''}`
-                    : 'Thời gian chờ cố định (ngẫu nhiên = 0)'}
-                  {' '}· chỉ chờ khi node thành công
+                    ? `${t('insp.waitRange', { lo: Math.max(s.delayAfter - s.jitterMs, 0), hi: s.delayAfter + s.jitterMs })}${s.type === 'click' && s.clicks > 1 ? t('insp.clickJitter') : ''}`
+                    : t('insp.waitFixed')}
+                  {t('insp.onlyOk')}
                 </span>
               </div>
             </Section>
@@ -148,11 +150,12 @@ export default function StepForm({ step: s, mode = 'panel', onClose }: { step: S
 
 // Loại node dưới tên (chữ màu nhóm): node hành động bấm vào mở bảng chọn loại (có hoạt hoạ), node điều khiển chỉ hiện chữ.
 function TypeSelect({ step: s }: { step: Step }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   if (isControl(s.type)) return <span className="truncate text-cat">{STEP_LABEL[s.type]}</span>;
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} aria-label="Loại node" title="Đổi loại node"
+      <button type="button" onClick={() => setOpen(true)} aria-label={t('insp.typeAria')} title={t('insp.typeTip')}
         className="inline-flex min-w-0 items-center gap-0.5 rounded px-0.5 text-cat hover:bg-hover">
         <span className="truncate">{stepLabel(s)}</span>
         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" className="flex-none" aria-hidden><path d="M6 9l6 6 6-6" /></svg>
@@ -223,14 +226,15 @@ function TypeBody({ step: s, setPoint }: { step: Step; setPoint: (i: number, p: 
 
 // Mã node (n2): dùng trong biến {{n2.output.x}}. Giữ bản nháp khi gõ, chỉ ghi khi hợp lệ và không trùng.
 function RefInput({ step: s }: { step: Step }) {
+  const t = useT();
   const { steps } = useScript();
   const [draft, setDraft] = useState(s.ref);
   const dup = steps.some((x) => x.id !== s.id && x.ref === draft);
   const bad = !REF_RE.test(draft) || draft === 'vars' || draft === 'last';
   return (
     <span className="flex flex-none items-center gap-1.5 text-muted">
-      <input value={draft} aria-label="Mã node" spellCheck={false}
-        title="Mã node – dùng trong biến {{mã.output.x}}. Chữ cái đầu, sau đó chữ / số / _"
+      <input value={draft} aria-label={t('insp.refAria')} spellCheck={false}
+        title={t('insp.refTip')}
         onChange={(e) => {
           const v = e.target.value.trim();
           setDraft(v);
@@ -238,7 +242,7 @@ function RefInput({ step: s }: { step: Step }) {
         }}
         onBlur={() => setDraft(s.ref)}
         className={`w-12 rounded bg-soft px-1 font-mono outline-none ${dup || bad ? 'text-danger-text' : 'text-ink'}`} />
-      {dup ? 'trùng mã node khác' : bad ? 'mã không hợp lệ' : null}
+      {dup ? t('insp.refDup') : bad ? t('insp.refBad') : null}
     </span>
   );
 }

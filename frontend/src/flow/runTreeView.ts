@@ -1,5 +1,7 @@
 // Chữ + hình của cây lần chạy (bước 60 V7): tiêu đề / dòng phụ của thẻ, pill giá trị VÀO / RA, đường dữ liệu đi vòng
 // tránh thẻ. Logic thuần – components/runs/ chỉ vẽ.
+import { tr } from '../i18n/lang';
+import type { MsgKey } from '../i18n/vi';
 import type { Step, StepResult } from '../types';
 import type { RunRow } from '../components/flow/model';
 import { valueText } from './runOutputs';
@@ -29,21 +31,21 @@ export function cardText(n: TreeNode, results: StepResult[], steps: Step[], rows
   switch (n.kind) {
     case 'loop': {
       const fails = n.children.filter((c) => c.fail).length;
-      return { title: name, sub: `${n.children.length} lượt${fails ? ` · ${fails} lượt lỗi` : ''}`, subFail: fails > 0 };
+      return { title: name, sub: `${tr('rt.loopSub', { n: n.children.length })}${fails ? ` · ${tr('rt.loopFails', { n: fails })}` : ''}`, subFail: fails > 0 };
     }
     case 'iter': {
       const label = iterLabel(r);
       const bad = n.children.find((c) => c.fail);
       const badRef = bad && steps.find((s) => s.id === bad.nodeId)?.ref;
-      return { title: `Lượt ${n.iter}${label ? ` · ${label}` : ''}`, sub: bad ? `lỗi ở ${badRef ?? '?'}` : 'xong', subFail: !!bad, ms: r?.durationMs }; // số node ở nút mở nhánh
+      return { title: label ? tr('rt.iterTitleLabel', { n: n.iter ?? 0, label }) : tr('rt.iterTitle', { n: n.iter ?? 0 }), sub: bad ? tr('rt.errAt', { ref: badRef ?? '?' }) : tr('rt.done'), subFail: !!bad, ms: r?.durationMs }; // số node ở nút mở nhánh
     }
-    case 'more': return { title: `${n.hidden} lượt nữa`, sub: 'bấm để hiện hết' };
-    case 'done': return { title: step?.type === 'counter' ? 'Hết lượt' : 'Hết danh sách', sub: `→ ${row?.next ?? ''}`, ms: r?.durationMs };
-    default: return { title: name, sub: `${row?.status === 'fail' ? 'Thất bại' : portName(row?.port)}${row?.next ? ` → ${row.next}` : ''}`, subFail: row?.status === 'fail', ms: r?.durationMs };
+    case 'more': return { title: tr('rt.more', { n: n.hidden ?? 0 }), sub: tr('rt.moreSub') };
+    case 'done': return { title: step?.type === 'counter' ? tr('port.done') : tr('port.doneList'), sub: `→ ${row?.next ?? ''}`, ms: r?.durationMs };
+    default: return { title: name, sub: `${row?.status === 'fail' ? tr('port.fail') : portName(row?.port)}${row?.next ? ` → ${row.next}` : ''}`, subFail: row?.status === 'fail', ms: r?.durationMs };
   }
 }
-const PORTS: Record<string, string> = { success: 'Thành công', fail: 'Thất bại', true: 'Đúng', false: 'Sai', item: 'Mỗi mục', done: 'Xong', next: 'Còn lượt', default: 'Khác', approve: 'Đồng ý', deny: 'Từ chối', timeout: 'Hết giờ' };
-export const portName = (p?: string) => (p ? PORTS[p] ?? p.replace(/^case:/, 'case ') : '');
+const PORTS: Record<string, MsgKey> = { success: 'port.success', fail: 'port.fail', true: 'port.true', false: 'port.false', item: 'rt.portItem', done: 'rt.portDone', next: 'port.next', default: 'port.default', approve: 'port.approve', deny: 'port.deny', timeout: 'port.timeout' };
+export const portName = (p?: string) => (p ? (PORTS[p] ? tr(PORTS[p]) : p.replace(/^case:/, 'case ')) : '');
 
 // Pill giá trị: VÀO = ô đọc biến (giá trị đã thay ở StepResult.input), RA = output được lần chạy sau dùng (không có thì 2 output đầu).
 export type Pill = { id: string; label: string; value: string };

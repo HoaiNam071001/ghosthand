@@ -1,5 +1,6 @@
 // Gom output của mọi node trong một lần chạy để xem / chép một chỗ (Lịch sử → Tất cả output, bước 49).
 import type { FlowNodeView, RunRow } from '../components/flow/model';
+import { tr } from '../i18n/lang';
 
 export type OutputBlock = {
   key: string; // n2 – nhiều vòng thì n2#3 (vòng 3): khoá khi chép JSON
@@ -24,7 +25,7 @@ export function outputBlocks(rows: RunRow[], nodes: Pick<FlowNodeView, 'id' | 'r
     const base = multiLoop ? `${ref}#${loop}` : ref;
     const count = (seen.get(base) ?? 0) + 1;
     seen.set(base, count);
-    out.push({ key: count > 1 ? `${base}.${count}` : base, ref, title: n?.title ?? 'node đã xoá', loop, at: r.at, status: r.status, output: r.output });
+    out.push({ key: count > 1 ? `${base}.${count}` : base, ref, title: n?.title ?? tr('runs.st.deleted'), loop, at: r.at, status: r.status, output: r.output });
   }
   return out;
 }

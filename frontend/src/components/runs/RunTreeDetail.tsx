@@ -1,6 +1,7 @@
 // Bảng chi tiết một lần chạy node trên cây (bước 60 V7): lỗi, ảnh lúc lỗi, VÀO (giá trị đã thay biến, biểu thức, lần chạy
 // nguồn – bấm để nhảy tới), RA (bảng output + lần chạy dùng tiếp), đi tiếp, chuỗi truy ngược dữ liệu, log. Chỉ hiển thị.
 import { useEffect, useState } from 'react';
+import { useT } from '../../i18n';
 import { StepIcon } from '../icons';
 import { fmtMs, LogLines, StatusChip } from '../flow/PortField';
 import OutputTable from '../flow/OutputTable';
@@ -23,9 +24,11 @@ const link = 'inline-flex max-w-full items-center gap-1.5 rounded-md border bord
 const h3 = 'm-0 flex items-center gap-1.5 text-[10.5px] font-bold tracking-[.08em] text-faint';
 
 export default function RunTreeDetail({ i, results, rows, steps, sources, onJump, loadShot }: Props) {
+  const t = useT();
   const r = results[i], row = rows[i];
   const step = steps.find((s) => s.id === r.nodeId);
-  const label = (j: number) => `${results[j].ref} ${(() => { const s = steps.find((x) => x.id === results[j].nodeId); return s ? nodeTitle(s) : ''; })()}${results[j].iter ? ` · lượt ${results[j].iter!.index}` : ''}`;
+  const iterSuf = (it?: { index: number }) => (it ? t('rt.iterSuf', { n: it.index }) : '');
+  const label = (j: number) => `${results[j].ref} ${(() => { const s = steps.find((x) => x.id === results[j].nodeId); return s ? nodeTitle(s) : ''; })()}${iterSuf(results[j].iter)}`;
   const slots = step ? dataSlots(step) : [];
   const ins = Object.entries(r.input ?? {});
   const src = sources[i] ?? [];
@@ -37,7 +40,7 @@ export default function RunTreeDetail({ i, results, rows, steps, sources, onJump
       <div className={`cat-${step ? nodeCategory(step) : 'app'} flex items-center gap-2.5`}>
         <span className="grid h-8 w-8 flex-none place-items-center rounded-lg bg-cat-tile text-cat"><StepIcon type={step?.type ?? 'wait'} className="h-4 w-4" /></span>
         <div className="min-w-0">
-          <div className="truncate text-sm font-semibold">{step ? nodeTitle(step) : r.ref}{r.iter ? ` · lượt ${r.iter.index}` : ''}</div>
+          <div className="truncate text-sm font-semibold">{step ? nodeTitle(step) : r.ref}{iterSuf(r.iter)}</div>
           <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted">
             <span className="rounded-[5px] bg-soft px-1 font-mono text-[11px]">{r.ref}</span><StatusChip status={r.status} />
             <span className="font-mono">{row?.at} · {fmtMs(r.durationMs)}</span>
@@ -48,7 +51,7 @@ export default function RunTreeDetail({ i, results, rows, steps, sources, onJump
       {miss && <ElementMissView miss={miss} />}
       {r.shot && loadShot && <Shot shot={r.shot} load={loadShot} />}
       <section className="flex flex-col gap-1.5">
-        <h3 className={h3}>VÀO <span className="ml-auto font-medium tracking-normal text-muted">giá trị lúc chạy (đã thay biến)</span></h3>
+        <h3 className={h3}>{t('rt.in')} <span className="ml-auto font-medium tracking-normal text-muted">{t('rt.inHint')}</span></h3>
         {ins.length ? (
           <dl className="m-0 overflow-hidden rounded-lg border border-line">
             {ins.map(([k, v]) => {
@@ -65,17 +68,17 @@ export default function RunTreeDetail({ i, results, rows, steps, sources, onJump
               );
             })}
           </dl>
-        ) : <p className="m-0 text-xs text-muted">{r.input === undefined && slots.some((x) => x.refs.length) ? 'Lần chạy cũ – chưa lưu giá trị vào.' : 'Không có ô nào đọc biến.'}</p>}
+        ) : <p className="m-0 text-xs text-muted">{r.input === undefined && slots.some((x) => x.refs.length) ? t('rt.oldRun') : t('rt.noSlot')}</p>}
       </section>
       <section className="flex flex-col gap-1.5">
-        <h3 className={h3}>RA</h3>
-        {r.output ? <OutputTable rows={outputRows(r.ref, r.output, step ? outputsOf(step) : [])} output={r.output} label={r.ref} /> : <p className="m-0 text-xs text-muted">Không có output.</p>}
-        {users.length > 0 && <span className="flex flex-wrap items-center gap-1.5 text-xs text-muted">dùng tiếp ở {users.map((j) => <button key={j} onClick={() => onJump(j)} className={link}>{label(j)}</button>)}</span>}
+        <h3 className={h3}>{t('rt.out')}</h3>
+        {r.output ? <OutputTable rows={outputRows(r.ref, r.output, step ? outputsOf(step) : [])} output={r.output} label={r.ref} /> : <p className="m-0 text-xs text-muted">{t('rt.noOut')}</p>}
+        {users.length > 0 && <span className="flex flex-wrap items-center gap-1.5 text-xs text-muted">{t('rt.usedAt')} {users.map((j) => <button key={j} onClick={() => onJump(j)} className={link}>{label(j)}</button>)}</span>}
       </section>
-      {row?.port && <section className="flex flex-col gap-1"><h3 className={h3}>ĐI TIẾP</h3><span className="text-xs text-muted">cổng <b className="font-semibold text-ink">{portName(row.port)}</b>{row.next ? ` → ${row.next}` : ''}</span></section>}
+      {row?.port && <section className="flex flex-col gap-1"><h3 className={h3}>{t('rt.next')}</h3><span className="text-xs text-muted">{t('rt.port')} <b className="font-semibold text-ink">{portName(row.port)}</b>{row.next ? ` → ${row.next}` : ''}</span></section>}
       {chain.length > 1 && (
         <section className="flex flex-col gap-1.5">
-          <h3 className={h3}>TRUY NGƯỢC DỮ LIỆU</h3>
+          <h3 className={h3}>{t('rt.trace')}</h3>
           <ol className="m-0 ml-1.5 flex list-none flex-col gap-1 border-l-2 border-dashed border-data/60 py-0.5 pl-3">
             {chain.map((c) => (
               <li key={c.index}>
@@ -94,16 +97,17 @@ export default function RunTreeDetail({ i, results, rows, steps, sources, onJump
 }
 
 function Shot({ shot, load }: { shot: string; load: (s: string) => Promise<string> }) {
+  const t = useT();
   const [url, setUrl] = useState('');
   const [big, setBig] = useState(false);
   useEffect(() => { load(shot).then(setUrl); }, [shot, load]);
   if (!url) return null;
   return (
     <>
-      <button onClick={() => setBig(true)} title="Màn hình lúc node thất bại – bấm để phóng to" className="overflow-hidden rounded-control border border-line">
-        <img src={url} alt="Màn hình lúc node thất bại" className="block w-full" />
+      <button onClick={() => setBig(true)} title={t('rt.shotTip')} className="overflow-hidden rounded-control border border-line">
+        <img src={url} alt={t('rt.shotAlt')} className="block w-full" />
       </button>
-      {big && <button onClick={() => setBig(false)} aria-label="Đóng ảnh" className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-6"><img src={url} alt="Màn hình lúc node thất bại" className="max-h-full max-w-full rounded-control" /></button>}
+      {big && <button onClick={() => setBig(false)} aria-label={t('rt.shotClose')} className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-6"><img src={url} alt={t('rt.shotAlt')} className="max-h-full max-w-full rounded-control" /></button>}
     </>
   );
 }

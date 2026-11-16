@@ -1,6 +1,7 @@
 // Khối flow của inspector node (bước 20, design v3): Khi thất bại, Cổng ra, Output, Lần chạy gần nhất – mỗi khối thu gọn
 // được, tóm tắt ở đầu khối (flow/summary) – rồi chân: đặt làm bắt đầu, điểm dừng, xoá node.
 // Phần hiển thị dùng chung với màn mẫu (components/flow/PortField, InspectorParts); ở đây chỉ nối vào store.
+import { useT } from '../../i18n';
 import { LastRunPanel, OutputsPanel, PortsPanel, RetryPanel, StatusChip } from '../flow/PortField';
 import { footerBtn, footerRow, Section } from './InspectorParts';
 import { nodeViews, outputsOf } from '../../flow/view';
@@ -12,6 +13,7 @@ import { useRunLog } from '../../runStore';
 import { CAN_FAIL, Step } from '../../types';
 
 export default function FlowSections({ step: s }: { step: Step }) {
+  const t = useT();
   const script = useScript();
   const { results } = useRunLog();
   const views = nodeViews(script);
@@ -24,12 +26,12 @@ export default function FlowSections({ step: s }: { step: Step }) {
   return (
     <>
       {CAN_FAIL.includes(s.type) && view.ports.some((p) => p.id === PORT_FAIL) && ( // Ứng dụng kiểm tra: chỉ có yes / no
-        <Section title="Khi thất bại" scope={s.type} summary={retrySummary(s.retry)}>
+        <Section title={t('insp.onFail')} scope={s.type} summary={retrySummary(s.retry)}>
           <RetryPanel value={{ count: s.retry?.count ?? 0, delayMs: s.retry?.delayMs ?? 0 }}
             onChange={(r) => updateStep(s.id, { retry: r.count ? r : undefined })} />
         </Section>
       )}
-      <Section title="Cổng ra" scope={s.type} summary={portsSummary(s.id, view.ports, script.edges, refOf)}>
+      <Section title={t('insp.ports')} scope={s.type} summary={portsSummary(s.id, view.ports, script.edges, refOf)}>
         <PortsPanel node={view} nodes={views} edges={script.edges}
           onConnect={(port, to) => connectPort(s.id, port, to)} onDisconnect={(port) => disconnectPort(s.id, port)} onJump={selectStep} />
       </Section>
@@ -39,20 +41,20 @@ export default function FlowSections({ step: s }: { step: Step }) {
         </Section>
       )}
       {lastRun && (
-        <Section title="Lần chạy gần nhất" scope={s.type} summary={<StatusChip status={lastRun.status} />}>
+        <Section title={t('insp.lastRun')} scope={s.type} summary={<StatusChip status={lastRun.status} />}>
           <LastRunPanel row={lastRun} refName={s.ref} fields={outputs} />
         </Section>
       )}
       <div className={footerRow}>
         <button disabled={isStart} onClick={() => setStart(s.id)} className={`${footerBtn} text-muted enabled:hover:text-ink`}>
-          {isStart ? 'Đang là node bắt đầu' : 'Đặt làm bắt đầu'}
+          {isStart ? t('insp.isStart') : t('insp.setStart')}
         </button>
         <button onClick={() => updateStep(s.id, { breakpoint: !s.breakpoint || undefined })} aria-pressed={!!s.breakpoint}
-          title="Điểm dừng (debug): chạy tới node này thì tạm dừng trước khi chạy nó – Tiếp / F10 để đi tiếp"
+          title={t('insp.bpTip')}
           className={`${footerBtn} ${s.breakpoint ? 'bg-danger-soft text-danger-text' : 'text-muted hover:text-ink'}`}>
-          <span className={`h-2 w-2 rounded-full ${s.breakpoint ? 'bg-danger' : 'border border-current'}`} />Điểm dừng
+          <span className={`h-2 w-2 rounded-full ${s.breakpoint ? 'bg-danger' : 'border border-current'}`} />{t('insp.bp')}
         </button>
-        <button onClick={() => removeStep(s.id)} className={`${footerBtn} ml-auto text-danger-text hover:bg-danger-soft`}>Xoá node</button>
+        <button onClick={() => removeStep(s.id)} className={`${footerBtn} ml-auto text-danger-text hover:bg-danger-soft`}>{t('insp.remove')}</button>
       </div>
     </>
   );

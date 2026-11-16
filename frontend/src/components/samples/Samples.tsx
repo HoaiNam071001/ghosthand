@@ -2,6 +2,7 @@
 // mở trang sân thử / web thật bằng trình duyệt mặc định. Dạng hộp thoại (Samples) và dạng trang Tệp (SamplesPage – bước 63).
 import { useEffect, useState } from 'react';
 import { OpenSandboxPage, Samples as LoadSamples } from '../../../wailsjs/go/app/App';
+import { tr } from '../../i18n';
 import { openSample } from '../../scriptFile';
 import { inWails } from '../../windowMode';
 import { Sample } from '../../samples/filter';
@@ -13,7 +14,7 @@ export function useSamples() {
   const [list, setList] = useState<Sample[] | null>(null);
   const [error, setError] = useState('');
   useEffect(() => {
-    if (!inWails) return setError('cần chạy trong app (wails dev)');
+    if (!inWails) return setError(tr('smp.errNeedApp'));
     LoadSamples().then((l) => setList(l ?? [])).catch((e) => setError(errText(e)));
   }, []);
   return { list, error, openPage: (page: string) => OpenSandboxPage(page).catch((e) => setError(errText(e))) };
