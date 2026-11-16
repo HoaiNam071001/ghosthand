@@ -40,6 +40,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | ✅ | Dữ liệu qua node | Thẻ node Gọn / Đầy đủ có VÀO / RA, kéo output sang input để nối (chỉ tới node chạy sau), thẻ gọn toả cổng khi rê; chi tiết Panel / Modal / Popover; Lịch sử chạy dạng cây node, rê thẻ xem giá trị vào / ra, đường dữ liệu + truy ngược | [60](phase3/60-du-lieu-qua-node.md) |
 | 🧪 | Dùng AI gọn hơn | Trạng thái đầu phiên ngắn, `ghosthand test` chạy nhiều kịch bản ra bảng gọn, kiểm tra môi trường trước khi chạy, `browserNorm` bắt buộc chọn đích, tự dọn kịch bản thử của AI | [61](phase3/61-dung-ai-gon.md) |
 | 🧪 | Wisp làm trình duyệt node web | Cài đặt → Trình duyệt (Tự động / Chrome của app / Wisp), node web chạy qua cổng Ghosthand của Wisp (sự kiện thật, không chiếm chuột), tự mở Wisp | [62](phase3/62-trinh-duyet-wisp.md) |
+| ⬜ | Layout ribbon kiểu Word | Thanh tiêu đề + ribbon theo tab gom mọi nút, trang Tệp (thư viện, lịch sử, Cài đặt), dưới chỉ còn canvas + inspector nổi, viền resize quanh cửa sổ | [63](phase3/63-layout-ribbon.md) |
 
 ### Node hành động
 
@@ -123,7 +124,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 > Bảng tự sinh – sau khi tick chạy `python3 scripts/tasks-index.py`. Bấm tên bước để mở file chi tiết.
 
 <!-- index:start -->
-**70 / 72 bước xong code** · 🧪 **[328 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
+**70 / 73 bước xong code** · 🧪 **[331 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
 
 ### Phase 3 – Design v2 & tự động hoá (theo thứ tự làm)
 
@@ -172,6 +173,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | ✅ xong | [60. Dữ liệu qua node](phase3/60-du-lieu-qua-node.md) | 11 / 11 |  |
 | 🧪 chờ kiểm tra tay | [61. Dùng AI gọn hơn](phase3/61-dung-ai-gon.md) | 5 / 5 | [8 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [62. Wisp làm trình duyệt của node web](phase3/62-trinh-duyet-wisp.md) | 6 / 7 | [8 việc](checks.md) |
+| ⬜ chưa làm | [63. Layout chính kiểu ribbon](phase3/63-layout-ribbon.md) | 0 / 8 |  |
 | 🧪 chờ kiểm tra tay | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | 12 / 12 | [10 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | 43 / 43 | [22 việc](checks.md) |
 | ✅ xong | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | 12 / 12 |  |
@@ -270,6 +272,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 16a1q | [60. Dữ liệu qua node](phase3/60-du-lieu-qua-node.md) | Người dùng yêu cầu (2026-11-02), đã duyệt design bản 3: V0 (lưu input lúc chạy) + V1–V2 trước, rồi thẻ / kéo nối (V3–V5), cây lần chạy (V6–V7) |
 | 16a1r | [61. Dùng AI gọn hơn](phase3/61-dung-ai-gon.md) | Người dùng yêu cầu (2026-11-03, sau khi AI tự thử ~90 mẫu): M1 (trạng thái đầu phiên ngắn – rẻ, lợi ngay) trước, rồi M4, M2, M3, M5 |
 | 16a1s | [62. Wisp làm trình duyệt của node web](phase3/62-trinh-duyet-wisp.md) | Người dùng yêu cầu (2026-11-15, bước 02 của plan Wisp `../flash-app`): backend Wisp + Cài đặt chọn trình duyệt, rồi MCP / Hướng dẫn |
+| 16a1t | [63. Layout chính kiểu ribbon](phase3/63-layout-ribbon.md) | Người dùng yêu cầu (2026-11-16), đã duyệt `design/mockup-ribbon.html`: R1 viền resize trước (lỗi đang gặp), rồi khung ribbon → trang Tệp / Cài đặt → main chỉ canvas |
 | 16a2 | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | Người dùng yêu cầu (2026-10-20): ngay sau 41 – chờ màn hình đứng yên thay Chờ cố định, lặp qua danh sách + tìm tất cả, tính toán / xử lý chữ; làm trên Mac được |
 | 16a3 | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | Người dùng yêu cầu (2026-10-20): sau 42, xen kẽ 40 O0–O3 (máy Windows) – trình duyệt Chromium thường không CDP, phần tử app không cần chuột, hệ điều hành, ảnh đánh số / cây giao diện cho AI trước 31c; mỗi việc một node |
 | 16b | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | Người dùng yêu cầu (2026-10-20): làm sau 31b, trước 31c – Windows chưa đọc được tiếng Việt (`Windows.Media.Ocr`); 31c (AI soạn bằng cách thử, ảnh mẫu) cần đọc chữ / tìm ảnh đáng tin |
