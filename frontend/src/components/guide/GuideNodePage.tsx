@@ -1,4 +1,5 @@
 // Trang một loại node trong Hướng dẫn (chỉ hiển thị): hoạt hoạ lớn + làm gì / dùng khi (flow/nodeInfo) + phần riêng của nodes.json.
+import { tr } from '../../i18n/lang';
 import { ReactNode } from 'react';
 import { outputsOf } from '../../flow/view';
 import type { Step } from '../../types';
@@ -21,7 +22,7 @@ export function GuideNodePage({ k, label, icon, type, info, guide, os, ctx }: {
         <Scene k={k} big />
         <div className="flex flex-col gap-2">
           <p>{info.desc}</p>
-          <p className="text-muted"><span className="font-semibold">Dùng khi:</span> {info.use}</p>
+          <p className="text-muted"><span className="font-semibold">{tr('info.useWhen')}</span> {info.use}</p>
         </div>
       </div>
       {guide && <>

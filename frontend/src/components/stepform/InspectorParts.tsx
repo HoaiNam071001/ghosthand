@@ -1,5 +1,6 @@
 // Khung inspector design v3 (bước 38) – chỉ hiển thị, dùng chung app (StepForm) và màn mẫu (#demo-flow):
 // đầu inspector theo màu nhóm node, khối thu gọn có tóm tắt (Section), nút ⓘ mô tả loại node, nút chữ ở chân.
+import { tr } from '../../i18n/lang';
 import { ReactNode, useState } from 'react';
 import { Chevron, Info, StepIcon, StepIconName } from '../icons';
 import type { NodeCategory } from '../../flow/category';
@@ -60,7 +61,7 @@ export function InfoButton({ info, onGuide }: { info: NodeInfo; onGuide?: () => 
       {open && (
         <div role="tooltip" className="absolute inset-x-0 top-full z-30 mt-1.5 flex flex-col gap-1 rounded-[8px] bg-ink px-3 py-2.5 text-[12.5px] leading-snug text-bg shadow-[0_8px_24px_rgb(0_0_0/.18)]">
           <span>{info.desc}</span>
-          <span className="opacity-75"><span className="font-semibold">Dùng khi:</span> {info.use}</span>
+          <span className="opacity-75"><span className="font-semibold">{tr('info.useWhen')}</span> {info.use}</span>
           {onGuide && <button onClick={() => { setOpen(false); onGuide(); }} className="self-start font-semibold underline-offset-2 hover:underline">Xem hướng dẫn →</button>}
         </div>
       )}

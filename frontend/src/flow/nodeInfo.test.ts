@@ -24,3 +24,11 @@ describe('nodeInfo', () => {
     expect(infoKey({ type: 'if' })).toBe('if');
   });
 });
+
+describe('nodeInfo.en', () => {
+  it('bản tiếng Anh đủ key, có chữ', async () => {
+    const { NODE_INFO_EN } = await import('./nodeInfo.en');
+    expect(Object.keys(NODE_INFO_EN).sort()).toEqual(Object.keys(NODE_INFO).sort());
+    for (const [k, v] of Object.entries(NODE_INFO_EN)) expect(v.desc && v.use, k).toBeTruthy();
+  });
+});

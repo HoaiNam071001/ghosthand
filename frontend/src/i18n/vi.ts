@@ -267,6 +267,7 @@ export const vi = {
   'pal.osShortcut': 'Shortcuts (macOS)',
   'pal.system': 'Âm lượng',
   'pal.openWeb': 'Mở trang (Chrome của app)',
+  'info.useWhen': 'Dùng khi:',
   'port.success': 'Thành công',
   'port.fail': 'Thất bại',
   'port.true': 'Đúng',

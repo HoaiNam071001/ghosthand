@@ -1,13 +1,15 @@
 // Mô tả từng loại node cho người dùng (bước 35 N0) – bảng thêm node (khung dưới) + inspector (đầu form).
 // Chữ cho người dùng, khác internal/model/steptypes.go (cho AI / MCP, đủ trường). Thêm loại node → thêm một dòng ở đây (test bắt thiếu).
 import type { Step, StepType } from '../types';
+import { getLang } from '../i18n/lang';
+import { NODE_INFO_EN } from './nodeInfo.en';
 
 // desc: làm gì; use: dùng khi nào / ví dụ.
 export type NodeInfo = { desc: string; use: string };
 // Biến thể hiện như loại riêng trên UI: Chờ chữ / Click theo chữ (findBy text), Mở trang bằng Chrome của app.
 export type InfoKey = StepType | 'waitText' | 'clickText' | 'waitElement' | 'clickElement' | 'openWeb';
 
-export const NODE_INFO: Record<InfoKey, NodeInfo> = {
+const VI_INFO: Record<InfoKey, NodeInfo> = {
   click: { desc: 'Bấm chuột tại một điểm trên màn hình, một hoặc nhiều lần.', use: 'Bấm nút, mở mục, chọn ô – khi chỗ cần bấm luôn nằm cố định.' },
   double: { desc: 'Nhấp đúp chuột tại một điểm.', use: 'Mở file / thư mục, chọn cả một từ, phóng to cửa sổ.' },
   hold: { desc: 'Nhấn giữ chuột tại một điểm trong một khoảng thời gian rồi nhả.', use: 'Nút phải giữ mới chạy (giữ để xác nhận, giữ để ghi âm).' },
@@ -79,6 +81,12 @@ export const NODE_INFO: Record<InfoKey, NodeInfo> = {
   textNumber: { desc: 'Lấy số từ chữ kiểu “1.234.000 đ”, viết số có dấu ngăn nghìn, hoặc đọc và viết lại ngày giờ.', use: 'Đọc giá → lấy số → Tính toán so ngưỡng; ghi ngày hôm nay vào tên file.' },
   setVar: { desc: 'Đặt hoặc cộng một biến để node sau đọc bằng {{vars.tên}}.', use: 'Đếm số đơn đã xử lý, ghi lại kết quả giữa các nhánh.' },
 };
+
+// Bản theo ngôn ngữ hiện tại: desc / use là getter nên đổi ngôn ngữ có hiệu lực ngay, không phải dựng lại danh sách.
+export const NODE_INFO = Object.fromEntries((Object.keys(VI_INFO) as InfoKey[]).map((k) => [k, {
+  get desc() { return (getLang() === 'en' ? NODE_INFO_EN : VI_INFO)[k].desc; },
+  get use() { return (getLang() === 'en' ? NODE_INFO_EN : VI_INFO)[k].use; },
+}])) as Record<InfoKey, NodeInfo>;
 
 // Mô tả cho một node cụ thể (biến thể theo cách tìm / trình duyệt).
 export function infoKey(s: Pick<Step, 'type' | 'findBy' | 'imageSource' | 'webBrowser'>): InfoKey {

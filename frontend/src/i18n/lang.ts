@@ -15,6 +15,7 @@ export function applyLang(p: LangPref) {
   listeners.forEach((l) => l());
 }
 
+export const getLang = () => current;
 export const tr = (key: MsgKey, vars?: Record<string, string | number>) => translate(current, key, vars);
 
 const subscribe = (l: () => void) => {

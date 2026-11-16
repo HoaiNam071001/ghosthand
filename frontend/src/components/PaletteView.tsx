@@ -1,6 +1,7 @@
 // Phần hiển thị của bảng thêm node – dùng chung cho Ctrl+K màn chính (AddStepPalette) và bảng thêm node của canvas mẫu (DemoFlow).
 // Ô tìm (không dấu cũng được), các nhóm, phím mũi tên + Enter; khung dưới mô tả mục đang chọn (bước 35 N0).
 // Loại chưa làm hiện nhãn "Sắp có" và không chọn được.
+import { tr } from '../i18n/lang';
 import { KeyboardEvent, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { useLang } from '../i18n';
 import { StepIcon, StepIconName } from './icons';
@@ -141,7 +142,7 @@ function PaletteDetail({ item, warn, onGuide }: { item?: Item; warn: string; onG
           </span>
           {item.info && <>
             <span className="text-[13px] text-ink">{item.info.desc}</span>
-            <span className="text-xs text-muted"><span className="font-semibold">Dùng khi:</span> {item.info.use}</span>
+            <span className="text-xs text-muted"><span className="font-semibold">{tr('info.useWhen')}</span> {item.info.use}</span>
             {onGuide && item.key && <button onClick={() => onGuide(item.key!)} className="self-start text-xs font-medium text-accent-text hover:underline">Xem hướng dẫn →</button>}
           </>}
           {warn && <span className="text-xs font-medium text-warn">{warn}</span>}

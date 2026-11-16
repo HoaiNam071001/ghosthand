@@ -269,6 +269,7 @@ export const en: Record<MsgKey, string> = {
   'pal.osShortcut': 'Shortcuts (macOS)',
   'pal.system': 'Volume',
   'pal.openWeb': 'Open page (in the app’s Chrome)',
+  'info.useWhen': 'Use when:',
   'port.success': 'Success',
   'port.fail': 'Failed',
   'port.true': 'True',
