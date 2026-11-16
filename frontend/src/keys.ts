@@ -1,5 +1,7 @@
 // Tên phím robotgo (gợi ý / kiểm tra trong form Phím tắt) và chữ hiển thị tổ hợp phím.
 import type { Step } from './types';
+import { tr } from './i18n/lang';
+import type { MsgKey } from './i18n/vi';
 
 // Tên phím robotgo hỗ trợ (ngoài các ký tự đơn như a, 1, /) – gợi ý trong form và kiểm tra.
 export const KEY_NAMES = [
@@ -11,18 +13,10 @@ export const KEY_NAMES = [
 ];
 export const isValidKey = (k: string) => [...k].length === 1 || KEY_NAMES.includes(k);
 
-// Mô tả tiếng Việt cho gợi ý tên phím trong form.
-const FIXED_LABEL: Record<string, string> = {
-  enter: 'Enter – xuống dòng / xác nhận', tab: 'Tab – sang ô kế', esc: 'Esc – thoát / huỷ', space: 'Phím cách',
-  backspace: 'Backspace – xoá lùi', delete: 'Delete – xoá tới', up: '↑ Mũi tên lên', down: '↓ Mũi tên xuống',
-  left: '← Mũi tên trái', right: '→ Mũi tên phải', home: 'Home – đầu dòng', end: 'End – cuối dòng',
-  pageup: 'Page Up – lên một trang', pagedown: 'Page Down – xuống một trang', insert: 'Insert', capslock: 'Caps Lock – bật / tắt chữ hoa',
-  printscreen: 'Print Screen – chụp màn hình', menu: 'Menu ngữ cảnh', num_enter: 'Enter bàn phím số',
-  audio_mute: 'Tắt / bật tiếng', audio_vol_down: 'Giảm âm lượng', audio_vol_up: 'Tăng âm lượng',
-  audio_play: 'Phát / tạm dừng nhạc', audio_next: 'Bài kế tiếp', audio_prev: 'Bài trước',
-};
+// Mô tả (key.<tên>) cho gợi ý tên phím trong form.
+const FIXED_KEYS = new Set<string>(['audio_mute', 'audio_next', 'audio_play', 'audio_prev', 'audio_vol_down', 'audio_vol_up', 'backspace', 'capslock', 'delete', 'down', 'end', 'enter', 'esc', 'home', 'insert', 'left', 'menu', 'num_enter', 'pagedown', 'pageup', 'printscreen', 'right', 'space', 'tab', 'up']);
 export const keyLabel = (k: string) =>
-  FIXED_LABEL[k] ?? (/^f\d+$/.test(k) ? `Phím chức năng ${k.toUpperCase()}` : /^num\d$/.test(k) ? `Số ${k.slice(3)} bàn phím số` : '');
+  FIXED_KEYS.has(k) ? tr(`key.${k}` as MsgKey) : /^f\d+$/.test(k) ? tr('key.fn', { n: k.toUpperCase() }) : /^num\d$/.test(k) ? tr('key.num', { n: k.slice(3) }) : '';
 
 const cap = (k: string) => k[0].toUpperCase() + k.slice(1);
 // chord: "Ctrl + C + T" · sequence: "Ctrl + C → T"

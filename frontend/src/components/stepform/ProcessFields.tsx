@@ -14,15 +14,17 @@ import { WIN_MATCHES } from '../../flow/window';
 import { Step } from '../../types';
 import { ProcessPicker, type ProcGroup } from './ProcessPicker';
 import { Field, fmtSec, hint, NumField, selectBox, useNodeVars } from './shared';
+import { tr, useT } from '../../i18n';
 
 const OP_HINT: Record<ProcOp, (t: string) => string> = {
-  '': () => 'Đọc một lần, không bao giờ lỗi vì không thấy – dùng running / cpuPercent / memMB với node Nếu. Tên trống = liệt kê mọi tiến trình (items, nặng → nhẹ).',
-  waitStart: (t) => `Chờ có tiến trình khớp (kể cả tiến trình nền không cửa sổ). Quá ${t} → cổng Thất bại.`,
-  waitQuit: (t) => `Chờ mọi tiến trình khớp thoát. Quá ${t} → cổng Thất bại. Muốn thoát app → node Ứng dụng.`,
-  waitIdle: (t) => `Chờ tổng CPU của tiến trình khớp thấp liên tục – dùng cho render / xuất file xong. Tiến trình không chạy → Thất bại; quá ${t} → Thất bại.`,
+  '': () => tr('pf.hint.read'),
+  waitStart: (t) => tr('pf.hint.start', { t }),
+  waitQuit: (t) => tr('pf.hint.quit', { t }),
+  waitIdle: (t) => tr('pf.hint.idle', { t }),
 };
 
 export default function ProcessFields({ step: s }: { step: Step }) {
+  const t = useT();
   const script = useScript();
   const nodeVars = useNodeVars(s.id);
   const set = (patch: Partial<Step>) => updateStep(s.id, patch);
@@ -39,33 +41,33 @@ export default function ProcessFields({ step: s }: { step: Step }) {
   const varProps = { inputs: script.inputs ?? [], nodeVars, rows: 1, compact: true, onCreateInput: (key: string) => addInput({ key, label: key, type: 'text' }) };
   return (
     <>
-      <Field label="Làm gì" wide group>
-        <Select value={op} onChange={(v) => set({ procOp: (v || undefined) as ProcOp | undefined })} className={selectBox} aria-label="Thao tác tiến trình"
+      <Field label={t('ap.do')} wide group>
+        <Select value={op} onChange={(v) => set({ procOp: (v || undefined) as ProcOp | undefined })} className={selectBox} aria-label={t('pf.opLabel')}
           options={PROC_OPS.map((o) => ({ value: o.id, label: o.label }))} />
       </Field>
-      <Field label="Tên tiến trình" wide group help="Tên trong Activity Monitor / Task Manager (notepad.exe, Google Chrome Helper). Khác tên app: tiến trình con tính riêng.">
+      <Field label={t('pf.name')} wide group help={t('pf.nameHelp')}>
         <div className="flex items-start gap-2">
           <div className="min-w-0 flex-1"><VarTextInput {...varProps} value={s.procName ?? ''} onChange={(v) => set({ procName: v || undefined })} placeholder="ffmpeg" /></div>
           <button onClick={() => { if (!picking) load(); setPicking(!picking); }} aria-expanded={picking}
-            className="h-[34px] flex-none rounded-control border border-line px-2.5 text-[13px] text-muted hover:bg-hover hover:text-ink">Chọn…</button>
+            className="h-[34px] flex-none rounded-control border border-line px-2.5 text-[13px] text-muted hover:bg-hover hover:text-ink">{t('pf.pick')}</button>
         </div>
         {picking && <ProcessPicker procs={procs} loading={loading} error={error} onRefresh={load}
           onPick={(name) => { set({ procName: name, procMatch: 'exact' }); setPicking(false); }} />}
       </Field>
-      <Field label="So khớp" wide group help="Chứa / Đúng: không phân biệt hoa thường, không dấu.">
-        <Segmented value={s.procMatch ?? ''} full label="So khớp" onChange={(v) => set({ procMatch: v || undefined })} options={WIN_MATCHES} />
+      <Field label={t('ap.match')} wide group help={t('pf.matchHelp')}>
+        <Segmented value={s.procMatch ?? ''} full label={t('ap.match')} onChange={(v) => set({ procMatch: v || undefined })} options={WIN_MATCHES} />
       </Field>
       {op === 'waitIdle' && <>
-        <Field label="CPU dưới" help="Tổng CPU các tiến trình khớp phải dưới mức này. 100 = đầy một lõi, máy nhiều lõi có thể vượt 100">
+        <Field label={t('pf.cpu')} help={t('pf.cpuHelp')}>
           <NumInput value={s.cpuBelow ?? 0} unit="%" min={1} onChange={(cpuBelow) => set({ cpuBelow })} />
         </Field>
-        <Field label="Yên liên tục" help={`CPU thấp liên tục ${fmtSec(s.stableMs)} mới đi tiếp – chạm ngưỡng thì đếm lại`}>
+        <Field label={t('pf.stable')} help={t('pf.stableHelp', { t: fmtSec(s.stableMs) })}>
           <NumInput value={s.stableMs ?? 0} unit="ms" onChange={(stableMs) => set({ stableMs })} />
         </Field>
       </>}
-      {op !== '' && <NumField label="Chờ tối đa" info="Quá giờ đi cổng Thất bại" step={s} field="timeoutMs" unit="ms" min={0} />}
+      {op !== '' && <NumField label={t('common.maxWait')} info={t('pf.waitInfo')} step={s} field="timeoutMs" unit="ms" min={0} />}
       <span className={`col-span-2 -mt-1 ${hint}`}>{OP_HINT[op](fmtSec(s.timeoutMs))}</span>
-      <span className={`col-span-2 -mt-1 ${hint}`}>Node sau dùng {`{{${s.ref}.output.cpuPercent}}`}, {`{{${s.ref}.output.memMB}}`}, {`{{${s.ref}.output.running}}`}…</span>
+      <span className={`col-span-2 -mt-1 ${hint}`}>{t('pf.later')} {`{{${s.ref}.output.cpuPercent}}`}, {`{{${s.ref}.output.memMB}}`}, {`{{${s.ref}.output.running}}`}…</span>
     </>
   );
 }

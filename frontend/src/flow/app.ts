@@ -2,12 +2,13 @@
 // công thức MatchApps (internal/model/app.go), test chung testdata/apps.json.
 import type { Step } from '../types';
 import { matchApp } from './window';
+import { tr } from '../i18n/lang';
 
 export type AppOp = '' | 'waitStart' | 'waitQuit' | 'quit' | 'forceQuit';
 
 export const APP_OPS: { id: AppOp; label: string }[] = [
-  { id: '', label: 'Kiểm tra đang chạy' }, { id: 'waitStart', label: 'Chờ app chạy' }, { id: 'waitQuit', label: 'Chờ app thoát' },
-  { id: 'quit', label: 'Thoát' }, { id: 'forceQuit', label: 'Buộc thoát' },
+  { id: '', get label() { return tr('app.op.0'); } }, { id: 'waitStart', get label() { return tr('app.op.1'); } }, { id: 'waitQuit', get label() { return tr('app.op.2'); } },
+  { id: 'quit', get label() { return tr('app.op.3'); } }, { id: 'forceQuit', get label() { return tr('app.op.4'); } },
 ];
 
 // App / tiến trình đang chạy – khớp model.AppInfo (internal/model/window.go).

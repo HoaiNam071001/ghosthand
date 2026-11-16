@@ -7,7 +7,7 @@ import { updateStep, useScript } from '../../store';
 import { addInput } from '../../scriptInputs';
 import { ScrollDirection, Step } from '../../types';
 import { canBackground, parseSelector, READ_LABEL, ReadFrom, SCROLL_MODE_LABEL, ScrollMode, SELECTOR_LABEL, selectorLines, stableSelector } from '../../flow/web';
-import { ButtonField, DIRECTION_OPTIONS, Field, NumField, SwitchField, useNodeVars, varHint } from './shared';
+import { ButtonField, directionOptions, Field, NumField, SwitchField, useNodeVars, varHint } from './shared';
 import { TypeModeField } from './TextFields';
 import { SelectorFixHint } from './SelectorFixHint';
 
@@ -110,7 +110,7 @@ export function WebScrollFields({ step: s }: { step: Step }) {
     {mode !== '' && <>
       <Field label="Hướng" wide group>
         <Segmented value={s.direction ?? 'down'} onChange={(direction: ScrollDirection) => set(s, { direction })} full label="Hướng cuộn"
-          options={DIRECTION_OPTIONS} />
+          options={directionOptions()} />
       </Field>
       <NumField label={mode === 'until' ? 'Mỗi lần lăn' : 'Số nấc'} step={s} field="amount" unit="nấc" min={1} stepper />
     </>}

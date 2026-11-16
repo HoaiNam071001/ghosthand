@@ -1,10 +1,11 @@
 // Node Vẽ đường (bước 35 N7) – đỉnh hình (cùng công thức ShapePoints, internal/model/shape.go – test chung
 // testdata/shapes.json), nhãn hình, dòng chi tiết thẻ. Chạy ở internal/engine/draw.go.
 import type { Point, Step } from '../types';
+import { tr } from '../i18n/lang';
 
 // '' = đường gấp khúc qua các điểm (khớp model.Shapes)
 export type Shape = '' | 'circle' | 'rect' | 'star';
-export const SHAPES: { id: Shape; label: string }[] = [{ id: '', label: 'Qua các điểm' }, { id: 'circle', label: 'Tròn' }, { id: 'rect', label: 'Chữ nhật' }, { id: 'star', label: 'Sao' }];
+export const SHAPES: { id: Shape; label: string }[] = [{ id: '', get label() { return tr('shape.0'); } }, { id: 'circle', get label() { return tr('shape.1'); } }, { id: 'rect', get label() { return tr('shape.2'); } }, { id: 'star', get label() { return tr('shape.3'); } }];
 
 const CIRCLE_SEGMENTS = 36;
 

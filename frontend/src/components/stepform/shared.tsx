@@ -12,26 +12,34 @@ import { MouseButton, numVarOf, NumVarField, ScrollDirection, Step, StepPoint } 
 import Segmented from '../Segmented';
 import { Switch } from '../Switch';
 import { nodeVarOptions } from '../../flow/view';
+import { getLang } from '../../i18n/lang';
+import { tr, useT } from '../../i18n';
 
 export const selectBox = `${fieldBox} w-full text-ink`;
 export const hint = 'text-xs text-muted';
 export const errText = 'text-xs text-danger-text'; // báo thiếu / sai ngay dưới ô (lỗi vẫn hiện chữ, không giấu vào ⓘ)
 // Chữ phụ bên phải nhãn ô chữ nhận biến
-export const varHint = <span className="text-xs text-muted">gõ <span className="font-mono">{'{{'}</span> để chèn biến</span>;
+function VarHint() {
+  const t = useT();
+  return <span className="text-xs text-muted">{t('sf.varHint.pre')}<span className="font-mono">{'{{'}</span>{t('sf.varHint.post')}</span>;
+}
+export const varHint = <VarHint />;
 // Ô chọn hướng cuộn (node Cuộn, Cuộn trang web).
-export const DIRECTION_OPTIONS: { id: ScrollDirection; label: string }[] = [{ id: 'up', label: '↑ Lên' }, { id: 'down', label: '↓ Xuống' }, { id: 'left', label: '← Trái' }, { id: 'right', label: '→ Phải' }];
-export const fmtSec = (ms?: number) => `${((ms ?? 0) / 1000).toLocaleString('vi-VN', { maximumFractionDigits: 1 })} s`;
+export const directionOptions = (): { id: ScrollDirection; label: string }[] => [{ id: 'up', label: tr('sf.dir.up') }, { id: 'down', label: tr('sf.dir.down') }, { id: 'left', label: tr('sf.dir.left') }, { id: 'right', label: tr('sf.dir.right') }];
+export const fmtSec = (ms?: number) => `${((ms ?? 0) / 1000).toLocaleString(getLang() === 'vi' ? 'vi-VN' : 'en-US', { maximumFractionDigits: 1 })} s`;
 // Biến kết quả các node khác ({{n2.output.x}}) cho ô chữ của node id
 export function useNodeVars(id: string) {
   const { steps, start, edges } = useScript();
   const secrets = useSecretNames();
-  return useMemo(() => [...nodeVarOptions({ steps, start, edges }, id), ...secrets.map((n) => ({ key: `secret.${n}`, label: `Bí mật ${n} (giá trị bị che)` }))], [steps, start, edges, id, secrets]);
+  return useMemo(() => [...nodeVarOptions({ steps, start, edges }, id), ...secrets.map((n) => ({ key: `secret.${n}`, label: tr('sf.secretVar', { n }) }))], [steps, start, edges, id, secrets]);
 }
 
 // Sửa một điểm của node (giữ các trường khác của điểm)
 export type SetPoint = (i: number, p: Partial<StepPoint>) => void;
 
-export function PickButton({ step: s, title = 'Chọn lại trên màn hình' }: { step: Step; title?: string }) {
+export function PickButton({ step: s, title }: { step: Step; title?: string }) {
+  const t = useT();
+  title ??= t('sf.repick');
   return (
     <button aria-label={title} title={title} onClick={() => pickPointFor(s.id)}
       className="grid h-[34px] w-[34px] flex-none place-items-center rounded-control border border-line text-muted hover:bg-hover hover:text-ink"><Target /></button>
@@ -96,6 +104,7 @@ export function NumField({ label, step: s, field, unit, prefix, min = 0, stepper
   help?: string; // "Ô này dùng để làm gì" cuối menu ⋯
   info?: string; // ⓘ cạnh nhãn
 }) {
+  const t = useT();
   const script = useScript();
   const nodeVars = useNodeVars(s.id);
   const inp = pinnedInput(script, s.id, field);
@@ -104,12 +113,12 @@ export function NumField({ label, step: s, field, unit, prefix, min = 0, stepper
   const def = defaultOf(s.type, field);
   const value = s[field] ?? min;
   const items: FieldMenuItem[] = expr !== undefined ? [] : [
-    ...(inp ? [] : [{ label: 'Dùng biến…', icon: MENU_ICON.variable, sub: 'vd {{n2.output.count}} + 1', onClick: () => setNumVarOn(s.id, field, true) }]),
+    ...(inp ? [] : [{ label: t('sf.num.useVar'), icon: MENU_ICON.variable, sub: t('sf.num.useVarSub'), onClick: () => setNumVarOn(s.id, field, true) }]),
     inp
-      ? { label: `Bỏ input ${inp.key}`, icon: MENU_ICON.pin, sub: 'không hỏi khi chạy nữa', onClick: () => unpinField(s.id, field) }
-      : { label: 'Đặt làm input khi chạy', icon: MENU_ICON.pin, sub: 'giá trị hiện tại làm mặc định', onClick: () => pinField(s.id, field) },
-    ...(inp ? [] : others.map((o) => ({ label: o.key, sub: `dùng chung input: ${o.label}`, mono: true, onClick: () => pinToInput(s.id, field, o.key) }))),
-    ...(def !== undefined && def !== value && !inp ? [{ label: `Về mặc định (${def}${unit ? ` ${unit}` : ''})`, icon: MENU_ICON.reset, onClick: () => updateStep(s.id, { [field]: def }) }] : []),
+      ? { label: t('sf.num.unpin', { key: inp.key }), icon: MENU_ICON.pin, sub: t('sf.num.unpinSub'), onClick: () => unpinField(s.id, field) }
+      : { label: t('sf.num.pin'), icon: MENU_ICON.pin, sub: t('sf.num.pinSub'), onClick: () => pinField(s.id, field) },
+    ...(inp ? [] : others.map((o) => ({ label: o.key, sub: t('sf.num.shareInput', { label: o.label }), mono: true, onClick: () => pinToInput(s.id, field, o.key) }))),
+    ...(def !== undefined && def !== value && !inp ? [{ label: t('sf.num.reset', { v: `${def}${unit ? ` ${unit}` : ''}` }), icon: MENU_ICON.reset, onClick: () => updateStep(s.id, { [field]: def }) }] : []),
   ];
   return (
     <Field label={label} group help={info} extra={inp && <KeyChip k={inp.key} />}>
@@ -119,13 +128,13 @@ export function NumField({ label, step: s, field, unit, prefix, min = 0, stepper
             <VarTextInput value={expr} rows={1} compact inputs={script.inputs ?? []} nodeVars={nodeVars} placeholder="{{n2.output.count}}"
               onCreateInput={(key) => addInput({ key, label: key, type: 'number' })} onChange={(v) => setNumVarExpr(s.id, field, v)} />
           </span>
-          <button type="button" onClick={() => setNumVarOn(s.id, field, false)} aria-label="Bỏ biến" title="Bỏ biến – dùng số cố định"
+          <button type="button" onClick={() => setNumVarOn(s.id, field, false)} aria-label={t('sf.num.dropVar')} title={t('sf.num.dropVarTip')}
             className="grid h-6 w-6 flex-none place-items-center rounded-[5px] text-muted hover:bg-hover hover:text-ink">
             <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden><path d="M1 1l8 8M9 1L1 9" stroke="currentColor" strokeWidth="1.4" /></svg>
           </button>
         </span>
       ) : (
-        <NumInput value={value} min={min} unit={unit} prefix={prefix} pinned={!!inp} tag={inp ? 'mặc định' : undefined} stepper={stepper}
+        <NumInput value={value} min={min} unit={unit} prefix={prefix} pinned={!!inp} tag={inp ? t('sf.num.default') : undefined} stepper={stepper}
           menu={<FieldMenu items={items} help={help} />}
           onChange={(v) => (inp ? setPinnedValue(s.id, field, v) : updateStep(s.id, { [field]: v }))} />
       )}
@@ -145,10 +154,11 @@ export function TabBtn({ active, onClick, title, children }: { active: boolean; 
 
 // Nút chuột của node bấm (click, click theo ảnh, click phần tử web).
 export function ButtonField({ step: s }: { step: Step }) {
+  const t = useT();
   return (
-    <Field label="Nút chuột" group>
-      <Segmented value={s.button} onChange={(button: MouseButton) => updateStep(s.id, { button })} full label="Nút chuột"
-        options={[{ id: 'left', label: 'Trái' }, { id: 'right', label: 'Phải' }, { id: 'center', label: 'Giữa' }]} />
+    <Field label={t('sf.btn')} group>
+      <Segmented value={s.button} onChange={(button: MouseButton) => updateStep(s.id, { button })} full label={t('sf.btn')}
+        options={[{ id: 'left', label: t('sf.btn.left') }, { id: 'right', label: t('sf.btn.right') }, { id: 'center', label: t('sf.btn.center') }]} />
     </Field>
   );
 }

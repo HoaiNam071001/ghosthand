@@ -7,8 +7,10 @@ import { addInput } from '../../scriptInputs';
 import { CLIP_OPS, type ClipOp } from '../../flow/clipboard';
 import { Step } from '../../types';
 import { errText, Field, useNodeVars } from './shared';
+import { useT } from '../../i18n';
 
 export function ClipFields({ step: s }: { step: Step }) {
+  const t = useT();
   const script = useScript();
   const nodeVars = useNodeVars(s.id);
   const set = (patch: Partial<Step>) => updateStep(s.id, patch);
@@ -18,23 +20,23 @@ export function ClipFields({ step: s }: { step: Step }) {
   const shot = script.steps.find((x) => x.type === 'screenshot' && x.id !== s.id);
   return (
     <>
-      <Field label="Làm gì" wide group help={op === 'write' ? 'Thay nội dung clipboard bằng chữ dưới – để trống = xoá clipboard'
-        : op === 'image' ? 'Chép ảnh PNG vào clipboard để dán (Cmd/Ctrl+V) vào chat, email…'
-        : `Đọc chữ đang có – node sau dùng {{${s.ref}.output.text}}; clipboard chỉ có ảnh thì ra rỗng`}>
-        <Segmented value={op} options={CLIP_OPS} onChange={(clipOp: ClipOp) => set({ clipOp: clipOp || undefined })} full label="Phép clipboard" />
+      <Field label={t('ap.do')} wide group help={op === 'write' ? t('cl.helpWrite')
+        : op === 'image' ? t('cl.helpImage')
+        : t('cl.helpRead', { ref: s.ref })}>
+        <Segmented value={op} options={CLIP_OPS} onChange={(clipOp: ClipOp) => set({ clipOp: clipOp || undefined })} full label={t('cl.opLabel')} />
       </Field>
       {op === 'write' && (
-        <Field label="Nội dung" wide group>
-          <VarTextInput {...varProps} value={s.text} onChange={(text) => set({ text })} placeholder="Mã đơn: {{n2.output.text}}" />
+        <Field label={t('cl.content')} wide group>
+          <VarTextInput {...varProps} value={s.text} onChange={(text) => set({ text })} placeholder={t('cl.contentPh')} />
         </Field>
       )}
       {op === 'image' && (
-        <Field label="File ảnh PNG" wide group help="~ / đường dẫn tương đối tính từ thư mục người dùng">
+        <Field label={t('cl.png')} wide group help={t('cl.pngHelp')}>
           <PathInput kind="file" {...varProps} value={s.filePath ?? ''} onChange={(v) => set({ filePath: v || undefined })}
-            placeholder={shot ? `{{${shot.ref}.output.path}}` : '~/Pictures/anh.png'} />
+            placeholder={shot ? `{{${shot.ref}.output.path}}` : '~/Pictures/image.png'} />
           {!s.filePath?.trim() && (
-            <span className={errText}>Chưa nhập file – chạy sẽ báo lỗi
-              {shot && <> · <button className="text-accent-text underline" onClick={() => set({ filePath: `{{${shot.ref}.output.path}}` })}>dùng ảnh của {shot.ref}</button></>}
+            <span className={errText}>{t('cl.noFile')}
+              {shot && <> · <button className="text-accent-text underline" onClick={() => set({ filePath: `{{${shot.ref}.output.path}}` })}>{t('cl.useShot', { ref: shot.ref })}</button></>}
             </span>
           )}
         </Field>

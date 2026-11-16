@@ -7,8 +7,10 @@ import { fmtPoint, usesVar } from '../../anchor';
 import { SHAPES, type Shape } from '../../flow/shape';
 import { Step, StepPoint } from '../../types';
 import { Field, NumField, SwitchField } from './shared';
+import { useT } from '../../i18n';
 
 export function PathFields({ step: s }: { step: Step }) {
+  const t = useT();
   const set = (patch: Partial<Step>) => updateStep(s.id, patch);
   const shape = s.shape ?? '';
   const setShape = (v: Shape) => set({
@@ -21,19 +23,19 @@ export function PathFields({ step: s }: { step: Step }) {
   });
   return (
     <>
-      <Field label="Hình" wide group>
-        <Segmented value={shape} options={SHAPES.map((x) => (x.id ? x : { ...x, label: 'Các điểm' }))} onChange={setShape} full label="Hình" />
+      <Field label={t('pa.shape')} wide group>
+        <Segmented value={shape} options={SHAPES.map((x) => (x.id ? x : { ...x, label: t('pa.points') }))} onChange={setShape} full label={t('pa.shape')} />
       </Field>
       {shape ? <>
-        <Field label={shape === 'circle' ? 'Đường kính / rộng' : 'Rộng'}>
+        <Field label={shape === 'circle' ? t('pa.diameter') : t('pa.width')}>
           <NumInput value={s.shapeW ?? 0} min={4} unit="px" onChange={(shapeW) => set({ shapeW })} />
         </Field>
-        {shape !== 'star' && <Field label="Cao">
+        {shape !== 'star' && <Field label={t('pa.height')}>
           <NumInput value={s.shapeH || s.shapeW || 0} min={4} unit="px" onChange={(shapeH) => set({ shapeH: shapeH === s.shapeW ? undefined : shapeH })} />
         </Field>}
       </> : <PathPoints step={s} />}
-      <NumField label="Thời gian vẽ" step={s} field="dragMs" unit="ms" min={1}
-        info={`Giữ chuột từ đầu tới cuối – một nét liền. Bấm 👁 ở đầu để xem / kéo ${shape ? 'tâm hình' : 'các điểm'} trên màn hình.`} />
+      <NumField label={t('pa.time')} step={s} field="dragMs" unit="ms" min={1}
+        info={t('pa.timeInfo', { what: shape ? t('pa.center') : t('pa.pointsLc') })} />
     </>
   );
 }
@@ -50,16 +52,17 @@ const shifted = (p: StepPoint | undefined, dx: number, dy: number): StepPoint =>
   p && !usesVar(p) ? { ...p, x: p.x + dx, y: p.y + dy } : { x: dx, y: dy, ax: 'center', ay: 'center' };
 
 function PathPoints({ step: s }: { step: Step }) {
+  const t = useT();
   const set = (points: StepPoint[]) => updateStep(s.id, { points });
   return (
     <>
-    <Field label="Các điểm (đi lần lượt)" wide group side={<span className="text-xs text-muted">{s.points.length} điểm</span>}>
+    <Field label={t('pa.pts')} wide group side={<span className="text-xs text-muted">{t('pa.count', { n: s.points.length })}</span>}>
       <ol className="flex flex-col gap-1">
         {s.points.map((p, i) => (
           <li key={i} className="flex h-8 items-center gap-2 rounded-control border border-line bg-field px-2.5">
             <span className="w-4 font-mono text-xs">{i + 1}</span>
             <span className="min-w-0 flex-1 truncate font-mono text-[13px] text-ink">{usesVar(p) ? `${p.xVar}, ${p.yVar}` : fmtPoint(p)}</span>
-            <button onClick={() => set(s.points.filter((_, j) => j !== i))} disabled={s.points.length <= 2} aria-label={`Xoá điểm ${i + 1}`}
+            <button onClick={() => set(s.points.filter((_, j) => j !== i))} disabled={s.points.length <= 2} aria-label={t('pa.del', { n: i + 1 })}
               className="grid h-6 w-6 place-items-center rounded-control hover:bg-hover hover:text-ink disabled:opacity-30">
               <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden><path d="M6 6l12 12M18 6L6 18" /></svg>
             </button>
@@ -68,12 +71,12 @@ function PathPoints({ step: s }: { step: Step }) {
       </ol>
       <div className="flex flex-wrap gap-2">
         <button onClick={() => set([...s.points, shifted(s.points[s.points.length - 1], 80, 40)])}
-          className="h-8 w-fit rounded-control border border-dashed border-line-strong px-3 text-[13px] text-ink hover:bg-hover">+ Thêm điểm</button>
-        <button onClick={() => drawPathFor(s.id)} title="Mở màn hình, kéo chuột một nét liền – app tự lấy các điểm theo nét đó (thay các điểm hiện có)"
-          className="h-8 w-fit rounded-control border border-line px-3 text-[13px] text-ink hover:bg-hover">Vẽ trên màn hình…</button>
+          className="h-8 w-fit rounded-control border border-dashed border-line-strong px-3 text-[13px] text-ink hover:bg-hover">{t('pa.add')}</button>
+        <button onClick={() => drawPathFor(s.id)} title={t('pa.drawTip')}
+          className="h-8 w-fit rounded-control border border-line px-3 text-[13px] text-ink hover:bg-hover">{t('pa.draw')}</button>
       </div>
     </Field>
-    <SwitchField label="Khép kín" help="Vẽ thêm đoạn từ điểm cuối về điểm đầu" on={!!s.closed} onChange={(on) => updateStep(s.id, { closed: on || undefined })} />
+    <SwitchField label={t('pa.closed')} help={t('pa.closedHelp')} on={!!s.closed} onChange={(on) => updateStep(s.id, { closed: on || undefined })} />
     </>
   );
 }

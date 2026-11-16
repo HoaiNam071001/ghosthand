@@ -3,20 +3,21 @@
 // testdata/windows.json, window_presets.json.
 import { fold } from '../fold';
 import type { Rect, Step } from '../types';
+import { tr } from '../i18n/lang';
 
 export type WinOp = '' | 'waitOpen' | 'waitClose' | 'setBounds' | 'minimize' | 'maximize' | 'restore' | 'close' | 'read';
 export type WinMatch = '' | 'exact' | 'regex';
 export type WinPreset = '' | 'center' | 'left' | 'right' | 'full';
 
 export const WIN_OPS: { id: WinOp; label: string }[] = [
-  { id: '', label: 'Đưa lên trước (focus)' }, { id: 'setBounds', label: 'Đặt vị trí + cỡ' },
-  { id: 'waitOpen', label: 'Chờ cửa sổ mở' }, { id: 'waitClose', label: 'Chờ cửa sổ đóng' },
-  { id: 'minimize', label: 'Thu nhỏ' }, { id: 'maximize', label: 'Phóng to' }, { id: 'restore', label: 'Bỏ thu nhỏ / phóng to' },
-  { id: 'close', label: 'Đóng (như bấm ×)' }, { id: 'read', label: 'Chỉ đọc thông tin' },
+  { id: '', get label() { return tr('win.op.0'); } }, { id: 'setBounds', get label() { return tr('win.op.1'); } },
+  { id: 'waitOpen', get label() { return tr('win.op.2'); } }, { id: 'waitClose', get label() { return tr('win.op.3'); } },
+  { id: 'minimize', get label() { return tr('win.op.4'); } }, { id: 'maximize', get label() { return tr('win.op.5'); } }, { id: 'restore', get label() { return tr('win.op.6'); } },
+  { id: 'close', get label() { return tr('win.op.7'); } }, { id: 'read', get label() { return tr('win.op.8'); } },
 ];
-export const WIN_MATCHES: { id: WinMatch; label: string }[] = [{ id: '', label: 'Chứa' }, { id: 'exact', label: 'Đúng' }, { id: 'regex', label: 'Regex' }];
+export const WIN_MATCHES: { id: WinMatch; label: string }[] = [{ id: '', get label() { return tr('win.op.9'); } }, { id: 'exact', get label() { return tr('win.op.10'); } }, { id: 'regex', get label() { return tr('win.op.11'); } }];
 export const WIN_PRESETS: { id: WinPreset; label: string }[] = [
-  { id: 'left', label: 'Trái' }, { id: 'center', label: 'Giữa' }, { id: 'right', label: 'Phải' }, { id: 'full', label: 'Đầy' }, { id: '', label: 'Toạ độ' },
+  { id: 'left', get label() { return tr('win.op.12'); } }, { id: 'center', get label() { return tr('win.op.13'); } }, { id: 'right', get label() { return tr('win.op.14'); } }, { id: 'full', get label() { return tr('win.op.15'); } }, { id: '', get label() { return tr('win.op.16'); } },
 ];
 
 // Cửa sổ đang mở – khớp model.WindowInfo (internal/model/window.go).
