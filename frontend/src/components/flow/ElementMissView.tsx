@@ -1,11 +1,13 @@
 // "App đã đọc được gì" khi node phần tử không thấy cái cần tìm (bước 50 A2): so với Accessibility Inspector.
+import { useT } from '../../i18n';
 import { CopyButton } from '../settings/parts';
 import { ElementMiss, missHint, missText } from '../../flow/elementMiss';
 
 export default function ElementMissView({ miss }: { miss: ElementMiss }) {
+  const t = useT();
   return (
     <details className="rounded-control bg-soft px-2.5 py-2 text-xs" open>
-      <summary className="cursor-pointer font-medium">App đã đọc {miss.read} phần tử</summary>
+      <summary className="cursor-pointer font-medium">{t('fl.em.read', { n: miss.read })}</summary>
       <p className="my-1.5 text-muted">{missHint(miss)}</p>
       {miss.near.length > 0 && (
         <ul className="mb-1.5 flex flex-col gap-0.5">
@@ -23,8 +25,8 @@ export default function ElementMissView({ miss }: { miss: ElementMiss }) {
           </div>
         ))}
       </div>
-      <div className="mt-1.5 flex items-center gap-2 text-muted"><span className="flex-1">Chép danh sách đã đọc</span>
-        <CopyButton text={missText(miss)} label="Chép danh sách phần tử đã đọc" /></div>
+      <div className="mt-1.5 flex items-center gap-2 text-muted"><span className="flex-1">{t('fl.em.copy')}</span>
+        <CopyButton text={missText(miss)} label={t('fl.em.copyL')} /></div>
     </details>
   );
 }

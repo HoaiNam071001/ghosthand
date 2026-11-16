@@ -1,6 +1,8 @@
 // Hình minh hoạ bước Cuộn (inspector): khung vùng / màn hình theo đúng tỷ lệ, điểm đặt chuột (hoặc hình con trỏ ở giữa
 // nếu cuộn tại chỗ chuột), và phần trang mới hiện ra nối tiếp theo hướng cuộn – chia thành từng màn ("màn 2, 3…"),
 // cuộn quá MAX_SCREENS màn thì vẽ gãy. Quãng cuộn là ước tính: SCROLL_NOTCH_PX một nấc (thực tế tuỳ app).
+import { getLang } from '../../i18n/lang';
+import { tr, useT } from '../../i18n';
 import { Point, Rect, ScrollDirection } from '../../types';
 import { SCROLL_ARROW, SCROLL_NOTCH_PX, scrollDelta } from '../../scroll';
 
@@ -9,11 +11,12 @@ const MAX_H = 210;
 const PAD = 6;
 const MAX_SCREENS = 3; // phần trang vẽ tối đa 3 màn
 
-export const fmtScreens = (n: number) => n.toLocaleString('vi-VN', { maximumFractionDigits: 1 });
+export const fmtScreens = (n: number) => n.toLocaleString(getLang() === 'en' ? 'en-US' : 'vi-VN', { maximumFractionDigits: 1 });
 
 export default function ScrollMap({ bounds: b, at, direction, amount, label }: {
   bounds: Rect; at: Point | null; direction: ScrollDirection; amount: number; label: string;
 }) {
+  const t = useT();
   const d = scrollDelta({ direction, amount });
   const dist = Math.abs(d.x || d.y);
   const vertical = direction === 'up' || direction === 'down';
@@ -51,7 +54,7 @@ export default function ScrollMap({ bounds: b, at, direction, amount, label }: {
   const screens = dist / size;
   return (
     <div className="flex flex-col items-center gap-1.5">
-      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Cuộn ${amount} nấc, khoảng ${dist} px`} className="overflow-visible">
+      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={t('scr.alt', { n: amount, d: dist })} className="overflow-visible">
         <defs>
           <marker id="scroll-ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
             <path d="M0 0 10 5 0 10z" className="fill-accent" />
@@ -70,7 +73,7 @@ export default function ScrollMap({ bounds: b, at, direction, amount, label }: {
             <g key={v}>
               <line {...l} className="stroke-accent" strokeDasharray="2 3" strokeWidth={1} />
               <text x={vertical ? l.x1 + 4 : l.x1 + 3} y={vertical ? l.y1 + sign * 11 - (sign < 0 ? 0 : 0) : l.y1 + 11}
-                className="fill-accent-text text-[9px]">màn {i + 3}</text>
+                className="fill-accent-text text-[9px]">{t('scr.screenN', { n: i + 3 })}</text>
             </g>
           );
         })}
@@ -85,17 +88,17 @@ export default function ScrollMap({ bounds: b, at, direction, amount, label }: {
         <text x={fx + 5} y={fy + 12} className="fill-muted font-mono text-[10px]">{label} {b.w} × {b.h}</text>
         {band > 0 && bandRect.w > 60 && bandRect.h > 14 && (
           <text x={bandRect.x + 5} y={vertical ? (sign > 0 ? bandRect.y + 11 : bandRect.y + bandRect.h - 4) : bandRect.y + 11}
-            className="fill-accent-text text-[9px] font-semibold">{divs.length || cut ? 'màn 2' : `hiện thêm ≈ ${dist} px`}</text>
+            className="fill-accent-text text-[9px] font-semibold">{divs.length || cut ? t('scr.screenN', { n: 2 }) : t('scr.more', { d: dist })}</text>
         )}
         <line x1={px} y1={py} x2={ex} y2={ey} className="stroke-accent" strokeWidth={2.5} markerEnd="url(#scroll-ah)" />
         {at ? <circle cx={px} cy={py} r={4.5} className={`${outside ? 'fill-danger' : 'fill-accent'} stroke-surface`} strokeWidth={2} />
           : <path transform={`translate(${px - 4} ${py - 5}) scale(.5)`} d="M2 2 L2 26 L8.5 19.5 L13 30 L17.5 28 L13 18 L22 18 Z" className="fill-ink stroke-surface" strokeWidth={3} />}
       </svg>
       <span className="text-center text-xs text-muted">
-        <span className="font-mono text-ink">{SCROLL_ARROW[direction]} {amount} nấc ≈ {dist} px</span>
-        {' '}≈ {screens < 1 ? `${Math.round(screens * 100)}% ${vertical ? 'chiều cao' : 'chiều rộng'} ${label.toLowerCase()}` : `${fmtScreens(screens)} ${label.toLowerCase()}`}
-        {cut && ` (vẽ ${MAX_SCREENS} màn đầu)`}
-        {' · '}ước tính {SCROLL_NOTCH_PX} px / nấc (Chrome, Edge), app khác có thể khác
+        <span className="font-mono text-ink">{SCROLL_ARROW[direction]} {t('scr.notches', { n: amount, d: dist })}</span>
+        {' '}≈ {screens < 1 ? t(vertical ? 'scr.pctH' : 'scr.pctW', { p: Math.round(screens * 100), label: label.toLowerCase() }) : `${fmtScreens(screens)} ${label.toLowerCase()}`}
+        {cut && ` ${t('scr.cut', { n: MAX_SCREENS })}`}
+        {' · '}{t('scr.est', { px: SCROLL_NOTCH_PX })}
       </span>
     </div>
   );

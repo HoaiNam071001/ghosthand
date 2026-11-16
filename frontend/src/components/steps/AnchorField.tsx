@@ -2,6 +2,7 @@
 // X: + = cách cạnh trái, − = cách cạnh phải; Y: + = cách cạnh trên, − = cách cạnh dưới. Gõ số âm là đổi neo.
 // Lưới 3×3 chọn neo (4 góc, giữa cạnh, tâm), "%" = theo tỷ lệ cạnh vùng (co giãn theo vùng).
 // Có bounds (design v3): sơ đồ thu gọn thành một hàng tóm tắt khoảng cách, bấm mới mở sơ đồ + px / %.
+import { tr, useT } from '../../i18n';
 import { ReactNode, useState } from 'react';
 import { Chevron } from '../icons';
 import NumInput from '../NumInput';
@@ -34,16 +35,19 @@ const parse = (n: number, a: Anchor): { n: number; a: Anchor } =>
     : n < 0 || Object.is(n, -0) ? { n: -n, a: 'end' } : n > 0 ? { n, a: 'start' } : { n, a };
 
 export function anchorHint({ x, y, ax, ay }: StepPoint) {
-  const part = (n: number, a: Anchor, near: string, far: string, mid: string) =>
-    a === 'start' ? `cách cạnh ${near} ${n} px` : a === 'end' ? `cách cạnh ${far} ${n} px`
-      : a === 'center' ? `${mid} ${n >= 0 ? '+' : ''}${n} px` : `${Number((n / 100).toFixed(2))}% ${near === 'trái' ? 'chiều rộng' : 'chiều cao'}`;
-  return `${part(x, axisOf(ax), 'trái', 'phải', 'giữa ngang')} · ${part(y, axisOf(ay), 'trên', 'dưới', 'giữa dọc')}`;
+  const part = (n: number, a: Anchor, horizontal: boolean) => {
+    const [near, far, mid] = horizontal ? [tr('anc.left'), tr('anc.right'), tr('anc.midX')] : [tr('anc.top'), tr('anc.bottom'), tr('anc.midY')];
+    return a === 'start' ? tr('anc.edge', { side: near, n }) : a === 'end' ? tr('anc.edge', { side: far, n })
+      : a === 'center' ? `${mid} ${n >= 0 ? '+' : ''}${n} px` : tr(horizontal ? 'anc.pctW' : 'anc.pctH', { n: Number((n / 100).toFixed(2)) });
+  };
+  return `${part(x, axisOf(ax), true)} · ${part(y, axisOf(ay), false)}`;
 }
 
 // Mở / đóng sơ đồ nhớ chung trong phiên – chọn node khác vẫn giữ.
 let mapOpen = false;
 
-export default function AnchorField({ value: v, onChange, onAnchor, disabled, pick, menu, bounds, boundsLabel = 'Vùng', grid = true }: Props) {
+export default function AnchorField({ value: v, onChange, onAnchor, disabled, pick, menu, bounds, boundsLabel = tr('anc.region'), grid = true }: Props) {
+  const t = useT();
   const [open, setOpen] = useState(mapOpen);
   const ratio = v.ax === 'ratio';
   const setAxis = (k: 'x' | 'y', n: number) => {
@@ -65,21 +69,21 @@ export default function AnchorField({ value: v, onChange, onAnchor, disabled, pi
         })}
         {!bounds && grid && <AnchorGrid value={v} onChange={(ax, ay) => anchor(ax, ay)} disabled={disabled} />}
         {pick ?? (
-          <button disabled={disabled} title="Chọn trên màn hình" aria-label="Chọn trên màn hình"
+          <button disabled={disabled} title={t('anc.pickScreen')} aria-label={t('anc.pickScreen')}
             className="grid h-[34px] w-[34px] flex-none place-items-center rounded-control border border-line text-muted enabled:hover:bg-hover enabled:hover:text-ink disabled:opacity-50"><Target /></button>
         )}
         {menu}
       </div>
       {bounds ? (
         <>
-          <button type="button" onClick={() => { mapOpen = !open; setOpen(!open); }} aria-expanded={open} aria-label={`Sơ đồ ${boundsLabel.toLowerCase()}`}
+          <button type="button" onClick={() => { mapOpen = !open; setOpen(!open); }} aria-expanded={open} aria-label={t('anc.mapOf', { name: boundsLabel.toLowerCase() })}
             className="flex h-8 items-center gap-1.5 rounded-control px-2 text-left text-[12.5px] text-muted hover:bg-hover hover:text-ink">
-            <Chevron open={open} /><span className="flex-none whitespace-nowrap">Sơ đồ</span>
+            <Chevron open={open} /><span className="flex-none whitespace-nowrap">{t('anc.map')}</span>
             <span className="ml-auto min-w-0 truncate font-mono text-[11.5px]" title={anchorHint(v)}>{anchorSummary(v)}</span>
           </button>
           {open && (
             <div className="flex flex-col gap-2 rounded-card bg-soft p-2.5">
-              <span className="text-xs text-muted">Bấm chấm để đổi neo</span>
+              <span className="text-xs text-muted">{t('anc.clickDot')}</span>
               <AnchorMap value={v} bounds={bounds} label={boundsLabel} disabled={disabled} onAnchor={(ax, ay) => anchor(ax, ay)} />
               <span className="flex items-center gap-2 text-xs text-muted">
                 <span className="min-w-0 flex-1">{anchorHint(v)}</span>
@@ -100,9 +104,10 @@ export default function AnchorField({ value: v, onChange, onAnchor, disabled, pi
 
 // px / %: theo tỷ lệ thì điểm co giãn theo vùng thay vì giữ khoảng cách tới cạnh
 function RatioToggle({ ratio, disabled, onToggle }: { ratio: boolean; disabled?: boolean; onToggle: () => void }) {
+  const t = useT();
   const opt = 'px-2 py-px font-mono text-[11px]';
   return (
-    <span role="radiogroup" aria-label="Đơn vị vị trí" title="Theo tỷ lệ: điểm co giãn theo vùng thay vì giữ khoảng cách tới cạnh"
+    <span role="radiogroup" aria-label={t('anc.unit')} title={t('anc.unitTip')}
       className={`flex flex-none overflow-hidden rounded-full border border-line ${disabled ? 'opacity-50' : ''}`}>
       <button role="radio" aria-checked={!ratio} disabled={disabled} onClick={() => ratio && onToggle()} className={`${opt} ${ratio ? 'enabled:hover:bg-hover' : 'bg-accent-soft text-accent-text'}`}>px</button>
       <button role="radio" aria-checked={ratio} disabled={disabled} onClick={() => !ratio && onToggle()} className={`${opt} ${ratio ? 'bg-accent-soft text-accent-text' : 'enabled:hover:bg-hover'}`}>%</button>
@@ -112,13 +117,14 @@ function RatioToggle({ ratio, disabled, onToggle }: { ratio: boolean; disabled?:
 
 // Lưới 3×3: chấm đang chọn = neo hiện tại của (X, Y)
 export function AnchorGrid({ value: v, onChange, disabled }: { value: StepPoint; onChange: (ax: Anchor, ay: Anchor) => void; disabled?: boolean }) {
+  const t = useT();
   return (
-    <div role="radiogroup" aria-label="Neo theo góc vùng" title="Neo theo góc / cạnh vùng – đổi vùng thì điểm giữ khoảng cách tới góc này"
+    <div role="radiogroup" aria-label={t('anc.corner')} title={t('anc.cornerTip')}
       className={`grid h-8 w-8 flex-none grid-cols-3 place-items-center rounded-control border border-line bg-field p-[3px] ${disabled ? 'opacity-50' : ''}`}>
       {AXES.flatMap((ay) => AXES.map((ax) => {
         const on = axisOf(v.ax) === ax && axisOf(v.ay) === ay;
         return (
-          <button key={`${ax}${ay}`} role="radio" aria-checked={on} disabled={disabled} aria-label={`Neo ${ay === 'start' ? 'trên' : ay === 'end' ? 'dưới' : 'giữa'} ${ax === 'start' ? 'trái' : ax === 'end' ? 'phải' : 'giữa'}`}
+          <button key={`${ax}${ay}`} role="radio" aria-checked={on} disabled={disabled} aria-label={t('anc.anchor', { name: `${ay === 'start' ? t('anc.top') : ay === 'end' ? t('anc.bottom') : t('anc.mid')} ${ax === 'start' ? t('anc.left') : ax === 'end' ? t('anc.right') : t('anc.mid')}` })}
             onClick={() => onChange(ax, ay)}
             className="grid h-full w-full place-items-center">
             <span className={`block rounded-full ${on ? 'h-[7px] w-[7px] bg-accent' : 'h-[3px] w-[3px] bg-muted/60'}`} />
@@ -144,6 +150,7 @@ export function AnchorMap({ value: v, bounds: b, label, marks = [], arrow, disab
   bounds: Rect; label: string; marks?: MapMark[]; arrow?: [Point, Point] | null;
   disabled?: boolean; onAnchor?: (ax: Anchor, ay: Anchor) => void;
 }) {
+  const t = useT();
   const k = Math.min(MAP_W / Math.max(b.w, 1), MAP_H / Math.max(b.h, 1));
   const w = Math.round(b.w * k);
   const h = Math.round(b.h * k);
@@ -156,7 +163,7 @@ export function AnchorMap({ value: v, bounds: b, label, marks = [], arrow, disab
   const ey = ay ? edge(ay, h) : 0;
   const ar = arrow && [at(arrow[0]), at(arrow[1])];
   const name = (x: Anchor, y: Anchor) =>
-    x === 'center' && y === 'center' ? 'tâm' : `${y === 'start' ? 'trên' : y === 'end' ? 'dưới' : 'giữa'} ${x === 'start' ? 'trái' : x === 'end' ? 'phải' : 'giữa'}`;
+    x === 'center' && y === 'center' ? t('anc.centre') : `${y === 'start' ? t('anc.top') : y === 'end' ? t('anc.bottom') : t('anc.mid')} ${x === 'start' ? t('anc.left') : x === 'end' ? t('anc.right') : t('anc.mid')}`;
   return (
     <div className="flex flex-col items-center gap-1">
       <div className="relative rounded-[6px] border border-line-strong bg-field" style={{ width: w + 2, height: h + 2 }}>
@@ -191,13 +198,13 @@ export function AnchorMap({ value: v, bounds: b, label, marks = [], arrow, disab
         </svg>
         {/* 9 chấm neo – vùng bấm 20×20; chỉ khi có điểm đổi neo được */}
         {v && onAnchor && (
-          <div role="radiogroup" aria-label="Neo theo góc vùng">
+          <div role="radiogroup" aria-label={t('anc.corner')}>
             {POS.flatMap((fy, iy) => POS.map((fx, ix) => {
               const nx = ANCHORS[ix];
               const ny = ANCHORS[iy];
               const on = ax === nx && ay === ny;
               return (
-                <button key={`${ix}${iy}`} role="radio" aria-checked={on} disabled={disabled} title={`Neo ${name(nx, ny)}`} aria-label={`Neo ${name(nx, ny)}`}
+                <button key={`${ix}${iy}`} role="radio" aria-checked={on} disabled={disabled} title={t('anc.anchor', { name: name(nx, ny) })} aria-label={t('anc.anchor', { name: name(nx, ny) })}
                   onClick={() => onAnchor(nx, ny)} style={{ left: 1 + fx * w, top: 1 + fy * h }}
                   className="group absolute grid h-5 w-5 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full disabled:opacity-50">
                   <span className={`block rounded-full transition-all ${on ? 'h-3 w-3 bg-accent ring-2 ring-surface' : 'h-2 w-2 border border-line-strong bg-surface group-enabled:group-hover:h-3 group-enabled:group-hover:w-3 group-enabled:group-hover:border-accent'}`} />

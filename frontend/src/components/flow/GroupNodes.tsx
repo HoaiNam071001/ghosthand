@@ -1,5 +1,6 @@
 // Khung nhóm node (bước 39 G1) trên canvas: khung nét đứt bao các thẻ (kéo thanh tên để dời cả cụm) và thẻ nhóm thu gọn.
 // Chỉ hiển thị – thao tác báo qua callback trong data.
+import { useT } from '../../i18n';
 import { useState } from 'react';
 import { Handle, Node, NodeProps, Position } from '@xyflow/react';
 import { groupColor } from '../../flow/groups';
@@ -18,32 +19,34 @@ const tint = (c?: string): React.CSSProperties => (groupColor(c) ? { borderColor
 const tintClass = (c: string | undefined, fallback: string) => (groupColor(c) ? `cat-${c}` : fallback);
 
 function Title({ view, onRename }: { view: FlowGroupView; onRename: GroupActions['onRename'] }) {
+  const t = useT();
   const [edit, setEdit] = useState(false);
   if (edit) {
     return (
-      <input autoFocus defaultValue={view.name} aria-label="Tên nhóm" maxLength={40}
+      <input autoFocus defaultValue={view.name} aria-label={t('fl.grp.name')} maxLength={40}
         onBlur={(e) => { setEdit(false); onRename(view.id, e.target.value); }}
         onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); if (e.key === 'Escape') setEdit(false); }}
         className="nodrag min-w-0 flex-1 rounded border border-line-strong bg-field px-1 text-[12px] font-semibold" />
     );
   }
-  return <span onDoubleClick={() => setEdit(true)} title="Bấm đúp để đổi tên" className="min-w-0 flex-1 truncate text-[12px] font-semibold">{view.name}</span>;
+  return <span onDoubleClick={() => setEdit(true)} title={t('fl.grp.rename')} className="min-w-0 flex-1 truncate text-[12px] font-semibold">{view.name}</span>;
 }
 
 function Buttons({ view, onToggle, onUngroup, onDelete, onColor }: Pick<GroupActions, 'onToggle' | 'onUngroup' | 'onDelete' | 'onColor'> & { view: FlowGroupView }) {
+  const t = useT();
   const btn = 'nodrag grid h-5 w-5 flex-none place-items-center rounded text-muted hover:bg-hover hover:text-ink';
   return (
     <>
       <GroupColorButton color={view.color} onPick={(c) => onColor(view.id, c)} />
-      <button onClick={() => onToggle(view.id)} aria-label={view.collapsed ? 'Mở rộng nhóm' : 'Thu gọn nhóm'} title={view.collapsed ? 'Mở rộng' : 'Thu gọn thành một thẻ'} className={btn}>
+      <button onClick={() => onToggle(view.id)} aria-label={view.collapsed ? t('fl.grp.expandL') : t('fl.grp.collapseL')} title={view.collapsed ? t('fl.grp.expand') : t('fl.grp.collapse')} className={btn}>
         <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
           <path d={view.collapsed ? 'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5' : 'M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5'} />
         </svg>
       </button>
-      <button onClick={() => onUngroup(view.id)} aria-label="Bỏ nhóm" title="Bỏ nhóm (node giữ nguyên)" className={btn}>
+      <button onClick={() => onUngroup(view.id)} aria-label={t('fl.grp.ungroup')} title={t('fl.grp.ungroupTip')} className={btn}>
         <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" aria-hidden><rect x="3" y="3" width="8" height="8" rx="1.5" /><rect x="13" y="13" width="8" height="8" rx="1.5" /></svg>
       </button>
-      <button onClick={() => onDelete(view.id)} aria-label="Xoá nhóm" title="Xoá nhóm cùng mọi node trong đó" className={`${btn} hover:!text-danger-text`}>
+      <button onClick={() => onDelete(view.id)} aria-label={t('fl.grp.del')} title={t('fl.grp.delTip')} className={`${btn} hover:!text-danger-text`}>
         <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" /></svg>
       </button>
     </>

@@ -3,6 +3,8 @@
 // - Khi thất bại: thử lại N lần, nghỉ giữa các lần (node hành động)
 // - Output: các giá trị node trả về, chèn vào ô chữ của node sau bằng {{n2.output.x}}
 // - Lần chạy gần nhất: status, lỗi, log của node (StepResult)
+import type { MsgKey } from '../../i18n/vi';
+import { tr, useT } from '../../i18n';
 import Select from '../Select';
 import { useState } from 'react';
 import NumInput, { fieldBox } from '../NumInput';
@@ -20,8 +22,9 @@ export function PortsPanel({ node, nodes, edges, onConnect, onDisconnect, onJump
   node: FlowNodeView; nodes: FlowNodeView[]; edges: FlowEdgeView[];
   onConnect: (port: string, to: string) => void; onDisconnect: (port: string) => void; onJump: (id: string) => void;
 }) {
+  const t = useT();
   if (!node.ports.length) {
-    return <span className="text-[13px] text-muted">Node Kết thúc không có cổng ra – kịch bản dừng ở đây.</span>;
+    return <span className="text-[13px] text-muted">{t('fl.endNoPort')}</span>;
   }
   const others = nodes.filter((n) => n.id !== node.id);
   return (
@@ -36,28 +39,29 @@ export function PortsPanel({ node, nodes, edges, onConnect, onDisconnect, onJump
             </span>
             <span className="flex min-w-0 gap-1">
               <div className="min-w-0 flex-1">
-                <Select value={to} onChange={(v) => (v ? onConnect(p.id, v) : onDisconnect(p.id))} aria-label={`Node đích của cổng ${p.label}`}
+                <Select value={to} onChange={(v) => (v ? onConnect(p.id, v) : onDisconnect(p.id))} aria-label={t('fl.targetOf', { p: p.label })}
                   className={`${fieldBox} text-[13px] ${to ? 'text-ink' : 'text-muted'}`}
-                  options={[{ value: '', label: p.kind === 'fail' ? '— dừng (lỗi)' : '— kết thúc' }, ...others.map((n) => ({ value: n.id, label: `${n.ref} · ${n.title}` }))]} />
+                  options={[{ value: '', label: p.kind === 'fail' ? t('fl.stopErr') : t('fl.finish') }, ...others.map((n) => ({ value: n.id, label: `${n.ref} · ${n.title}` }))]} />
               </div>
-              <button disabled={!to} onClick={() => onJump(to)} title="Chọn node đích" aria-label="Chọn node đích"
+              <button disabled={!to} onClick={() => onJump(to)} title={t('fl.pickTarget')} aria-label={t('fl.pickTarget')}
                 className="grid h-[34px] w-7 flex-none place-items-center rounded-control text-muted enabled:hover:bg-hover enabled:hover:text-ink disabled:opacity-30">→</button>
             </span>
           </div>
         );
       })}
-      <span className="text-xs text-muted">Hoặc kéo từ chấm cổng trên thẻ sang node khác.</span>
+      <span className="text-xs text-muted">{t('fl.dragPort')}</span>
     </div>
   );
 }
 
 export type Retry = { count: number; delayMs: number };
 export function RetryPanel({ value, onChange }: { value: Retry; onChange: (v: Retry) => void }) {
+  const t = useT();
   return (
     <div className={body}>
-      <label className={row}><span className="text-muted">Thử lại</span><NumInput value={value.count} unit="lần" stepper onChange={(count) => onChange({ ...value, count })} /></label>
-      <label className={row}><span className="text-muted">Nghỉ giữa các lần</span><NumInput value={value.delayMs} unit="ms" onChange={(delayMs) => onChange({ ...value, delayMs })} /></label>
-      <span className="text-xs text-muted">Thử hết vẫn không được thì đi ra cổng <span className="text-danger-text">Thất bại</span>.</span>
+      <label className={row}><span className="text-muted">{t('fl.retry')}</span><NumInput value={value.count} unit={t('fl.times')} stepper onChange={(count) => onChange({ ...value, count })} /></label>
+      <label className={row}><span className="text-muted">{t('fl.retryGap')}</span><NumInput value={value.delayMs} unit="ms" onChange={(delayMs) => onChange({ ...value, delayMs })} /></label>
+      <span className="text-xs text-muted">{t('fl.retryEndA')} <span className="text-danger-text">{t('fl.failPort')}</span>.</span>
     </div>
   );
 }
@@ -65,6 +69,7 @@ export function RetryPanel({ value, onChange }: { value: Retry; onChange: (v: Re
 import type { OutputField } from '../../flow/view';
 export type { OutputField };
 export function OutputsPanel({ refName, fields }: { refName: string; fields: OutputField[] }) {
+  const t = useT();
   const [copied, setCopied] = useState('');
   const copy = (k: string) => {
     const t = `{{${refName}.output.${k}}}`;
@@ -74,28 +79,29 @@ export function OutputsPanel({ refName, fields }: { refName: string; fields: Out
   };
   return (
     <div className={body}>
-      <span className="text-xs text-muted">Bấm để chép biến – rê để xem ý nghĩa</span>
+      <span className="text-xs text-muted">{t('fl.copyVar')}</span>
       {/* chip var-token (design v3): mô tả trong tooltip, vừa chép thì chip hiện ✓ */}
       <div className="flex flex-wrap gap-1.5">
         {fields.map((f) => (
           <button key={f.key} onClick={() => copy(f.key)} title={f.desc}
             className={`var-token inline-flex items-center gap-1 hover:ring-1 hover:ring-accent/40 ${copied === f.key ? 'ring-1 ring-accent' : ''}`}>
-            {`${refName}.output.${f.key}`}{copied === f.key && <span aria-label="đã chép">✓</span>}
+            {`${refName}.output.${f.key}`}{copied === f.key && <span aria-label={t('fl.copied')}>✓</span>}
           </button>
         ))}
       </div>
-      <span className="text-xs text-muted">Còn có <span className="font-mono">{`{{${refName}.status}}`}</span>, <span className="font-mono">{`{{${refName}.error.message}}`}</span>.</span>
+      <span className="text-xs text-muted">{t('fl.alsoHas')} <span className="font-mono">{`{{${refName}.status}}`}</span>, <span className="font-mono">{`{{${refName}.error.message}}`}</span>.</span>
     </div>
   );
 }
 
 export function LastRunPanel({ row, refName, fields }: { row: RunRow; refName: string; fields?: OutputField[] }) {
+  const t = useT();
   return (
     <div className={body}>
       <div className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs text-muted">
         <span>{row.at}</span>
         {row.ms !== undefined && <span>{fmtMs(row.ms)}</span>}
-        {row.attempts && row.attempts > 1 && <span>{row.attempts} lần thử</span>}
+        {row.attempts && row.attempts > 1 && <span>{t('fl.tries', { n: row.attempts })}</span>}
         {row.port && <span>→ {row.port}{row.next ? ` · ${row.next}` : ''}</span>}
       </div>
       {row.error && (
@@ -122,15 +128,15 @@ export function LogLines({ logs }: { logs: NonNullable<RunRow['logs']> }) {
   );
 }
 
-const STATUS: Record<RunRow['status'], [string, string]> = {
-  success: ['Thành công', 'bg-soft text-ok'],
-  fail: ['Thất bại', 'bg-danger-soft text-danger-text'],
-  skipped: ['Bỏ qua', 'bg-soft text-muted'],
-  cancelled: ['Đã dừng', 'bg-soft text-muted'],
-  running: ['Đang chạy', 'bg-accent-soft text-accent-text'],
+const STATUS: Record<RunRow['status'], [MsgKey, string]> = {
+  success: ['fl.st.success', 'bg-soft text-ok'],
+  fail: ['fl.st.fail', 'bg-danger-soft text-danger-text'],
+  skipped: ['fl.st.skipped', 'bg-soft text-muted'],
+  cancelled: ['fl.st.cancelled', 'bg-soft text-muted'],
+  running: ['fl.st.running', 'bg-accent-soft text-accent-text'],
 };
 export const StatusChip = ({ status }: { status: RunRow['status'] }) => (
-  <span className={`rounded-full px-2 py-px text-[11px] font-semibold whitespace-nowrap ${STATUS[status][1]}`}>{STATUS[status][0]}</span>
+  <span className={`rounded-full px-2 py-px text-[11px] font-semibold whitespace-nowrap ${STATUS[status][1]}`}>{tr(STATUS[status][0])}</span>
 );
 
 export const fmtMs = (ms: number) => (ms >= 1000 ? `${(ms / 1000).toFixed(1).replace('.', ',')} s` : `${ms} ms`);

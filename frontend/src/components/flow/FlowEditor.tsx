@@ -1,5 +1,6 @@
 // Canvas flow của màn chính (bước 20 F4b): nối FlowCanvas (chỉ hiển thị) với store kịch bản.
 // Dữ liệu thẻ tính ở flow/view.ts; mọi thao tác (nối, xoá, dời, thêm node) gọi hàm store – component không tự sửa script.
+import { tr } from '../../i18n';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLang } from '../../i18n';
 import FlowCanvas from './FlowCanvas';
@@ -72,7 +73,7 @@ export default function FlowEditor() {
     const step = script.steps.find((s) => s.id === v.id);
     if (!step?.enabled) return v;
     const lack = missingOf(permItems, needsOf(step)).map((id) => permItems?.find((it) => it.id === id)?.name ?? id);
-    return lack.length ? { ...v, warn: [v.warn, `Thiếu quyền: ${lack.join(', ')}`].filter(Boolean).join('\n') } : v;
+    return lack.length ? { ...v, warn: [v.warn, tr('fl.noPerm', { list: lack.join(', ') })].filter(Boolean).join('\n') } : v;
   }), [script, trace, pins, permItems, pinsById, lang]);
   const cur = script.steps.find((s) => s.id === selected);
   const relayout = () => layoutOf(script, prefs.card === 'full' ? pinsById : undefined).then((pos) => { applyLayout(pos); setFitKey((k) => k + 1); });
@@ -156,7 +157,7 @@ export default function FlowEditor() {
           onNodeMenu={(id, c) => setMenu({ id, x: c.x, y: c.y })} />
         {script.steps.length === 0 && (
           <p className="pointer-events-none absolute inset-0 grid place-items-center text-center text-muted">
-            Chưa có node nào – mở tab “Chèn node” (hoặc {isMac ? '⌘K' : 'Ctrl+K'}), hoặc F6 để lưu vị trí chuột.
+            {tr('fl.emptyA')} {isMac ? '⌘K' : 'Ctrl+K'}{tr('fl.emptyB')}
           </p>
         )}
       </div>

@@ -1,5 +1,6 @@
 // Dữ liệu trên thẻ node (bước 60): khối VÀO / RA của thẻ Đầy đủ và cổng toả ra quanh thẻ Gọn khi rê chuột / đang kéo nối.
 // Mỗi hàng có chấm vuông nối dữ liệu (Handle React Flow: nguồn "o:<khoá>", đích "i:<ô>") – chỉ hiển thị.
+import { useT } from '../../i18n';
 import { Handle, Position } from '@xyflow/react';
 import type { DataPins, DataPinView } from '../../flow/dataView';
 import { IO_HEAD, IO_PAD, PIN_ROW } from './model';
@@ -42,6 +43,7 @@ function PinRow({ pin: p, side }: { pin: DataPinView; side: 'in' | 'out' }) {
 
 // Cổng toả ra quanh thẻ Gọn: VÀO bên trái, RA bên phải (side 'in' = chỉ VÀO, lúc đang kéo nối từ node khác tới).
 export function DataFan({ pins, side, height, block }: { pins: DataPins; side: 'both' | 'in'; height: number; block?: string }) {
+  const t = useT();
   if (block) {
     return <div role="note" className="nodrag absolute inset-x-0 top-[calc(100%+6px)] rounded-md bg-danger-soft px-2 py-1 text-center text-[11px] text-danger-text">{block}</div>;
   }
@@ -55,7 +57,7 @@ export function DataFan({ pins, side, height, block }: { pins: DataPins; side: '
       )}
       {side === 'both' && pins.outs.length > 0 && (
         <div className="flow-fan flow-fan-out nodrag" style={{ top: height / 2 }}>
-          <span className="px-1 text-[9.5px] font-bold tracking-[.08em] text-faint">RA · kéo để nối</span>
+          <span className="px-1 text-[9.5px] font-bold tracking-[.08em] text-faint">{t('fl.out')}</span>
           {pins.outs.map((p, i) => <FanChip key={p.id} pin={p} side="out" i={i} />)}
         </div>
       )}
