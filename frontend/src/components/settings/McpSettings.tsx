@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { AddToClaudeDesktop, ClaudeDesktopConfigPath, MCPClients, MCPLog, MCPSeenClients, MCPTools } from '../../../wailsjs/go/app/App';
 import { mcpsrv, store } from '../../../wailsjs/go/models';
 import { errorText } from '../../engineStore';
+import { tr, useLang } from '../../i18n';
 import Select from '../Select';
 import { selectBox } from '../stepform/shared';
 import { Switch } from '../Switch';
@@ -13,6 +14,7 @@ import McpTools from './McpTools';
 import { CopyButton, SettingCode } from './parts';
 
 export default function McpSettings({ mcp, onChange }: { mcp: store.MCPSettings; onChange: (patch: Partial<store.MCPSettings>) => void }) {
+  useLang();
   const enabled = mcp.enabled;
   const [clients, setClients] = useState<mcpsrv.ClientConfig[]>([]);
   const [client, setClient] = useState('Claude Desktop');
@@ -33,17 +35,17 @@ export default function McpSettings({ mcp, onChange }: { mcp: store.MCPSettings;
 
   const add = () => {
     setConfirm('');
-    AddToClaudeDesktop().then(() => setMsg('Đã thêm – thoát hẳn rồi mở lại Claude Desktop')).catch((e) => setMsg(errorText(e)));
+    AddToClaudeDesktop().then(() => setMsg(tr('mcp.added'))).catch((e) => setMsg(errorText(e)));
   };
   const cfg = clients.find((c) => c.client === client) ?? clients[0];
 
   return (
     <>
       <label className="flex items-center justify-between gap-3">
-        <span className="flex flex-col">Cho AI điều khiển (MCP)
-          <span className="text-xs text-muted">Claude, Cursor, Codex… tạo / sửa / chạy thử kịch bản</span>
+        <span className="flex flex-col">{tr('mcp.title')}
+          <span className="text-xs text-muted">{tr('mcp.hint')}</span>
         </span>
-        <Switch on={enabled} onChange={(on) => onChange({ enabled: on })} label="Bật MCP" />
+        <Switch on={enabled} onChange={(on) => onChange({ enabled: on })} label={tr('mcp.switch')} />
       </label>
       {enabled && (
         <>
@@ -51,22 +53,22 @@ export default function McpSettings({ mcp, onChange }: { mcp: store.MCPSettings;
           <McpTools mcp={mcp} tools={tools} seen={seen} client={toolClient} onClient={setToolClient} onChange={onChange} />
           {confirm ? (
             <div className="flex flex-col gap-1.5 rounded-control bg-soft p-2 text-xs">
-              Ghi mục “ghosthand” vào <span className="font-mono break-all">{confirm}</span>? Cài đặt khác của Claude giữ nguyên.
+              {tr('mcp.confirmA')}<span className="font-mono break-all">{confirm}</span>{tr('mcp.confirmB')}
               <span className="flex gap-1.5">
-                <button onClick={add} className="btn-primary rounded-control px-3 py-1 text-on-accent">Ghi</button>
-                <button onClick={() => setConfirm('')} className="rounded-control border border-line px-3 py-1 hover:bg-hover">Huỷ</button>
+                <button onClick={add} className="btn-primary rounded-control px-3 py-1 text-on-accent">{tr('mcp.write')}</button>
+                <button onClick={() => setConfirm('')} className="rounded-control border border-line px-3 py-1 hover:bg-hover">{tr('mcp.cancel')}</button>
               </span>
             </div>
           ) : (
             <button onClick={() => ClaudeDesktopConfigPath().then(setConfirm).catch((e) => setMsg(errorText(e)))}
-              className="self-start rounded-control border border-line px-3 py-1.5 hover:bg-hover">Thêm vào Claude Desktop…</button>
+              className="self-start rounded-control border border-line px-3 py-1.5 hover:bg-hover">{tr('mcp.addDesktop')}</button>
           )}
           {cfg && (
             <div className="flex flex-col gap-1 text-muted">
               <span className="flex items-center gap-1.5">
                 <Select value={cfg.client} onChange={setClient} options={clients.map((c) => ({ value: c.client, label: c.client }))}
-                  className={`${selectBox} flex-1`} aria-label="Client AI" />
-                <CopyButton text={cfg.text} label="Chép cấu hình" />
+                  className={`${selectBox} flex-1`} aria-label={tr('mcp.clientAria')} />
+                <CopyButton text={cfg.text} label={tr('mcp.copyCfg')} />
               </span>
               <span className="text-xs">{cfg.where}</span>
               <SettingCode>{cfg.text}</SettingCode>

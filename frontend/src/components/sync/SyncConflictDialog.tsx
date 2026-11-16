@@ -1,10 +1,11 @@
 // Hộp hỏi khi đồng bộ gặp xung đột (bước 54 C4): hai bên cùng đổi một thứ. Không có lựa chọn "tự ghi đè" – đóng hộp / Esc = để đó,
 // lần đồng bộ sau hỏi lại. Chỉ hiển thị: app thật dùng SyncConflictHost (nối store), màn mẫu #demo-sync truyền props.
 import { useEffect } from 'react';
+import { tr, useLang } from '../../i18n';
 import { clockText, conflictLead } from '../../sync/text';
 import type { SyncAnswer, SyncConflict } from '../../sync/types';
 
-const KIND: Record<SyncConflict['kind'], string> = { script: 'Kịch bản', settings: 'Cài đặt', secrets: 'Kho bí mật' };
+const kindLabel = (k: SyncConflict['kind']) => tr(`sync.kind.${k}`);
 
 function Side({ title, time, note }: { title: string; time: string; note?: string }) {
   return (
@@ -27,27 +28,28 @@ export default function SyncConflictDialog({ ask, onAnswer }: { ask: SyncConflic
     window.addEventListener('keydown', onKey, true);
     return () => window.removeEventListener('keydown', onKey, true);
   }, [ask, onAnswer]);
+  useLang();
   if (!ask) return null;
   const btn = 'rounded-control border border-line bg-surface px-3.5 py-2 text-left hover:bg-hover';
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/25 px-4 pt-[12vh]">
       <div role="alertdialog" aria-labelledby="sync-ask-title" className="flex w-[520px] max-w-full flex-col gap-3 rounded-panel border border-line bg-surface p-[18px] text-[13px] text-ink shadow-[0_16px_48px_rgb(0_0_0/.22)]">
-        <div id="sync-ask-title" className="text-base font-semibold">{KIND[ask.kind]} “{ask.name}” bị sửa ở hai nơi</div>
+        <div id="sync-ask-title" className="text-base font-semibold">{tr('sync.c.title', { kind: kindLabel(ask.kind), name: ask.name })}</div>
         <span>{conflictLead(ask)}</span>
         <div className="flex gap-2">
-          <Side title="Máy này" time={ask.localTime} note={ask.localDeleted ? 'đã xoá' : ask.kind === 'script' ? undefined : 'bản trên máy'} />
-          <Side title={`Cloud · ${ask.device || 'máy khác'}`} time={ask.remoteTime} note={ask.remoteDeleted ? 'đã xoá' : undefined} />
+          <Side title={tr('sync.c.thisMachine')} time={ask.localTime} note={ask.localDeleted ? tr('sync.c.deleted') : ask.kind === 'script' ? undefined : tr('sync.c.localCopy')} />
+          <Side title={tr('sync.c.cloud', { dev: ask.device || tr('sync.otherDevice') })} time={ask.remoteTime} note={ask.remoteDeleted ? tr('sync.c.deleted') : undefined} />
         </div>
         <div className="flex flex-col gap-2">
-          <button onClick={() => onAnswer('local')} className={btn}><b>Giữ bản máy này</b><br /><span className="text-xs text-muted">{ask.localDeleted ? 'Xoá luôn trên cloud.' : 'Ghi đè bản trên cloud.'}</span></button>
-          <button onClick={() => onAnswer('remote')} className={btn}><b>Lấy bản cloud</b><br /><span className="text-xs text-muted">{ask.remoteDeleted ? 'Xoá ở máy này.' : 'Ghi đè bản ở máy này.'}</span></button>
+          <button onClick={() => onAnswer('local')} className={btn}><b>{tr('sync.c.keepLocal')}</b><br /><span className="text-xs text-muted">{ask.localDeleted ? tr('sync.c.keepLocalDel') : tr('sync.c.keepLocalOver')}</span></button>
+          <button onClick={() => onAnswer('remote')} className={btn}><b>{tr('sync.c.takeRemote')}</b><br /><span className="text-xs text-muted">{ask.remoteDeleted ? tr('sync.c.takeRemoteDel') : tr('sync.c.takeRemoteOver')}</span></button>
           {ask.canKeepBoth && (
-            <button onClick={() => onAnswer('both')} className={btn}><b>Giữ cả hai</b><br /><span className="text-xs text-muted">Bản cloud lưu thành “{ask.name} ({ask.device || 'máy khác'})” cạnh bản của bạn.</span></button>
+            <button onClick={() => onAnswer('both')} className={btn}><b>{tr('sync.c.both')}</b><br /><span className="text-xs text-muted">{tr('sync.c.bothHint', { name: ask.name, dev: ask.device || tr('sync.otherDevice') })}</span></button>
           )}
         </div>
         <div className="flex items-center border-t border-line pt-3">
-          <span className="text-xs text-muted">Chưa chọn thì app giữ nguyên cả hai và hỏi lại lần sau.</span>
-          <button onClick={() => onAnswer('skip')} className="ml-auto rounded-control border border-line bg-surface px-3.5 py-1.5 hover:bg-hover">Để sau <span className="font-mono text-[11px] text-muted">Esc</span></button>
+          <span className="text-xs text-muted">{tr('sync.c.note')}</span>
+          <button onClick={() => onAnswer('skip')} className="ml-auto rounded-control border border-line bg-surface px-3.5 py-1.5 hover:bg-hover">{tr('sync.c.later')} <span className="font-mono text-[11px] text-muted">Esc</span></button>
         </div>
       </div>
     </div>

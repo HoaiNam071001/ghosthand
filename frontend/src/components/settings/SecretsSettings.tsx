@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { DeleteSecret, ListSecrets, SetSecret } from '../../../wailsjs/go/app/App';
 import { errorText } from '../../engineStore';
+import { tr, useLang } from '../../i18n';
 import { refreshSecretNames } from '../../store';
 import { CopyButton, SettingCode } from './parts';
 
@@ -10,6 +11,7 @@ const NAME_RE = /^[A-Za-z][A-Za-z0-9_]*$/;
 const MIN_LEN = 4; // khớp secrets.MinLen
 
 export default function SecretsSettings({ onError }: { onError: (msg: string) => void }) {
+  useLang();
   const [names, setNames] = useState<string[]>([]);
   const [name, setName] = useState('');
   const [value, setValue] = useState('');
@@ -26,29 +28,28 @@ export default function SecretsSettings({ onError }: { onError: (msg: string) =>
   const input = 'rounded-control border border-line bg-field px-2 py-1.5 text-ink outline-none focus:ring-focus';
   return (
     <>
-      <span className="font-semibold">Bí mật</span>
+      <span className="font-semibold">{tr('sec.title')}</span>
       <span className="text-xs text-muted">
-        Mật khẩu, token… lưu trong Keychain (macOS) / Credential Manager (Windows). Dùng trong ô chữ của node bằng <code className="font-mono">{'{{secret.tên}}'}</code>;
-        giá trị không vào file kịch bản, lịch sử chạy hay nhật ký (hiện ••••) và AI chỉ thấy tên.
+        {tr('sec.desc1')}<code className="font-mono">{tr('sec.nameTpl')}</code>{tr('sec.desc2')}
       </span>
       {names.length === 0
-        ? <span className="text-muted">Chưa có bí mật nào.</span>
+        ? <span className="text-muted">{tr('sec.none')}</span>
         : <ul className="flex flex-col gap-1.5">
           {names.map((n) => (
             <li key={n} className="flex items-center gap-1.5">
               <SettingCode>{`{{secret.${n}}}`}</SettingCode>
-              <CopyButton text={`{{secret.${n}}}`} label={`Chép {{secret.${n}}}`} />
-              <button onClick={() => remove(n)} aria-label={`Xoá bí mật ${n}`} className="btn-danger-soft flex-none rounded-control px-2 py-1.5 text-xs">Xoá</button>
+              <CopyButton text={`{{secret.${n}}}`} label={tr('sec.copy', { n })} />
+              <button onClick={() => remove(n)} aria-label={tr('sec.delAria', { n })} className="btn-danger-soft flex-none rounded-control px-2 py-1.5 text-xs">{tr('sec.del')}</button>
             </li>
           ))}
         </ul>}
       <form className="flex flex-col gap-1.5 border-t border-line pt-3" onSubmit={(e) => { e.preventDefault(); if (canSave) save(); }}>
-        <span className="text-muted">Thêm hoặc đổi giá trị</span>
-        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="tên (vd mat_khau_email)" aria-label="Tên bí mật" className={input} autoComplete="off" spellCheck={false} />
-        {name && !nameOk && <span className="text-xs text-danger-text">Chữ cái đầu, sau đó chữ / số / gạch dưới.</span>}
-        <input value={value} onChange={(e) => setValue(e.target.value)} type="password" placeholder={`giá trị (từ ${MIN_LEN} ký tự)`} aria-label="Giá trị bí mật" className={input} autoComplete="new-password" />
-        <button type="submit" disabled={!canSave} className="btn-primary self-start rounded-control px-3 py-1.5 disabled:opacity-40">Lưu</button>
-        {names.includes(name) && <span className="text-xs text-muted">Tên này đã có – lưu sẽ ghi đè giá trị cũ.</span>}
+        <span className="text-muted">{tr('sec.addOrChange')}</span>
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder={tr('sec.namePh')} aria-label={tr('sec.nameAria')} className={input} autoComplete="off" spellCheck={false} />
+        {name && !nameOk && <span className="text-xs text-danger-text">{tr('sec.nameBad')}</span>}
+        <input value={value} onChange={(e) => setValue(e.target.value)} type="password" placeholder={tr('sec.valuePh', { n: MIN_LEN })} aria-label={tr('sec.valueAria')} className={input} autoComplete="new-password" />
+        <button type="submit" disabled={!canSave} className="btn-primary self-start rounded-control px-3 py-1.5 disabled:opacity-40">{tr('sec.save')}</button>
+        {names.includes(name) && <span className="text-xs text-muted">{tr('sec.exists')}</span>}
       </form>
     </>
   );

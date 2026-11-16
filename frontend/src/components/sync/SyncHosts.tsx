@@ -1,6 +1,7 @@
 // Phần nối store của đồng bộ cloud (bước 54 C8) cho màn chính: hộp hỏi xung đột + chấm trên thanh dưới + nạp lại sau khi kéo về.
 // Phần hiển thị nằm ở SyncConflictDialog / SyncChip (props) để màn mẫu #demo-sync dùng chung.
 import { useEffect } from 'react';
+import { tr } from '../../i18n';
 import { openSettings } from '../../settingsNav';
 import { initTheme } from '../../theme';
 import { setNotice } from '../../store';
@@ -23,6 +24,6 @@ export function useSyncPulled() {
   useEffect(() => onSyncPulled((paths) => {
     if (paths.includes('settings.json')) initTheme();
     const scripts = paths.filter((p) => p.startsWith('scripts/')).length;
-    if (scripts > 0) setNotice(`Đồng bộ: nhận ${scripts} kịch bản từ cloud – mở lại từ Thư viện để thấy bản mới`);
+    if (scripts > 0) setNotice(tr('sync.received', { n: scripts }));
   }), []);
 }
