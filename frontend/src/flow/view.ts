@@ -12,7 +12,7 @@ import { checkCalc } from './calc';
 import { browserTabWarning } from './browserTab';
 import { isTextNode, textDetail, textPortLabel, textWarning } from './textNodes';
 import { outputsOf } from './outputs';
-import { tr } from '../i18n/lang';
+import { getLang, tr } from '../i18n/lang';
 import type { MsgKey } from '../i18n/vi';
 export { outputsOf, type OutputField } from './outputs';
 
@@ -71,8 +71,8 @@ export function nodeViews(sc: Pick<Script, 'steps' | 'start' | 'edges'>, opt: Vi
       detail: isControl(s.type) ? controlDetail(s) : `${fmtPos(s, refOf)} · ${numVarOf(s, 'delayAfter') ?? fmtMs(s.delayAfter)}`,
       ports: portViews(s),
       enabled: s.enabled,
-      chips: [...(n ? [`${n} input`] : []), ...(s.retry?.count ? [`thử lại ${s.retry.count}`] : []),
-        ...(s.human && usesHuman(s) ? [`giống người: ${humanLabel(s.human)}`] : [])],
+      chips: [...(n ? [tr('vw.inputN', { n })] : []), ...(s.retry?.count ? [tr('vw.retryN', { n: s.retry.count })] : []),
+        ...(s.human && usesHuman(s) ? [tr('vw.human', { v: humanLabel(s.human) })] : [])],
       warn: warningOf(s, ok.has(s.id), refs),
       breakpoint: s.breakpoint,
       pinned: opt.pinned?.(s.id),
@@ -85,50 +85,50 @@ export function nodeViews(sc: Pick<Script, 'steps' | 'start' | 'edges'>, opt: Vi
 // Cảnh báo khi soạn (không chặn lưu; chạy thì Go kiểm tra đủ): node không đi tới được, click theo ảnh thiếu nguồn,
 // node điều khiển thiếu dữ liệu.
 function warningOf(s: Step, reachable: boolean, refs: Map<string, string>): string | undefined {
-  if (!reachable) return 'Không có đường nào đi tới node này – sẽ không bao giờ chạy';
-  if (s.type === 'clickImage' && s.imageSource !== 'search' && !refs.has(s.imageFrom ?? '')) return 'Chưa chọn node lấy chỗ thấy (Chờ ảnh / Chờ chữ)';
+  if (!reachable) return tr('vw.w.unreach');
+  if (s.type === 'clickImage' && s.imageSource !== 'search' && !refs.has(s.imageFrom ?? '')) return tr('vw.w.noSrc');
   if (s.type === 'if' && s.cond) return condMissing(s.cond);
-  if ((s.type === 'switch' || s.type === 'switchScreen') && !s.cases?.length) return 'Chưa có case nào';
+  if ((s.type === 'switch' || s.type === 'switchScreen') && !s.cases?.length) return tr('vw.w.noCase');
   if (s.type === 'switchScreen') {
     for (const c of s.cases ?? []) {
-      const m = c.cond ? condMissing(c.cond) : 'chưa có điều kiện';
-      if (m) return `Case ${c.label || c.key}: ${m.toLowerCase()}`;
+      const m = c.cond ? condMissing(c.cond) : tr('vw.w.noCond');
+      if (m) return tr('vw.w.case', { c: c.label || c.key, m: m.toLowerCase() });
     }
   }
-  if (s.type === 'calc' && checkCalc(s.value ?? '')) return s.value?.trim() ? 'Biểu thức sai' : 'Chưa nhập biểu thức';
+  if (s.type === 'calc' && checkCalc(s.value ?? '')) return s.value?.trim() ? tr('vw.w.badExpr') : tr('vw.w.noExpr');
   if (isTextNode(s.type)) return textWarning(s);
   if (s.type === 'browserTab' || s.type === 'browserGo' || s.type === 'browserNorm' || s.type === 'savePdf') return browserTabWarning(s, refs);
-  if (s.type === 'forEach' && listSource(s) === '—') return s.listFrom === 'file' ? 'Chưa chọn file CSV / Excel' : 'Danh sách trống';
+  if (s.type === 'forEach' && listSource(s) === '—') return s.listFrom === 'file' ? tr('vw.w.noFile') : tr('vw.w.emptyList');
   return undefined;
 }
 
 // Điều kiện thiếu dữ liệu (chạy sẽ báo lỗi) – undefined = đủ.
 export function condMissing(c: Cond): string | undefined {
   switch (c.kind) {
-    case 'text': return c.findText?.trim() ? undefined : 'Chưa nhập chữ cần thấy';
-    case 'element': return c.selectors?.some((l) => l.trim()) ? undefined : 'Chưa nhập cách tìm phần tử';
-    case 'image': return c.template ? undefined : 'Chưa có ảnh mẫu';
-    case 'pixel': return c.points?.[0] ? undefined : 'Chưa chọn điểm màu';
+    case 'text': return c.findText?.trim() ? undefined : tr('vw.m.text');
+    case 'element': return c.selectors?.some((l) => l.trim()) ? undefined : tr('vw.m.element');
+    case 'image': return c.template ? undefined : tr('vw.m.image');
+    case 'pixel': return c.points?.[0] ? undefined : tr('vw.m.pixel');
     case 'all': case 'any':
-      return c.conds?.length ? c.conds.map(condMissing).find(Boolean) : 'Nhóm chưa có điều kiện nào';
+      return c.conds?.length ? c.conds.map(condMissing).find(Boolean) : tr('vw.m.group');
     default: return undefined;
   }
 }
 
-const OP_TEXT: Record<string, string> = { eq: '=', ne: '≠', contains: 'chứa', gt: '>', lt: '<' };
+const opText = (op: string) => ({ eq: '=', ne: '≠', contains: tr('vw.op.contains'), gt: '>', lt: '<' } as Record<string, string>)[op];
 // Một dòng mô tả điều kiện: thấy chữ “Gửi”, {{x}} > 3, 2 điều kiện (và)…
 export function condText(c: Cond): string {
-  const neg = c.not ? 'không ' : '';
+  const neg = c.not ? tr('vw.c.not') : '';
   switch (c.kind) {
-    case 'text': return `${neg}thấy chữ “${c.findText ?? ''}”`;
-    case 'element': return `${neg}thấy phần tử ${firstSelector(c.selectors)}`;
-    case 'image': return c.template ? `${neg}thấy ảnh (≥ ${c.threshold ?? 90}%${matchTags(c)})` : 'chưa có ảnh mẫu';
-    case 'pixel': return `${c.not ? 'khác' : 'có'} màu ${c.color ?? ''}`;
+    case 'text': return tr('vw.c.seeText', { neg, t: c.findText ?? '' });
+    case 'element': return tr('vw.c.seeEl', { neg, s: firstSelector(c.selectors) });
+    case 'image': return c.template ? tr('vw.c.seeImg', { neg, th: c.threshold ?? 90, tags: matchTags(c) }) : tr('vw.c.noImg');
+    case 'pixel': return tr('vw.c.color', { w: c.not ? tr('vw.c.diff') : tr('vw.c.has'), c: c.color ?? '' });
     case 'value': {
-      const t = c.op === 'empty' ? `${c.left ?? ''} trống` : `${c.left ?? ''} ${OP_TEXT[c.op ?? 'eq']} ${c.right ?? ''}`;
-      return c.not ? `không (${t})` : t;
+      const t = c.op === 'empty' ? tr('vw.c.empty', { l: c.left ?? '' }) : `${c.left ?? ''} ${opText(c.op ?? 'eq')} ${c.right ?? ''}`;
+      return c.not ? tr('vw.c.notP', { t }) : t;
     }
-    default: return `${c.not ? 'không: ' : ''}${c.conds?.length ?? 0} điều kiện (${c.kind === 'all' ? 'và' : 'hoặc'})`;
+    default: return `${c.not ? tr('vw.c.not2') : ''}${tr('vw.c.group', { n: c.conds?.length ?? 0, j: c.kind === 'all' ? tr('vw.c.and') : tr('vw.c.or') })}`;
   }
 }
 
@@ -138,20 +138,20 @@ export function listSource(s: Pick<Step, 'listFrom' | 'filePath' | 'value'>): st
   const v = (s.value ?? '').trim();
   if (!v) return '—';
   if (/^\{\{[^}]+\}\}$/.test(v) || v.startsWith('[')) return v.length > 40 ? `${v.slice(0, 39)}…` : v;
-  return `${v.split('\n').filter((l) => l.trim()).length} dòng`;
+  return tr('vw.list.lines', { n: v.split('\n').filter((l) => l.trim()).length });
 }
 
-const sec = (ms: number) => `${(ms / 1000).toLocaleString('vi-VN', { maximumFractionDigits: 1 })} s`;
+const sec = (ms: number) => `${(ms / 1000).toLocaleString(getLang() === 'en' ? 'en-US' : 'vi-VN', { maximumFractionDigits: 1 })} s`;
 // Dòng chi tiết trên thẻ node điều khiển.
 function controlDetail(s: Step): string {
   const n = s.cases?.length ?? 0;
   switch (s.type) {
-    case 'if': return `${s.cond ? condText(s.cond) : '—'}${s.timeoutMs ? ` · chờ ${sec(s.timeoutMs)}` : ''}`;
-    case 'switch': return `${s.value || '—'} · ${n} case`;
-    case 'switchScreen': return `chờ tối đa ${sec(s.timeoutMs ?? 0)} · ${n} case`;
-    case 'counter': return `tối đa ${s.max ?? 0} lần`;
+    case 'if': return `${s.cond ? condText(s.cond) : '—'}${s.timeoutMs ? tr('vw.d.wait', { s: sec(s.timeoutMs) }) : ''}`;
+    case 'switch': return tr('vw.d.cases', { v: s.value || '—', n });
+    case 'switchScreen': return tr('vw.d.maxWait', { s: sec(s.timeoutMs ?? 0), n });
+    case 'counter': return tr('vw.d.counter', { n: s.max ?? 0 });
     case 'forEach': return listSource(s);
-    case 'end': return s.endStatus === 'fail' ? `thất bại${s.message ? ` · ${s.message}` : ''}` : `thành công${s.message ? ` · ${s.message}` : ''}`;
+    case 'end': return `${s.endStatus === 'fail' ? tr('vw.d.fail') : tr('vw.d.ok')}${s.message ? ` · ${s.message}` : ''}`;
     case 'setVar': return `vars.${s.varName || '?'} ${s.varOp === 'add' ? '+=' : '='} ${s.value ?? ''}`;
     case 'calc': return s.value || '—';
     default: return textDetail(s);
@@ -170,7 +170,7 @@ export function nodeVarOptions(sc: Pick<Script, 'steps' | 'start' | 'edges'>, se
     return [
       ...outputsOf(s).map((o) => ({ key: `${s.ref}.output.${o.key}`, label: `${name} – ${o.desc}` })),
       { key: `${s.ref}.status`, label: `${name} – success / fail / skipped` },
-      { key: `${s.ref}.error.message`, label: `${name} – lời báo lỗi` },
+      { key: `${s.ref}.error.message`, label: tr('vw.v.err', { name }) },
     ];
   });
 }
@@ -186,7 +186,7 @@ export function coordSources(sc: Pick<Script, 'steps' | 'start' | 'edges'>, self
     if (!s || id === self || !s.ref) return [];
     if (s.type === 'forEach') {
       const src = /\{\{\s*(\w+)\.output\.items\s*\}\}/.exec(s.value ?? '')?.[1];
-      return src && byRef.get(src)?.type === 'findAll' ? [{ ref: s.ref, label: `${s.ref} · ${nodeTitle(s)} – chỗ đang lặp`, base: `${s.ref}.output.item` }] : [];
+      return src && byRef.get(src)?.type === 'findAll' ? [{ ref: s.ref, label: tr('vw.v.loop', { ref: s.ref, title: nodeTitle(s) }), base: `${s.ref}.output.item` }] : [];
     }
     const keys = outputsOf(s).map((o) => o.key);
     return keys.includes('x') && keys.includes('y') ? [{ ref: s.ref, label: `${s.ref} · ${nodeTitle(s)}`, base: `${s.ref}.output` }] : [];

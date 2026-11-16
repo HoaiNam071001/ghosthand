@@ -2,6 +2,8 @@
 import type { Step } from '../types';
 import { browserTabOutputs } from './browserTab';
 import { textOutputs } from './textNodes';
+import { getLang } from '../i18n/lang';
+import { OUTPUT_EN } from './outputs.en';
 
 // Output node trả về khi thành công – khớp Outputs trong steptypes.go. Node sau đọc bằng {{ref.output.key}}.
 export type OutputField = { key: string; desc: string };
@@ -21,7 +23,12 @@ const WEB_EFFECT: OutputField[] = [
 ];
 // Output mọi node có (CommonOutputs trong steptypes.go, engine điền ở execNode).
 const COMMON: OutputField[] = [{ key: 'startedAt', desc: 'giờ bắt đầu' }, { key: 'durationMs', desc: 'thời gian chạy (ms)' }];
-export const outputsOf = (s: Step): OutputField[] => [...ownOutputs(s), ...COMMON];
+const IF_SUFFIX = ' (điều kiện ảnh / chữ đúng)';
+const descEn = (d: string): string => (d.endsWith(IF_SUFFIX) ? `${descEn(d.slice(0, -IF_SUFFIX.length))} (when the image / text condition is true)` : OUTPUT_EN[d] ?? d);
+export const outputsOf = (s: Step): OutputField[] => {
+  const all = [...ownOutputs(s), ...COMMON];
+  return getLang() === 'en' ? all.map((f) => ({ ...f, desc: descEn(f.desc) })) : all;
+};
 const MOUSE_AT: OutputField[] = [{ key: 'x', desc: 'X chuột dừng' }, { key: 'y', desc: 'Y chuột dừng' }];
 // Cửa sổ đang ở trước sau thao tác (Windows) – kiểm tra có bấm / gõ vào đúng app không.
 const FOCUS: OutputField[] = [{ key: 'window', desc: 'cửa sổ đang ở trước (tiêu đề)' }, { key: 'windowApp', desc: 'app của cửa sổ đang ở trước' }];

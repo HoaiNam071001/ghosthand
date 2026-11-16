@@ -1,6 +1,7 @@
 // Bộ tính node Tính toán (bước 42 G4a) – cùng cú pháp + kết quả với Go script/calc.go (test chung testdata/calc.json).
 // Inspector dùng để xem trước kết quả / báo lỗi cú pháp; lúc chạy Go tính.
 
+import { tr } from '../i18n/lang';
 export type CalcValue = number | string | boolean;
 
 // Lỗi cú pháp: sai ngay cả khi chưa có giá trị biến. Lỗi khác (chia 0, sai kiểu) chỉ biết khi chạy.
@@ -36,7 +37,7 @@ function lex(src: string): Tok[] {
       let j = i;
       while (j < src.length && (isDigit(src[j]) || src[j] === '.')) j++;
       const t = src.slice(i, j);
-      if (!/^\d+(\.\d+)?$/.test(t)) throw syn(`“${t}” không phải số`);
+      if (!/^\d+(\.\d+)?$/.test(t)) throw syn(tr('calc.notNum', { t }));
       out.push({ kind: 'n', s: t, n: Number(t) }); i = j; continue;
     }
     if (c === '"') {
@@ -45,7 +46,7 @@ function lex(src: string): Tok[] {
         if (src[j] === '\\' && j + 1 < src.length) j++;
         s += src[j];
       }
-      if (j >= src.length) throw syn('thiếu dấu " đóng chuỗi');
+      if (j >= src.length) throw syn(tr('calc.noClose'));
       out.push({ kind: 's', s }); i = j + 1; continue;
     }
     if (/[A-Za-z_]/.test(c)) {
@@ -54,24 +55,24 @@ function lex(src: string): Tok[] {
       out.push({ kind: 'w', s: src.slice(i, j).toLowerCase() }); i = j; continue;
     }
     const op = OPS.find((o) => src.startsWith(o, i));
-    if (!op) throw syn(`không hiểu ký tự “${String.fromCodePoint(src.codePointAt(i)!)}”`);
+    if (!op) throw syn(tr('calc.badChar', { c: String.fromCodePoint(src.codePointAt(i)!) }));
     out.push({ kind: 'o', s: op }); i += op.length;
   }
   return out;
 }
 
 function show(v: CalcValue): string {
-  return typeof v === 'string' ? `chữ “${v}” (số kiểu 1.234 đ: dùng node Xử lý chữ lấy số trước)` : String(v);
+  return typeof v === 'string' ? tr('calc.showText', { v }) : String(v);
 }
 
 function nums(a: CalcValue, b: CalcValue, op: string): [number, number] {
-  if (typeof a !== 'number') throw new Error(`“${op}” cần số, có ${show(a)}`);
-  if (typeof b !== 'number') throw new Error(`“${op}” cần số, có ${show(b)}`);
+  if (typeof a !== 'number') throw new Error(tr('calc.needNum', { op, v: show(a) }));
+  if (typeof b !== 'number') throw new Error(tr('calc.needNum', { op, v: show(b) }));
   return [a, b];
 }
 
 function bool(v: CalcValue, op: string): boolean {
-  if (typeof v !== 'boolean') throw new Error(`“${op}” cần true / false, có ${show(v)}`);
+  if (typeof v !== 'boolean') throw new Error(tr('calc.needBool', { op, v: show(v) }));
   return v;
 }
 
@@ -137,28 +138,28 @@ class Parser {
 
   primary(): CalcValue {
     const t = this.rest;
-    if (!t) throw syn('biểu thức thiếu số ở cuối');
+    if (!t) throw syn(tr('calc.endNum'));
     this.i++;
     if (t.kind === 'n') return t.n!;
     if (t.kind === 's') return t.s;
     if (t.kind === 'o' && t.s === '(') {
       const v = this.or();
-      if (!this.eat(')')) throw syn('thiếu dấu )');
+      if (!this.eat(')')) throw syn(tr('calc.noParen'));
       return v;
     }
     if (t.kind === 'w' && (t.s === 'true' || t.s === 'false')) return t.s === 'true';
     if (t.kind === 'w') return this.call(t.s);
-    throw syn(`thiếu số trước “${t.s}”`);
+    throw syn(tr('calc.beforeNum', { s: t.s }));
   }
 
   call(name: string): number {
     const lim = ARITY[name];
-    if (!lim) throw syn(`không có hàm / từ “${name}” (có: round floor ceil abs min max, and or not, true false)`);
-    if (!this.eat('(')) throw syn(`${name} cần ( sau tên`);
+    if (!lim) throw syn(tr('calc.noFn', { n: name }));
+    if (!this.eat('(')) throw syn(tr('calc.needOpen', { n: name }));
     const args: number[] = [];
     do args.push(nums(this.or(), 0, name)[0]); while (this.eat(','));
-    if (!this.eat(')')) throw syn(`${name} thiếu dấu )`);
-    if (args.length < lim[0] || args.length > lim[1]) throw syn(`${name} nhận ${lim[0]}–${lim[1]} số, có ${args.length}`);
+    if (!this.eat(')')) throw syn(tr('calc.fnNoParen', { n: name }));
+    if (args.length < lim[0] || args.length > lim[1]) throw syn(tr('calc.argc', { n: name, a: lim[0], b: lim[1], c: args.length }));
     const [x] = args;
     switch (name) {
       case 'round': { const k = args.length === 2 ? 10 ** roundHalfUp(args[1]) : 1; return roundHalfUp(x * k) / k; }
@@ -173,13 +174,13 @@ class Parser {
 
 // Tính biểu thức đã thay biến. Lỗi: CalcSyntaxError (cú pháp) hoặc Error (lúc tính).
 export function evalCalc(expr: string): CalcValue {
-  if (!expr.trim()) throw syn('chưa nhập biểu thức');
-  if (expr.includes('{{')) throw new Error(`“${expr}” còn biến chưa thay`);
+  if (!expr.trim()) throw syn(tr('calc.empty'));
+  if (expr.includes('{{')) throw new Error(tr('calc.unreplaced', { e: expr }));
   const p = new Parser(lex(expr));
   let v = p.or();
-  if (p.rest) throw syn(`thừa “${p.rest.s}”`);
+  if (p.rest) throw syn(tr('calc.extra', { s: p.rest.s }));
   if (typeof v === 'number') {
-    if (!Number.isFinite(v)) throw new Error('kết quả không phải số hữu hạn');
+    if (!Number.isFinite(v)) throw new Error(tr('calc.inf'));
     if (Math.abs(v) < 1e15) v = roundHalfUp(v * 1e10) / 1e10;
   }
   return v;
