@@ -1,4 +1,6 @@
 // Node Màn hình / âm thanh (bước 43 S7): chế độ sáng / tối, độ sáng, loa / micro mặc định, phát âm báo.
+import { useT } from '../../i18n';
+import type { MsgKey } from '../../i18n/vi';
 import NumInput from '../NumInput';
 import Segmented from '../Segmented';
 import Select from '../Select';
@@ -10,16 +12,12 @@ import { DISPLAY_OPS, SYSTEM_SOUNDS, THEMES, type DisplayOp } from '../../flow/d
 import { Step } from '../../types';
 import { Field, hint, selectBox, useNodeVars } from './shared';
 
-const OP_HINT: Record<DisplayOp, string> = {
-  '': 'Đọc một lần, không đổi gì – dùng theme / brightness / outputName với node Nếu.',
-  theme: 'Đổi chế độ sáng / tối của hệ điều hành (macOS lần đầu hỏi quyền điều khiển System Events).',
-  brightness: 'Chỉ màn hình laptop; màn ngoài / máy bàn → Thất bại.',
-  audioOut: 'Tên hoặc mã thiết bị, chứa là khớp. Không có → lỗi kèm danh sách thiết bị máy có.',
-  audioIn: 'Tên hoặc mã thiết bị, chứa là khớp. Không có → lỗi kèm danh sách thiết bị máy có.',
-  sound: 'macOS: file aiff / wav / mp3 hoặc tên âm (Glass, Ping…) · Windows: file .wav hoặc Asterisk, Beep, Exclamation… Âm lượng → node Hệ thống.',
+const OP_HINT: Record<DisplayOp, MsgKey> = {
+  '': 'df.h.read', theme: 'df.h.theme', brightness: 'df.h.bright', audioOut: 'df.h.audio', audioIn: 'df.h.audio', sound: 'df.h.sound',
 };
 
 export default function DisplayFields({ step: s }: { step: Step }) {
+  const t = useT();
   const script = useScript();
   const nodeVars = useNodeVars(s.id);
   const set = (patch: Partial<Step>) => updateStep(s.id, patch);
@@ -29,32 +27,32 @@ export default function DisplayFields({ step: s }: { step: Step }) {
   const text = (placeholder: string) => <VarTextInput {...varProps} value={value} onChange={(v) => set({ displayValue: v || undefined })} placeholder={placeholder} />;
   return (
     <>
-      <Field label="Làm gì" wide group>
-        <Select value={op} onChange={(v) => set({ displayOp: (v || undefined) as DisplayOp | undefined, displayValue: undefined })} className={selectBox} aria-label="Thao tác màn hình / âm thanh"
+      <Field label={t('ap.do')} wide group>
+        <Select value={op} onChange={(v) => set({ displayOp: (v || undefined) as DisplayOp | undefined, displayValue: undefined })} className={selectBox} aria-label={t('df.opLabel')}
           options={DISPLAY_OPS.map((o) => ({ value: o.id, label: o.label }))} />
       </Field>
       {op === 'theme' && (
-        <Field label="Chế độ" wide group>
-          <Segmented value={value} full label="Chế độ sáng / tối" onChange={(v) => set({ displayValue: v })} options={THEMES} />
+        <Field label={t('df.mode')} wide group>
+          <Segmented value={value} full label={t('df.themeLabel')} onChange={(v) => set({ displayValue: v })} options={THEMES} />
         </Field>
       )}
       {op === 'brightness' && (
-        <Field label="Độ sáng" help="0–100 %">
+        <Field label={t('df.bright')} help={t('df.brightHelp')}>
           <NumInput value={Number(value) || 0} unit="%" min={0} onChange={(n) => set({ displayValue: String(Math.min(100, n)) })} />
         </Field>
       )}
       {(op === 'audioOut' || op === 'audioIn') && (
-        <Field label={op === 'audioOut' ? 'Loa' : 'Micro'} wide group>{text(op === 'audioOut' ? 'AirPods' : 'MacBook Pro Microphone')}</Field>
+        <Field label={op === 'audioOut' ? t('df.speaker') : t('df.mic')} wide group>{text(op === 'audioOut' ? 'AirPods' : 'MacBook Pro Microphone')}</Field>
       )}
       {op === 'sound' && (
         <>
-          <Field label="File hoặc tên âm" wide group help={`Âm hệ thống macOS: ${SYSTEM_SOUNDS.join(', ')}`}>{text('Glass')}</Field>
-          <Field label="Chờ phát xong" help="Bật: node chỉ đi tiếp khi âm kết thúc">
-            <Switch on={!!s.soundWait} onChange={(soundWait) => set({ soundWait: soundWait || undefined })} label="Chờ phát xong" />
+          <Field label={t('df.soundFile')} wide group help={t('df.sysSounds', { list: SYSTEM_SOUNDS.join(', ') })}>{text('Glass')}</Field>
+          <Field label={t('df.wait')} help={t('df.waitHelp')}>
+            <Switch on={!!s.soundWait} onChange={(soundWait) => set({ soundWait: soundWait || undefined })} label={t('df.wait')} />
           </Field>
         </>
       )}
-      <span className={`col-span-2 -mt-1 ${hint}`}>{OP_HINT[op]}</span>
+      <span className={`col-span-2 -mt-1 ${hint}`}>{t(OP_HINT[op])}</span>
     </>
   );
 }
