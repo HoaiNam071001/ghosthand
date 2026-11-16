@@ -2,7 +2,7 @@
 // Dữ liệu thẻ tính ở flow/view.ts; mọi thao tác (nối, xoá, dời, thêm node) gọi hàm store – component không tự sửa script.
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import FlowCanvas from './FlowCanvas';
-import FlowHeader, { headerBtn } from './FlowHeader';
+import FlowHeader, { headerBtn, headerKey, headerLabel } from './FlowHeader';
 import EmbedMenu from './EmbedMenu';
 import AddStepPalette from '../AddStepPalette';
 import { Region } from '../icons';
@@ -129,9 +129,10 @@ export default function FlowEditor() {
     <main aria-label="Flow" className="flex min-w-0 flex-1 flex-col">
       <div className="relative min-h-0 flex-1">
         <FlowHeader count={script.steps.length}>
-          <button onClick={() => openOverlay('region')} title="Chọn vùng trên màn hình – toạ độ điểm tính theo vùng" className={`${headerBtn} text-muted hover:text-ink`}>
+          <button onClick={() => openOverlay('region')} title="Chọn vùng trên màn hình – toạ độ điểm tính theo vùng" aria-label={region ? `Vùng ${region.w} × ${region.h}` : 'Toàn màn hình'}
+            className={`${headerBtn} text-muted hover:text-ink`}>
             <Region className="h-3.5 w-3.5" />
-            {region ? <span className="font-mono">Vùng {region.w} × {region.h}</span> : 'Toàn màn hình'}
+            {region ? <span className="font-mono">{region.w} × {region.h}</span> : <span className={headerLabel}>Toàn màn hình</span>}
           </button>
           {region && (
             <button onClick={() => setRegion(null)} aria-label="Về toàn màn hình" title="Về toàn màn hình"
@@ -139,13 +140,13 @@ export default function FlowEditor() {
           )}
           {picked.length > 1 && (
             <button onClick={groupPicked} title="Gom các node đang chọn vào một khung" className={headerBtn}>
-              Nhóm lại <span className="font-mono text-[11px] text-muted">{isMac ? '⌘G' : 'Ctrl+G'}</span>
+              Nhóm lại <span className={`font-mono text-[11px] text-muted ${headerKey}`}>{isMac ? '⌘G' : 'Ctrl+G'}</span>
             </button>
           )}
           <EmbedMenu />
           <ViewMenu card={prefs.card} detail={prefs.detail} onCard={(card) => { setFlowPrefs({ card }); if (card === 'full') setNotice('Thẻ Đầy đủ cao hơn – thẻ chồng nhau thì bấm Sắp xếp lại (góc dưới trái)'); }} onDetail={(detail) => setFlowPrefs({ detail })} />
-          <button onClick={openPalette} className={headerBtn}>
-            + Thêm node <span className="font-mono text-[11px] text-muted">{isMac ? '⌘K' : 'Ctrl+K'}</span>
+          <button onClick={openPalette} title="Thêm node" aria-label="Thêm node" className={headerBtn}>
+            + <span className="@max-md:hidden">Thêm node</span> <span className={`font-mono text-[11px] text-muted ${headerKey}`}>{isMac ? '⌘K' : 'Ctrl+K'}</span>
           </button>
         </FlowHeader>
         <FlowCanvas nodes={views} edges={edges} groups={groups} groupActions={groupActions} onMoveGroup={moveGroup} start={script.start} positions={positions} selected={selected || null} picked={picked} fitKey={fitKey}

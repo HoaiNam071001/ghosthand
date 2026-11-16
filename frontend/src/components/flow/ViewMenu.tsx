@@ -1,7 +1,8 @@
 // Nút "Xem" trên dòng đầu canvas (bước 60): kiểu thẻ Gọn / Đầy đủ và cách mở chi tiết node. Chỉ hiển thị – giá trị qua props.
 import Segmented from '../Segmented';
 import { usePopover } from '../usePopover';
-import { headerBtn } from './FlowHeader';
+import { Eye } from '../icons';
+import { headerBtn, headerLabel } from './FlowHeader';
 import type { CardMode } from './model';
 import type { DetailMode } from '../../flowPrefs';
 
@@ -11,9 +12,9 @@ export default function ViewMenu({ card, detail, onCard, onDetail }: {
   const { open, setOpen, ref } = usePopover();
   return (
     <div ref={ref} className="relative">
-      <button onClick={() => setOpen(!open)} aria-expanded={open} aria-haspopup="dialog" className={headerBtn}
+      <button onClick={() => setOpen(!open)} aria-expanded={open} aria-haspopup="dialog" aria-label="Kiểu xem" className={headerBtn}
         title="Kiểu thẻ node (Gọn / Đầy đủ có VÀO – RA) và cách mở chi tiết node">
-        Xem <span className="text-muted">{card === 'full' ? 'Đầy đủ' : 'Gọn'}</span>
+        <Eye className="h-3.5 w-3.5 text-muted" /><span className={headerLabel}>Xem</span> <span className="text-muted">{card === 'full' ? 'Đầy đủ' : 'Gọn'}</span>
         <svg viewBox="0 0 24 24" className="h-3 w-3 text-muted" fill="none" stroke="currentColor" strokeWidth={2.4} aria-hidden><path d="M6 9l6 6 6-6" /></svg>
       </button>
       {open && (

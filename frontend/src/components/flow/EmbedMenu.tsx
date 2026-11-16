@@ -4,7 +4,8 @@ import { Samples } from '../../../wailsjs/go/app/App';
 import { embedFile, embedSample } from '../../store';
 import { inWails } from '../../windowMode';
 import { usePopover } from '../usePopover';
-import { headerBtn } from './FlowHeader';
+import { Package } from '../icons';
+import { headerBtn, headerLabel } from './FlowHeader';
 
 type Info = { id: string; name: string };
 const item = 'block w-full truncate px-3 py-1.5 text-left text-[12.5px] hover:bg-hover';
@@ -18,8 +19,8 @@ export default function EmbedMenu() {
   const pick = (run: () => void) => { setOpen(false); run(); };
   return (
     <div ref={ref} className="relative">
-      <button onClick={() => setOpen(!open)} disabled={!inWails} title="Chép node của kịch bản khác vào đây thành một khung nhóm" className={`${headerBtn} disabled:opacity-50`}>
-        Nhúng kịch bản
+      <button onClick={() => setOpen(!open)} disabled={!inWails} title="Chép node của kịch bản khác vào đây thành một khung nhóm" aria-label="Nhúng kịch bản" className={`${headerBtn} disabled:opacity-50`}>
+        <Package className="h-3.5 w-3.5 text-muted" /><span className={headerLabel}>Nhúng kịch bản</span>
       </button>
       {open && (
         <div className="absolute right-0 top-9 z-20 max-h-72 w-60 overflow-auto rounded-control border border-line bg-surface py-1 shadow-lg">

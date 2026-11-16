@@ -4,6 +4,11 @@ Những việc **đã xong code** nhưng cần người dùng thử trong app th
 Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi thì báo để sửa (thêm mục con trong file của bước).
 
 
+## UI – Cài đặt gọn + dòng đầu canvas co theo bề rộng (2026-11-16)
+- [ ] Cài đặt: menu dọc 6 mục (Lưu trữ, Khi chạy, Bảo mật, AI, API, Giới thiệu); mục gom nhiều phần có tab gạch chân ngang; chọn tab nào chỉ hiện phần đó
+- [ ] Nút "Mở Cài đặt → Quyền / Hỏi AI / MCP server / Bí mật" ở chỗ khác → mở đúng mục, chọn sẵn đúng tab con
+- [ ] Mở panel node (canvas hẹp): dòng đầu canvas chỉ còn icon (vùng, nhúng, xem) + "+ Thêm node", một dòng, không đè dưới panel; rê chuột có chú thích; canvas rộng thì đủ chữ như cũ
+
 ## 62 – Wisp làm trình duyệt của node web (2026-11-15) · [62](phase3/62-trinh-duyet-wisp.md)
 - [ ] Cài đặt → *Trình duyệt*: Wisp đang mở + bật Cổng Ghosthand → ô Wisp "Sẵn sàng"; tắt Wisp → *Kiểm tra lại* báo cách sửa; chưa cài → "chưa cài Wisp"
 - [ ] Chọn *Wisp* → *Mẫu thử* → các mẫu Web (đăng nhập, chạy nền, iframe, hộp thoại JS, phím trên trang…) → Chạy: chạy trong tab Wisp, chuột không nhúc nhích, thành công như với Chrome của app

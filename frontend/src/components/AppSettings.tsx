@@ -1,4 +1,4 @@
-// Cài đặt app (nút bánh răng trên thanh tiêu đề), chia tab: Lưu trữ – thư mục kịch bản / ảnh (bước 41, settings/StorageSettings), Màn hình – cạnh đặt thanh overlay (bước 49) + viền lúc đang chạy (58 D5, settings/OverlaySettings), Trình duyệt – Chrome của app / Wisp cho node web (bước 62, settings/WebBrowserSettings),
+// Cài đặt app (nút bánh răng trên thanh tiêu đề), menu dọc ít mục (settings/SettingsNav), mục gom nhiều phần thì có tab ngang, các phần: Lưu trữ – thư mục kịch bản / ảnh (bước 41, settings/StorageSettings), Màn hình – cạnh đặt thanh overlay (bước 49) + viền lúc đang chạy (58 D5, settings/OverlaySettings), Trình duyệt – Chrome của app / Wisp cho node web (bước 62, settings/WebBrowserSettings),
 // Bí mật – kho mật khẩu / token (bước 43 S10, settings/SecretsSettings), Quyền – quyền hệ điều hành (bước 48, settings/PermSettings), API – dòng lệnh + API local (bước 22, settings/ApiSettings), AI qua MCP (bước 31, settings/McpSettings), MCP server – server ngoài node Gọi tool MCP dùng (bước 55, settings/McpServersSettings), Đồng bộ – Google Drive (bước 54, settings/SyncSettings), Giới thiệu – phiên bản + kiểm tra bản mới (settings/AboutSettings).
 import { useEffect, useState } from 'react';
 import {
@@ -24,10 +24,10 @@ import SecretsSettings from './settings/SecretsSettings';
 import SyncSettings from './settings/SyncSettings';
 import StorageSettings, { StorageKey } from './settings/StorageSettings';
 import WebBrowserSettings from './settings/WebBrowserSettings';
-import Segmented from './Segmented';
+import SettingsNav, { pageOf } from './settings/SettingsNav';
+import { TabBtn } from './stepform/shared';
 
 type Tab = SettingsTab;
-const TABS: { id: Tab; label: string }[] = [{ id: 'storage', label: 'Lưu trữ' }, { id: 'overlay', label: 'Màn hình' }, { id: 'browser', label: 'Trình duyệt' }, { id: 'secrets', label: 'Bí mật' }, { id: 'perms', label: 'Quyền' }, { id: 'api', label: 'API' }, { id: 'mcp', label: 'AI (MCP)' }, { id: 'askai', label: 'Hỏi AI' }, { id: 'servers', label: 'MCP server' }, { id: 'sync', label: 'Đồng bộ' }, { id: 'about', label: 'Giới thiệu' }];
 
 export default function AppSettings() {
   const [open, setOpen] = useState(false);
@@ -38,6 +38,7 @@ export default function AppSettings() {
   const upd = useUpdate();
   const script = useScript();
   const [defaults, setDefaults] = useState<store.StorageDefaults | null>(null);
+  const page = pageOf(tab);
 
   const show = () => {
     GetSettings().then(setSettings).catch((e) => setError(errorText(e)));
@@ -99,35 +100,46 @@ export default function AppSettings() {
     PickFolder('Chọn thư mục', from).then((dir) => dir && saveStorage(key, dir)).catch((e) => setError(errorText(e)));
   const openDir = (dir: string) => OpenFolder(dir).then(() => setError('')).catch((e) => setError(errorText(e)));
 
+  const section = (t: Tab) => {
+    switch (t) {
+      case 'storage': return <StorageSettings storage={settings!.storage ?? {}} defaults={defaults} onPick={pick} onOpen={openDir} onReset={(key) => saveStorage(key, '')} />;
+      case 'overlay': return <OverlaySettings overlay={settings!.overlay ?? {}} onChange={saveOverlay} />;
+      case 'browser': return <WebBrowserSettings web={settings!.web ?? {}} status={wispState} onChange={saveWeb} onRefresh={refreshWisp} />;
+      case 'secrets': return <SecretsSettings onError={setError} />;
+      case 'perms': return <PermSettings items={perms.items} needed={needs(script)} focus={focusId} busy={perms.busy} error={perms.error}
+        onRefresh={refreshPerms} onRequest={requestPerm} onOpen={openPermSettings} />;
+      case 'api': return <ApiSettings api={settings!.api} onChange={saveApi} />;
+      case 'mcp': return <McpSettings mcp={settings!.mcp} onChange={saveMcp} />;
+      case 'askai': return <AskAISettings onError={setError} />;
+      case 'servers': return <McpServersSettings onError={setError} />;
+      case 'sync': return <SyncSettings />;
+      case 'about': return <AboutSettings version={upd.version} info={upd.info} busy={upd.busy} error={upd.error} progress={upd.progress} onCheck={checkUpdate} onOpen={openReleasePage} onInstall={installUpdate} />;
+    }
+  };
+
   return (
     <>
       <button onClick={toggle} aria-label="Cài đặt" title="Cài đặt" aria-haspopup="dialog" aria-expanded={open}
         className="grid h-9 w-9 place-items-center text-muted hover:bg-hover hover:text-ink"><Gear /></button>
       {open && settings && (
         <div className="fixed inset-0 z-40 flex items-start justify-center bg-black/25 px-4 pt-[6vh]" onMouseDown={(e) => e.target === e.currentTarget && setOpen(false)}>
-          <div role="dialog" aria-modal="true" aria-label="Cài đặt" className="flex h-[80vh] max-h-[88vh] w-[760px] max-w-full flex-col gap-3 overflow-y-auto rounded-panel border border-line bg-surface p-[18px] text-[13px] text-ink shadow-[0_16px_48px_rgb(0_0_0/.22)]">
+          <div role="dialog" aria-modal="true" aria-label="Cài đặt" className="flex h-[80vh] max-h-[88vh] w-[860px] max-w-full flex-col gap-3 rounded-panel border border-line bg-surface p-[18px] text-[13px] text-ink shadow-[0_16px_48px_rgb(0_0_0/.22)]">
             <div className="flex items-center justify-between">
               <div className="text-base font-semibold">Cài đặt</div>
               <button onClick={() => setOpen(false)} aria-label="Đóng" className="rounded-md px-2 py-1 text-muted hover:bg-hover hover:text-ink">✕</button>
             </div>
-            <Segmented value={tab} options={TABS} onChange={setTab} label="Nhóm cài đặt" full />
-            {tab === 'storage' && (
-              <StorageSettings storage={settings.storage ?? {}} defaults={defaults} onPick={pick} onOpen={openDir} onReset={(key) => saveStorage(key, '')} />
-            )}
-            {tab === 'overlay' && <OverlaySettings overlay={settings.overlay ?? {}} onChange={saveOverlay} />}
-            {tab === 'browser' && <WebBrowserSettings web={settings.web ?? {}} status={wispState} onChange={saveWeb} onRefresh={refreshWisp} />}
-            {tab === 'secrets' && <SecretsSettings onError={setError} />}
-            {tab === 'perms' && (
-              <PermSettings items={perms.items} needed={needs(script)} focus={focusId} busy={perms.busy} error={perms.error}
-                onRefresh={refreshPerms} onRequest={requestPerm} onOpen={openPermSettings} />
-            )}
-            {tab === 'api' && <ApiSettings api={settings.api} onChange={saveApi} />}
-            {tab === 'mcp' && <McpSettings mcp={settings.mcp} onChange={saveMcp} />}
-            {tab === 'askai' && <AskAISettings onError={setError} />}
-            {tab === 'servers' && <McpServersSettings onError={setError} />}
-            {tab === 'sync' && <SyncSettings />}
-            {tab === 'about' && <AboutSettings version={upd.version} info={upd.info} busy={upd.busy} error={upd.error} progress={upd.progress} onCheck={checkUpdate} onOpen={openReleasePage} onInstall={installUpdate} />}
-            {error && <span className="text-danger-text">{error}</span>}
+            <div className="flex min-h-0 flex-1 gap-4">
+              <SettingsNav page={page} onChange={(p) => { setTab(p.sections[0].id); setFocusId(''); }} />
+              <div key={tab} className="flex min-w-0 flex-1 flex-col gap-3 overflow-y-auto pr-1">
+                {page.sections.length > 1 && (
+                  <div className="flex flex-none gap-4 border-b border-line" role="tablist" aria-label={page.label}>
+                    {page.sections.map((sec) => <TabBtn key={sec.id} active={tab === sec.id} onClick={() => { setTab(sec.id); setFocusId(''); }}>{sec.label}</TabBtn>)}
+                  </div>
+                )}
+                {section(tab)}
+                {error && <span className="text-danger-text">{error}</span>}
+              </div>
+            </div>
           </div>
         </div>
       )}
