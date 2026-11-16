@@ -7,6 +7,7 @@ import { errorText } from '../../engineStore';
 import { formatPairs, joinArgs, parsePairs, splitArgs } from '../../flow/mcpServer';
 import McpServerList from './McpServerList';
 import { openSettings } from '../../settingsNav';
+import { useT } from '../../i18n';
 import McpLibrary from './McpLibrary';
 import McpServerForm, { EMPTY_DRAFT, ServerDraft } from './McpServerForm';
 
@@ -22,6 +23,7 @@ const toServer = (d: ServerDraft, enabled: boolean) => store.MCPServer.createFro
 });
 
 export default function McpServersSettings({ onError }: { onError: (msg: string) => void }) {
+  const t = useT();
   const [list, setList] = useState<app.MCPServerView[]>([]);
   const [draft, setDraft] = useState<ServerDraft | null>(null);
   const [busy, setBusy] = useState('');
@@ -44,18 +46,18 @@ export default function McpServersSettings({ onError }: { onError: (msg: string)
 
   return (
     <>
-      <span className="font-semibold">MCP server</span>
+      <span className="font-semibold">{t('mcps.title')}</span>
       <span className="text-xs text-muted">
-        Server MCP ngoài (đọc file, GitHub, Sheets…) để node <b>Gọi tool MCP</b> dùng. Kết nối kiểu “Chạy lệnh” sẽ chạy lệnh đó trên máy bạn – chỉ thêm server bạn tin.
+        {t('mcps.intro').split(/(<b>.*?<\/b>)/).map((p, i) => (p.startsWith('<b>') ? <b key={i}>{p.slice(3, -4)}</b> : p))}
       </span>
-      {list.length === 0 && !draft && <span className="text-muted">Chưa có server nào.</span>}
+      {list.length === 0 && !draft && <span className="text-muted">{t('mcps.empty')}</span>}
       <McpServerList list={list} busy={busy} onReload={reload} onEdit={(s) => setDraft(toDraft(s))} onToggle={toggle} onRemove={remove} />
       {draft
         ? <McpServerForm draft={draft} onChange={(p) => setDraft({ ...draft, ...p })} onSave={save} onCancel={() => setDraft(null)} />
         : (
           <div className="flex gap-1.5">
-            <button onClick={() => setDraft(EMPTY_DRAFT)} className="btn-primary rounded-control px-3 py-1.5">Thêm server</button>
-            <button onClick={() => (lib ? setLib(null) : MCPLibrary().then(setLib).catch(fail))} className="rounded-control border border-line px-3 py-1.5 hover:bg-hover">{lib ? 'Đóng thư viện' : 'Thư viện'}</button>
+            <button onClick={() => setDraft(EMPTY_DRAFT)} className="btn-primary rounded-control px-3 py-1.5">{t('mcps.add')}</button>
+            <button onClick={() => (lib ? setLib(null) : MCPLibrary().then(setLib).catch(fail))} className="rounded-control border border-line px-3 py-1.5 hover:bg-hover">{lib ? t('mcps.libClose') : t('mcps.lib')}</button>
           </div>
         )}
       {lib && !draft && <McpLibrary entries={lib} onPick={(d) => { setDraft(d); setLib(null); }} onOpenSecrets={() => openSettings('secrets')} />}

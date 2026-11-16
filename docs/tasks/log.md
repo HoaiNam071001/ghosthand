@@ -363,3 +363,4 @@
 - **2026-11-16** – Kế hoạch (người dùng yêu cầu): 64 chọn ngôn ngữ vi / en – i18n tự viết, nút ở Cài đặt › Giao diện + ribbon Xem, dịch theo đợt L1–L5, MCP giữ tiếng Việt.
 - **2026-11-16** – 64 L1+L2: i18n tự viết (src/i18n: vi/en/core/index, test), Settings.Language + SetLanguage (Go), nút VI/EN ở thanh tiêu đề + Cài đặt › Giao diện, chương Hướng dẫn settings-ui; dịch tạm theme + nút ngôn ngữ. tsc + vitest 608 + go test guide/mcpsrv OK (TestTrials của store đang lỗi sẵn do file thật trong Documents); chưa thử tay.
 - **2026-11-16** – 64 L3 (một phần): dịch ribbon, thanh tiêu đề, menu trang Tệp / Cài đặt, thanh zoom, nhóm node, nhãn cổng; i18n/lang.ts tách khỏi Wails, testSetup ép tiếng Việt. tsc + vitest 608 + build OK; chưa thử tay.
+- 2026-11-16 · 64 L3: dịch Cài đặt › MCP server (mcps.*)

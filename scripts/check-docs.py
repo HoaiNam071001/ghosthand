@@ -43,7 +43,7 @@ types = [consts[c] for c in re.findall(r'Step\w+', listed.group(1)) if c in cons
 for rel in ('frontend/src/types.ts', 'frontend/src/components/icons.tsx', 'internal/model/steptypes.go'):
     src = read(rel)
     for t in types:
-        if not re.search(rf"(^|[\s{{,'\"])'?{t}'?\s*:|Step{t[0].upper() + t[1:]}\b|\"{t}\"", src, re.M):
+        if not re.search(rf"(^|[\s{{,'\"])'?{t}'?\s*:|Step{t[0].upper() + t[1:]}\b|[\'\"]{t}[\'\"]", src, re.M):
             errors.append(f'{rel} thiếu loại node "{t}" (nhãn / icon / mô tả – checklist Thêm loại node)')
 
 # Hướng dẫn: mục node trong nodes.json + trường riêng (Fields của steptypes.go) có được nhắc.

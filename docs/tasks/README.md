@@ -125,7 +125,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 > Bảng tự sinh – sau khi tick chạy `python3 scripts/tasks-index.py`. Bấm tên bước để mở file chi tiết.
 
 <!-- index:start -->
-**71 / 73 bước xong code** · 🧪 **[340 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
+**71 / 74 bước xong code** · 🧪 **[340 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
 
 ### Phase 3 – Design v2 & tự động hoá (theo thứ tự làm)
 
@@ -175,6 +175,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 chờ kiểm tra tay | [61. Dùng AI gọn hơn](phase3/61-dung-ai-gon.md) | 5 / 5 | [8 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [62. Wisp làm trình duyệt của node web](phase3/62-trinh-duyet-wisp.md) | 6 / 7 | [8 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [63. Layout chính kiểu ribbon](phase3/63-layout-ribbon.md) | 8 / 8 | [10 việc](checks.md) |
+| 🟡 đang làm | [64. Chọn ngôn ngữ giao diện](phase3/64-ngon-ngu-vi-en.md) | 2 / 5 |  |
 | 🧪 chờ kiểm tra tay | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | 12 / 12 | [10 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | 43 / 43 | [22 việc](checks.md) |
 | ✅ xong | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | 12 / 12 |  |

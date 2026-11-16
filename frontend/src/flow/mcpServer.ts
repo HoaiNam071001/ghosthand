@@ -1,4 +1,5 @@
 // Cài đặt → MCP server (bước 55 M8): chuyển ô nhập của người dùng ↔ cấu hình server. Lưu / kiểm tra ở Go (store/mcpservers.go).
+import { tr } from '../i18n/lang';
 
 // "-y @scope/pkg  /Users/me/docs" → ['-y', '@scope/pkg', '/Users/me/docs']. Dấu nháy kép gom thành một tham số.
 export function splitArgs(line: string): string[] {
@@ -31,9 +32,9 @@ export function formatPairs(m: Record<string, string> | undefined, sep: '=' | ':
 
 // Chữ trạng thái kết nối (khớp mcpclient.State*).
 export function statusText(st?: { state?: string; tools?: unknown[]; err?: string }): string {
-  if (!st?.state || st.state === 'idle') return 'Chưa kết nối';
-  if (st.state === 'ok') return `Đã kết nối · ${st.tools?.length ?? 0} tool`;
-  return st.err ? `Lỗi: ${st.err}` : 'Lỗi kết nối';
+  if (!st?.state || st.state === 'idle') return tr('mcps.st.idle');
+  if (st.state === 'ok') return tr('mcps.st.ok', { n: st.tools?.length ?? 0 });
+  return st.err ? tr('mcps.st.err', { err: st.err }) : tr('mcps.st.errNone');
 }
 
 // Thư viện gợi ý (M6): thay ${key} bằng giá trị người dùng điền → các ô của form thêm server (khớp mcplib.Fill).

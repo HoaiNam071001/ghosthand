@@ -2,15 +2,17 @@
 // Chỉ hiển thị: dữ liệu từ MCPLog (Go đã che bí mật trước khi ghi nhật ký).
 import { useState } from 'react';
 import { mcpsrv } from '../../../wailsjs/go/models';
+import { useT } from '../../i18n';
 
 const timeText = (at: string) => new Date(at).toLocaleTimeString('vi-VN', { hour12: false });
 const durText = (ms: number) => (ms >= 1000 ? `${(ms / 1000).toFixed(1)} s` : `${ms} ms`);
 
 export default function McpCallLog({ calls }: { calls: mcpsrv.Call[] }) {
+  const t = useT();
   const [open, setOpen] = useState(-1);
   if (calls.length === 0) return null;
   return (
-    <div className="flex flex-col gap-0.5 text-xs text-muted">Lệnh AI gần đây
+    <div className="flex flex-col gap-0.5 text-xs text-muted">{t('mcps.log.title')}
       <div className="flex max-h-56 flex-col overflow-y-auto">
         {calls.map((c, i) => {
           const args = Object.entries(c.args ?? {});
@@ -26,7 +28,7 @@ export default function McpCallLog({ calls }: { calls: mcpsrv.Call[] }) {
               </button>
               {open === i && (
                 <div className="mb-1 ml-5 flex flex-col gap-0.5 rounded bg-soft px-2 py-1 font-mono">
-                  {args.length === 0 && <span>Không có tham số</span>}
+                  {args.length === 0 && <span>{t('mcps.log.noArgs')}</span>}
                   {args.map(([k, v]) => (
                     <span key={k} className="break-all"><span className="text-ink">{k}</span>: {v}</span>
                   ))}
