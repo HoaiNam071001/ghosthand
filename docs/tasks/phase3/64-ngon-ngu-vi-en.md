@@ -1,0 +1,18 @@
+# 64. Chọn ngôn ngữ giao diện (vi / en)
+
+- [ ] **64. Chọn ngôn ngữ giao diện** *(người dùng yêu cầu 2026-11-16)* – nút chọn Tiếng Việt / English, đổi chữ giao diện ngay không cần mở lại app.
+  - Đã chốt (2026-11-16):
+    - **Chia giai đoạn** – mỗi đợt dùng được ngay; chữ chưa dịch hiện tiếng Việt (fallback `vi`).
+    - **Vị trí nút:** Cài đặt › Giao diện (cạnh chọn theme) + nút nhỏ `VI / EN` ở ribbon tab *Xem* cạnh nút đổi theme. Lưu trong settings như theme (`internal/store/settings.go`), chưa đặt = theo ngôn ngữ hệ điều hành (`vi*` → vi, còn lại → en).
+    - **MCP giữ tiếng Việt** – primer, `get_step_types`, lỗi validate cho AI không đổi theo ngôn ngữ (tránh giữ hai bản chữ gọn + budget test đôi).
+    - **Tự viết i18n nhẹ**, không thêm thư viện: `src/i18n/` – `vi.ts` (nguồn chuẩn), `en.ts` kiểu `Record<keyof typeof vi, string>` (tsc báo thiếu key), `t(key, vars)` thay `{x}`, hook `useLang()` re-render khi đổi.
+  - [ ] L1. Khung: `src/i18n/` (logic thuần `t`, chọn ngôn ngữ từ settings / `navigator.language`, test), `Settings.Language` bên Go + `SetLanguage` (bind, validate `vi|en|system`), `wails generate module`. Màn mẫu nhận `?lang=en`.
+  - [ ] L2. Nút chọn: Cài đặt › Giao diện (`Segmented` Tự động / Tiếng Việt / English) + nút ribbon tab Xem; `<html lang>` đổi theo.
+  - [ ] L3. Đợt 1 dịch khung chính: thanh tiêu đề, ribbon (`ribbon/model.ts`), trang Tệp, Cài đặt, status bar, inspector khung, tên node / nhóm palette / nhãn cổng (`flow/view.ts` – trả key hoặc nhận `t`, giữ logic thuần không đọc store).
+  - [ ] L4. Đợt 2: form từng loại node (`stepform/`), thông báo / toast, hộp thoại, overlay, thanh mini, Lịch sử chạy.
+  - [ ] L5. Đợt 3: Hướng dẫn (`internal/guide/` thêm bản `*.en.json`, modal chọn theo ngôn ngữ, MCP vẫn đọc bản vi) + lỗi Go hiện cho người dùng (`ScriptError` / `StepError` – frontend dịch theo **mã lỗi**, Go giữ chữ vi cho MCP).
+  - Quy ước mới (ghi vào CLAUDE.md khi xong L1): chữ UI mới viết qua `t('…')`, thêm key vào cả `vi.ts` + `en.ts`.
+  - *Chuẩn bị cho MCP:* không đổi định dạng kịch bản, không đổi chữ MCP. Tên node trong file kịch bản do người dùng đặt – không dịch.
+  - Rủi ro: chữ tiếng Anh dài hơn → ribbon / nút giãn theo chữ cần soát lại; nhãn node mặc định (`flow/view.ts`) dùng cả trong biến / hiển thị – chỉ dịch phần hiển thị, `ref` giữ nguyên.
+  - Kiểm tra tay: [checks.md](../checks.md) mục 64 (thêm khi xong từng đợt).
+  - Xong khi: đổi EN ở Cài đặt / ribbon thì toàn bộ khung + form node + Hướng dẫn hiện tiếng Anh ngay, mở lại app vẫn giữ; MCP không đổi.

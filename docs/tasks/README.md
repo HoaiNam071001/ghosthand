@@ -41,6 +41,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 | Dùng AI gọn hơn | Trạng thái đầu phiên ngắn, `ghosthand test` chạy nhiều kịch bản ra bảng gọn, kiểm tra môi trường trước khi chạy, `browserNorm` bắt buộc chọn đích, tự dọn kịch bản thử của AI | [61](phase3/61-dung-ai-gon.md) |
 | 🧪 | Wisp làm trình duyệt node web | Cài đặt → Trình duyệt (Tự động / Chrome của app / Wisp), node web chạy qua cổng Ghosthand của Wisp (sự kiện thật, không chiếm chuột), tự mở Wisp | [62](phase3/62-trinh-duyet-wisp.md) |
 | 🧪 | Layout ribbon kiểu Word | Thanh tiêu đề + ribbon theo tab gom mọi nút, trang Tệp (thư viện, lịch sử, Cài đặt), dưới chỉ còn canvas + inspector nổi, viền resize quanh cửa sổ | [63](phase3/63-layout-ribbon.md) |
+| ⬜ | Ngôn ngữ vi / en | Nút chọn Tiếng Việt / English ở Cài đặt + ribbon Xem, đổi ngay; dịch theo đợt (khung → form node → Hướng dẫn); MCP giữ tiếng Việt | [64](phase3/64-ngon-ngu-vi-en.md) |
 
 ### Node hành động
 
@@ -273,6 +274,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 16a1r | [61. Dùng AI gọn hơn](phase3/61-dung-ai-gon.md) | Người dùng yêu cầu (2026-11-03, sau khi AI tự thử ~90 mẫu): M1 (trạng thái đầu phiên ngắn – rẻ, lợi ngay) trước, rồi M4, M2, M3, M5 |
 | 16a1s | [62. Wisp làm trình duyệt của node web](phase3/62-trinh-duyet-wisp.md) | Người dùng yêu cầu (2026-11-15, bước 02 của plan Wisp `../flash-app`): backend Wisp + Cài đặt chọn trình duyệt, rồi MCP / Hướng dẫn |
 | 16a1t | [63. Layout chính kiểu ribbon](phase3/63-layout-ribbon.md) | Người dùng yêu cầu (2026-11-16), đã duyệt `design/mockup-ribbon.html`: R1 viền resize trước (lỗi đang gặp), rồi khung ribbon → trang Tệp / Cài đặt → main chỉ canvas |
+| 16a1u | [64. Chọn ngôn ngữ vi / en](phase3/64-ngon-ngu-vi-en.md) | Người dùng yêu cầu (2026-11-16): L1 khung i18n tự viết + L2 nút chọn trước, rồi dịch theo đợt L3 → L5 |
 | 16a2 | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | Người dùng yêu cầu (2026-10-20): ngay sau 41 – chờ màn hình đứng yên thay Chờ cố định, lặp qua danh sách + tìm tất cả, tính toán / xử lý chữ; làm trên Mac được |
 | 16a3 | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | Người dùng yêu cầu (2026-10-20): sau 42, xen kẽ 40 O0–O3 (máy Windows) – trình duyệt Chromium thường không CDP, phần tử app không cần chuột, hệ điều hành, ảnh đánh số / cây giao diện cho AI trước 31c; mỗi việc một node |
 | 16b | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | Người dùng yêu cầu (2026-10-20): làm sau 31b, trước 31c – Windows chưa đọc được tiếng Việt (`Windows.Media.Ocr`); 31c (AI soạn bằng cách thử, ảnh mẫu) cần đọc chữ / tìm ảnh đáng tin |
