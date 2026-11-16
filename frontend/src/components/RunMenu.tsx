@@ -14,8 +14,8 @@ export type RunMenuItem = {
   onClick?: () => void;
 };
 
-export function RunButton({ running, disabled, title, onRun, items, compact }: {
-  running: boolean; disabled?: boolean; title?: string; onRun: (e: { shiftKey: boolean }) => void; items: RunMenuItem[]; compact?: boolean;
+export function RunButton({ running, disabled, title, onRun, items, compact, badge }: {
+  running: boolean; disabled?: boolean; title?: string; onRun: (e: { shiftKey: boolean }) => void; items: RunMenuItem[]; compact?: boolean; badge?: string; // badge: số lần lặp hiện cạnh chữ Chạy
 }) {
   const { open, setOpen, ref } = usePopover();
   const main = items.filter((it) => !it.minor);
@@ -26,7 +26,7 @@ export function RunButton({ running, disabled, title, onRun, items, compact }: {
       {/* style inline: btn-primary / btn-danger-soft tự đặt cả 4 viền – hai nửa dính nhau, ngăn bằng vạch sáng mờ */}
       <button onClick={onRun} disabled={disabled} title={title} style={{ borderRightWidth: 0 }}
         className={`${half} gap-[9px] rounded-l-control px-3.5 font-semibold ${running ? 'btn-danger-soft' : 'btn-primary'}`}>
-        {running ? <><Stop className="h-2.5 w-2.5" />Dừng</> : <><Play className="h-2.5 w-2.5" />Chạy</>}
+        {running ? <><Stop className="h-2.5 w-2.5" />Dừng</> : <><Play className="h-2.5 w-2.5" />Chạy{badge && <span className="rounded-full bg-white/25 px-1.5 font-mono text-[11px] font-semibold" title="Số lần lặp kịch bản">{badge}</span>}</>}
         <span className="font-mono text-[11px] font-normal opacity-80">F8</span>
       </button>
       <button onClick={() => setOpen(!open)} aria-label="Cách chạy khác" aria-expanded={open} aria-haspopup="menu"

@@ -22,6 +22,9 @@ const modeOf = (sc: Script): Mode => (sc.loops > 0 ? 'loops' : sc.maxMinutes > 0
 export const loopSummary = (sc: Script) =>
   ({ loops: `${sc.loops} vòng`, infinite: '∞ vòng', time: `${sc.maxMinutes} phút` })[modeOf(sc)];
 
+// Chữ ngắn trên nút Chạy: "×10" / "∞" / "5p"
+export const loopBadge = (sc: Script) => ({ loops: `×${sc.loops}`, infinite: "∞", time: `${sc.maxMinutes}p` })[modeOf(sc)];
+
 // Nhớ số vòng / số phút đã nhập để chuyển chế độ qua lại không mất.
 let lastLoops = 10;
 let lastMinutes = 5;

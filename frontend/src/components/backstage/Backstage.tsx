@@ -4,8 +4,7 @@
 import { useEffect } from 'react';
 import { exportPack, importPack, newScript, openScript, save } from '../../scriptFile';
 import { inWails } from '../../windowMode';
-import { closeBackstage, openBackstage, useShell } from '../../shellStore';
-import AppSettings from '../AppSettings';
+import { closeBackstage, openBackstage, openSettingsDialog, useShell } from '../../shellStore';
 import { RunsPage } from '../library/RunsDialog';
 import { SamplesPage } from '../samples/Samples';
 import BackstageNav, { NavEntry } from './BackstageNav';
@@ -44,9 +43,9 @@ export default function Backstage() {
       { id: 'import', label: 'Nhập gói .zip…', icon: 'zip', disabled: !inWails, onClick: run(importPack) },
     ],
     [{ id: 'runs', label: 'Lịch sử chạy', icon: 'clock', page: 'runs' }],
-    [{ id: 'settings', label: 'Cài đặt', icon: 'gear', hint: `${MOD},`, page: 'settings' }],
+    [{ id: 'settings', label: 'Cài đặt', icon: 'gear', hint: `${MOD},`, onClick: openSettingsDialog }],
   ];
-  const fill = page === 'samples' || page === 'runs' || page === 'settings'; // trang tự lấp đầy và tự cuộn
+  const fill = page === 'samples' || page === 'runs'; // trang tự lấp đầy và tự cuộn
   return (
     <div role="region" aria-label="Trang Tệp" className="absolute inset-0 z-30 flex bg-bg">
       <BackstageNav sections={sections} current={page} onPage={openBackstage} onBack={closeBackstage} />
@@ -55,7 +54,6 @@ export default function Backstage() {
         {page === 'samples' && <SamplesPage onDone={closeBackstage} />}
         {page === 'runs' && <RunsPage onDone={closeBackstage} />}
         {page === 'embed' && <EmbedPage onDone={closeBackstage} />}
-        {page === 'settings' && <AppSettings />}
       </div>
     </div>
   );

@@ -12,7 +12,7 @@ import { inWails, openOverlay } from '../../windowMode';
 import { setTheme, useTheme } from '../../theme';
 import { openGuide } from '../../guideNav';
 import { sendCanvas } from '../../canvasBus';
-import { openBackstage, setInspectorPinned, setMinimap, useShell } from '../../shellStore';
+import { openBackstage, openSettingsDialog, setInspectorPinned, setRunsDialog, setMinimap, useShell } from '../../shellStore';
 import { openSettings } from '../../settingsNav';
 import { GROUPS } from '../palette/groups';
 import { customGroup, useCustomNodes } from '../palette/customGroup';
@@ -47,7 +47,7 @@ export function useRibbonActions(): RibbonActions {
     runStep: () => void startRun(false, { step: true }),
     preview: () => void openOverlay('preview'),
     record: () => void startRecording(),
-    history: () => openBackstage('runs'),
+    history: () => setRunsDialog(true),
     bundle: () => {
       if (!latestRun) return setNotice('Chưa có lần chạy nào để xuất gói báo lỗi');
       exportRunBundle(latestRun).then((p) => p && setNotice(`Đã xuất gói lỗi ${p}`)).catch((e) => setNotice(errorText(e)));
@@ -64,7 +64,7 @@ export function useRibbonActions(): RibbonActions {
     layout: () => sendCanvas('layout'), palette: () => sendCanvas('palette'),
     region: () => void openOverlay('region'),
     pickPoint: () => void openOverlay('point'),
-    settings: () => openBackstage('settings'),
+    settings: () => openSettingsDialog(),
     mcp: () => openSettings('mcp'),
     guide: () => openGuide(),
   }), [latestRun]);

@@ -15,7 +15,7 @@ import { demoRunItems } from './runMenu';
 export default function DemoRibbon({ notify, running = false, onRun, loop = '3 vòng', insert = GROUPS, extra, acts = {} }: {
   notify: (msg: string) => void; running?: boolean; onRun?: () => void; loop?: string; insert?: PaletteGroup[]; extra?: ReactNode; acts?: Partial<RibbonActions>;
 }) {
-  // ?tab=insert | run | view | tools – mở sẵn tab; ?bs=home | samples | runs | embed | settings – mở sẵn trang Tệp (chụp màn hình để duyệt)
+  // ?tab=insert | run | view | tools – mở sẵn tab; ?bs=home | samples | runs | embed – mở sẵn trang Tệp (chụp màn hình để duyệt)
   const [tab, setTab] = useState<RibbonTabId>(() => (new URLSearchParams(location.search).get('tab') as RibbonTabId) || 'home');
   useEffect(() => {
     const bs = new URLSearchParams(location.search).get('bs');

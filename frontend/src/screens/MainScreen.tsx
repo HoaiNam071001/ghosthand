@@ -26,7 +26,9 @@ import ZoomBar from '../components/shell/ZoomBar';
 import FlowEditor from '../components/flow/FlowEditor';
 import StepForm from '../components/StepForm';
 import { requestZoom, sendCanvas, useCanvasZoom } from '../canvasBus';
-import { getShell, openBackstage } from '../shellStore';
+import { getShell, openSettingsDialog, setRunsDialog, useShell } from '../shellStore';
+import SettingsDialog from '../components/settings/SettingsDialog';
+import RunsDialog from '../components/library/RunsDialog';
 import { STOP_REASON, useEngine } from '../engineStore';
 import { useRunLog } from '../runStore';
 import { Point } from '../types';
@@ -46,6 +48,7 @@ export default function MainScreen() {
   const { running, lastError, stopReason, hotkeyError } = useEngine();
   const { summary, live } = useRunLog();
   const zoom = useCanvasZoom();
+  const { runsDialog } = useShell();
   const endMessage = !running && live && summary?.status === 'success' ? summary.message : undefined;
   const runForm = useRunForm();
   useEffect(() => {
@@ -82,7 +85,7 @@ export default function MainScreen() {
     <div className="flex h-screen flex-col overflow-hidden bg-bg text-ink">
       <TitleBar name={script.name} nameTitle={path ?? 'Chưa lưu thành file'} unsaved={dirty} modKey={modKey}
         unsavedTitle={`Có thay đổi chưa lưu xuống file (${modKey}S) – bản nháp vẫn tự lưu trên máy`}
-        canUndo={past.length > 0} canRedo={future.length > 0} onSave={() => save()} onUndo={undo} onRedo={redo} onSettings={() => openBackstage('settings')} />
+        canUndo={past.length > 0} canRedo={future.length > 0} onSave={() => save()} onUndo={undo} onRedo={redo} onSettings={openSettingsDialog} />
 
       <div className="relative flex min-h-0 flex-1 flex-col">
         <RibbonHost />
@@ -121,6 +124,8 @@ export default function MainScreen() {
           countdown={editorCountdown} error={runForm.error} onClose={closeRunForm} onRun={submitRun}
           onSavePreset={savePreset} onDeletePreset={deletePreset} />
       )}
+      <SettingsDialog />
+      {runsDialog && <RunsDialog onClose={() => setRunsDialog(false)} />}
       <EdgeResize />
     </div>
   );

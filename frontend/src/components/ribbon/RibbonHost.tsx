@@ -5,13 +5,13 @@ import InsertSearch from './InsertSearch';
 import { StopScript } from '../../../wailsjs/go/app/App';
 import { LoopButton } from '../AppChrome';
 import { RunButton } from '../RunMenu';
-import RunSettings, { loopSummary } from '../RunSettings';
+import RunSettings, { loopBadge, loopSummary } from '../RunSettings';
 import PageCheckButton from '../pagecheck/PageCheckButton';
 import { getEditor, useEditor } from '../../store';
 import { useEngine } from '../../engineStore';
 import { startRun, } from '../../runForm';
 import { inWails, openOverlay } from '../../windowMode';
-import { closeBackstage, openBackstage, setRibbonTab, toggleRibbon, useShell } from '../../shellStore';
+import { closeBackstage, openBackstage, openSettingsDialog, setRibbonTab, toggleRibbon, useShell } from '../../shellStore';
 import RibbonView from './RibbonView';
 import { buildRibbon, RIBBON_TABS } from './model';
 import { runItems } from './runItems';
@@ -33,7 +33,7 @@ export default function RibbonHost() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'F1' && (isMac ? e.metaKey : e.ctrlKey)) { e.preventDefault(); toggleRibbon(); }
-      else if (e.key === ',' && (isMac ? e.metaKey : e.ctrlKey) && !e.altKey) { e.preventDefault(); openBackstage('settings'); }
+      else if (e.key === ',' && (isMac ? e.metaKey : e.ctrlKey) && !e.altKey) { e.preventDefault(); openSettingsDialog(); }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -41,7 +41,7 @@ export default function RibbonHost() {
 
   const right = (
     <>
-      <RunButton compact running={running} disabled={!inWails} onRun={(e) => (running ? StopScript() : startRun(e.shiftKey))}
+      <RunButton compact badge={loopBadge(script)} running={running} disabled={!inWails} onRun={(e) => (running ? StopScript() : startRun(e.shiftKey))}
         title={!inWails ? 'Chỉ chạy được trong app' : !!script.inputs?.length ? 'Shift + bấm để sửa input trước khi chạy' : undefined}
         items={runItems(cur?.ref, off, !!script.inputs?.length, {
           from: cur && ((only) => startRun(false, { from: getEditor().selected, only })),

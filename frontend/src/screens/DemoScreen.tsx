@@ -5,7 +5,8 @@ import TitleBar from '../components/TitleBar';
 import { StatusBar } from '../components/AppChrome';
 import DemoRibbon from '../demo/DemoRibbon';
 import Backstage from '../components/backstage/Backstage';
-import { openBackstage } from '../shellStore';
+import { openSettingsDialog } from '../shellStore';
+import SettingsDialog from '../components/settings/SettingsDialog';
 import ScheduleDialog, { Schedule } from '../components/ScheduleDialog';
 import { GroupFrame, StaticCard } from '../components/StepCard';
 import RunDialog from '../components/inputs/RunDialog';
@@ -33,7 +34,7 @@ export default function DemoScreen() {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-bg text-ink">
-      <TitleBar name="Nhắn tin Facebook" unsaved onSettings={() => openBackstage('settings')} canUndo canRedo />
+      <TitleBar name="Nhắn tin Facebook" unsaved onSettings={openSettingsDialog} canUndo canRedo />
       <div className="relative flex min-h-0 flex-1 flex-col">
       <DemoRibbon notify={setNotice} loop="10 vòng" onRun={() => setRunOpen(true)}
         extra={<button onClick={() => setScheduleOpen(true)} className="flex h-7 items-center gap-1.5 rounded-control border border-line bg-surface px-2.5 text-[12.5px] hover:bg-hover" title="Hẹn giờ chạy (mẫu)">⏱ {schedule ? schedule.time : 'Hẹn giờ'}</button>} />
@@ -61,6 +62,7 @@ export default function DemoScreen() {
       <Backstage />
       </div>
 
+      <SettingsDialog />
       <StatusBar running={false} mouse="X 1204 Y 388">
         <span>Bản nháp tự lưu lúc 14:32</span>
         {notice && <span className="text-accent-text">{notice}</span>}

@@ -4,7 +4,7 @@ import { ReactNode, useState } from 'react';
 import { Loop } from './icons';
 import { usePopover } from './usePopover';
 
-// Status bar: chấm trạng thái, toạ độ chuột, các thông báo (children), gợi ý dừng khẩn cấp; end = thanh zoom ở góc phải.
+// Status bar: chấm trạng thái, toạ độ chuột, các thông báo (children), end = thanh zoom ở góc phải.
 export function StatusBar({ running, mouse, children, end }: { running: boolean; mouse: string; children?: ReactNode; end?: ReactNode }) {
   return (
     <footer className="@container flex flex-none items-center gap-x-4 overflow-hidden border-t border-line bg-chrome px-4 py-[3px] whitespace-nowrap text-xs text-muted">
@@ -13,7 +13,7 @@ export function StatusBar({ running, mouse, children, end }: { running: boolean;
       </span>
       <span className="font-mono">{mouse}</span>
       <span className="flex min-w-0 flex-1 items-center gap-x-4 overflow-hidden [&>*]:flex-none [&>*]:truncate">{children}</span>
-      <span className="ml-auto flex-none @max-2xl:hidden" title="Bấm F8 hoặc rê chuột vào một góc màn hình để dừng kịch bản đang chạy">Dừng khẩn cấp: F8 / góc màn hình</span>
+      <span className="ml-auto" />
       <span className="flex-none">{end}</span>
     </footer>
   );

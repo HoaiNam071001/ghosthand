@@ -9,7 +9,8 @@ import Backstage from '../components/backstage/Backstage';
 import ZoomBar from '../components/shell/ZoomBar';
 import EdgeResize from '../components/shell/EdgeResize';
 import { requestZoom, sendCanvas, useCanvasZoom } from '../canvasBus';
-import { openBackstage } from '../shellStore';
+import { openSettingsDialog } from '../shellStore';
+import SettingsDialog from '../components/settings/SettingsDialog';
 import Segmented from '../components/Segmented';
 import { PaletteGroup, PaletteView } from '../components/PaletteView';
 import { InfoKey, NODE_INFO } from '../flow/nodeInfo';
@@ -119,7 +120,7 @@ export default function DemoFlow() {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-bg text-ink">
-      <TitleBar name="Nhắn tin Facebook" unsaved onSettings={() => openBackstage('settings')} canUndo canRedo />
+      <TitleBar name="Nhắn tin Facebook" unsaved onSettings={openSettingsDialog} canUndo canRedo />
       <div className="relative flex min-h-0 flex-1 flex-col">
         <DemoRibbon notify={setNotice} loop="3 vòng" running={mode === 'running'} onRun={() => setMode(mode === 'running' ? 'edit' : 'running')}
           insert={paletteGroups(add)} acts={{ palette: () => { setDrop(null); setPaletteOpen(true); }, layout: () => relayout(nodes, edges) }}
@@ -158,6 +159,7 @@ export default function DemoFlow() {
         <Backstage />
       </div>
 
+      <SettingsDialog />
       <StatusBar running={mode === 'running'} mouse="X 1204 Y 388"
         end={<ZoomBar zoom={zoom} onZoom={requestZoom} onIn={() => sendCanvas('zoomIn')} onOut={() => sendCanvas('zoomOut')} onFit={() => sendCanvas('fit')} onReset={() => sendCanvas('zoom100')} />}>
         <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap text-accent-text">Màn mẫu #demo-flow</span>

@@ -4,7 +4,7 @@ import { useSyncExternalStore } from 'react';
 import type { SettingsTab } from './settingsNav';
 
 export type RibbonTabId = 'home' | 'insert' | 'run' | 'view' | 'tools';
-export type BackstagePageId = 'home' | 'samples' | 'runs' | 'embed' | 'settings';
+export type BackstagePageId = 'home' | 'samples' | 'runs' | 'embed';
 
 export type ShellState = {
   ribbonTab: RibbonTabId;
@@ -14,6 +14,8 @@ export type ShellState = {
   settingsFocus: string;
   inspectorPinned: boolean; // true: inspector dính cạnh phải (canvas co lại); false: nổi trên canvas
   minimap: boolean;
+  settingsOpen: boolean; // Cài đặt dạng hộp thoại
+  runsDialog: boolean; // hộp thoại Lịch sử chạy mở từ ribbon (trang Tệp có bản dạng trang)
 };
 
 const KEY = 'shell-prefs';
@@ -35,7 +37,7 @@ function load(): Saved {
   }
 }
 
-let state: ShellState = { ...load(), backstage: null, settingsTab: 'storage', settingsFocus: '' };
+let state: ShellState = { ...load(), backstage: null, settingsTab: 'storage', settingsFocus: '', settingsOpen: false, runsDialog: false };
 const subs = new Set<() => void>();
 
 function set(patch: Partial<ShellState>) {
@@ -55,7 +57,11 @@ export const setRibbonTab = (ribbonTab: RibbonTabId) => set({ ribbonTab, ribbonC
 export const toggleRibbon = () => set({ ribbonCollapsed: !state.ribbonCollapsed });
 export const openBackstage = (page: BackstagePageId = 'home') => set({ backstage: page });
 export const closeBackstage = () => set({ backstage: null });
-export const showSettings = (settingsTab: SettingsTab, settingsFocus = '') => set({ backstage: 'settings', settingsTab, settingsFocus });
+export const showSettings = (settingsTab: SettingsTab, settingsFocus = '') => set({ backstage: null, settingsOpen: true, settingsTab, settingsFocus });
+export const closeSettings = () => set({ settingsOpen: false });
+// Mở Cài đặt ở tab đang xem lần trước
+export const openSettingsDialog = () => set({ backstage: null, settingsOpen: true });
 export const setSettingsTab = (settingsTab: SettingsTab) => set({ settingsTab, settingsFocus: '' });
 export const setInspectorPinned = (inspectorPinned: boolean) => set({ inspectorPinned });
+export const setRunsDialog = (runsDialog: boolean) => set({ runsDialog });
 export const setMinimap = (minimap: boolean) => set({ minimap });
