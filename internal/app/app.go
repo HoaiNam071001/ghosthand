@@ -4,6 +4,7 @@ import (
 	"context"
 	"runtime"
 	"sync"
+	"time"
 
 	"ghosthand/internal/api"
 	"ghosthand/internal/engine"
@@ -47,6 +48,7 @@ type App struct {
 	batches   batchState                // lượt chạy nhiều kịch bản (batchrun.go)
 	// app do AI mở nền (`--background`, bước 31b): khởi động ẩn, AI chạy thì chỉ hiện thanh mini
 	background bool
+	quitTimer  *time.Timer // hẹn giờ tự đóng sau lượt AI (runstage.go, planAutoQuit)
 	running    bool // đang có lần chạy (theo session.Activity) – thanh mini nổi (58 D6); đọc / ghi dưới mu
 
 	web        *web.Chrome        // Chrome của app cho giao diện (webapi.go) – tạo lười

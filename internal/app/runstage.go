@@ -11,6 +11,7 @@ import (
 	"ghosthand/internal/runborder"
 	"ghosthand/internal/session"
 	"ghosthand/internal/store"
+	"ghosthand/internal/taskbadge"
 	"ghosthand/internal/winfloat"
 )
 
@@ -88,6 +89,22 @@ func (a *App) onActivity(act session.Activity) {
 		winfloat.Minibar(running)
 	}
 	a.showBorder(act)
+	a.showBadge(act, running)
+	a.planAutoQuit(act, running)
+}
+
+// showBadge – dấu trên icon thanh tác vụ: đang chạy → vòng xoay; xong / lỗi → ✓ / ! trong 3 giây; dừng tay → mất ngay.
+func (a *App) showBadge(act session.Activity, running bool) {
+	switch {
+	case running:
+		taskbadge.Set(taskbadge.Running)
+	case act.Doing == session.DoingDone:
+		taskbadge.Set(taskbadge.Done)
+	case act.Doing == session.DoingFailed:
+		taskbadge.Set(taskbadge.Failed)
+	default:
+		taskbadge.Set(taskbadge.None)
+	}
 }
 
 // showBorder – viền theo việc đang làm: hiện trên màn đang có chuột (chỗ engine vừa / sắp thao tác), xong / lỗi /
@@ -102,3 +119,21 @@ func (a *App) showBorder(act session.Activity) {
 	x, y := device.Location()
 	runborder.Show(x, y, px, look)
 }
+
+// planAutoQuit – app do AI mở nền (--background) xong lượt AI thì tự đóng sau khi dấu xong hết (taskbadge.DoneFor);
+// lượt mới bắt đầu trong lúc chờ thì huỷ.
+func (a *App) planAutoQuit(act session.Activity, running bool) {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	if a.quitTimer != nil {
+		a.quitTimer.Stop()
+		a.quitTimer = nil
+	}
+	if running || !a.background || act.Source != session.SourceAI {
+		return
+	}
+	a.quitTimer = time.AfterFunc(taskbadge.DoneFor+200*time.Millisecond, a.autoQuit)
+}
+
+// autoQuit – đóng app nền sau lượt AI, không kiểm gì thêm (người dùng đã chốt: AI mở thì AI xong là đóng).
+func (a *App) autoQuit() { a.quitSoon() }

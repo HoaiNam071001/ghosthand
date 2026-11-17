@@ -365,3 +365,4 @@
 - **2026-11-16** – 64 L3 (một phần): dịch ribbon, thanh tiêu đề, menu trang Tệp / Cài đặt, thanh zoom, nhóm node, nhãn cổng; i18n/lang.ts tách khỏi Wails, testSetup ép tiếng Việt. tsc + vitest 608 + build OK; chưa thử tay.
 - 2026-11-16 · 64 L3: dịch Cài đặt › MCP server (mcps.*)
 - 2026-11-16 · 64 L3: dịch Mẫu thử, Lịch sử chạy (cây), inspector khung
+- 2026-11-17 · dấu trạng thái chạy / xong 3s trên icon thanh tác vụ Windows (taskbadge) + app AI mở nền tự đóng sau lượt AI
