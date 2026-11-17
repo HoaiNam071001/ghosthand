@@ -45,13 +45,17 @@ type release struct {
 	} `json:"assets"`
 }
 
+// apiBase – test đổi sang máy chủ giả.
+var apiBase = "https://api.github.com"
+
 const maxNotes = 600
 
 // Check hỏi bản phát hành mới nhất. base rỗng = api.github.com (test truyền máy chủ giả). Repo chưa có bản phát hành
 // hoặc là repo riêng tư → lỗi nói rõ, không coi là "đã mới nhất".
 func Check(ctx context.Context, base string) (Info, error) {
+	useWebFallback := base == ""
 	if base == "" {
-		base = "https://api.github.com"
+		base = apiBase
 	}
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
@@ -69,7 +73,7 @@ func Check(ctx context.Context, base string) (Info, error) {
 	if resp.StatusCode == http.StatusNotFound {
 		return Info{}, fmt.Errorf("chưa có bản phát hành nào trên GitHub (hoặc repo ở chế độ riêng tư)")
 	}
-	if base == "" && (resp.StatusCode == http.StatusForbidden || resp.StatusCode == http.StatusTooManyRequests) {
+	if useWebFallback && (resp.StatusCode == http.StatusForbidden || resp.StatusCode == http.StatusTooManyRequests) {
 		return checkViaWeb(ctx) // API hết hạn mức theo IP → đi đường trang web
 	}
 	if resp.StatusCode != http.StatusOK {

@@ -29,3 +29,24 @@ func TestCheckViaWeb(t *testing.T) {
 		t.Fatalf("sai: %+v", info)
 	}
 }
+
+// Check với base rỗng + API trả 403 phải rơi sang đường web (lỗi thật gặp ở mạng công ty).
+func TestCheckFallsBackOn403(t *testing.T) {
+	api := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(http.StatusForbidden) }))
+	defer api.Close()
+	web := http.NewServeMux()
+	web.HandleFunc("/"+Repo+"/releases/latest", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/"+Repo+"/releases/tag/v9.0.1", http.StatusFound)
+	})
+	web.HandleFunc("/"+Repo+"/releases/expanded_assets/v9.0.1", func(w http.ResponseWriter, r *http.Request) {})
+	ws := httptest.NewServer(web)
+	defer ws.Close()
+	oa, ow := apiBase, webBase
+	apiBase, webBase = api.URL, ws.URL
+	defer func() { apiBase, webBase = oa, ow }()
+
+	info, err := Check(context.Background(), "")
+	if err != nil || info.Latest != "9.0.1" {
+		t.Fatalf("info=%+v err=%v", info, err)
+	}
+}
