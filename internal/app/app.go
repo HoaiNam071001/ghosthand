@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"os"
 	"runtime"
 	"sync"
 	"time"
@@ -98,6 +99,8 @@ func (a *App) startup(ctx context.Context) {
 
 // shutdown is called when the app is closing.
 func (a *App) shutdown(ctx context.Context) {
+	// Dọn nào treo (hook phím, server API, MCP con, WebView2) cũng không để tiến trình ghosthand.exe nằm lại trong Task Manager.
+	time.AfterFunc(3*time.Second, func() { os.Exit(0) })
 	a.StopScript()
 	a.CancelPick()
 	a.stopHotkeys()
