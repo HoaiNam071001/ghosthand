@@ -19,6 +19,8 @@ import { GROUPS } from '../palette/groups';
 import { customGroup, useCustomNodes } from '../palette/customGroup';
 import { usePlatform } from '../palette/usePlatform';
 import { onlyLabel, unsupportedHere } from '../../flow/platform';
+import { summarizeRegion } from '../../overlay/regionSummary';
+import { useDisplayList } from './useDisplayList';
 import type { RibbonActions, RibbonCtx } from './model';
 import type { ReactNode } from 'react';
 
@@ -79,6 +81,7 @@ export function useRibbonCtx(slots: { pageCheck?: ReactNode; loop?: ReactNode },
   const theme = useTheme();
   const act = useRibbonActions();
   const t = useT();
+  const displays = useDisplayList();
   const { list, reload } = useCustomNodes();
   const { goos, only } = usePlatform();
   const cur = script.steps.find((s) => s.id === selected);
@@ -92,6 +95,7 @@ export function useRibbonCtx(slots: { pageCheck?: ReactNode; loop?: ReactNode },
     selectedRef: cur?.ref, selectedOn: !!cur?.enabled, picked: picked.length,
     canUndo: past.length > 0, canRedo: future.length > 0,
     card: prefs.card, detail: prefs.detail, pinned: shell.inspectorPinned, minimap: shell.minimap, theme,
+    region: summarizeRegion(script.region, displays),
     insert,
     platformWarn: (type) => (unsupportedHere(only, type, goos) ? t('rb.warnPlatform', { label: onlyLabel(only, type) }) : onlyLabel(only, type)),
     slots, insertQuery, act,

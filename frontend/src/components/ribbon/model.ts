@@ -13,6 +13,7 @@ import type { Theme } from '../../theme';
 import type { RibbonTabId } from '../../shellStore';
 import type { MsgKey } from '../../i18n/vi';
 import type { Translate } from '../../i18n/core';
+import type { RegionSummary } from '../../overlay/regionSummary';
 
 export type RibbonItem = {
   id: string;
@@ -27,6 +28,7 @@ export type RibbonItem = {
   active?: boolean; // đang bật (kiểu thẻ đang chọn, inspector ghim…)
   danger?: boolean;
   onClick?: () => void;
+  region?: RegionSummary; // nút Vùng màn hình: vẽ khung màn thu nhỏ + chữ "Màn 2 · 800×600" thay cho icon
   custom?: ReactNode; // nút có popup riêng (Nhúng kịch bản, Thử trang…) – RibbonHost truyền sẵn
 };
 export type RibbonGroup = { id: string; label: string; items: RibbonItem[] };
@@ -65,6 +67,7 @@ export type RibbonCtx = {
   pinned: boolean;
   minimap: boolean;
   theme: Theme;
+  region?: RegionSummary; // vùng màn hình của kịch bản (undefined = chưa biết danh sách màn)
   insert: PaletteGroup[]; // nhóm node (palette/groups.ts + Của tôi) – không chép danh sách ở đây
   platformWarn?: (type: string | undefined) => string; // "Chỉ macOS – không chạy được trên máy này" hoặc ''
   slots: { pageCheck?: ReactNode; loop?: ReactNode };
@@ -105,7 +108,7 @@ function home(c: RibbonCtx): RibbonGroup[] {
       { id: 'start', label: t('rb.start'), icon: 'flag', disabled: !sel, title: t('rb.t.start'), onClick: a.setStart },
     ] },
     { id: 'screen', label: t('rb.g.screen'), items: [
-      big({ id: 'region', label: t('rb.region'), icon: 'region', title: t('rb.t.region'), onClick: a.region }),
+      big({ id: 'region', label: t('rb.region'), icon: 'region', title: t('rb.t.region'), region: c.region, onClick: a.region }),
     ] },
   ];
 }

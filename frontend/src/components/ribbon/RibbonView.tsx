@@ -4,6 +4,7 @@ import { ReactNode, useEffect, useRef } from 'react';
 import { MsgKey, useT } from '../../i18n';
 import { StepIcon } from '../icons';
 import { RibbonIcon } from './ribbonIcons';
+import { RegionBadge, regionCaption } from './RegionBadge';
 import { columnsOf, RibbonGroup, RibbonItem } from './model';
 import type { RibbonTabId } from '../../shellStore';
 
@@ -95,18 +96,22 @@ function Group({ group, wrap }: { group: RibbonGroup; wrap?: boolean }) {
 const tone = (it: RibbonItem) => (it.danger ? 'text-danger-text' : it.cat ? 'text-cat' : '');
 
 function Cell({ item: it }: { item: RibbonItem }) {
+  const tt = useT();
   if (it.custom) return <>{it.custom}</>;
   const big = it.size === 'big';
   const icon = it.step ? <StepIcon type={it.step} className={big ? 'h-6 w-6' : 'h-3.5 w-3.5'} />
     : it.icon ? <RibbonIcon name={it.icon} className={big ? 'h-6 w-6' : 'h-3.5 w-3.5'} /> : null;
   const on = it.active ? 'bg-accent-soft text-accent-text' : 'hover:bg-hover';
+  const caption = it.region ? regionCaption(it.region, tt) : '';
   return (
-    <button onClick={it.onClick} disabled={it.disabled} title={it.title ?? (it.hotkey ? `${it.label} (${it.hotkey})` : it.label)} aria-pressed={it.active}
+    <button onClick={it.onClick} disabled={it.disabled} aria-pressed={it.active}
+      title={`${it.title ?? (it.hotkey ? `${it.label} (${it.hotkey})` : it.label)}${caption ? `\n${tt('rb.region.now')}: ${caption}` : ''}`}
       className={`${it.cat ? `cat-${it.cat}` : ''} ${on} rounded-[7px] disabled:cursor-default disabled:opacity-45 disabled:hover:bg-transparent ${big
-        ? 'flex h-[66px] min-w-[52px] max-w-[92px] flex-none flex-col items-center gap-1.5 px-2 pt-[7px] text-center text-[11.5px] leading-[1.15]'
+        ? `flex h-[66px] min-w-[52px] ${it.region ? 'max-w-[116px]' : 'max-w-[92px]'} flex-none flex-col items-center gap-1.5 px-2 pt-[7px] text-center text-[11.5px] leading-[1.15]`
         : 'flex h-[21px] max-w-[160px] items-center gap-1.5 pr-2 pl-1.5 text-xs whitespace-nowrap'}`}>
-      <span className={`flex flex-none ${tone(it)}`}>{icon}</span>
-      <span className={big ? 'line-clamp-2' : 'truncate'}>{it.label}</span>
+      <span className={`flex flex-none ${tone(it)}`}>{it.region ? <RegionBadge s={it.region} /> : icon}</span>
+      <span className={big && !it.region ? 'line-clamp-2' : 'max-w-full truncate'}>{it.label}</span>
+      {caption && <span className="-mt-1 max-w-full truncate text-[10.5px] text-muted">{caption}</span>}
     </button>
   );
 }

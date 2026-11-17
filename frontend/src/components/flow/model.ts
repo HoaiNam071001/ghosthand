@@ -98,5 +98,6 @@ export const nodeHeight = (ports: string[], io = 0) => 2 + NODE_HEAD + NODE_DETA
 export const inputY = 1 + NODE_HEAD / 2;
 export function portY(ports: string[], i: number, io = 0): number {
   if (portRows(ports)) return 1 + NODE_HEAD + NODE_DETAIL + io + i * PORT_ROW + PORT_ROW / 2;
-  return ports[i] === PORT_FAIL ? nodeHeight(ports, io) - 11 : inputY;
+  // Thất bại ở dòng chi tiết (đáy thẻ Gọn) kể cả thẻ Đầy đủ – không đẩy xuống đáy, khỏi dính hàng output cuối
+  return ports[i] === PORT_FAIL ? nodeHeight(ports) - 11 : inputY;
 }

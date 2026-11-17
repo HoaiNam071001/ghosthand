@@ -14,7 +14,7 @@ export function DataBlock({ pins }: { pins: DataPins }) {
   return (
     <>
       {pins.ins.length > 0 && <Section title={t('nd.in')} align="left">{pins.ins.map((p) => <PinRow key={p.id} pin={p} side="in" />)}</Section>}
-      {pins.outs.length > 0 && <Section title="RA" align="right">{pins.outs.map((p) => <PinRow key={p.id} pin={p} side="out" />)}</Section>}
+      {pins.outs.length > 0 && <Section title={t('nd.out')} align="right">{pins.outs.map((p) => <PinRow key={p.id} pin={p} side="out" />)}</Section>}
     </>
   );
 }

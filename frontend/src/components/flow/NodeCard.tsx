@@ -49,7 +49,6 @@ export default function NodeCard({ id, data, selected }: NodeProps<CardNode>) {
       </div>
       <div style={{ height: NODE_DETAIL }} className={`truncate px-2.5 pt-[5px] font-mono text-[11px] text-muted ${off ? 'opacity-50' : ''}`}>{v.detail}</div>
       {io > 0 && v.data && <div style={{ height: io }}><DataBlock pins={v.data} /></div>}
-
       {rows && (
         <div style={{ paddingBottom: PORTS_PAD }}>
           {v.ports.map((p) => (
