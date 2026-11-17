@@ -36,6 +36,7 @@ func Install(file string) error {
 		script = WinPortableScript(os.Getpid(), newExe, exe)
 	}
 	cmd := exec.Command("powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-WindowStyle", "Hidden", "-Command", script)
-	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true, CreationFlags: 0x00000008 | 0x00000200} // DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP
+	// CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP – DETACHED_PROCESS làm powershell nền không chạy script (đã thử: exe không được thay)
+	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true, CreationFlags: 0x08000000 | 0x00000200}
 	return cmd.Start()
 }
