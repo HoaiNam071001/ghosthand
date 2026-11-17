@@ -132,7 +132,7 @@ func TestScriptsQuoteSafely(t *testing.T) {
 		t.Errorf("script win cài: %s", ps)
 	}
 	pp := WinPortableScript(7, `C:\P\g.exe.new`, `C:\P\g.exe`)
-	if !strings.Contains(pp, "Move-Item -Force") || !strings.Contains(pp, `Start-Process -FilePath 'C:\P\g.exe'`) {
+	if !strings.Contains(pp, "Move-Item -Force") || !strings.Contains(pp, `$exe = 'C:\P\g.exe'`) || !strings.Contains(pp, `$new = 'C:\P\g.exe.new'`) || !strings.Contains(pp, "Wait-Process -Id 7") {
 		t.Errorf("script win portable: %s", pp)
 	}
 }

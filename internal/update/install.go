@@ -209,8 +209,25 @@ Start-Process -FilePath %s
 
 // WinPortableScript (PowerShell) – chờ app thoát, đè exe cũ bằng exe mới (thử lại vì Windows nhả khoá file chậm), mở lại.
 func WinPortableScript(pid int, newExe, exe string) string {
-	return fmt.Sprintf(`Wait-Process -Id %d -ErrorAction SilentlyContinue
-for ($i = 0; $i -lt 50; $i++) { try { Move-Item -Force -LiteralPath %s -Destination %s -ErrorAction Stop; break } catch { Start-Sleep -Milliseconds 300 } }
-Start-Process -FilePath %s
-`, pid, psQuote(newExe), psQuote(exe), psQuote(exe))
+	// Đổi tên exe cũ trước (Windows cho đổi tên file đang bị khoá, không cho ghi đè) rồi mới đặt exe mới; lỗi ghi vào
+	// ghosthand-update.log để biết vì sao, và luôn mở lại một bản (mới nếu xong, không thì bản cũ).
+	return fmt.Sprintf(`$log = Join-Path $env:TEMP 'ghosthand-update.log'
+$exe = %[2]s; $new = %[3]s; $old = $exe + '.old'
+Wait-Process -Id %[1]d -ErrorAction SilentlyContinue
+$done = $false
+for ($i = 0; $i -lt 100 -and -not $done; $i++) {
+  try {
+    Remove-Item -Force -LiteralPath $old -ErrorAction SilentlyContinue
+    Move-Item -Force -LiteralPath $exe -Destination $old -ErrorAction Stop
+    Move-Item -Force -LiteralPath $new -Destination $exe -ErrorAction Stop
+    $done = $true
+  } catch {
+    Add-Content -LiteralPath $log -Value ((Get-Date -Format s) + ' ' + $_.Exception.Message)
+    if (-not (Test-Path -LiteralPath $exe) -and (Test-Path -LiteralPath $old)) { Move-Item -Force -LiteralPath $old -Destination $exe -ErrorAction SilentlyContinue }
+    Start-Sleep -Milliseconds 300
+  }
+}
+if ($done) { Remove-Item -Force -LiteralPath $old -ErrorAction SilentlyContinue }
+Start-Process -FilePath $exe
+`, pid, psQuote(exe), psQuote(newExe))
 }
