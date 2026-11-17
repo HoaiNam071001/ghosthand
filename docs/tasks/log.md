@@ -366,3 +366,4 @@
 - 2026-11-16 · 64 L3: dịch Cài đặt › MCP server (mcps.*)
 - 2026-11-16 · 64 L3: dịch Mẫu thử, Lịch sử chạy (cây), inspector khung
 - 2026-11-17 · dấu trạng thái chạy / xong 3s trên icon thanh tác vụ Windows (taskbadge) + app AI mở nền tự đóng sau lượt AI
+- 2026-11-17 · ghi plan bước 65: chọn element trên Wisp → thêm step (phía Wisp xong ở flash-app bước 06)

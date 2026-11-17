@@ -125,7 +125,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 > Bảng tự sinh – sau khi tick chạy `python3 scripts/tasks-index.py`. Bấm tên bước để mở file chi tiết.
 
 <!-- index:start -->
-**71 / 74 bước xong code** · 🧪 **[346 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
+**71 / 75 bước xong code** · 🧪 **[346 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
 
 ### Phase 3 – Design v2 & tự động hoá (theo thứ tự làm)
 
@@ -176,6 +176,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 chờ kiểm tra tay | [62. Wisp làm trình duyệt của node web](phase3/62-trinh-duyet-wisp.md) | 6 / 7 | [8 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [63. Layout chính kiểu ribbon](phase3/63-layout-ribbon.md) | 8 / 8 | [10 việc](checks.md) |
 | 🟡 đang làm | [64. Chọn ngôn ngữ giao diện](phase3/64-ngon-ngu-vi-en.md) | 4 / 5 |  |
+| ⬜ chưa làm | [65. Chọn element trên Wisp → thêm step vào kịch bản](phase3/65-chon-element-tu-wisp.md) | 0 / 6 |  |
 | 🧪 chờ kiểm tra tay | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | 12 / 12 | [10 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | 43 / 43 | [22 việc](checks.md) |
 | ✅ xong | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | 12 / 12 |  |
@@ -276,6 +277,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 16a1s | [62. Wisp làm trình duyệt của node web](phase3/62-trinh-duyet-wisp.md) | Người dùng yêu cầu (2026-11-15, bước 02 của plan Wisp `../flash-app`): backend Wisp + Cài đặt chọn trình duyệt, rồi MCP / Hướng dẫn |
 | 16a1t | [63. Layout chính kiểu ribbon](phase3/63-layout-ribbon.md) | Người dùng yêu cầu (2026-11-16), đã duyệt `design/mockup-ribbon.html`: R1 viền resize trước (lỗi đang gặp), rồi khung ribbon → trang Tệp / Cài đặt → main chỉ canvas |
 | 16a1u | [64. Chọn ngôn ngữ vi / en](phase3/64-ngon-ngu-vi-en.md) | Người dùng yêu cầu (2026-11-16): L1 khung i18n tự viết + L2 nút chọn trước, rồi dịch theo đợt L3 → L5 |
+| 16a1v | [65. Chọn element trên Wisp → thêm step](phase3/65-chon-element-tu-wisp.md) | Người dùng yêu cầu (2026-11-17, bước 06 của plan Wisp `../flash-app`; phía Wisp xong): P1–P2 (nhận sự kiện `pick`, đổi thành step) trước, rồi P3–P4 (UI) |
 | 16a2 | [42. Dữ liệu & luồng](phase3/42-du-lieu-luong.md) | Người dùng yêu cầu (2026-10-20): ngay sau 41 – chờ màn hình đứng yên thay Chờ cố định, lặp qua danh sách + tìm tất cả, tính toán / xử lý chữ; làm trên Mac được |
 | 16a3 | [43. Node chuyên sâu](phase3/43-node-chuyen-sau.md) | Người dùng yêu cầu (2026-10-20): sau 42, xen kẽ 40 O0–O3 (máy Windows) – trình duyệt Chromium thường không CDP, phần tử app không cần chuột, hệ điều hành, ảnh đánh số / cây giao diện cho AI trước 31c; mỗi việc một node |
 | 16b | [40. Nhận dạng chữ / ảnh tốt hơn](phase3/40-nhan-dang.md) | Người dùng yêu cầu (2026-10-20): làm sau 31b, trước 31c – Windows chưa đọc được tiếng Việt (`Windows.Media.Ocr`); 31c (AI soạn bằng cách thử, ảnh mẫu) cần đọc chữ / tìm ảnh đáng tin |

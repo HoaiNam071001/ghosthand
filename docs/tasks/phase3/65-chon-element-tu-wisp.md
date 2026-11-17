@@ -1,0 +1,18 @@
+# 65. Chọn element trên Wisp → thêm step
+
+- [ ] **65. Chọn element trên Wisp → thêm step vào kịch bản** *(người dùng yêu cầu 2026-11-17 – bước 06 của plan Wisp `../flash-app/docs/plan/06-chon-element.md`; phía Wisp đã xong, còn phía Ghosthand)* – người dùng rê chuột trên trang ở Wisp, bấm vào phần tử, chọn hành động (Click / Gõ chữ / Chờ thấy / Đọc giá trị) → Ghosthand thêm đúng node web vào kịch bản đang mở, selector đã kiểm (khớp đúng 1 phần tử). Thay cho việc tự gõ selector hay nhờ AI dò.
+  - Cổng Wisp (api 1, đã có ở `flash-app`):
+    - Sự kiện `pick` – phải có trong `subscribe {events:[…,"pick"]}` thì mới nhận. Dữ liệu: `{tab, url, action, selector, selectors[], count, role, name, text, value, input?}`. `action` ∈ `click | type | waitFor | read` (`copy` do Wisp tự chép vào clipboard, không gửi). `selector` = cái người dùng chọn / sửa (cú pháp Ghosthand `text=` / `aria=` / `role=…[name="…"]` / `css=`), `selectors` = các ứng viên bền; `count` = số phần tử khớp lúc bấm (> 1 thì selector chưa chắc chắn); `input` chỉ có khi `action = type`.
+    - Lệnh `pick {on?: boolean, tab?}` – bật / tắt chế độ chọn trên tab (bỏ `on` = đảo). Lệnh `pickDone {message}` – Wisp hiện toast (dùng để báo "Đã thêm n5").
+  - Cần chốt khi làm (hỏi người dùng, có khuyến nghị):
+    - Step thêm vào đâu: cuối kịch bản đang mở và nối sau node đang chọn (khuyến nghị), hay vào nháp `draft` khi chưa mở kịch bản nào.
+    - Ghosthand chưa nối Wisp thì nút "Chọn element" ở Ghosthand làm gì (khuyến nghị: gọi `pick {on:true}` qua cổng, báo "Đang chọn trên Wisp – Esc để thoát").
+  - [ ] P1. `internal/wisp`: `subscribe` thêm `pick`; `onEvent` giải `pickEvent` (struct như trên) và đẩy ra callback `OnPick` (không giữ trong `dialogs` / `navs`); lệnh `Pick(on)` + `PickDone(msg)`; test với `fakeWisp` (`conn_test.go`) đẩy sự kiện `pick`.
+  - [ ] P2. Phần tính thuần `internal/wisp/pickstep.go` (có test): sự kiện → `model.Step` – `click` → `webClick`, `type` → `webType` (`text` = `input`), `waitFor` → `webWait` (chờ thấy), `read` → `webRead` (đặt biến output); `findBy`/selector theo `selector`; `count != 1` → vẫn thêm nhưng đánh dấu cảnh báo cho UI. Chữ người dùng gõ có `{{` thì giữ nguyên (là biến).
+  - [ ] P3. `internal/app`: nhận `OnPick` → phát event Wails `wisp:pick` {step, warn}; method bind `StartWispPick(on bool)`. Gọi `PickDone("Đã thêm nX")` sau khi frontend xác nhận đã thêm (qua method `AckWispPick(ref string)`), để toast trên Wisp nói đúng số node.
+  - [ ] P4. Frontend (`store/` ghép logic thuần + state; component chỉ hiển thị): nghe `wisp:pick` → thêm node qua `flow/edit.ts` + `updateScript` (có hoàn tác), nối sau node đang chọn, chọn node mới; cảnh báo `count != 1` bằng toast / badge; nút "Chọn element" (ribbon tab *Chèn* cạnh Ghi macro) gọi `StartWispPick`, chỉ bật khi Wisp sẵn sàng (`WispStatus`). Chữ qua `t('…')` (vi + en).
+  - [ ] P5. MCP: tool mới không cần; ghi ngắn vào `get_step_types topic=web` rằng người dùng có thể chọn element trên Wisp (giữ `budget_test.go`). Hướng dẫn: chương web (`internal/guide/`, cả bản `.en.json`).
+  - [ ] P6. *(Sau)* chế độ **Ghi lại** bên Wisp (mỗi click / gõ của người dùng thành một step) – đợi Wisp làm; Ghosthand chỉ cần nhận thêm `action` mới.
+  - Rủi ro: Wisp ≥ bản có `pick` (api vẫn 1) – Wisp cũ không có lệnh `pick` thì trả `bad_args` → báo "cập nhật Wisp"; sự kiện `pick` tới khi Ghosthand đang chạy kịch bản thì vẫn thêm vào kịch bản đang mở (không chen vào lượt chạy) – cần chốt nếu kịch bản đang chạy.
+  - Kiểm tra tay: [checks.md](../checks.md) mục 65 (thêm khi xong P4).
+  - Xong khi: trên Wisp chọn ô tìm kiếm Google → Ghosthand thêm step `webType` có selector đúng 1 phần tử, chạy kịch bản vẫn gõ được; Wisp hiện "Đã thêm nX".
