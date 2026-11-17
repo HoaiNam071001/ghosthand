@@ -69,6 +69,9 @@ func Check(ctx context.Context, base string) (Info, error) {
 	if resp.StatusCode == http.StatusNotFound {
 		return Info{}, fmt.Errorf("chưa có bản phát hành nào trên GitHub (hoặc repo ở chế độ riêng tư)")
 	}
+	if base == "" && (resp.StatusCode == http.StatusForbidden || resp.StatusCode == http.StatusTooManyRequests) {
+		return checkViaWeb(ctx) // API hết hạn mức theo IP → đi đường trang web
+	}
 	if resp.StatusCode != http.StatusOK {
 		return Info{}, fmt.Errorf("GitHub trả mã %d", resp.StatusCode)
 	}
