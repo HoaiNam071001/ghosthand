@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { tr, useT } from '../../i18n';
 import { StopScript } from '../../../wailsjs/go/app/App';
 import {
-  copySelected, duplicateStep, getEditor, groupPicked, insertAfterSelected, pasteClip, redo, removeSteps, selectNodes, setNotice, setStart, startRecording, toggleStep, undo, useEditor,
+  copySelected, duplicateStep, getEditor, groupPicked, insertAfterSelected, pasteClip, redo, removeSteps, selectNodes, setNotice, setStart, startRecording, startWispPick, toggleStep, undo, useEditor, useWispReady,
 } from '../../store';
 import { useEngine, errorText } from '../../engineStore';
 import { setFlowPrefs, useFlowPrefs } from '../../flowPrefs';
@@ -50,6 +50,7 @@ export function useRibbonActions(): RibbonActions {
     runStep: () => void startRun(false, { step: true }),
     preview: () => void openOverlay('preview'),
     record: () => void startRecording(),
+    pickElement: () => void startWispPick(),
     history: () => setRunsDialog(true),
     bundle: () => {
       if (!latestRun) return setNotice(tr('rib.noRun'));
@@ -82,6 +83,7 @@ export function useRibbonCtx(slots: { pageCheck?: ReactNode; loop?: ReactNode },
   const act = useRibbonActions();
   const t = useT();
   const displays = useDisplayList();
+  const wisp = useWispReady();
   const { list, reload } = useCustomNodes();
   const { goos, only } = usePlatform();
   const cur = script.steps.find((s) => s.id === selected);
@@ -91,7 +93,7 @@ export function useRibbonCtx(slots: { pageCheck?: ReactNode; loop?: ReactNode },
     ...g, items: g.items.map((it) => (it.run ? { ...it, run: () => { insertAfterSelected(); return it.run?.(); } } : it)),
   }));
   return {
-    t, running, offline: !inWails, hasInputs: !!script.inputs?.length, hasSteps: script.steps.length > 0,
+    t, running, offline: !inWails, hasInputs: !!script.inputs?.length, hasSteps: script.steps.length > 0, wisp,
     selectedRef: cur?.ref, selectedOn: !!cur?.enabled, picked: picked.length,
     canUndo: past.length > 0, canRedo: future.length > 0,
     card: prefs.card, detail: prefs.detail, pinned: shell.inspectorPinned, minimap: shell.minimap, theme,

@@ -45,6 +45,7 @@ export const RIBBON_ICON = {
   check: 'M5 12l4 4 10-10',
   search: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4',
   up: 'M6 15l6-6 6 6',
+  pick: 'M4 4l7 17 2.5-7.5L21 11zM14 14l6 6',
   pack: 'M12 3l8 4v10l-8 4-8-4V7zM4 7l8 4 8-4M12 11v10',
 } as const;
 export type RibbonIconName = keyof typeof RIBBON_ICON;

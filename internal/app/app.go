@@ -55,6 +55,7 @@ type App struct {
 	web        *web.Chrome        // Chrome của app cho giao diện (webapi.go) – tạo lười
 	wispB      *wisp.Browser      // Wisp cho giao diện / MCP khi Cài đặt chọn Wisp (wispapi.go) – tạo lười
 	pickCancel context.CancelFunc // huỷ lần Chọn phần tử đang chờ
+	wispPickB  *wisp.Browser      // kết nối Wisp riêng cho Chọn element (wisppick.go) – không phụ thuộc Cài đặt trình duyệt
 
 	upd updateState // bản mới đã hỏi được + đang cập nhật (updateapi.go)
 

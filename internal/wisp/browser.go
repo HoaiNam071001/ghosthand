@@ -25,6 +25,7 @@ type Browser struct {
 	lastTab int                 // tab của lần Find gần nhất
 	dialogs map[int]*web.Dialog // hộp thoại JS đang mở theo tab (sự kiện dialog)
 	navs    map[int]int         // số lần tab chuyển trang (sự kiện navigate) – Mark / Settle
+	onPick  func(PickEvent)     // chọn element (pick.go); nil = không đăng ký sự kiện pick
 }
 
 var _ web.Browser = (*Browser)(nil)
@@ -71,7 +72,13 @@ func (b *Browser) client(ctx context.Context) (*Conn, error) {
 	if err != nil {
 		return nil, &web.BrowserError{Msg: "không nối được cổng Wisp: " + err.Error()}
 	}
-	if err := c.Call(ctx, "subscribe", map[string]any{"events": []string{"navigate", "popup", "dialog"}}, nil); err != nil {
+	events := []string{"navigate", "popup", "dialog"}
+	b.mu.Lock()
+	if b.onPick != nil {
+		events = append(events, "pick")
+	}
+	b.mu.Unlock()
+	if err := c.Call(ctx, "subscribe", map[string]any{"events": events}, nil); err != nil {
 		c.Close()
 		return nil, wispErr("subscribe", err)
 	}
@@ -113,6 +120,10 @@ type dialogEvent struct {
 }
 
 func (b *Browser) onEvent(name string, data json.RawMessage) {
+	if name == "pick" {
+		b.firePick(data)
+		return
+	}
 	var d dialogEvent
 	if json.Unmarshal(data, &d) != nil {
 		return

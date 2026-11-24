@@ -683,6 +683,14 @@ Người dùng chốt 2026-10-18: việc qua Chrome của app làm sau cùng –
 - [ ] (C10) AI gọi `sync_status` thấy `on/backend/loggedIn/lastAt/failed/conflicts`, không thấy tên máy hay đường dẫn; không có tool nào khác về đồng bộ trong `tools/list`
 - [ ] `#demo-sync?backend=mcp` (cả `?theme=dark`): form ánh xạ không vỡ ở 2 theme, hẹp cửa sổ không tràn
 
+### 65 – Chọn element trên Wisp · [phase3/65-chon-element-tu-wisp.md](phase3/65-chon-element-tu-wisp.md)
+
+- [ ] Wisp chưa mở / cổng Ghosthand tắt: tab *Chèn node* → nút *Chọn element* (nhóm *Từ trang web*) xám, rê chuột thấy lý do; mở Wisp + bật cổng → nút bật lại sau vài giây
+- [ ] Mở Google trên Wisp → bấm *Chọn element* → thanh thông báo "Đang chọn trên Wisp"; trên Wisp bấm ô tìm kiếm, chọn *Gõ chữ* + gõ chữ → Ghosthand thêm node *Gõ vào ô web* (selector đúng 1 phần tử) nối sau node đang chọn, node mới được chọn; Wisp hiện toast "Đã thêm nX"
+- [ ] Chọn thêm *Click* / *Chờ thấy* / *Đọc giá trị* → ra đúng node webClick / webWait / webRead; ⌘Z hoàn tác một lần bỏ đúng node vừa thêm
+- [ ] Chọn phần tử có selector khớp nhiều chỗ → vẫn thêm node, thông báo nhắc kiểm lại selector
+- [ ] Chạy kịch bản vừa thêm (webType) → gõ được vào ô tìm kiếm
+
 ### 64 L4 – Ngôn ngữ VI / EN (đợt 2) · [phase3/64-ngon-ngu-vi-en.md](phase3/64-ngon-ngu-vi-en.md)
 
 - [ ] Đặt ngôn ngữ English (nút VI / EN trên thanh tiêu đề): mở từng loại node (Nếu, Switch, Đếm, Lặp qua danh sách, Tính toán, Lọc mẫu, Tách chữ, Làm sạch chữ, Số & ngày) → inspector không còn chữ tiếng Việt, nút *Thử node* / *Chạy thử* / *Đọc thử* đúng chữ

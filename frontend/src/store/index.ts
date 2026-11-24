@@ -12,3 +12,4 @@ export * from './control';
 export * from './secrets';
 export * from './record';
 export * from './dataLinks';
+export * from './wispPick';

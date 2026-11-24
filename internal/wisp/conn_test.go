@@ -17,7 +17,7 @@ import (
 // fakeWisp – cổng giả: kiểm token, trả lời lệnh theo handle, đẩy một sự kiện sau subscribe.
 func fakeWisp(t *testing.T, handle func(cmd string, args map[string]any) (any, *CmdError)) (Info, func(int)) {
 	t.Helper()
-	conns := make(chan *websocket.Conn, 1)
+	conns := make(chan *websocket.Conn, 8)
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("Authorization") != "Bearer tok" {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -42,6 +42,10 @@ func fakeWisp(t *testing.T, handle func(cmd string, args map[string]any) (any, *
 				_ = ws.WriteJSON(map[string]any{"id": msg.ID, "ok": false, "error": cerr})
 			} else {
 				_ = ws.WriteJSON(map[string]any{"id": msg.ID, "ok": true, "result": res})
+			}
+			if evs, _ := msg.Args["events"].([]any); msg.Cmd == "subscribe" && len(evs) > 3 && evs[3] == "pick" {
+				_ = ws.WriteJSON(map[string]any{"event": "pick", "data": map[string]any{"tab": 2, "url": "https://g/", "action": "type",
+					"selector": "aria=Tìm kiếm", "selectors": []string{"aria=Tìm kiếm", "css=textarea"}, "count": 1, "input": "xin {{k}}"}})
 			}
 			if msg.Cmd == "subscribe" {
 				_ = ws.WriteJSON(map[string]any{"event": "dialog", "data": map[string]any{"tab": 2, "type": "alert", "message": "Xin chào"}})

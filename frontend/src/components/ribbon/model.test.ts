@@ -37,7 +37,7 @@ describe('ribbon model', () => {
 
   it('tab Chèn node lấy đủ node từ danh mục palette', () => {
     const groups = buildRibbon('insert', ctx());
-    const n = groups.reduce((s, g) => s + g.items.length, 0);
+    const n = groups.filter((g) => g.id !== 'wispPick').reduce((s, g) => s + g.items.length, 0);
     expect(n).toBe(GROUPS.reduce((s, g) => s + g.items.length, 0));
   });
 
@@ -50,8 +50,20 @@ describe('ribbon model', () => {
   it('nút node bấm vào gọi đúng hành động thêm node', () => {
     const run = vi.fn();
     const g = buildRibbon('insert', ctx({ insert: [{ cat: 'wait', items: [{ icon: 'wait', label: 'Chờ', keywords: '', run }] }] }));
-    g[0].items[0].onClick?.();
+    g.find((x) => x.id !== 'wispPick')!.items[0].onClick?.();
     expect(run).toHaveBeenCalledOnce();
+  });
+
+  it('nút Chọn element: tắt khi Wisp chưa sẵn sàng, bật thì gọi pickElement; ẩn khi đang tìm node', () => {
+    const pick = vi.fn();
+    const find = (c: RibbonCtx) => buildRibbon('insert', c).flatMap((g) => g.items).find((i) => i.id === 'pickElement');
+    expect(find(ctx({ wisp: { ready: false, problem: 'chưa mở Wisp' } }))!.disabled).toBe(true);
+    expect(find(ctx({ wisp: { ready: false, problem: 'chưa mở Wisp' } }))!.title).toContain('chưa mở Wisp');
+    const on = find(ctx({ wisp: { ready: true, problem: '' }, act: { ...act, pickElement: pick } as RibbonActions }))!;
+    expect(on.disabled).toBe(false);
+    on.onClick?.();
+    expect(pick).toHaveBeenCalledOnce();
+    expect(find(ctx({ insertQuery: 'cho' }))).toBeUndefined();
   });
 
   it('Gom nhóm chỉ bật khi chọn từ 2 node; Chạy từ node cần có node chọn', () => {

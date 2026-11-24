@@ -24,7 +24,7 @@ const webTips = `Node web chỉ khi người dùng xin (mặc định node ảnh
 - loading (trang tải lâu): chờ vài giây rồi probe_page không url (dò lại tab, không tải lại) – tối đa 2–3 lần, vẫn loading thì screenshot xem trang rồi quyết.
 - captcha / blocked / canvas / empty: dùng node ảnh / chữ (open bằng trình duyệt thường, waitImage / clickImage findBy "text") và nói người dùng lý do (signs).
 - Trang cần đăng nhập: không tự gõ mật khẩu trong Chrome của app – nhờ người dùng bấm Đăng nhập ở node web (mở như Chrome thường), đăng nhập rồi bấm Xong; hoặc dùng trình duyệt thường + node ảnh / chữ.
-- Wisp (Cài đặt → Trình duyệt chọn Wisp, hoặc Tự động khi Wisp đang mở): node web + read_web_outline chạy trên tab Wisp, kịch bản giữ nguyên; probe_page vẫn thử trên Chrome của app.`
+- Wisp (Cài đặt → Trình duyệt chọn Wisp, hoặc Tự động khi Wisp đang mở): node web + read_web_outline chạy trên tab Wisp, kịch bản giữ nguyên; probe_page vẫn thử trên Chrome của app. Người dùng cũng tự chọn element trên Wisp (tab Chèn node → Chọn element) để thêm node web có selector đã kiểm.`
 
 type probeIn struct {
 	URL string `json:"url,omitempty" jsonschema:"trang cần thử (https://… hoặc tên miền); bỏ trống = dò lại tab đang mở, không tải lại"`

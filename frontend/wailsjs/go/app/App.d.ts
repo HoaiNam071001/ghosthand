@@ -19,6 +19,8 @@ import {wisp} from '../models';
 
 export function AIScripts():Promise<Array<string>>;
 
+export function AckWispPick(arg1:string):Promise<void>;
+
 export function AddToClaudeDesktop():Promise<string>;
 
 export function AnswerAIRun(arg1:string,arg2:string):Promise<void>;
@@ -250,6 +252,8 @@ export function SetWindowMode(arg1:string):Promise<void>;
 export function StartRecording():Promise<void>;
 
 export function StartWebLogin(arg1:string):Promise<void>;
+
+export function StartWispPick(arg1:boolean):Promise<void>;
 
 export function StepOnlyOS():Promise<Record<string, Array<string>>>;
 

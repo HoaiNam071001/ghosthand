@@ -6,6 +6,10 @@ export function AIScripts() {
   return window['go']['app']['App']['AIScripts']();
 }
 
+export function AckWispPick(arg1) {
+  return window['go']['app']['App']['AckWispPick'](arg1);
+}
+
 export function AddToClaudeDesktop() {
   return window['go']['app']['App']['AddToClaudeDesktop']();
 }
@@ -468,6 +472,10 @@ export function StartRecording() {
 
 export function StartWebLogin(arg1) {
   return window['go']['app']['App']['StartWebLogin'](arg1);
+}
+
+export function StartWispPick(arg1) {
+  return window['go']['app']['App']['StartWispPick'](arg1);
 }
 
 export function StepOnlyOS() {

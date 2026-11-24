@@ -45,7 +45,7 @@ export const RIBBON_TABS: { id: RibbonTabId; key: MsgKey }[] = [
 export type RibbonActions = {
   paste(): void; cut(): void; copy(): void; duplicate(): void; undo(): void; redo(): void; remove(): void; selectAll(): void;
   group(): void; toggleNode(): void; setStart(): void;
-  run(ask: boolean): void; stop(): void; runFrom(only: boolean): void; runStep(): void; preview(): void; record(): void; history(): void; bundle(): void;
+  run(ask: boolean): void; stop(): void; runFrom(only: boolean): void; runStep(): void; preview(): void; record(): void; pickElement(): void; history(): void; bundle(): void;
   card(m: CardMode): void; detail(m: DetailMode): void; pin(on: boolean): void; minimap(on: boolean): void; theme(t: Theme): void;
   zoomIn(): void; zoomOut(): void; zoom100(): void; fit(): void; layout(): void; palette(): void;
   region(): void; pickPoint(): void; settings(): void; mcp(): void; guide(): void;
@@ -57,6 +57,7 @@ export type RibbonCtx = {
   offline: boolean; // trình duyệt, không có Go – nút chạy tắt
   hasInputs: boolean;
   hasSteps: boolean;
+  wisp?: { ready: boolean; problem: string }; // Wisp sẵn sàng cho nút Chọn element (undefined = màn mẫu / chưa biết)
   selectedRef?: string; // node đang chọn ('' / undefined = chưa chọn)
   selectedOn: boolean;
   picked: number; // số node chọn cùng lúc
@@ -131,7 +132,11 @@ export function insertGroups(c: RibbonCtx): RibbonGroup[] {
       };
     }),
   }));
-  return groups.filter((g) => g.items.length > 0);
+  const web: RibbonGroup = { id: 'wispPick', label: t('rb.g.fromWeb'), items: [
+    big({ id: 'pickElement', label: t('rb.pickElement'), icon: 'pick', disabled: c.offline || (c.wisp ? !c.wisp.ready : false),
+      title: c.wisp && !c.wisp.ready ? `${t('rb.t.pickElement')} – ${c.wisp.problem}` : t('rb.t.pickElement'), onClick: c.act.pickElement }),
+  ] };
+  return [...(words.length ? [] : [web]), ...groups.filter((g) => g.items.length > 0)];
 }
 
 function run(c: RibbonCtx): RibbonGroup[] {

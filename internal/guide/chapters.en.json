@@ -711,6 +711,10 @@
       {
         "kind": "tip",
         "text": "The status box tells you whether Wisp is ready and how to fix it (not installed, not open, gateway off, version mismatch). Click *Check again* after opening Wisp."
+      },
+      {
+        "kind": "tip",
+        "text": "**Pick element** (*Insert node* tab → *From web page*): needs Wisp open with the gateway on. Click the button, then in Wisp hover and click an element and choose an action (Click / Type / Wait for / Read value) → Ghosthand adds a web node with a verified selector after the selected node. You get a warning if the selector does not match exactly 1 element."
       }
     ]
   },
