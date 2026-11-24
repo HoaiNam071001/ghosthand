@@ -269,6 +269,9 @@ func checkStep(s *model.Step) error {
 	if s.SearchArea != "" && s.SearchArea != "screen" && s.SearchArea != model.SearchGame {
 		return fmt.Errorf("vùng tìm không hợp lệ: %q", s.SearchArea)
 	}
+	if s.SearchArea == model.SearchGame && s.FindBy == model.FindByElement {
+		return fmt.Errorf("vùng tìm “khung game Wisp” chỉ dùng với ảnh / chữ, không dùng với tìm phần tử")
+	}
 	if s.MinCount < 0 || s.MaxCount < 0 {
 		return errors.New("số chỗ tối thiểu / tối đa không được âm")
 	}
