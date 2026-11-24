@@ -269,8 +269,12 @@ func checkStep(s *model.Step) error {
 	if s.SearchArea != "" && s.SearchArea != "screen" && s.SearchArea != model.SearchGame {
 		return fmt.Errorf("vùng tìm không hợp lệ: %q", s.SearchArea)
 	}
-	if s.SearchArea == model.SearchGame && s.FindBy == model.FindByElement {
-		return fmt.Errorf("vùng tìm “khung game Wisp” chỉ dùng với ảnh / chữ, không dùng với tìm phần tử")
+	if s.SearchArea == model.SearchGame {
+		// các node khác (Đọc phần tử, Chụp màn hình…) không hỏi Wisp khung game – lặng lẽ tìm ở vùng kịch bản là sai
+		image := s.Type == model.StepWaitImage || s.Type == model.StepClickImage || s.Type == model.StepFindAll
+		if !image || s.FindBy == model.FindByElement {
+			return fmt.Errorf("vùng tìm “khung game Wisp” chỉ dùng với Chờ ảnh / Click theo ảnh / Tìm tất cả (ảnh hoặc chữ), không dùng với tìm phần tử")
+		}
 	}
 	if s.MinCount < 0 || s.MaxCount < 0 {
 		return errors.New("số chỗ tối thiểu / tối đa không được âm")

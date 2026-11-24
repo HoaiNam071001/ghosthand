@@ -24,3 +24,18 @@ func TestCheckFindByAI(t *testing.T) {
 		t.Error("Đọc phần tử không được tìm bằng AI")
 	}
 }
+
+func TestCheckSearchAreaGame(t *testing.T) {
+	ok := model.Step{Type: model.StepWaitImage, FindBy: model.FindByText, FindText: "Bắt đầu", SearchArea: model.SearchGame, TimeoutMs: 5000, IntervalMs: 250}
+	if err := checkImageStep(0, ok); err != nil {
+		t.Fatalf("chờ chữ trong khung game phải hợp lệ: %v", err)
+	}
+	elem := ok
+	elem.FindBy = model.FindByElement
+	if checkImageStep(0, elem) == nil {
+		t.Error("tìm phần tử không dùng được khung game")
+	}
+	if checkStep(&model.Step{Type: model.StepElementRead, SearchArea: model.SearchGame}) == nil {
+		t.Error("Đọc phần tử không dùng được khung game (sẽ lặng lẽ tìm sai vùng)")
+	}
+}
