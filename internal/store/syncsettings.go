@@ -9,7 +9,7 @@ import (
 // PortableSettings mới rời máy. Thêm trường cài đặt mới → TestSyncPolicyCoversEveryField bắt buộc ghi nó vào
 // syncPolicy là "mang đi" hay "riêng máy" – quên là test đỏ, không rò rỉ lặng lẽ.
 //
-// Riêng máy: file gần đây, thư mục lưu, cổng + token API (bí mật), máy chủ MCP ngoài (lệnh chạy trên máy), và mọi thứ
+// Riêng máy: ngôn ngữ giao diện ("system" theo hệ điều hành từng máy), file gần đây, thư mục lưu, cổng + token API (bí mật), máy chủ MCP ngoài (lệnh chạy trên máy), và mọi thứ
 // quyết định AI được làm gì trên máy này (bật MCP, mức chạy, tool bị tắt) – cloud bị chiếm không được nới quyền AI.
 type PortableSettings struct {
 	Theme   string          `json:"theme"`
@@ -37,7 +37,7 @@ type PortableMCP struct {
 // syncPolicy – mọi trường (Kiểu.Trường) của các struct cài đặt: true = mang đi, false = riêng máy.
 // Trường cha có con mang đi một phần (MCP) ghi true ở cha và liệt kê từng con.
 var syncPolicy = map[string]bool{
-	"Settings.Theme": true, "Settings.Recent": false, "Settings.API": false, "Settings.MCP": true,
+	"Settings.Theme": true, "Settings.Language": false, "Settings.Recent": false, "Settings.API": false, "Settings.MCP": true,
 	"Settings.Storage": false, "Settings.Overlay": true, "Settings.AI": true, "Settings.MCPServers": false, "Settings.Sync": false, "Settings.Web": false,
 	"SyncSettings.Scripts": false, "SyncSettings.Settings": false, "SyncSettings.Secrets": false,
 	"SyncSettings.Backend": false, "SyncSettings.MCP": false, "SyncSettings.OnOpen": false, "SyncSettings.OnSave": false, "SyncSettings.IntervalMin": false, "SyncSettings.Device": false,
