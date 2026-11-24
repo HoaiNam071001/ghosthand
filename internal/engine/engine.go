@@ -103,6 +103,7 @@ type Engine struct {
 	sh          shell.Runner                         // node Chạy lệnh (shell.go) – test thay bằng bản giả
 	tabs        browser.Backend                      // node Tab trình duyệt (browsertab.go) – test thay bằng bản giả
 	allowDanger bool                                 // người dùng đã xác nhận thao tác nguy hiểm của kịch bản (Options.AllowDanger)
+	gameArea    *model.Rect                          // khung game Wisp của node đang chạy (resolveGameArea)
 	browser     web.Browser                          // node web (webstep.go) – nil = không điều khiển trình duyệt
 
 	onNode      func(model.StepResult)       // mỗi node chạy xong (event engine:node) – có thể nil

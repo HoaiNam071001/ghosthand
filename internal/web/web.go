@@ -121,3 +121,9 @@ func (e *BrowserError) Error() string { return e.Msg }
 type QueryError struct{ Msg string }
 
 func (e *QueryError) Error() string { return e.Msg }
+
+// GameFramer – trình duyệt báo được khung game trên màn hình (Wisp, lệnh frameRect): vùng tìm SearchGame của
+// node tìm ảnh / chữ. tab "" = tab đang xem.
+type GameFramer interface {
+	GameRect(ctx context.Context, tab string) (model.Rect, error)
+}

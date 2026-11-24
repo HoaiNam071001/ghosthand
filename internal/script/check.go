@@ -266,7 +266,7 @@ func checkStep(s *model.Step) error {
 	if s.FindBy == model.FindByAI && s.Type != model.StepWaitImage && s.Type != model.StepClickImage {
 		return fmt.Errorf("tìm bằng AI chỉ dùng cho Chờ ảnh / Click theo ảnh")
 	}
-	if s.SearchArea != "" && s.SearchArea != "screen" {
+	if s.SearchArea != "" && s.SearchArea != "screen" && s.SearchArea != model.SearchGame {
 		return fmt.Errorf("vùng tìm không hợp lệ: %q", s.SearchArea)
 	}
 	if s.MinCount < 0 || s.MaxCount < 0 {

@@ -125,7 +125,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 > Bảng tự sinh – sau khi tick chạy `python3 scripts/tasks-index.py`. Bấm tên bước để mở file chi tiết.
 
 <!-- index:start -->
-**71 / 75 bước xong code** · 🧪 **[346 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
+**71 / 75 bước xong code** · 🧪 **[347 việc chờ bạn kiểm tra tay](checks.md)** · ✅ xong · 🧪 xong code, chờ kiểm tra tay · 🟡 đang làm · ⬜ chưa làm
 
 ### Phase 3 – Design v2 & tự động hoá (theo thứ tự làm)
 
@@ -173,7 +173,7 @@ Desktop app tự động click theo kịch bản: chọn vùng / toàn màn hìn
 | 🧪 chờ kiểm tra tay | [59. AI tự cập nhật + test](phase3/59-ai-tu-cap-nhat-va-test.md) | 7 / 7 | [3 việc](checks.md) |
 | ✅ xong | [60. Dữ liệu qua node](phase3/60-du-lieu-qua-node.md) | 11 / 11 |  |
 | 🧪 chờ kiểm tra tay | [61. Dùng AI gọn hơn](phase3/61-dung-ai-gon.md) | 5 / 5 | [8 việc](checks.md) |
-| 🧪 chờ kiểm tra tay | [62. Wisp làm trình duyệt của node web](phase3/62-trinh-duyet-wisp.md) | 6 / 7 | [8 việc](checks.md) |
+| 🧪 chờ kiểm tra tay | [62. Wisp làm trình duyệt của node web](phase3/62-trinh-duyet-wisp.md) | 7 / 8 | [9 việc](checks.md) |
 | 🧪 chờ kiểm tra tay | [63. Layout chính kiểu ribbon](phase3/63-layout-ribbon.md) | 8 / 8 | [10 việc](checks.md) |
 | 🟡 đang làm | [64. Chọn ngôn ngữ giao diện](phase3/64-ngon-ngu-vi-en.md) | 4 / 5 |  |
 | ⬜ chưa làm | [65. Chọn element trên Wisp → thêm step vào kịch bản](phase3/65-chon-element-tu-wisp.md) | 0 / 6 |  |

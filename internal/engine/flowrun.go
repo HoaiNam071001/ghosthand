@@ -246,6 +246,15 @@ func (e *Engine) execNode(ctx context.Context, s model.Step, loop int) (res mode
 			logf("error", "%v", err)
 			return res, 0
 		}
+		if e.sim == nil {
+			err = e.resolveGameArea(ctx, rs)
+		}
+		if err != nil {
+			res.Status, res.Port = model.StatusFail, model.PortFail
+			res.Error = &model.StepError{Code: model.ErrNotFound, Message: err.Error()}
+			logf("error", "%v", err)
+			return res, 0
+		}
 		wait = e.jitterMs(rs.DelayAfter, rs.JitterMs)
 		e.setHuman(rs)
 		port, out := model.PortSuccess, map[string]any(nil)

@@ -22,6 +22,7 @@ Thử xong: tick `[x]` ở đây, ghi kết quả vào [log.md](log.md); lỗi t
 
 ## 62 – Wisp làm trình duyệt của node web (2026-11-15) · [62](phase3/62-trinh-duyet-wisp.md)
 - [ ] Cài đặt → *Trình duyệt*: Wisp đang mở + bật Cổng Ghosthand → ô Wisp "Sẵn sàng"; tắt Wisp → *Kiểm tra lại* báo cách sửa; chưa cài → "chưa cài Wisp"
+- [ ] Chờ ảnh / chờ chữ, *Tìm trong* → *Khung game Wisp*: mở trang bất kỳ trong Wisp (hoặc game Flash), chạy → chỉ tìm trong khung game / trang; thu nhỏ cửa sổ game Flash rồi chạy → lỗi nói "thu nhỏ / ẩn"
 - [ ] Chọn *Wisp* → *Mẫu thử* → các mẫu Web (đăng nhập, chạy nền, iframe, hộp thoại JS, phím trên trang…) → Chạy: chạy trong tab Wisp, chuột không nhúc nhích, thành công như với Chrome của app
 - [ ] Chọn *Wisp* khi Wisp đang tắt → Chạy mẫu web: Wisp tự mở rồi chạy
 - [ ] *Tự động*: Wisp mở → dùng Wisp; tắt Wisp → dùng Chrome của app

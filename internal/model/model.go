@@ -60,7 +60,7 @@ type Step struct {
 	ColorTol      int     `json:"colorTol,omitempty"`      // % lệch màu trung bình tối đa so với ảnh mẫu (0 = không kiểm tra màu)
 	TimeoutMs     int     `json:"timeoutMs,omitempty"`     // chờ tối đa
 	IntervalMs    int     `json:"intervalMs,omitempty"`    // kiểm tra mỗi
-	SearchArea    string  `json:"searchArea,omitempty"`    // "" = vùng của kịch bản | screen = cả màn chứa vùng (không có vùng: màn chính)
+	SearchArea    string  `json:"searchArea,omitempty"`    // "" = vùng của kịch bản | screen = cả màn chứa vùng (không có vùng: màn chính) | game = khung game Wisp (SearchGame)
 	ImageSource   string  `json:"imageSource,omitempty"`   // clickImage: node | search
 	ImageFrom     string  `json:"imageFrom,omitempty"`     // clickImage ImageSource node / screenshot ShotArea node: id node lấy chỗ thấy
 	Dx            int     `json:"dx,omitempty"`            // clickImage / webClick: lệch so với tâm ảnh / phần tử

@@ -145,7 +145,7 @@ export interface Step extends AdvancedFields, TextFields {
   colorTol?: number; // % lệch màu tối đa so với ảnh mẫu, 0 / trống = không kiểm tra màu (bước 40)
   timeoutMs?: number; // chờ tối đa
   intervalMs?: number; // kiểm tra mỗi
-  searchArea?: 'screen'; // bỏ trống = vùng của kịch bản
+  searchArea?: 'screen' | 'game'; // bỏ trống = vùng của kịch bản | screen = cả màn | game = khung game Wisp
   imageSource?: 'node' | 'search'; // clickImage: chỗ node imageFrom thấy / tự tìm
   imageFrom?: string; // clickImage imageSource node / screenshot shotArea node: id node lấy chỗ thấy
   dx?: number; // clickImage / webClick: lệch so với tâm ảnh / phần tử

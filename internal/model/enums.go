@@ -16,6 +16,9 @@ const (
 
 var MatchModes = []string{MatchGray, MatchEdge}
 
+// SearchGame – Step.SearchArea: tìm trong khung game của Wisp (lệnh frameRect), không phải vùng của kịch bản.
+const SearchGame = "game"
+
 // Vùng chụp của node Chụp màn hình (Step.ShotArea).
 const (
 	ShotRegion = ""       // vùng của kịch bản (không có vùng: màn chính)

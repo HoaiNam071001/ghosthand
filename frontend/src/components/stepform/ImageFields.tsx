@@ -114,8 +114,8 @@ function ImageSearchFields({ step: s }: { step: Step }) {
         </span>
       )}
       <Field label={t('er.in')} wide group help={t(byElem ? 'if.areaEl' : byText ? 'if.areaText' : 'if.areaImg') + (byElem ? '' : ' ' + t('if.areaScreen'))}>
-        <Segmented value={s.searchArea ?? 'region'} onChange={(v) => updateStep(s.id, { searchArea: v === 'screen' ? 'screen' : undefined })} full
-          options={[{ id: 'region', label: t('er.region') }, { id: 'screen', label: t('er.screen') }]} />
+        <Segmented value={s.searchArea ?? 'region'} onChange={(v) => updateStep(s.id, { searchArea: v === 'screen' || v === 'game' ? v : undefined })} full
+          options={[{ id: 'region', label: t('er.region') }, { id: 'screen', label: t('er.screen') }, ...(byElem ? [] : [{ id: 'game', label: t('er.game') }])]} />
       </Field>
     </>
   );

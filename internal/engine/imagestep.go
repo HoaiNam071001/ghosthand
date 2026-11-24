@@ -36,8 +36,12 @@ func waitWhat(s model.Step) string {
 	return w
 }
 
-// searchArea: vùng tìm ảnh theo toạ độ robotgo – vùng của kịch bản, hoặc cả màn chứa vùng đó (không có vùng: màn chính).
+// searchArea: vùng tìm ảnh theo toạ độ robotgo – vùng của kịch bản, cả màn chứa vùng đó (không có vùng: màn chính),
+// hoặc khung game Wisp (resolveGameArea đã hỏi).
 func (e *Engine) searchArea(s model.Step) model.Rect {
+	if s.SearchArea == model.SearchGame && e.gameArea != nil {
+		return *e.gameArea
+	}
 	b := script.Bounds(e.sc, e.screen)
 	if s.SearchArea != "screen" {
 		return b
