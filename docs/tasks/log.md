@@ -368,3 +368,4 @@
 - 2026-11-17 · dấu trạng thái chạy / xong 3s trên icon thanh tác vụ Windows (taskbadge) + app AI mở nền tự đóng sau lượt AI
 - 2026-11-17 · ghi plan bước 65: chọn element trên Wisp → thêm step (phía Wisp xong ở flash-app bước 06)
 2026-11-24 62 W7: vùng tìm Khung game Wisp (searchArea game, GameFramer, frameRect)
+- 2026-11-24: Kế hoạch (người dùng yêu cầu): bước 66 – click an toàn + bấm theo cửa sổ (run_step click thiếu points bấm ở (0,0) → dừng khẩn cấp).
